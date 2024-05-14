@@ -1,0 +1,57 @@
+:root {
+    --primary-color: #2563eb;
+    --roulette-selector-color: #ffffff;
+    --font-main-color: #ffffff;
+    --background-color: #0f1923;
+    --game-background-color: #1A242D;
+    --green-card-color: #00C74D;
+    --red-card-color: #f9305b;
+    --black-card-color: #2D3035;
+
+    /*Navbar*/
+    --navbar-color: #1A242D;
+    --sidebar-color: #1A242D;
+    --hover-navbar-color: #374151;
+    /**/
+
+    --lightgray-color: #8f8f8f;
+
+    /*Technologies component*/
+    --title-tech-color: #ffffff;
+    --content-tech-color: #9ca3af;
+    --cardText-tech-color: #ffffff;
+    --cardBg-tech-color: #030712;
+    --cardIconBg-tech-color: #374151;
+    --cardIconText-tech-color: #ffffff;
+    --cardIconBorder-tech-color: #4b5563;
+    /**/
+}
+
+[data-theme="light"] {
+    --primary-color: #2563eb;
+    --roulette-selector-color: #2563eb;
+    --font-main-color: #1f2937;
+    --background-color: #ffffff;
+    --game-background-color: #c9c9c9;
+    --green-card-color: #00C74D;
+    --red-card-color: #f9305b;
+    --black-card-color: #2D3035;
+    
+    /*Navbar*/
+    --navbar-color: #ffffff;
+    --sidebar-color: #2563eb;
+    --hover-navbar-color: #ebebeb;
+    /**/
+
+    --lightgray-color: #353535;
+
+    /*Technologies component*/
+    --title-tech-color: #111827;
+    --content-tech-color: #6b7280;
+    --cardText-tech-color: #334155;
+    --cardBg-tech-color: #f3f4f6;
+    --cardIconBg-tech-color: #d1d5db;
+    --cardIconText-tech-color: #1f2937;
+    --cardIconBorder-tech-color: #e5e7eb;
+    /**/
+}
