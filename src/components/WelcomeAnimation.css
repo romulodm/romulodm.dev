@@ -16,7 +16,7 @@
 }
 
 .welcome-container.hide {
-    animation: container-fade-out 0.5s forwards;
+    animation: container-slide-down 0.5s forwards;
 }
 
 .emoji {
@@ -26,11 +26,18 @@
 
 @keyframes emoji-animation {
     0% { transform: rotate(0deg); }
-    10% { transform: rotate(14deg); }
+    10% { transform: rotate(20deg); }
     20% { transform: rotate(-8deg); }
     30% { transform: rotate(14deg); }
     40% { transform: rotate(-4deg); }
     50% { transform: rotate(10deg); }
+
+    55% { transform: rotate(5deg); }
+    56% { transform: rotate(4deg); }
+    57% { transform: rotate(3deg); }
+    58% { transform: rotate(2deg); }
+    59% { transform: rotate(1deg); }
+
     60% { transform: rotate(0deg); }
     100% { transform: rotate(0deg); }
 }
@@ -40,13 +47,14 @@
     100% { opacity: 0; transform: scale(0); }
 }
 
+/*
 @keyframes container-fade-out {
     0% { opacity: 1; transform: scale(1); }
     100% { opacity: 0; transform: scale(0.25); }
 }
+*/
 
-/*
-@keyframes fade-slide-down {
+@keyframes container-slide-down {
     0% {
         transform: translateY(0);
         opacity: 1;
@@ -56,4 +64,3 @@
         opacity: 0;
     }
 }
-*/
