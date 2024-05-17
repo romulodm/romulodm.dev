@@ -32,11 +32,11 @@ export default function ThemeSelector() {
     return (
         <div>
             {actualTheme == "dark" ? (
-                <button id="nav-hover" onClick={setLightMode} className="flex justify-center rounded-md w-11 p-2">
+                <button onClick={setLightMode} className="flex justify-center rounded-md">
                     <DarkModeOutlinedIcon/>
                 </button>
             ) : (
-                <button id="nav-hover" onClick={setDarkMode} className="flex justify-center rounded-md w-11 p-2">
+                <button onClick={setDarkMode} className="flex justify-center rounded-md">
                     <LightModeOutlinedIcon/>
                 </button>
             )}
