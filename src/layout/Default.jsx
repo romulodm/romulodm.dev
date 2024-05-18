@@ -1,23 +1,32 @@
 import { Outlet } from 'react-router-dom';
 import Navbar from '../components/navigation/Navbar';
-import Footer from '../components/Footer';
+import Sidebar from '../components/navigation/Sidebar';
+import Mobilebar from '../components/navigation/Mobilebar';
 
 const DefaultLayout = () => {
     return (
-    <div className="h-full min-h-screen">
-        
-        <Navbar/>
+        <div className="h-full min-h-screen">
+            <div className="flex flex-col md:flex-row mx-auto">
+                <div className="hidden lg:block">
+                    <Sidebar />
+                </div>
+                
+                <div className="hidden sm:block lg:hidden">
+                    <Navbar />
+                </div>
 
-        <main className="w-full">
-            
-            <Outlet />
-            
-        </main>
+                <main className="lg:ml-20 w-full">
+                    <div className="overflow-auto">
+                        <Outlet />
+                    </div>
+                </main>
 
-        <Footer/>
-
-    </div>
-  );
+                <div className="block sm:hidden">
+                    <Mobilebar />
+                </div>
+            </div>
+        </div>
+    );
 };
 
 export default DefaultLayout;

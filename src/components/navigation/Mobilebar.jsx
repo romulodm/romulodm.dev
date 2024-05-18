@@ -1,20 +1,18 @@
 import "./navbar.css";
 import { NavLink } from 'react-router-dom';
 
-import LogoDevOutlinedIcon from '@mui/icons-material/LogoDevOutlined';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import ListAltOutlinedIcon from '@mui/icons-material/ListAltOutlined';
 import CommentBankOutlinedIcon from '@mui/icons-material/CommentBankOutlined';
+import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import IntegrationInstructionsOutlinedIcon from '@mui/icons-material/IntegrationInstructionsOutlined';
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import { styled } from '@mui/material/styles';
 
 import getActualRoute from "../../utils/getActualRoute";
-import ThemeSelector from "./ThemeSelector";
-import LanguageSelector from "./LanguageSelector";
 
 const ItemTooltip = styled(({ className, ...props }) => (
-    <Tooltip {...props} classes={{ popper: className }} />
+    <Tooltip {...props}  classes={{ popper: className }} />
 ))(({ theme }) => ({
     [`& .${tooltipClasses.tooltip}`]: {
         backgroundColor: theme.palette.common.black,
@@ -22,23 +20,17 @@ const ItemTooltip = styled(({ className, ...props }) => (
     },
 }));
 
-export default function Navbar() {
+export default function Mobilebar() {
     const actualRoute = getActualRoute();
 
     const defaultClassName = "flex justify-center items-center px-4 py-3 text-gray-600 rounded-lg hover:text-white hover:bg-red-200";
     const activateClassName = "flex justify-center items-center px-4 py-3 text-gray-600 bg-primary-color rounded-lg text-white";
 
     return (
-        <nav id="navbar-color" className="fixed top-0 left-0 right-0 flex flex-row justify-between items-center text-main-color bg-white/70 border-b shadow-2xl border-gray-200 py-2 px-5">
-            <div className="flex flex-row gap-5">
-                <div className="flex justify-center items-center px-4 py-3 text-gray-700 rounded-lg">
-                    <LogoDevOutlinedIcon/>
-                </div>
-            </div>
-            
-            <nav className="flex flex-row gap-5">
+        <nav id="navbar-color" className="fixed bottom-0 left-0 right-0 shadow-2xl flex flex-row justify-center items-center text-main-color bg-white/70 backdrop-blur-md border-t border-gray-200 py-2 px-5">
+            <nav className="flex flex-row gap-3">
                 <NavLink to="/home">
-                    <ItemTooltip title="Início" placement="bottom">
+                    <ItemTooltip title="Início" placement="top">
                         <div className={actualRoute === "home" ? activateClassName : defaultClassName}>
                             <HomeOutlinedIcon />
                         </div>
@@ -68,22 +60,13 @@ export default function Navbar() {
                         </div>
                     </ItemTooltip>
                 </NavLink>
-            </nav>
 
-            <div className="flex flex-row gap-5">
-
-                <ItemTooltip title="Linguagem" placement="bottom">
+                <ItemTooltip title="Configurações" placement="top">
                     <div className="flex justify-center items-center px-4 py-3 text-gray-700 rounded-lg">
-                        <LanguageSelector/>
+                        <SettingsOutlinedIcon />
                     </div>
                 </ItemTooltip>
-                    
-                <ItemTooltip title="Tema" placement="bottom">
-                    <div className="flex justify-center items-center px-4 py-3 text-gray-700 rounded-lg">
-                        <ThemeSelector/> 
-                    </div>
-                </ItemTooltip> 
-            </div>
+            </nav>
         </nav>
     );
 }
