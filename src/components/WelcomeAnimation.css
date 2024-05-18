@@ -22,6 +22,7 @@
 .emoji {
     font-size: 5rem;
     animation: emoji-animation 1.5s infinite, emoji-fade-out 0.5s 1s forwards;
+    text-shadow: 4px 4px 10px rgba(0, 0, 0, 0.5);
 }
 
 @keyframes emoji-animation {
