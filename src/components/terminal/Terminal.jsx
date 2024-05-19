@@ -3,12 +3,12 @@ import { IoAddOutline } from "react-icons/io5";
 import { VscChromeClose, VscChromeMaximize, VscChromeMinimize, VscTerminalPowershell } from "react-icons/vsc";
 import TerminalExperience from "./TerminalExperience";
 import TerminalFunctional from "./TerminalFunctional";
-import { DefaultMessage, FollowMessage, HelpMessage, CatMessage, InterMessage, UnknowMessage } from './TerminalMessages';
+import { DefaultMessage, InitialMessage, HelpMessage, CatsMessage, InterMessage, UnknowMessage } from './TerminalMessages';
 
 const commands = {
     "help": HelpMessage,
-    "follow": FollowMessage,
-    "cat": CatMessage,
+    "follow": InitialMessage,
+    "cats": CatsMessage,
     "inter": InterMessage,
 };
 
@@ -17,25 +17,24 @@ export default function Terminal() {
 
   const [showSecondNavigationTab, setShowSecondNavigationTab] = useState(false);
   const [displayedNavigationTab, setDisplayedNavigationTab] = useState(0);
-  const [componentsToShow, setComponentsToShow] = useState([DefaultMessage, FollowMessage]);
+  const [componentsToShow, setComponentsToShow] = useState([DefaultMessage, InitialMessage]);
   const [textTypedByUser, setTextTypedByUser] = useState("");
 
   function closeNavigationTab() {
     setDisplayedNavigationTab(0);
     setShowSecondNavigationTab(false);
-    setComponentsToShow([DefaultMessage, FollowMessage]);
+    setComponentsToShow([DefaultMessage, InitialMessage]);
   }
 
   function checkMessageEntered(e) {
     if (e.key === "Enter") {
         const CommandComponent = commands[textTypedByUser];
-        if (textTypedByUser === "clear"){
+        if (textTypedByUser === "clear") {
             setComponentsToShow([]);
-        }
-        else if (CommandComponent) {
+        } else if (CommandComponent) {
             setComponentsToShow([...componentsToShow, CommandComponent]);
         } else {
-            setComponentsToShow([...componentsToShow, UnknowMessage]);
+            setComponentsToShow([...componentsToShow, () => <UnknowMessage command={textTypedByUser} />]);
         }
         setTextTypedByUser("");
     }
@@ -109,7 +108,7 @@ export default function Terminal() {
         </div>
       </div>
 
-      <div className="flex flex-row p-2 h-96 overflow-auto">
+      <div className="flex flex-row p-2 h-110 overflow-auto">
           {displayedNavigationTab === 0 ? (
             <TerminalExperience loadingTime={loadingTime}/>
           ) : (
