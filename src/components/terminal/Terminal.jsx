@@ -1,17 +1,44 @@
 import { useEffect, useState } from "react";
-import { HiChevronDown } from "react-icons/hi";
 import { IoAddOutline } from "react-icons/io5";
 import { VscChromeClose, VscChromeMaximize, VscChromeMinimize, VscTerminalPowershell } from "react-icons/vsc";
 import TerminalExperience from "./TerminalExperience";
 import TerminalFunctional from "./TerminalFunctional";
+import { DefaultMessage, FollowMessage, HelpMessage, CatMessage, InterMessage, UnknowMessage } from './TerminalMessages';
+
+const commands = {
+    "help": HelpMessage,
+    "follow": FollowMessage,
+    "cat": CatMessage,
+    "inter": InterMessage,
+};
 
 export default function Terminal() {
+  const loadingTime = useState(Math.floor(Math.random() * 300));
+
   const [showSecondNavigationTab, setShowSecondNavigationTab] = useState(false);
   const [displayedNavigationTab, setDisplayedNavigationTab] = useState(0);
-  
+  const [componentsToShow, setComponentsToShow] = useState([DefaultMessage, FollowMessage]);
+  const [textTypedByUser, setTextTypedByUser] = useState("");
+
   function closeNavigationTab() {
     setDisplayedNavigationTab(0);
     setShowSecondNavigationTab(false);
+    setComponentsToShow([DefaultMessage, FollowMessage]);
+  }
+
+  function checkMessageEntered(e) {
+    if (e.key === "Enter") {
+        const CommandComponent = commands[textTypedByUser];
+        if (textTypedByUser === "clear"){
+            setComponentsToShow([]);
+        }
+        else if (CommandComponent) {
+            setComponentsToShow([...componentsToShow, CommandComponent]);
+        } else {
+            setComponentsToShow([...componentsToShow, UnknowMessage]);
+        }
+        setTextTypedByUser("");
+    }
   }
 
   return (
@@ -84,11 +111,15 @@ export default function Terminal() {
 
       <div className="flex flex-row p-2 h-96 overflow-auto">
           {displayedNavigationTab === 0 ? (
-            <TerminalExperience/>
+            <TerminalExperience loadingTime={loadingTime}/>
           ) : (
-            <TerminalFunctional/>
+            <TerminalFunctional
+              componentsToShow={componentsToShow}
+              textTypedByUser={textTypedByUser}
+              setTextTypedByUser={setTextTypedByUser}
+              checkMessageEntered={checkMessageEntered}
+            />
           )}
-
       </div>
     </div>
   );

@@ -1,13 +1,7 @@
 import { useEffect, useState } from "react";
 import Experience from "../experience/Experience";
 
-export default function TerminalExperience() {
-    const [loadingTime, setLoadingTime] = useState();
-
-    useEffect(() => {
-        setLoadingTime(Math.floor(Math.random() * 300));
-      }, []);
-    
+export default function TerminalExperience({ loadingTime }) {
     return(
         <div className="flex flex-col gap-4">
             <div className="font-mono text-sm">

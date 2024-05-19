@@ -1,7 +1,3 @@
-function getRandomTime() {
-    return Math.floor(Math.random() * 300)
-}
-
 export function DefaultMessage() {
     return(
         <div className="font-mono text-sm">
@@ -22,7 +18,7 @@ export function FollowMessage() {
 
                 </div>
                 <div className="text-gray-500">
-                    Loading follow message took {getRandomTime()} ms.
+                    Loading follow message took 29 ms.
                 </div>
             </div>
             <pre className="text-gray-600">
@@ -54,7 +50,7 @@ export function CatMessage() {
                     <div className="whitespace-nowrap font-semibold">{`follow`}</div>
                 </div>
                 <div className="text-gray-500">
-                    Loading follow message took {getRandomTime()} ms.
+                    Loading follow message took 164 ms.
                 </div>
             </div>
             <pre>
@@ -82,10 +78,10 @@ export function InterMessage() {
             <div className="font-mono text-sm">
                 <div className="flex flex-row gap-1">
                     <div className="text-blue-600 font-semibold">visitor@romulodm:~$&nbsp;</div>
-                    <div className="whitespace-nowrap font-semibold">{`follow`}</div>
+                    <div className="whitespace-nowrap font-semibold">{`inter`}</div>
                 </div>
                 <div className="text-gray-500">
-                    Loading follow message took {getRandomTime()} ms.
+                    Loading follow message took 1909 ms.
                 </div>
             </div>
             <pre className="bg-red-600 text-white">
