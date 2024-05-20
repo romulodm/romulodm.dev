@@ -1,3 +1,5 @@
+import './navigation.css'
+
 import { NavLink } from 'react-router-dom';
 
 import LanguageSelector from "./LanguageSelector";
@@ -28,63 +30,60 @@ const ItemTooltip = styled(({ className, ...props }) => (
 export default function Sidebar() {
     const actualRoute = getActualRoute();
 
-    const defaultClassName = "flex justify-center items-center px-4 py-3 text-gray-600 rounded-lg hover:text-white hover:bg-red-200";
-    const activateClassName = "flex justify-center items-center px-4 py-3 text-gray-600 bg-primary-color rounded-lg text-white";
-
     return (
-        <div className="fixed top-0 left-0 h-screen w-fit bg-white px-2 border border-y-0 shadow-2xl flex flex-col justify-between gap-5">
-            <div className="flex flex-col gap-5">
+        <div id="navbar" className="fixed top-0 left-0 h-screen w-fit bg-white px-2 border border-y-0 shadow-xl flex flex-col justify-between gap-5">
+            <div className="flex flex-col flex-1 justify-between">
                 <div className="flex justify-center items-center px-4 py-3 text-gray-700 rounded-lg">
                     <LogoDevOutlinedIcon />
                 </div>
-            </div>
 
-            <nav className="flex flex-col flex-1 py-5 gap-5">
-                <NavLink to="/home">
-                    <ItemTooltip title="Início" placement="right">
-                        <div className={actualRoute === "home" ? activateClassName : defaultClassName}>
-                            <HomeOutlinedIcon />
+                <nav className="flex flex-col py-5 gap-5">
+                    <NavLink to="/home">
+                        <ItemTooltip title="Início" placement="right">
+                            <div className={`flex justify-center items-center px-4 py-3 rounded-lg ${actualRoute === "home" ? "active-navicon" : "desactive-navicon"}`}>
+                                <HomeOutlinedIcon />
+                            </div>
+                        </ItemTooltip>
+                    </NavLink>
+
+                    <NavLink to="/resume">
+                        <ItemTooltip title="Currículo" placement="right">
+                            <div className={`flex justify-center items-center px-4 py-3 rounded-lg ${actualRoute === "resume" ? "active-navicon" : "desactive-navicon"}`}>
+                                <ListAltOutlinedIcon />
+                            </div>
+                        </ItemTooltip>
+                    </NavLink>
+
+                    <NavLink to="/blog">
+                        <ItemTooltip title="Blog" placement="right">
+                            <div className={`flex justify-center items-center px-4 py-3 rounded-lg ${actualRoute === "blog" ? "active-navicon" : "desactive-navicon"}`}>
+                                <CommentBankOutlinedIcon />
+                            </div>
+                        </ItemTooltip>
+                    </NavLink>
+
+                    <NavLink to="/projects">
+                        <ItemTooltip title="Projetos" placement="right">
+                            <div className={`flex justify-center items-center px-4 py-3 rounded-lg ${actualRoute === "projects" ? "active-navicon" : "desactive-navicon"}`}>
+                                <IntegrationInstructionsOutlinedIcon />
+                            </div>
+                        </ItemTooltip>
+                    </NavLink>
+                </nav>
+
+                <div className="flex flex-col py-5 gap-5">
+                    <ItemTooltip title="Linguagem" placement="right">
+                        <div className="flex justify-center items-center px-4 py-3 rounded-lg desactive-navicon">
+                            <LanguageSelector />
                         </div>
                     </ItemTooltip>
-                </NavLink>
 
-                <NavLink to="/resume">
-                    <ItemTooltip title="Currículo" placement="right">
-                        <div className={actualRoute === "resume" ? activateClassName : defaultClassName}>
-                            <ListAltOutlinedIcon />
+                    <ItemTooltip title="Tema" placement="right">
+                        <div className="flex justify-center items-center px-4 py-3 rounded-lg desactive-navicon">
+                            <ThemeSelector />
                         </div>
                     </ItemTooltip>
-                </NavLink>
-
-                <NavLink to="/blog">
-                    <ItemTooltip title="Blog" placement="right">
-                        <div className={actualRoute === "blog" ? activateClassName : defaultClassName}>
-                            <CommentBankOutlinedIcon />
-                        </div>
-                    </ItemTooltip>
-                </NavLink>
-
-                <NavLink to="/projects">
-                    <ItemTooltip title="Projetos" placement="right">
-                        <div className={actualRoute === "projects" ? activateClassName : defaultClassName}>
-                            <IntegrationInstructionsOutlinedIcon />
-                        </div>
-                    </ItemTooltip>
-                </NavLink>
-            </nav>
-
-            <div className="flex flex-col py-5 gap-5">
-                <ItemTooltip title="Linguagem" placement="right">
-                    <div className="flex justify-center items-center px-4 py-3 text-gray-700 rounded-lg">
-                        <LanguageSelector />
-                    </div>
-                </ItemTooltip>
-
-                <ItemTooltip title="Tema" placement="right">
-                    <div className="flex justify-center items-center px-4 py-3 text-gray-700 rounded-lg">
-                        <ThemeSelector />
-                    </div>
-                </ItemTooltip>
+                </div>
             </div>
         </div>
     );

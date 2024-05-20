@@ -1,0 +1,19 @@
+@import "../../theme/colors.css";
+
+#navbar{
+    z-index: 1000;
+}
+
+.active-navicon {
+    color: #ffffff;
+    background-color: var(--primary-color);
+}
+
+.desactive-navicon {
+    color: #4b5563;
+}
+
+.desactive-navicon:hover {
+    color: #ffffff;
+    background-color: var(--primary-color);
+}

@@ -1,4 +1,3 @@
-import "./navbar.css";
 import { NavLink } from 'react-router-dom';
 
 import LogoDevOutlinedIcon from '@mui/icons-material/LogoDevOutlined';
@@ -29,7 +28,7 @@ export default function Navbar() {
     const activateClassName = "flex justify-center items-center px-4 py-3 text-gray-600 bg-primary-color rounded-lg text-white";
 
     return (
-        <nav id="navbar-color" className="fixed top-0 left-0 right-0 flex flex-row justify-between items-center text-main-color bg-white/70 border-b shadow-2xl border-gray-200 py-2 px-5">
+        <nav id="navbar" className="fixed top-0 left-0 right-0 flex flex-row justify-between items-center text-main-color bg-white/70 backdrop-blur-md border-b shadow-md border-gray-200 py-2 px-5">
             <div className="flex flex-row gap-5">
                 <div className="flex justify-center items-center px-4 py-3 text-gray-700 rounded-lg">
                     <LogoDevOutlinedIcon/>

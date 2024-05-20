@@ -1,4 +1,3 @@
-import "./navbar.css";
 import { NavLink } from 'react-router-dom';
 
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
@@ -27,7 +26,7 @@ export default function Mobilebar() {
     const activateClassName = "flex justify-center items-center px-4 py-3 text-gray-600 bg-primary-color rounded-lg text-white";
 
     return (
-        <nav id="navbar-color" className="fixed bottom-0 left-0 right-0 shadow-2xl flex flex-row justify-center items-center text-main-color bg-white/70 backdrop-blur-md border-t border-gray-200 py-2 px-5">
+        <nav id="navbar" className="fixed bottom-0 left-0 right-0 shadow-2xl flex flex-row justify-center items-center text-main-color bg-white/70 backdrop-blur-md border-t border-gray-200 py-2 px-5">
             <nav className="flex flex-row gap-3">
                 <NavLink to="/home">
                     <ItemTooltip title="Início" placement="top">
