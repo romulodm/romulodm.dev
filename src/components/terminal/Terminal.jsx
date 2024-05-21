@@ -1,19 +1,30 @@
-import { useEffect, useState } from "react";
+import './Terminal.css'
+
+const SECRET_PASSWORD = import.meta.env.VITE_TERMINAL_SECRET_PASSWORD
+
+import { useState } from "react";
 import { IoAddOutline } from "react-icons/io5";
 import { VscChromeClose, VscChromeMaximize, VscChromeMinimize, VscTerminalPowershell } from "react-icons/vsc";
 import TerminalExperience from "./TerminalExperience";
 import TerminalFunctional from "./TerminalFunctional";
-import { DefaultMessage, InitialMessage, HelpMessage, CatsMessage, InterMessage, UnknowMessage } from './TerminalMessages';
+import { DefaultMessage, InitialMessage, HelpMessage, CatsMessage, InterMessage, UnknowMessage, WhoMessage, WhoamiMessage, SecretMessage, SecretHintMessage, SecretWrongMessage, SecretCorrectMessage } from './TerminalMessages';
 
 const commands = {
     "help": HelpMessage,
+    "initial": InitialMessage,
     "follow": InitialMessage,
+    "who": WhoMessage,
+    "whoami": WhoamiMessage,
     "cats": CatsMessage,
     "inter": InterMessage,
+    "secret": SecretMessage,
+    "secret --get_hint": SecretHintMessage,
 };
 
 export default function Terminal() {
   const loadingTime = useState(Math.floor(Math.random() * 300));
+
+  const secretPassRegex = /^secret --pass (\d{4})$/;
 
   const [showSecondNavigationTab, setShowSecondNavigationTab] = useState(false);
   const [displayedNavigationTab, setDisplayedNavigationTab] = useState(0);
@@ -29,9 +40,22 @@ export default function Terminal() {
   function checkMessageEntered(e) {
     if (e.key === "Enter") {
         const CommandComponent = commands[textTypedByUser];
+
+        // checking password typed:
+        const match = textTypedByUser.match(secretPassRegex);
+        //
+
         if (textTypedByUser === "clear") {
             setComponentsToShow([]);
-        } else if (CommandComponent) {
+        } else if(match) {
+          const enteredPassword = match[1];
+          if (enteredPassword === SECRET_PASSWORD) {
+              setComponentsToShow([...componentsToShow, () => <SecretCorrectMessage command={textTypedByUser}/>]);
+          } else {
+              setComponentsToShow([...componentsToShow, () => <SecretWrongMessage command={textTypedByUser}/>]);
+          }
+        } 
+        else if (CommandComponent) {
             setComponentsToShow([...componentsToShow, CommandComponent]);
         } else {
             setComponentsToShow([...componentsToShow, () => <UnknowMessage command={textTypedByUser} />]);
@@ -40,13 +64,18 @@ export default function Terminal() {
     }
   }
 
+  function openAndChangeTab() {
+    setDisplayedNavigationTab(1);
+    setShowSecondNavigationTab(true);
+  }
+
   return (
     <div className="flex flex-col rounded-lg overflow-hidden border rounded-xl shadow-3xl">
       <div className="flex flex-row justify-between bg-gray-300 w-full">
         <div className="flex flex-row items-center text-sm py-1.5">
           <button
             onClick={() => setDisplayedNavigationTab(0)}
-            className="flex cursor-default px-3 ml-1.5 py-1 flex-row w-56 h-8 rounded-lg bg-gray-200 items-center justify-between"
+            className={`${displayedNavigationTab === 0 ? 'active-nav' : 'desactive-nav'} flex cursor-default px-3 ml-1.5 py-1 flex-row w-56 h-8 rounded-lg items-center justify-between`}
           >
             <div className="flex flex-row items-center gap-2">
               <VscTerminalPowershell />
@@ -61,8 +90,8 @@ export default function Terminal() {
             <>
             <button 
               onClick={() => setDisplayedNavigationTab(1)}
-              className="flex cursor-default px-3 ml-1.5 flex-row w-56 h-8 rounded-lg bg-gray-200 items-center justify-between"
-            >
+              className={`${displayedNavigationTab === 1 ? 'active-nav' : 'desactive-nav'} flex cursor-default px-3 ml-1.5 py-1 flex-row w-56 h-8 rounded-lg items-center justify-between`}
+              >
               <div className="flex flex-row items-center gap-2">
                 <VscTerminalPowershell />
                 <p>pwsh in romulodm</p>
@@ -87,7 +116,7 @@ export default function Terminal() {
             </>
           ) : (
             <button 
-              onClick={() => setShowSecondNavigationTab(true)}
+              onClick={() => openAndChangeTab()}
               className="flex px-3 ml-1.5 flex-row h-8 rounded-lg bg-gray-200 items-center justify-between"
             >
               <IoAddOutline />
