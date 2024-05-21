@@ -41,8 +41,8 @@ export default function Timeline() {
     };
 
     return (
-        <section className="mx-auto mt-20 max-w-6xl px-4 pb-16 md:px-8">
-            <div className="-mx-4 flex h-96 overflow-x-auto py-4 px-6 xl:mx-0">
+        <section id="timeline" className="mt-5 w-full pb-2">
+            <div className="-mx-4 flex h-80 overflow-x-auto px-6 xl:mx-0 scroll-stylized">
                 {Object.entries(timelineObject).map(([year, events]) => (
                     <div key={year} className="relative">
                         <header className="absolute left-0 -translate-x-1/2 select-none text-xs font-semibold text-gray-400">
@@ -53,31 +53,35 @@ export default function Timeline() {
                             className="mt-6 grid"
                             style={{ gridTemplateColumns: `repeat(${events.length}, 120px)` }}
                         >
-                            {events.map(({ heading, Icon, description }) => {
-                                const eventIndex = globalIndex;
+                            {events.map(({ heading, Icon, description }, eventIndex) => {
+                                const globalEventIndex = globalIndex;
                                 globalIndex += 1;
 
                                 return (
                                     <section
                                         key={heading + year}
                                         className="relative"
-                                        onMouseEnter={() => handleMouseEnter(eventIndex)}
+                                        onMouseEnter={() => handleMouseEnter(globalEventIndex)}
                                         onMouseLeave={handleMouseLeave}
                                     >
                                         <button 
-                                            key={eventIndex} 
+                                            key={globalEventIndex} 
                                             className="absolute flex -translate-x-1/2 flex-col items-center px-3 hfa:outline-none"
-                                            onClick={() => handleItemChange(eventIndex)}
+                                            onClick={() => handleItemChange(globalEventIndex)}
                                         >
                                             <span className="sr-only">{`${year} - ${heading}`}</span>
-                                            <div className={`h-8 w-0.5 transition-all ${currentItem === eventIndex ? 'bg-sky-500 h-[80px]' : 'bg-gray-500'}`}></div>
-                                            <Icon className={`mt-2 h-5 w-5 transition-all ${currentItem === eventIndex ? 'text-gray-900' : 'text-gray-500'}`} />
+                                            <div className={`h-8 w-0.5 transition-all ${currentItem === globalEventIndex ? 'bg-sky-500 h-[80px]' : 'bg-gray-500'}`}></div>
+                                            <Icon className={`mt-2 h-5 w-5 transition-all ${currentItem === globalEventIndex ? 'text-sky-500' : 'text-gray-500'}`} />
                                         </button>
 
                                         <div className={`absolute top-0 left-px h-2.5 w-[119px] bg-[image:linear-gradient(90deg,transparent_0px,transparent_9px,var(--line-color)_10px,var(--line-color)_10px)] bg-[length:10px_10px] transition-all [--line-color:theme(colors.gray.500)]`} />
 
-                                        {currentItem === eventIndex && (
-                                            <main aria-hidden={currentItem !== eventIndex} className="absolute w-52 top-28 p-4 bg-white z-10 -translate-x-1/2 text-center">
+                                        {currentItem === globalEventIndex && (
+                                            <main 
+                                                aria-hidden={currentItem !== globalEventIndex} 
+                                                className={`absolute w-72 top-28 p-4 bg-white z-10 ${globalEventIndex === 0 ? 'text-left' : 'text-center'}`}
+                                                style={globalEventIndex === 0 ? { transform: 'translateX(-8%)' } : { transform: 'translateX(-50%)' }}
+                                            >
                                                 <h3 className="whitespace-nowrap font-semibold tracking-tight text-gray-800">
                                                     {heading}
                                                 </h3>
