@@ -1,5 +1,35 @@
+import { useState } from "react";
+
 export default function TerminalFunctional({ componentsToShow, textTypedByUser, setTextTypedByUser, checkMessageEntered }) {
-  return (
+    const [messageHistory, setMessageHistory] = useState([]);
+    const [historyIndex, setHistoryIndex] = useState(0);
+    
+    function checkEnter(e) {
+        if (e.key === "Enter") {
+            setMessageHistory([...messageHistory, textTypedByUser]);
+            setHistoryIndex(historyIndex + 1);
+            checkMessageEntered(e);
+            setTextTypedByUser(""); 
+
+        } else if (e.key === "ArrowUp") {
+            console.log(historyIndex)
+            if (historyIndex > 0) {
+                setHistoryIndex(historyIndex - 1);
+                setTextTypedByUser(messageHistory[historyIndex - 1]);
+            }
+            
+        } else if (e.key === "ArrowDown") {
+            if (historyIndex < messageHistory.length - 1) {
+                setHistoryIndex(historyIndex + 1);
+                setTextTypedByUser(messageHistory[historyIndex + 1]);
+            } else if (historyIndex === messageHistory.length - 1) {
+                setHistoryIndex(messageHistory.length);
+                setTextTypedByUser("");
+            }
+        }
+    }
+  
+    return (
       <div className="flex flex-col">
           {componentsToShow.map((Component, index) => (
               <Component key={index} />
@@ -12,7 +42,7 @@ export default function TerminalFunctional({ componentsToShow, textTypedByUser, 
                       className="whitespace-nowrap outline-0 border-0 font-semibold flex-1"
                       value={textTypedByUser}
                       onChange={(e) => setTextTypedByUser(e.target.value)}
-                      onKeyDown={checkMessageEntered}
+                      onKeyDown={checkEnter}
                   />
               </div>
           </div>
