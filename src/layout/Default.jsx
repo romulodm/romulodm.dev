@@ -15,7 +15,7 @@ const DefaultLayout = () => {
                     <Navbar />
                 </div>
 
-                <main className="lg:ml-20 lg:mr-1.5 lg:mt-0 sm:mt-20 w-full">
+                <main className="lg:pl-20 lg:mr-1.5 lg:mt-0 sm:mt-20 w-full">
                     <div className="overflow-auto">
                         <Outlet />
                     </div>
