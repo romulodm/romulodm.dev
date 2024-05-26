@@ -65,7 +65,7 @@ export default function FakeTimeline() {
 
     return (
         <section className="mt-5 w-full pb-5">
-            <div className="-mx-4 flex h-32  px-6 xl:mx-0 scroll-stylized">
+            <div className="-mx-4 flex h-28  px-6 xl:mx-0 scroll-stylized">
                 {Object.entries(timelineObject).map(([year, events]) => (
                     <div key={year} className="relative">
                         <header className="absolute left-0 -translate-x-1/2 select-none text-xs font-semibold text-gray-400">
