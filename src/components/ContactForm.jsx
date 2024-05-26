@@ -114,7 +114,7 @@ export default function ContactForm() {
             rows="4"
           />
         </div>
-        <div className='w-full flex justify-ce gap-2'>
+        <div className='w-full flex justify-start'>
             <button
                 type="submit"
                 className="shadow-glow w-1/2 text-sm inline-flex justify-center items-center px-4 py-2 bg-[#f9305b] text-white rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-200"
@@ -132,12 +132,6 @@ export default function ContactForm() {
                 )}
             </button>
 
-            <button
-                className="shadow-glow w-1/2 text-sm inline-flex justify-center items-center px-4 py-2 bg-gray-600 text-white rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-200"
-            >
-                <FaQuestionCircle  className="mr-2" />
-                How this form work?
-            </button>
         </div>
       </form>
 
