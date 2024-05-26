@@ -3,7 +3,7 @@ import React, { useEffect, useState, useRef } from 'react';
 export default function TypeWriter({
   mainText,
   wordToType,
-  typeInterval = 45,
+  typeInterval = 40,
   onTransitionEnd = () => {},
 }) {
   const [currentWord, setCurrentWord] = useState('');
@@ -37,11 +37,13 @@ export default function TypeWriter({
   }, [currentWord, wordToType]);
 
   return (
-    <h1 className="mb-4 text-5xl font-semibold tracking-tight leading-none pb-3.5">
-      {mainText}
+
+    <h1 className="w-full text-gray-800 py-5 text-5xl sm:text-6xl z-50 font-extrabold tracking-tight leading-none">
+      {mainText},
       <span> </span>
-      <p className="inset-0 bg-gradient-to-r from-blue-700 via-purple-700 to-blue-700 bg-clip-text text-transparent" style={{ display: 'inline-block' }}>{currentWord}</p>
-      <p ref={cursorRef} style={{ fontWeight: '200', display: 'inline-block' }}>|</p>
+      <br className="sm:hidden"/>
+      <p className="inset-0 z-50 bg-white text-blue-600" style={{ display: 'inline-block' }}>{currentWord}</p>
+      <p ref={cursorRef} className="text-black" style={{ fontWeight: '200', display: 'inline-block' }}>|</p>
     </h1>
   );
 }
