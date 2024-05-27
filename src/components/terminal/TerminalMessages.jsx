@@ -1,5 +1,3 @@
-import Timeline from "../timeline/Timeline";
-
 const availableCommands = {
     "- help": "List of commands",
     "- clear": "Clear terminal",
@@ -9,6 +7,7 @@ const availableCommands = {
     "- whoami": "Who is you?",
     "- cats": "Wonderful cat art",
     "- inter": "The biggest football club in the world",
+    "- spotify": "One of my playlists",
     "- secret": "Simple puzzle, what are the password?",
 };
 
@@ -177,10 +176,6 @@ export function CatsMessage() {
 
 `}
             </pre>
-            <div className="w-110">
-                <Timeline/>
-
-            </div>
         </div>
     );
 }
@@ -219,6 +214,42 @@ export function InterMessage() {
         </div>
     );
 }
+
+export function SpotifyMessage() {
+    const iframeStyle = {
+        borderRadius: '0px'
+    };
+
+    return (
+        <div>
+            <div className="font-mono text-sm">
+                <div className="flex flex-row gap-1">
+                    <div className="text-blue-600 font-semibold">visitor@romulodm:~$&nbsp;</div>
+                    <div className="whitespace-nowrap font-semibold">{`spotify`}</div>
+                </div>
+                <div className="text-gray-500">
+                    Loading this amazing playlist took 1337 ms.
+                </div>
+                
+            </div>
+            <div className="py-2 font-mono text-sm">
+                <iframe 
+                    style={iframeStyle} 
+                    src="https://open.spotify.com/embed/playlist/4Z93kTEkoajtrtsSs9z5W2?utm_source=generator&theme=0"
+                    width="90%" height="152" 
+                    allowfullscreen="" 
+                    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
+                    loading="lazy">
+                </iframe>
+                <div className="text-gray-500 pt-2">
+                    Be careful with the volume too high and enjoy in moderation!
+                </div>
+            </div>
+
+        </div>
+    );
+}
+
 
 export function SecretMessage() {
     return (
