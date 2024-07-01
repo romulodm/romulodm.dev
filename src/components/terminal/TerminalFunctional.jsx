@@ -7,7 +7,7 @@ export default function TerminalFunctional({ componentsToShow, textTypedByUser, 
     function setCursorToEnd(inputElement) {
         setTimeout(() => {
             inputElement.setSelectionRange(inputElement.value.length, inputElement.value.length);
-        }, 1);
+        }, 0);
     }
 
     function checkEnter(e) {
@@ -41,7 +41,7 @@ export default function TerminalFunctional({ componentsToShow, textTypedByUser, 
                 <Component key={index} />
             ))}
 
-            <div className="font-mono text-sm">
+            <div className="font-mono text-sm pb-2">
                 <div className="flex items-center flex-nowrap gap-1">
                     <div className="text-blue-600 font-semibold">visitor@romulodm:~$&nbsp;</div>
                     <input
