@@ -1,0 +1,11 @@
+.active-nav {
+    background-color: gray;
+}
+
+.desactive-nav:hover {
+    background-color: gray;
+}
+
+.desactive-nav {
+    background-color: rgb(148, 148, 148);
+}

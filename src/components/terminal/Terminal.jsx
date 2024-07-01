@@ -4,15 +4,15 @@ import { IoAddOutline } from "react-icons/io5";
 import { VscChromeClose, VscChromeMaximize, VscChromeMinimize, VscTerminalPowershell } from "react-icons/vsc";
 import TerminalExperience from "./TerminalExperience";
 import TerminalFunctional from "./TerminalFunctional";
-import { DefaultMessage, InitialMessage, HelpMessage, CatsMessage, InterMessage, UnknowMessage, WhoMessage, WhoamiMessage, SecretMessage, SecretHintMessage, SecretWrongMessage, SecretCorrectMessage, SpotifyMessage } from './TerminalMessages';
-import CustomTooltip from '../CustomTooltip';
+import { DefaultMessage, InitialMessage, HelpMessage, CatsMessage, InterMessage, UnknowMessage, WhoMessage, WhoamiMessage, SecretMessage, SecretHintMessage, SecretWrongMessage, SecretCorrectMessage, SpotifyMessage, FollowMessage } from './TerminalMessages';
+import CustomTooltip from './CustomTooltip';
 
 const SECRET_PASSWORD = import.meta.env.VITE_TERMINAL_SECRET_PASSWORD;
 
 const commands = {
     "help": HelpMessage,
     "initial": InitialMessage,
-    "follow": InitialMessage,
+    "follow": FollowMessage,
     "who": WhoMessage,
     "whoami": WhoamiMessage,
     "cats": CatsMessage,

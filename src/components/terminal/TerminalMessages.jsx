@@ -108,7 +108,15 @@ export function FollowMessage() {
                 <div className="text-gray-500">
                     Loading socials message took 1337 ms.
                 </div>
-            </div>
+
+                <div className="flex ml-5 flex-col text-purple-400 underline">
+                    <a target="_blank" href="https://github.com/romulodm">- GitHub</a>
+                    <a target="_blank" href="https://www.linkedin.com/in/romulo-de-moraes-918793258/">- LinkedIn</a>
+                    <a target="_blank" href="https://steamcommunity.com/id/rdmzao/">- Steam</a>
+                    <a target="_blank" href="https://www.instagram.com/romulo_dmr/">- Instagram</a>
+                </div>
+                
+                </div>
         </div>
     );
 }
@@ -124,6 +132,11 @@ export function WhoMessage() {
                 </div>
                 <div className="text-gray-500">
                     Loading this useless infos took 20 years.
+                </div>
+                <div className="text-gray-500 flex flex-row">
+                So... <br/>
+                I'm 20 years old, a mere student and technology enthusiast who likes 
+                to play games, read books and do some other nerdy things. 🤓
                 </div>
             </div>
         </div>
@@ -142,11 +155,30 @@ export function WhoamiMessage() {
                 <div className="text-gray-500">
                     Loading this pill took 2 ms.
                 </div>
+
+                <div className="text-gray-500 flex flex-row">
+                <br/>
+                “Life is not a mystery to be solved, but an experience to be lived.” 
+                <br/><br/>
+                I saw this phrase in the movie Dune and I thought about it a lot. 
+                I believe that we often <br/> make our insignificance a form of martyrdom and doubt,
+                when in fact things should be <br/>simpler than they really are.
+                <br/><br/>
+                You and I are not mere candidates for a place in heaven. If you always live thinking <br/> about
+                a future reward, you end up forgetting to live for today and forget who you are.
+                <br/><br/>
+                According to Jean-Paul Sartre, an existence precedes an essence. This means that<br/> 
+                human beings do not have a predetermined nature. You create your own nature through<br/> your 
+                actions and choices. Therefore, this question does not have a correct answer. The <br/>responsibilities
+                you assume and the choices you make throughout your life determine <br/>who you are.
+                <br/><br/>
+                Today you can be a programmer, a student, a professional... However, tomorrow you <br/>could be a 
+                totally different person, it all depends on you.       
+                </div>
             </div>
         </div>
     );
 }
-
 
 export function CatsMessage() {
     return (
@@ -323,7 +355,7 @@ export function SecretCorrectMessage({ command }) {
                     <div className="whitespace-nowrap font-semibold">{command}</div>
                 </div>
                 <div className="text-gray-500">
-                    Correct!
+                    Correct! Your reward here: <a className="text-purple-400 underline" target="_blank" href={import.meta.env.VITE_TERMINAL_SECRET_REWARD}>reward</a>
                 </div>
             </div>
             
