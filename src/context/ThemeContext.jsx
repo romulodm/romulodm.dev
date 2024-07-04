@@ -7,6 +7,7 @@ export const PortfolioThemeProvider = ({ children }) => {
 
     const setLightMode = () => {
         document.querySelector("body").setAttribute("data-theme", "light");
+        document.documentElement.classList.remove('dark')
         localStorage.setItem('theme', 'light');
         setTheme("light");
     }
@@ -14,6 +15,7 @@ export const PortfolioThemeProvider = ({ children }) => {
     const setDarkMode = () => {
         document.querySelector("body").setAttribute("data-theme", "dark");
         localStorage.setItem('theme', 'dark');
+        document.documentElement.classList.add('dark')
         setTheme("dark");
     }
 
