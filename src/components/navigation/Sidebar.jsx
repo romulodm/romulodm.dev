@@ -53,7 +53,7 @@ export default function Sidebar() {
                             </div>
                         </ItemTooltip>
                     </NavLink>
-
+                    
                     <NavLink to="/blog">
                         <ItemTooltip title="Blog" placement="right">
                             <div className={`flex justify-center items-center px-4 py-3 rounded-lg ${actualRoute === "blog" ? "active-navicon" : "desactive-navicon"}`}>
@@ -61,26 +61,18 @@ export default function Sidebar() {
                             </div>
                         </ItemTooltip>
                     </NavLink>
-
-                    <NavLink to="/projects">
-                        <ItemTooltip title="Projetos" placement="right">
-                            <div className={`flex justify-center items-center px-4 py-3 rounded-lg ${actualRoute === "projects" ? "active-navicon" : "desactive-navicon"}`}>
-                                <IntegrationInstructionsOutlinedIcon />
-                            </div>
-                        </ItemTooltip>
-                    </NavLink>
                 </nav>
 
                 <div className="flex flex-col py-5 gap-5">
-                    <ItemTooltip title="Linguagem" placement="right">
-                        <div className="flex justify-center items-center px-4 py-3 rounded-lg desactive-navicon">
-                            <LanguageSelector />
+                    <ItemTooltip title="Tema" placement="right">
+                        <div className="flex justify-center items-center px-4 py-3 rounded-lg">
+                            <ThemeSelector />
                         </div>
                     </ItemTooltip>
-
-                    <ItemTooltip title="Tema" placement="right">
-                        <div className="flex justify-center items-center px-4 py-3 rounded-lg desactive-navicon">
-                            <ThemeSelector />
+                    
+                    <ItemTooltip title="Linguagem" placement="right">
+                        <div className="flex justify-center items-center px-4 py-3 rounded-lg">
+                            <LanguageSelector showTitle={true}/>
                         </div>
                     </ItemTooltip>
                 </div>

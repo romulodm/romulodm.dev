@@ -13,8 +13,11 @@ import ThemeSelector from "./ThemeSelector";
 import LanguageSelector from "./LanguageSelector";
 
 const ItemTooltip = styled(({ className, ...props }) => (
-    <Tooltip {...props} classes={{ popper: className }} />
-))(({ theme }) => ({
+    <Tooltip {...props} arrow classes={{ popper: className }} />
+  ))(({ theme }) => ({
+    [`& .${tooltipClasses.arrow}`]: {
+        color: theme.palette.common.black,
+    },
     [`& .${tooltipClasses.tooltip}`]: {
         backgroundColor: theme.palette.common.black,
         fontSize: '13px',
@@ -60,28 +63,20 @@ export default function Navbar() {
                     </ItemTooltip>
                 </NavLink>
 
-                <NavLink to="/projects">
-                    <ItemTooltip title="Projetos" placement="top">
-                        <div className={actualRoute === "projects" ? activateClassName : defaultClassName}>
-                            <IntegrationInstructionsOutlinedIcon />
-                        </div>
-                    </ItemTooltip>
-                </NavLink>
             </nav>
 
             <div className="flex flex-row gap-5">
+                <ItemTooltip title="Tema" placement="bottom">
+                    <div className="flex-col justify-center items-center px-4 py-3 text-gray-700 rounded-lg">
+                        <ThemeSelector/> 
+                    </div>
+                </ItemTooltip> 
 
                 <ItemTooltip title="Linguagem" placement="bottom">
                     <div className="flex justify-center items-center px-4 py-3 text-gray-700 rounded-lg">
                         <LanguageSelector/>
                     </div>
                 </ItemTooltip>
-                    
-                <ItemTooltip title="Tema" placement="bottom">
-                    <div className="flex justify-center items-center px-4 py-3 text-gray-700 rounded-lg">
-                        <ThemeSelector/> 
-                    </div>
-                </ItemTooltip> 
             </div>
         </nav>
     );
