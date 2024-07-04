@@ -1,32 +1,25 @@
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import ExpandLessIcon from '@mui/icons-material/ExpandLess';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import LanguageOutlinedIcon from '@mui/icons-material/LanguageOutlined';
+const locales = {
+    "pt-BR": { title: "PT", iconPath: "./br.svg"},
+    "en-US": { title: "EN", iconPath: "./us.svg"}
+}
 
-export default function LanguageSelector() {
-    const [isOpen, setIsOpen] = useState(false);
+export default function LanguageSelector({showTitle}) {
     const { i18n } = useTranslation();
-
     const actualLanguage = i18n.language;
     const otherLanguage = actualLanguage === 'pt-BR' ? 'en-US' : 'pt-BR';
 
     const changeSystemsLanguage = () => {
         i18n.changeLanguage(otherLanguage);
-        setIsOpen(false);
     };
 
     return (
-        <div className="relative inline-block text-left">
-            <div>
-                <button
-                    type="button"
-                    onClick={changeSystemsLanguage}           
-                >
-                    <LanguageOutlinedIcon />
-                </button>
-            </div>
-        </div>
+        <button className="flex flex-col items-center gap-1" onClick={changeSystemsLanguage}  >
+            <img className="w-5 h-5 rounded-full object-cover" src={locales[actualLanguage].iconPath} alt={locales[actualLanguage].title} />
+            {showTitle && (
+                <div className="text-xs">{locales[actualLanguage].title}</div>
+            )}
+        </button>        
     );
 }
