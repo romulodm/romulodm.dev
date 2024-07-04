@@ -9,6 +9,8 @@ import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import { styled } from '@mui/material/styles';
 
 import getActualRoute from "../../utils/getActualRoute";
+import MobilebarTooltip from './MobilebarTooltip';
+import { useState } from 'react';
 
 const ItemTooltip = styled(({ className, ...props }) => (
     <Tooltip {...props} arrow classes={{ popper: className }} />
@@ -23,14 +25,16 @@ const ItemTooltip = styled(({ className, ...props }) => (
   }));
 
 export default function Mobilebar() {
+    const [showTooltip, setShowTooltip] = useState(false);
+
     const actualRoute = getActualRoute();
 
-    const defaultClassName = "flex justify-center items-center px-4 py-3 text-gray-600 rounded-lg hover:text-white hover:bg-red-200";
+    const defaultClassName = "flex justify-center items-center px-4 py-3 text-gray-600 rounded-lg hover:text-white hover:bg-blue-600";
     const activateClassName = "flex justify-center items-center px-4 py-3 text-gray-600 bg-primary-color rounded-lg text-white";
 
     return (
-        <nav id="navbar" className="fixed bottom-0 left-0 right-0 shadow-2xl flex flex-row justify-center items-center text-main-color bg-white/70 backdrop-blur-md border-t border-gray-200 py-2 px-5">
-            <nav className="flex flex-row gap-3">
+        <nav id="navbar" className="fixed bottom-0 left-0 right-0 shadow-2xl flex flex-row justify-center items-center text-main-color bg-white/70 backdrop-blur-md border-t border-gray-200 py-2 px-2">
+            <nav className="flex w-full flex-row justify-center gap-4">
                 <NavLink to="/home">
                     <ItemTooltip title="Início" placement="top">
                         <div className={actualRoute === "home" ? activateClassName : defaultClassName}>
@@ -55,19 +59,27 @@ export default function Mobilebar() {
                     </ItemTooltip>
                 </NavLink>
 
-                <NavLink to="/projects">
-                    <ItemTooltip title="Projetos" placement="top">
-                        <div className={actualRoute === "projects" ? activateClassName : defaultClassName}>
-                            <IntegrationInstructionsOutlinedIcon />
-                        </div>
-                    </ItemTooltip>
-                </NavLink>
+                { showTooltip ? (
+                     <MobilebarTooltip position="bottom" onClose={() => setShowTooltip(false)}>
+                        <button 
+                            className={`flex justify-center items-center px-4 py-3 text-gray-700 rounded-lg ${activateClassName}`}
+                            onClick={() => setShowTooltip(false)}
+                        >
+                            <SettingsOutlinedIcon />
+                        </button>
+                    </MobilebarTooltip>
 
-                <ItemTooltip title="Configurações" placement="top">
-                    <div className="flex justify-center items-center px-4 py-3 text-gray-700 rounded-lg">
-                        <SettingsOutlinedIcon />
-                    </div>
-                </ItemTooltip>
+                ) : (
+                    <ItemTooltip title="Configurações" placement="top">
+                        <button 
+                            className={`flex justify-center items-center px-4 py-3 text-gray-700 rounded-lg ${defaultClassName}`}
+                            onClick={() => setShowTooltip(true)}
+                        >
+                            <SettingsOutlinedIcon />
+                        </button>
+                    </ItemTooltip>
+                )}
+
             </nav>
         </nav>
     );
