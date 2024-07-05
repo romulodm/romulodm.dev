@@ -8,7 +8,7 @@ export default function MobilebarTooltip({children}) {
             <div className="">
                 {children}
             </div>
-            <span className={`absolute w-20 rounded-lg inner-block bg-neutral-900 shadow-2xl text-white text-xs p-2 'left-1/2 -translate-x-[13px] bottom-[calc(100%+5px)]`}>
+            <span className={`absolute w-20 rounded-lg inner-block bg-neutral-900 shadow-2xl text-white text-xs p-2 'left-1/2 -translate-x-[17px] bottom-[calc(100%+4.7px)]`}>
                 <div className="flex flex-col gap-4 py-2 justify-between px-1 items-center">
                     <LanguageSelector showTitle={true}/>
                     <ThemeSelector/>
