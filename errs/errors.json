@@ -1,0 +1,28 @@
+{
+    "en-us": {
+      "LOGIN_USER_NOT_FOUND": "There is no account registered with the email provided.",
+      "LOGIN_INCORRECT_PASSWORD": "Incorrect password.",
+      "LOGIN_TOKEN_FAILURE": "Server failed to generate your token.",
+      "LOGIN_REFRESH_TOKEN_FAILURE": "Server failed to generate your refresh token.",
+      "LOGIN_INTERNAL_ERROR_SQL": "Internal server error processing your request in our database.",
+
+      "REGISTER_HASH_FAILED": "Server failed to hash you password.",
+      "REGISTER_EMAIL_ALREADY_EXISTS": "An account with this email already exists.",
+      "REGISTER_USERNAME_ALREADY_EXISTS": "An account with this username already exists.",
+      "REGISTER_INTERNAL_ERROR_SQL": "Internal server error processing your request in our database."
+      
+    },
+    "pt-br": {
+      "LOGIN_USER_NOT_FOUND": "Não existe uma conta cadastrada com o e-mail informado.",
+      "LOGIN_INCORRECT_PASSWORD": "Senha incorreta.",
+      "LOGIN_TOKEN_FAILURE": "O servidor falhou em gerar seu token.",
+      "LOGIN_REFRESH_TOKEN_FAILURE": "O servidor falhou em gerar seu token de atualização.",
+      "LOGIN_INTERNAL_ERROR_SQL": "Erro interno do servidor ao processar sua solicitação em nosso banco de dados.",
+
+      "REGISTER_HASH_FAILED": "O servidor falhou em codificar sua senha.",
+      "REGISTER_EMAIL_ALREADY_EXISTS": "Já existe uma conta com este e-mail.",
+      "REGISTER_USERNAME_ALREADY_EXISTS": "Já existe uma conta com este nome de usuário.",
+      "REGISTER_INTERNAL_ERROR_SQL": "Erro interno do servidor ao processar sua solicitação em nosso banco de dados."
+
+    }
+  }
