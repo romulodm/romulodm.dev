@@ -5,13 +5,13 @@ CREATE TABLE "users" (
   "email_verified" bool DEFAULT false,
   "picture" varchar NOT NULL,
   "name" varchar NOT NULL,
-  "surname" varchar DEFAULT(""),
+  "surname" varchar NOT NULL DEFAULT(""),
   "full_name" varchar NOT NULL,
-  "newsletter" bool DEFAULT false,
-  "admin" bool DEFAULT false,
-  "active" bool DEFAULT true,
+  "newsletter" bool NOT NULL DEFAULT false,
+  "admin" bool NOT NULL DEFAULT false,
+  "active" bool NOT NULL DEFAULT true,
   "created_at" timestamp NOT NULL DEFAULT (now()),
-  "updated_at" timestamp
+  "updated_at" timestamp NOT NULL DEFAULT (now())
 );
 
 CREATE TABLE "posts" (
@@ -21,8 +21,8 @@ CREATE TABLE "posts" (
   "views_count" int DEFAULT 0,
   "likes_count" int DEFAULT 0,
   "comments_count" int DEFAULT 0,
-  "created_at" timestamp,
-  "updated_at" timestamp
+  "created_at" timestamp NOT NULL DEFAULT (now()),
+  "updated_at" timestamp NOT NULL DEFAULT (now())
 );
 
 CREATE TABLE "likes" (
@@ -34,21 +34,21 @@ CREATE TABLE "likes" (
 
 CREATE TABLE "comments" (
   "id" serial PRIMARY KEY,
-  "content" varchar,
+  "content" varchar NOT NULL,
   "replies_count" int DEFAULT 0,
   "likes_count" int DEFAULT 0,
   "created_at" timestamp DEFAULT (now()),
   "updated_at" timestamp,
-  "user_id" serial,
-  "post_id" serial
+  "user_id" timestamp NOT NULL DEFAULT (now()),
+  "updated_at" timestamp NOT NULL DEFAULT (now())
 );
 
 CREATE TABLE "comments_reply" (
   "id" serial PRIMARY KEY,
-  "content" varchar,
+  "content" varchar NOT NULL,
   "likes_count" int DEFAULT 0,
-  "created_at" timestamp DEFAULT (now()),
-  "updated_at" timestamp,
+  "created_at" timestamp NOT NULL DEFAULT (now()),
+  "updated_at" timestamp NOT NULL DEFAULT (now())
   "user_id" serial,
   "post_id" serial,
   "comment_id" serial
