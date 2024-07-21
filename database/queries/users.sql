@@ -42,13 +42,13 @@ SET active = false, updated_at = NOW()
 WHERE id = $1
 RETURNING *;
 
--- name: DeactivateteUserByEmail :exec
+-- name: DeactivateUserByEmail :exec
 UPDATE users
 SET active = false, updated_at = NOW()
 WHERE email = $1
 RETURNING *;
 
--- name: DeactivateteUserBySub :exec
+-- name: DeactivateUserBySub :exec
 UPDATE users
 SET active = false, updated_at = NOW()
 WHERE sub = $1
@@ -85,7 +85,7 @@ SET name = $2, full_name = $3, picture = $4, updated_at = NOW()
 WHERE email = $1
 RETURNING *;
 
--- name: UpdaUserBySub :exec
+-- name: UpdateUserBySub :exec
 UPDATE users
 SET name = $2, full_name = $3, picture = $4, updated_at = NOW()
 WHERE sub = $1
@@ -99,3 +99,41 @@ DELETE FROM users WHERE email = $1;
 
 -- name: DeleteUserBySub :exec
 DELETE FROM users WHERE sub = $1;
+
+
+-- name: ActivateNewsletterUserById :exec
+UPDATE users
+SET newsletter = true, updated_at = NOW()
+WHERE id = $1
+RETURNING *;
+
+-- name: ActivateNewsletterUserByEmail :exec
+UPDATE users
+SET newsletter = true, updated_at = NOW()
+WHERE email = $1
+RETURNING *;
+
+-- name: ActivateNewsletterUserBySub :exec
+UPDATE users
+SET newsletter = true, updated_at = NOW()
+WHERE sub = $1
+RETURNING *;
+
+
+-- name: DeactivateNewsletterUserById :exec
+UPDATE users
+SET newsletter = false, updated_at = NOW()
+WHERE id = $1
+RETURNING *;
+
+-- name: DeactivateNewsletterUserByEmail :exec
+UPDATE users
+SET newsletter = false, updated_at = NOW()
+WHERE email = $1
+RETURNING *;
+
+-- name: DeactivateNewsletterUserBySub :exec
+UPDATE users
+SET newsletter = false, updated_at = NOW()
+WHERE sub = $1
+RETURNING *;

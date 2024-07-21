@@ -5,8 +5,9 @@ CREATE TABLE "users" (
   "email_verified" bool DEFAULT false,
   "picture" varchar NOT NULL,
   "name" varchar NOT NULL,
-  "surname" varchar,
-  "full_name" varchar,
+  "surname" varchar DEFAULT(""),
+  "full_name" varchar NOT NULL,
+  "newsletter" bool DEFAULT false,
   "admin" bool DEFAULT false,
   "active" bool DEFAULT true,
   "created_at" timestamp NOT NULL DEFAULT (now()),
@@ -16,7 +17,7 @@ CREATE TABLE "users" (
 CREATE TABLE "posts" (
   "id" serial PRIMARY KEY,
   "slug" varchar UNIQUE NOT NULL,
-  "link" varchar,
+  "link" varchar NOT NULL,
   "views_count" int DEFAULT 0,
   "likes_count" int DEFAULT 0,
   "comments_count" int DEFAULT 0,
@@ -89,24 +90,24 @@ CREATE INDEX ON "comments_replies_likes" ("comment_reply_id");
 
 CREATE UNIQUE INDEX ON "comments_replies_likes" ("user_id", "comment_reply_id");
 
-ALTER TABLE "likes" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
+ALTER TABLE "likes" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE CASCADE;
 
-ALTER TABLE "likes" ADD FOREIGN KEY ("post_id") REFERENCES "posts" ("id");
+ALTER TABLE "likes" ADD FOREIGN KEY ("post_id") REFERENCES "posts" ("id") ON DELETE CASCADE;
 
-ALTER TABLE "comments" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
+ALTER TABLE "comments" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE CASCADE;
 
-ALTER TABLE "comments" ADD FOREIGN KEY ("post_id") REFERENCES "posts" ("id");
+ALTER TABLE "comments" ADD FOREIGN KEY ("post_id") REFERENCES "posts" ("id") ON DELETE CASCADE;
 
-ALTER TABLE "comments_reply" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
+ALTER TABLE "comments_reply" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE CASCADE;
 
-ALTER TABLE "comments_reply" ADD FOREIGN KEY ("post_id") REFERENCES "posts" ("id");
+ALTER TABLE "comments_reply" ADD FOREIGN KEY ("post_id") REFERENCES "posts" ("id") ON DELETE CASCADE;
 
-ALTER TABLE "comments_reply" ADD FOREIGN KEY ("comment_id") REFERENCES "comments" ("id");
+ALTER TABLE "comments_reply" ADD FOREIGN KEY ("comment_id") REFERENCES "comments" ("id") ON DELETE CASCADE;
 
-ALTER TABLE "comments_likes" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
+ALTER TABLE "comments_likes" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE CASCADE;
 
-ALTER TABLE "comments_likes" ADD FOREIGN KEY ("comment_id") REFERENCES "comments" ("id");
+ALTER TABLE "comments_likes" ADD FOREIGN KEY ("comment_id") REFERENCES "comments" ("id") ON DELETE CASCADE;
 
-ALTER TABLE "comments_replies_likes" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
+ALTER TABLE "comments_replies_likes" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE CASCADE;
 
-ALTER TABLE "comments_replies_likes" ADD FOREIGN KEY ("comment_reply_id") REFERENCES "comments_reply" ("id");
+ALTER TABLE "comments_replies_likes" ADD FOREIGN KEY ("comment_reply_id") REFERENCES "comments_reply" ("id") ON DELETE CASCADE;
