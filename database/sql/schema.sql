@@ -5,8 +5,8 @@ CREATE TABLE "users" (
   "email_verified" bool DEFAULT false,
   "picture" varchar NOT NULL,
   "name" varchar NOT NULL,
-  "surname" varchar NOT NULL DEFAULT(""),
-  "full_name" varchar NOT NULL,
+  "surname" varchar DEFAULT '',
+  "full_name" varchar  DEFAULT '',
   "newsletter" bool NOT NULL DEFAULT false,
   "admin" bool NOT NULL DEFAULT false,
   "active" bool NOT NULL DEFAULT true,
@@ -39,8 +39,8 @@ CREATE TABLE "comments" (
   "likes_count" int DEFAULT 0,
   "created_at" timestamp DEFAULT (now()),
   "updated_at" timestamp,
-  "user_id" timestamp NOT NULL DEFAULT (now()),
-  "updated_at" timestamp NOT NULL DEFAULT (now())
+  "user_id" serial,
+  "post_id" serial
 );
 
 CREATE TABLE "comments_reply" (
@@ -48,7 +48,7 @@ CREATE TABLE "comments_reply" (
   "content" varchar NOT NULL,
   "likes_count" int DEFAULT 0,
   "created_at" timestamp NOT NULL DEFAULT (now()),
-  "updated_at" timestamp NOT NULL DEFAULT (now())
+  "updated_at" timestamp NOT NULL DEFAULT (now()),
   "user_id" serial,
   "post_id" serial,
   "comment_id" serial
