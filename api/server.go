@@ -35,6 +35,17 @@ func (server *Server) setupRouter() {
 	r.POST("/auth/google-auth", server.googleAuth)
 	r.POST("/token/renew-token", server.renewAccessToken)
 
+	r.POST("/posts/create", server.createPost)
+	r.GET("posts/i/:id", server.getPostById)
+	r.GET("posts/s/:slug", server.getPostBySlug)
+	r.GET("posts/", server.getAllPosts)
+	r.PUT("posts/increment/views/:id", server.incrementViews)
+	r.PUT("posts/increment/likes/:id", server.incrementLikes)
+	r.PUT("posts/increment/comments/:id", server.incrementComments)
+	r.DELETE("posts/:id", server.deletePost)
+
+	r.POST("/comments/create", server.createComment)
+
 	server.router = r
 }
 
