@@ -5,62 +5,61 @@
 package db
 
 import (
-	"database/sql"
 	"time"
 )
 
 type Comment struct {
 	ID           int32
-	Content      sql.NullString
-	RepliesCount sql.NullInt32
-	LikesCount   sql.NullInt32
-	CreatedAt    sql.NullTime
-	UpdatedAt    sql.NullTime
-	UserID       sql.NullInt32
-	PostID       sql.NullInt32
+	Content      string
+	RepliesCount int32
+	LikesCount   int32
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
+	UserID       int32
+	PostID       int32
 }
 
 type CommentsLike struct {
 	ID        int32
 	CreatedAt time.Time
-	UserID    sql.NullInt32
-	CommentID sql.NullInt32
+	UserID    int32
+	CommentID int32
 }
 
 type CommentsRepliesLike struct {
 	ID             int32
 	CreatedAt      time.Time
-	UserID         sql.NullInt32
-	CommentReplyID sql.NullInt32
+	UserID         int32
+	CommentReplyID int32
 }
 
 type CommentsReply struct {
 	ID         int32
-	Content    sql.NullString
-	LikesCount sql.NullInt32
-	CreatedAt  sql.NullTime
-	UpdatedAt  sql.NullTime
-	UserID     sql.NullInt32
-	PostID     sql.NullInt32
-	CommentID  sql.NullInt32
+	Content    string
+	LikesCount int32
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
+	UserID     int32
+	PostID     int32
+	CommentID  int32
 }
 
 type Like struct {
 	ID        int32
-	CreatedAt sql.NullTime
-	UserID    sql.NullInt32
-	PostID    sql.NullInt32
+	CreatedAt time.Time
+	UserID    int32
+	PostID    int32
 }
 
 type Post struct {
 	ID            int32
 	Slug          string
-	Link          sql.NullString
-	ViewsCount    sql.NullInt32
-	LikesCount    sql.NullInt32
-	CommentsCount sql.NullInt32
-	CreatedAt     sql.NullTime
-	UpdatedAt     sql.NullTime
+	Link          string
+	ViewsCount    int32
+	LikesCount    int32
+	CommentsCount int32
+	CreatedAt     time.Time
+	UpdatedAt     time.Time
 }
 
 type User struct {
@@ -70,9 +69,11 @@ type User struct {
 	EmailVerified bool
 	Picture       string
 	Name          string
+	Surname       string
 	FullName      string
+	Newsletter    bool
 	Admin         bool
-	Active        sql.NullBool
+	Active        bool
 	CreatedAt     time.Time
-	UpdatedAt     sql.NullTime
+	UpdatedAt     time.Time
 }

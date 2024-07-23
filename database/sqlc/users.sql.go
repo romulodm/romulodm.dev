@@ -7,14 +7,49 @@ package db
 
 import (
 	"context"
-	"database/sql"
 )
+
+const activateNewsletterUserByEmail = `-- name: ActivateNewsletterUserByEmail :exec
+UPDATE users
+SET newsletter = true, updated_at = NOW()
+WHERE email = $1
+RETURNING id, sub, email, email_verified, picture, name, surname, full_name, newsletter, admin, active, created_at, updated_at
+`
+
+func (q *Queries) ActivateNewsletterUserByEmail(ctx context.Context, email string) error {
+	_, err := q.db.ExecContext(ctx, activateNewsletterUserByEmail, email)
+	return err
+}
+
+const activateNewsletterUserById = `-- name: ActivateNewsletterUserById :exec
+UPDATE users
+SET newsletter = true, updated_at = NOW()
+WHERE id = $1
+RETURNING id, sub, email, email_verified, picture, name, surname, full_name, newsletter, admin, active, created_at, updated_at
+`
+
+func (q *Queries) ActivateNewsletterUserById(ctx context.Context, id int32) error {
+	_, err := q.db.ExecContext(ctx, activateNewsletterUserById, id)
+	return err
+}
+
+const activateNewsletterUserBySub = `-- name: ActivateNewsletterUserBySub :exec
+UPDATE users
+SET newsletter = true, updated_at = NOW()
+WHERE sub = $1
+RETURNING id, sub, email, email_verified, picture, name, surname, full_name, newsletter, admin, active, created_at, updated_at
+`
+
+func (q *Queries) ActivateNewsletterUserBySub(ctx context.Context, sub string) error {
+	_, err := q.db.ExecContext(ctx, activateNewsletterUserBySub, sub)
+	return err
+}
 
 const activateUserByEmail = `-- name: ActivateUserByEmail :exec
 UPDATE users
 SET active = true, updated_at = NOW()
 WHERE email = $1
-RETURNING id, sub, email, email_verified, picture, name, full_name, admin, active, created_at, updated_at
+RETURNING id, sub, email, email_verified, picture, name, surname, full_name, newsletter, admin, active, created_at, updated_at
 `
 
 func (q *Queries) ActivateUserByEmail(ctx context.Context, email string) error {
@@ -26,7 +61,7 @@ const activateUserById = `-- name: ActivateUserById :exec
 UPDATE users
 SET active = true, updated_at = NOW()
 WHERE id = $1
-RETURNING id, sub, email, email_verified, picture, name, full_name, admin, active, created_at, updated_at
+RETURNING id, sub, email, email_verified, picture, name, surname, full_name, newsletter, admin, active, created_at, updated_at
 `
 
 func (q *Queries) ActivateUserById(ctx context.Context, id int32) error {
@@ -38,7 +73,7 @@ const activateUserBySub = `-- name: ActivateUserBySub :exec
 UPDATE users
 SET active = true, updated_at = NOW()
 WHERE sub = $1
-RETURNING id, sub, email, email_verified, picture, name, full_name, admin, active, created_at, updated_at
+RETURNING id, sub, email, email_verified, picture, name, surname, full_name, newsletter, admin, active, created_at, updated_at
 `
 
 func (q *Queries) ActivateUserBySub(ctx context.Context, sub string) error {
@@ -49,7 +84,7 @@ func (q *Queries) ActivateUserBySub(ctx context.Context, sub string) error {
 const createUser = `-- name: CreateUser :one
 INSERT INTO users (email, sub, email_verified, name, full_name, picture)
 VALUES ($1, $2, $3, $4, $5, $6)
-RETURNING id, sub, email, email_verified, picture, name, full_name, admin, active, created_at, updated_at
+RETURNING id, sub, email, email_verified, picture, name, surname, full_name, newsletter, admin, active, created_at, updated_at
 `
 
 type CreateUserParams struct {
@@ -78,7 +113,9 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 		&i.EmailVerified,
 		&i.Picture,
 		&i.Name,
+		&i.Surname,
 		&i.FullName,
+		&i.Newsletter,
 		&i.Admin,
 		&i.Active,
 		&i.CreatedAt,
@@ -87,11 +124,59 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 	return i, err
 }
 
+const deactivateNewsletterUserByEmail = `-- name: DeactivateNewsletterUserByEmail :exec
+UPDATE users
+SET newsletter = false, updated_at = NOW()
+WHERE email = $1
+RETURNING id, sub, email, email_verified, picture, name, surname, full_name, newsletter, admin, active, created_at, updated_at
+`
+
+func (q *Queries) DeactivateNewsletterUserByEmail(ctx context.Context, email string) error {
+	_, err := q.db.ExecContext(ctx, deactivateNewsletterUserByEmail, email)
+	return err
+}
+
+const deactivateNewsletterUserById = `-- name: DeactivateNewsletterUserById :exec
+UPDATE users
+SET newsletter = false, updated_at = NOW()
+WHERE id = $1
+RETURNING id, sub, email, email_verified, picture, name, surname, full_name, newsletter, admin, active, created_at, updated_at
+`
+
+func (q *Queries) DeactivateNewsletterUserById(ctx context.Context, id int32) error {
+	_, err := q.db.ExecContext(ctx, deactivateNewsletterUserById, id)
+	return err
+}
+
+const deactivateNewsletterUserBySub = `-- name: DeactivateNewsletterUserBySub :exec
+UPDATE users
+SET newsletter = false, updated_at = NOW()
+WHERE sub = $1
+RETURNING id, sub, email, email_verified, picture, name, surname, full_name, newsletter, admin, active, created_at, updated_at
+`
+
+func (q *Queries) DeactivateNewsletterUserBySub(ctx context.Context, sub string) error {
+	_, err := q.db.ExecContext(ctx, deactivateNewsletterUserBySub, sub)
+	return err
+}
+
+const deactivateUserByEmail = `-- name: DeactivateUserByEmail :exec
+UPDATE users
+SET active = false, updated_at = NOW()
+WHERE email = $1
+RETURNING id, sub, email, email_verified, picture, name, surname, full_name, newsletter, admin, active, created_at, updated_at
+`
+
+func (q *Queries) DeactivateUserByEmail(ctx context.Context, email string) error {
+	_, err := q.db.ExecContext(ctx, deactivateUserByEmail, email)
+	return err
+}
+
 const deactivateUserById = `-- name: DeactivateUserById :exec
 UPDATE users
 SET active = false, updated_at = NOW()
 WHERE id = $1
-RETURNING id, sub, email, email_verified, picture, name, full_name, admin, active, created_at, updated_at
+RETURNING id, sub, email, email_verified, picture, name, surname, full_name, newsletter, admin, active, created_at, updated_at
 `
 
 func (q *Queries) DeactivateUserById(ctx context.Context, id int32) error {
@@ -99,27 +184,15 @@ func (q *Queries) DeactivateUserById(ctx context.Context, id int32) error {
 	return err
 }
 
-const deactivateteUserByEmail = `-- name: DeactivateteUserByEmail :exec
-UPDATE users
-SET active = false, updated_at = NOW()
-WHERE email = $1
-RETURNING id, sub, email, email_verified, picture, name, full_name, admin, active, created_at, updated_at
-`
-
-func (q *Queries) DeactivateteUserByEmail(ctx context.Context, email string) error {
-	_, err := q.db.ExecContext(ctx, deactivateteUserByEmail, email)
-	return err
-}
-
-const deactivateteUserBySub = `-- name: DeactivateteUserBySub :exec
+const deactivateUserBySub = `-- name: DeactivateUserBySub :exec
 UPDATE users
 SET active = false, updated_at = NOW()
 WHERE sub = $1
-RETURNING id, sub, email, email_verified, picture, name, full_name, admin, active, created_at, updated_at
+RETURNING id, sub, email, email_verified, picture, name, surname, full_name, newsletter, admin, active, created_at, updated_at
 `
 
-func (q *Queries) DeactivateteUserBySub(ctx context.Context, sub string) error {
-	_, err := q.db.ExecContext(ctx, deactivateteUserBySub, sub)
+func (q *Queries) DeactivateUserBySub(ctx context.Context, sub string) error {
+	_, err := q.db.ExecContext(ctx, deactivateUserBySub, sub)
 	return err
 }
 
@@ -151,7 +224,7 @@ func (q *Queries) DeleteUserBySub(ctx context.Context, sub string) error {
 }
 
 const getAllUsers = `-- name: GetAllUsers :many
-SELECT id, sub, email, email_verified, picture, name, full_name, admin, active, created_at, updated_at FROM users LIMIT $1 OFFSET $2
+SELECT id, sub, email, email_verified, picture, name, surname, full_name, newsletter, admin, active, created_at, updated_at FROM users LIMIT $1 OFFSET $2
 `
 
 type GetAllUsersParams struct {
@@ -175,7 +248,9 @@ func (q *Queries) GetAllUsers(ctx context.Context, arg GetAllUsersParams) ([]Use
 			&i.EmailVerified,
 			&i.Picture,
 			&i.Name,
+			&i.Surname,
 			&i.FullName,
+			&i.Newsletter,
 			&i.Admin,
 			&i.Active,
 			&i.CreatedAt,
@@ -195,7 +270,7 @@ func (q *Queries) GetAllUsers(ctx context.Context, arg GetAllUsersParams) ([]Use
 }
 
 const getUserByEmail = `-- name: GetUserByEmail :one
-SELECT id, sub, email, email_verified, picture, name, full_name, admin, active, created_at, updated_at FROM users
+SELECT id, sub, email, email_verified, picture, name, surname, full_name, newsletter, admin, active, created_at, updated_at FROM users
 WHERE email = $1 LIMIT 1
 `
 
@@ -209,7 +284,9 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error
 		&i.EmailVerified,
 		&i.Picture,
 		&i.Name,
+		&i.Surname,
 		&i.FullName,
+		&i.Newsletter,
 		&i.Admin,
 		&i.Active,
 		&i.CreatedAt,
@@ -219,7 +296,7 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error
 }
 
 const getUserById = `-- name: GetUserById :one
-SELECT id, sub, email, email_verified, picture, name, full_name, admin, active, created_at, updated_at FROM users
+SELECT id, sub, email, email_verified, picture, name, surname, full_name, newsletter, admin, active, created_at, updated_at FROM users
 WHERE id = $1 LIMIT 1
 `
 
@@ -233,7 +310,9 @@ func (q *Queries) GetUserById(ctx context.Context, id int32) (User, error) {
 		&i.EmailVerified,
 		&i.Picture,
 		&i.Name,
+		&i.Surname,
 		&i.FullName,
+		&i.Newsletter,
 		&i.Admin,
 		&i.Active,
 		&i.CreatedAt,
@@ -243,7 +322,7 @@ func (q *Queries) GetUserById(ctx context.Context, id int32) (User, error) {
 }
 
 const getUserBySub = `-- name: GetUserBySub :one
-SELECT id, sub, email, email_verified, picture, name, full_name, admin, active, created_at, updated_at FROM users
+SELECT id, sub, email, email_verified, picture, name, surname, full_name, newsletter, admin, active, created_at, updated_at FROM users
 WHERE sub = $1 LIMIT 1
 `
 
@@ -257,7 +336,9 @@ func (q *Queries) GetUserBySub(ctx context.Context, sub string) (User, error) {
 		&i.EmailVerified,
 		&i.Picture,
 		&i.Name,
+		&i.Surname,
 		&i.FullName,
+		&i.Newsletter,
 		&i.Admin,
 		&i.Active,
 		&i.CreatedAt,
@@ -266,40 +347,16 @@ func (q *Queries) GetUserBySub(ctx context.Context, sub string) (User, error) {
 	return i, err
 }
 
-const updaUserBySub = `-- name: UpdaUserBySub :exec
-UPDATE users
-SET name = $2, full_name = $3, picture = $4, updated_at = NOW()
-WHERE sub = $1
-RETURNING id, sub, email, email_verified, picture, name, full_name, admin, active, created_at, updated_at
-`
-
-type UpdaUserBySubParams struct {
-	Sub      string
-	Name     string
-	FullName string
-	Picture  string
-}
-
-func (q *Queries) UpdaUserBySub(ctx context.Context, arg UpdaUserBySubParams) error {
-	_, err := q.db.ExecContext(ctx, updaUserBySub,
-		arg.Sub,
-		arg.Name,
-		arg.FullName,
-		arg.Picture,
-	)
-	return err
-}
-
 const updateAdminById = `-- name: UpdateAdminById :exec
 UPDATE users
 SET admin = $2, updated_at = NOW()
 WHERE id = $1
-RETURNING id, sub, email, email_verified, picture, name, full_name, admin, active, created_at, updated_at
+RETURNING id, sub, email, email_verified, picture, name, surname, full_name, newsletter, admin, active, created_at, updated_at
 `
 
 type UpdateAdminByIdParams struct {
 	ID    int32
-	Admin sql.NullBool
+	Admin bool
 }
 
 func (q *Queries) UpdateAdminById(ctx context.Context, arg UpdateAdminByIdParams) error {
@@ -311,12 +368,12 @@ const updateToAdminByEmail = `-- name: UpdateToAdminByEmail :exec
 UPDATE users
 SET admin = $2, updated_at = NOW()
 WHERE email = $1
-RETURNING id, sub, email, email_verified, picture, name, full_name, admin, active, created_at, updated_at
+RETURNING id, sub, email, email_verified, picture, name, surname, full_name, newsletter, admin, active, created_at, updated_at
 `
 
 type UpdateToAdminByEmailParams struct {
 	Email string
-	Admin sql.NullBool
+	Admin bool
 }
 
 func (q *Queries) UpdateToAdminByEmail(ctx context.Context, arg UpdateToAdminByEmailParams) error {
@@ -328,12 +385,12 @@ const updateToAdminBySub = `-- name: UpdateToAdminBySub :exec
 UPDATE users
 SET admin = $2, updated_at = NOW()
 WHERE sub = $1
-RETURNING id, sub, email, email_verified, picture, name, full_name, admin, active, created_at, updated_at
+RETURNING id, sub, email, email_verified, picture, name, surname, full_name, newsletter, admin, active, created_at, updated_at
 `
 
 type UpdateToAdminBySubParams struct {
 	Sub   string
-	Admin sql.NullBool
+	Admin bool
 }
 
 func (q *Queries) UpdateToAdminBySub(ctx context.Context, arg UpdateToAdminBySubParams) error {
@@ -345,7 +402,7 @@ const updateUserByEmail = `-- name: UpdateUserByEmail :exec
 UPDATE users
 SET name = $2, full_name = $3, picture = $4, updated_at = NOW()
 WHERE email = $1
-RETURNING id, sub, email, email_verified, picture, name, full_name, admin, active, created_at, updated_at
+RETURNING id, sub, email, email_verified, picture, name, surname, full_name, newsletter, admin, active, created_at, updated_at
 `
 
 type UpdateUserByEmailParams struct {
@@ -369,7 +426,7 @@ const updateUserById = `-- name: UpdateUserById :exec
 UPDATE users
 SET name = $2, full_name = $3, picture = $4, email_verified = $5, updated_at = NOW()
 WHERE id = $1
-RETURNING id, sub, email, email_verified, picture, name, full_name, admin, active, created_at, updated_at
+RETURNING id, sub, email, email_verified, picture, name, surname, full_name, newsletter, admin, active, created_at, updated_at
 `
 
 type UpdateUserByIdParams struct {
@@ -387,6 +444,30 @@ func (q *Queries) UpdateUserById(ctx context.Context, arg UpdateUserByIdParams) 
 		arg.FullName,
 		arg.Picture,
 		arg.EmailVerified,
+	)
+	return err
+}
+
+const updateUserBySub = `-- name: UpdateUserBySub :exec
+UPDATE users
+SET name = $2, full_name = $3, picture = $4, updated_at = NOW()
+WHERE sub = $1
+RETURNING id, sub, email, email_verified, picture, name, surname, full_name, newsletter, admin, active, created_at, updated_at
+`
+
+type UpdateUserBySubParams struct {
+	Sub      string
+	Name     string
+	FullName string
+	Picture  string
+}
+
+func (q *Queries) UpdateUserBySub(ctx context.Context, arg UpdateUserBySubParams) error {
+	_, err := q.db.ExecContext(ctx, updateUserBySub,
+		arg.Sub,
+		arg.Name,
+		arg.FullName,
+		arg.Picture,
 	)
 	return err
 }

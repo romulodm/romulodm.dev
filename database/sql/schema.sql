@@ -1,12 +1,20 @@
+DROP TABLE IF EXISTS "comments_replies_likes" CASCADE;
+DROP TABLE IF EXISTS "comments_likes" CASCADE;
+DROP TABLE IF EXISTS "comments_reply" CASCADE;
+DROP TABLE IF EXISTS "comments" CASCADE;
+DROP TABLE IF EXISTS "likes" CASCADE;
+DROP TABLE IF EXISTS "posts" CASCADE;
+DROP TABLE IF EXISTS "users" CASCADE;
+
 CREATE TABLE "users" (
   "id" serial PRIMARY KEY,
-  "sub" varchar UNIQUE,
+  "sub" varchar NOT NULL UNIQUE,
   "email" varchar UNIQUE NOT NULL,
-  "email_verified" bool DEFAULT false,
+  "email_verified" bool NOT NULL DEFAULT false,
   "picture" varchar NOT NULL,
   "name" varchar NOT NULL,
-  "surname" varchar DEFAULT '',
-  "full_name" varchar  DEFAULT '',
+  "surname" varchar NOT NULL DEFAULT '',
+  "full_name" varchar NOT NULL DEFAULT '',
   "newsletter" bool NOT NULL DEFAULT false,
   "admin" bool NOT NULL DEFAULT false,
   "active" bool NOT NULL DEFAULT true,

@@ -3,6 +3,10 @@ INSERT INTO comments (content, user_id, post_id, created_at)
 VALUES ($1, $2, $3, NOW())
 RETURNING *;
 
+-- name: GetAllCommentsByPostId :many
+SELECT * FROM comments
+WHERE post_id = $1;
+
 -- name: IncrementCommentLikes :exec
 UPDATE comments
 SET likes_count = likes_count + 1
