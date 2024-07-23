@@ -10,7 +10,7 @@ import (
 )
 
 type GoogleAuthRequest struct {
-	Email         string `json:"email" binding:"required"`
+	Email         string `json:"email" binding:"required,email"`
 	Sub           string `json:"sub" binding:"required"`
 	EmailVerified bool   `json:"email_verified"`
 	Name          string `json:"name" binding:"required"`
@@ -23,7 +23,20 @@ type GoogleAuthResponse struct {
 	AccessTokenExpiresAt  time.Time `json:"token_expires_at"`
 	RefreshToken          string    `json:"refresh_token"`
 	RefreshTokenExpiresAt time.Time `json:"refresh_token_expires_at"`
-	User                  db.User   `json:"user"`
+	User                  User      `json:"user"`
+}
+
+type User struct {
+	ID            int32     `json:"id"`
+	Email         string    `json:"email"`
+	Sub           string    `json:"sub"`
+	EmailVerified bool      `json:"email_verified"`
+	Name          string    `json:"name"`
+	FullName      string    `json:"full_name,omitempty"`
+	Picture       string    `json:"picture"`
+	Admin         bool      `json:"admin"`
+	CreatedAt     time.Time `json:"created_at"`
+	UpdatedAt     time.Time `json:"updated_at,omitempty"`
 }
 
 func (server *Server) googleAuth(ctx *gin.Context) {
@@ -79,7 +92,18 @@ func (server *Server) googleAuth(ctx *gin.Context) {
 		AccessTokenExpiresAt:  accessPayload.ExpiresAt,
 		RefreshToken:          refreshToken,
 		RefreshTokenExpiresAt: refreshPayload.ExpiresAt,
-		User:                  user,
+		User: User{
+			ID:            user.ID,
+			Email:         user.Email,
+			Sub:           user.Sub,
+			EmailVerified: user.EmailVerified,
+			Name:          user.Name,
+			FullName:      user.FullName,
+			Picture:       user.Picture,
+			Admin:         user.Admin,
+			CreatedAt:     user.CreatedAt,
+			UpdatedAt:     user.UpdatedAt,
+		},
 	}
 
 	ctx.JSON(http.StatusOK, rsp)
