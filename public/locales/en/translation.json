@@ -1,5 +1,30 @@
 {
-    "main": {
-        "start": "Nothing yet!"
+    "resume": {
+        "linkedin": "LinkedIn Profile",
+        "github": "GitHub Profile"
+    },
+    "contact": {
+        "title": "Send a",
+        "title-colored": "Message",
+        "text": "Feel free to contact me if you have any questions or suggestions. I am open to ideas and opportunities.",
+        "form-email": "Your email",
+        "form-name": "Your name",
+        "form-text": "What are you thinking about?",
+        "form-button": "Send",
+        "sended-title": "Thank you for contacting me!",
+        "sended-content": "Your message has been sent successfully."
+    },
+    "footer": {
+        "content": "Made with ❤️ and so much ☕"
+    },
+    "newsletter": {
+        "title": "Want receive new posts?",
+        "content": "Subscribe in our newsletter and stay on top of everything.",
+        "btn": "Subscribe",
+        "input": "Your email",
+        "privacy": "Privacy policy"
+    },
+    "auth":{
+        "title": "Log in to your account and start interacting."
     }
 }
