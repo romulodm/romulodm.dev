@@ -1,8 +1,11 @@
-import React, { createContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { ToastContext } from './ToastContext';
 
 export const ThemeContext = createContext();
 
 export const PortfolioThemeProvider = ({ children }) => {
+    const { changeToastTheme } = useContext(ToastContext);
+
     const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
 
     const setLightMode = () => {
@@ -10,6 +13,7 @@ export const PortfolioThemeProvider = ({ children }) => {
         document.documentElement.classList.remove('dark')
         localStorage.setItem('theme', 'light');
         setTheme("light");
+        changeToastTheme("light");
     }
 
     const setDarkMode = () => {
@@ -17,6 +21,7 @@ export const PortfolioThemeProvider = ({ children }) => {
         localStorage.setItem('theme', 'dark');
         document.documentElement.classList.add('dark')
         setTheme("dark");
+        changeToastTheme("dark");
     }
 
     function lightThemeActive() {
