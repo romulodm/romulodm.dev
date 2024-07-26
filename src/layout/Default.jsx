@@ -6,7 +6,7 @@ import Mobilebar from '../components/navigation/Mobilebar';
 const DefaultLayout = () => {
     return (
         <div className="h-full min-h-screen">
-            <div className="flex flex-col md:flex-row mx-auto">
+            <div className="flex flex-col md:flex-row">
                 <div className="hidden lg:block">
                     <Sidebar />
                 </div>
@@ -15,7 +15,7 @@ const DefaultLayout = () => {
                     <Navbar />
                 </div>
 
-                <main className="lg:pl-[74px] mb-16 sm:mb-0 lg:mr-1.5 lg:mt-0 sm:mt-20 w-full">
+                <main className="lg:pl-[74px] mb-16 sm:mb-0 lg:mt-[-24px] sm:mt-5 w-full">
                     <div className="overflow-auto">
                         <Outlet />
                     </div>
