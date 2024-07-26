@@ -11,7 +11,7 @@ export default function Footer() {
             </div>
             
             <footer className="text-gray-400 text-center text-sm py-2 px-10">
-                Romulo de Moraes 2024 © Made with ❤️ and so much ☕ 
+                Romulo de Moraes 2024 © {t('footer.content')}
             </footer> 
 
         </div>
