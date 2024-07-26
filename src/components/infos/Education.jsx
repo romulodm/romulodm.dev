@@ -1,3 +1,4 @@
+import { Avatar } from "@mui/material";
 import getInformation from "../../utils/getInformation";
 
 export default function Education() {
@@ -9,11 +10,13 @@ export default function Education() {
         const isLast = index === personalInformations.education.length - 1;
 
         return (
-          <div className="flex flex-row w-full gap-2 items-center" key={`${item.school}-${index}`}>
-            <div className="relative w-14">
-              <img
-                alt={item.school}
-                className="responsive-img w-12 h-12 rounded-lg border border-gray-300"
+          <div className="flex flex-row w-full gap-3 items-center" key={`${item.school}-${index}`}>
+            <div className="w-[3rem]">
+              <Avatar
+                color="neutral"
+                variant="soft"
+                size="2xl"
+                className="border rounded-md w-12 h-12"
                 src={item.icon}
               />
             </div>
@@ -29,7 +32,7 @@ export default function Education() {
                 </a>
                 <p className="text-sm text-gray-500">{item.start} - {item.end}</p>
               </div>
-              <div className="flex flex-row items-center gap-2">
+              <div className="flex text-gray-600 flex-row items-center gap-2">
                 <p>{item.degree}</p>
                 <p>|</p>
                 <p>{item.major}</p>
