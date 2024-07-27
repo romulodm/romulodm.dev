@@ -65,7 +65,49 @@ export default function FakeTimeline() {
 
     return (
         <section className="mt-5 w-full pb-5">
-            <div className="-mx-4 flex h-28  px-6 xl:mx-0 scroll-stylized">
+            
+            <div className="-mx-2 flex md:hidden h-20 px-4 xl:mx-0 scroll-stylized">
+                {Object.entries(timelineObject).map(([year, events]) => (
+                    <div key={year} className="relative">
+                        <header className="absolute left-0 -translate-x-1/2 select-none text-xs font-semibold text-gray-400">
+                            {year}
+                        </header>
+
+                        <div
+                            className="mt-4 grid"
+                            style={{ gridTemplateColumns: `repeat(${events.length}, 80px)` }}
+                        >
+                            {events.map(({ heading, Icon }) => {
+                                const eventIndex = globalIndex;
+                                globalIndex += 1;
+
+                                return (
+                                    <section
+                                        key={Icon + year}
+                                        className="relative"
+                                    >
+                                        <a 
+                                            key={eventIndex}
+                                            href="#timeline"
+                                            onClick={handleSmoothScroll}
+                                            className="absolute flex -translate-x-1/2 flex-col items-center px-2 hfa:outline-none"
+                                        >
+                                            <span className="sr-only">{`${year} - ${heading}`}</span>
+                                            <div className="h-6 w-0.5 transition-all bg-gray-500"/>
+                                            <Icon className="mt-1 h-4 w-4 transition-all text-gray-500"/>
+                                        </a>
+
+                                        <div className={`absolute top-0 left-px h-2 w-[79px] bg-[image:linear-gradient(90deg,transparent_0px,transparent_9px,var(--line-color)_10px,var(--line-color)_10px)] bg-[length:10px_10px] transition-all [--line-color:theme(colors.gray.500)]`} />
+                                    </section>
+                                );
+                            })}
+                        </div>
+                    </div>
+                ))}
+            </div>
+            
+            
+            <div className="-mx-4 hidden md:flex h-28  px-6 xl:mx-0 scroll-stylized">
                 {Object.entries(timelineObject).map(([year, events]) => (
                     <div key={year} className="relative">
                         <header className="absolute left-0 -translate-x-1/2 select-none text-xs font-semibold text-gray-400">
@@ -82,7 +124,7 @@ export default function FakeTimeline() {
 
                                 return (
                                     <section
-                                        key={heading + year}
+                                        key={Icon + year}
                                         className="relative"
                                     >
                                         <a 
