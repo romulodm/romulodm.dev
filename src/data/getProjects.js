@@ -64,7 +64,6 @@ const mainProjects = [
 
 export async function getMainProjects() {
     const repos = await getGitHubProjects();
-    console.log(repos)
     const projects = repos.map(transformGitHubRepoToProject);
 
     const projectMap = new Map(projects.map(project => [project.title, project]));
