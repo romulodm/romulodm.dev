@@ -19,7 +19,7 @@ export default function CustomTooltip({ position, content, children, onClose }) 
             </span>
             <span className={`absolute inner-block border-[5px] 
                             ${position == "top" && 'left-1/2 -translate-x-1/2 bottom-full border-l-transparent border-r-transparent border-b-0 border-t-blue-600'}
-                            ${position == "bottom" && 'left-1/2 -translate-x-[20%] top-full border-l-transparent border-r-transparent border-t-0 border-b-blue-600'}
+                            ${position == "bottom" && 'left-1/2 -translate-x-[20%] -translate-y-[-20%] top-full border-l-transparent border-r-transparent border-t-0 border-b-blue-600'}
                             ${position == "left" && 'top-1/2 -translate-y-1/2 right-full border-t-transparent border-b-transparent border-r-0 border-l-blue-600'}
                             ${position == "right" && 'top-1/2 -translate-y-1/2 left-full border-t-transparent border-b-transparent border-l-0 border-r-blue-600'}
             `}/>
