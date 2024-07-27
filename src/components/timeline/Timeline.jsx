@@ -42,10 +42,10 @@ export default function Timeline() {
 
     return (
         <section id="timeline" className="mt-5 w-full pb-2">
-            <div className="-mx-4 flex h-80 overflow-x-auto px-6 xl:mx-0 scroll-stylized">
+            <div className=" flex h-72 overflow-x-auto px-4 scroll-stylized">
                 {Object.entries(timelineObject).map(([year, events]) => (
                     <div key={year} className="relative">
-                        <header className="absolute left-0 -translate-x-1/2 select-none text-xs font-semibold text-gray-400">
+                        <header className="absolute left-0 -translate-x-1/2 text-xs font-semibold text-gray-400">
                             {year}
                         </header>
 
@@ -53,7 +53,7 @@ export default function Timeline() {
                             className="mt-6 grid"
                             style={{ gridTemplateColumns: `repeat(${events.length}, 120px)` }}
                         >
-                            {events.map(({ heading, Icon, description }, eventIndex) => {
+                            {events.map(({ heading, Icon, description }) => {
                                 const globalEventIndex = globalIndex;
                                 globalIndex += 1;
 
@@ -66,7 +66,7 @@ export default function Timeline() {
                                     >
                                         <button 
                                             key={globalEventIndex} 
-                                            className="absolute flex -translate-x-1/2 flex-col items-center px-3 hfa:outline-none"
+                                            className="absolute flex -translate-x-1/2 flex-col items-center"
                                             onClick={() => handleItemChange(globalEventIndex)}
                                         >
                                             <span className="sr-only">{`${year} - ${heading}`}</span>
@@ -79,13 +79,13 @@ export default function Timeline() {
                                         {currentItem === globalEventIndex && (
                                             <main 
                                                 aria-hidden={currentItem !== globalEventIndex} 
-                                                className={`absolute w-72 top-28 p-4 bg-white z-10 ${globalEventIndex === 0 ? 'text-left' : 'text-center'}`}
+                                                className={`absolute w-72 top-28 px-4 pt-1 bg-white z-50 ${globalEventIndex === 0 ? 'text-left' : 'text-center'}`}
                                                 style={globalEventIndex === 0 ? { transform: 'translateX(-8%)' } : { transform: 'translateX(-50%)' }}
                                             >
-                                                <h3 className="whitespace-nowrap font-semibold tracking-tight text-gray-800">
+                                                <h3 className="font-semibold tracking-tight text-gray-800">
                                                     {heading}
                                                 </h3>
-                                                <p className="text-[15px] font-medium leading-relaxed tracking-tight text-gray-500">
+                                                <p className="text-[0.9rem] font-medium leading-relaxed tracking-tight text-gray-500">
                                                     {description}
                                                 </p>
                                             </main>
