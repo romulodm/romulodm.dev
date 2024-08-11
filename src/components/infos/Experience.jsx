@@ -29,7 +29,7 @@ export default function Experience() {
                     <div className="flex flex-rol gap-1 items-center">
                         <a
                             href={item.url}
-                            className="text-lg font-medium hover:underline"
+                            className="text-md font-medium hover:underline"
                             target="_blank"
                             rel="noopener noreferrer"
                         >
