@@ -43,6 +43,7 @@ export default function TypeWriter({
       <span> </span>
       <br className="sm:hidden"/>
       <p className="inset-0 z-50 bg-white text-blue-600" style={{ display: 'inline-block' }}>{currentWord}</p>
+      
       <p ref={cursorRef} className="text-black" style={{ fontWeight: '200', display: 'inline-block' }}>|</p>
     </h1>
   );
