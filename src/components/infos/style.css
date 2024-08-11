@@ -1,0 +1,19 @@
+.timeline-connector::before {
+    content: "";
+    position: absolute;
+    width: .92px;
+    height: calc(100% - 3rem);
+    background: #d1d5db;
+    left: calc(1.75rem - 5px);
+    top: calc(3rem + 12px);
+}
+  
+.timeline-connector-last::before {
+    content: "";
+    position: absolute;
+    width: .9px;
+    height: calc(100% - 3rem);
+    background: linear-gradient(to bottom, #d1d5db, transparent); 
+    left: calc(1.75rem - 5px);
+    top: calc(3rem + 12px);
+}
