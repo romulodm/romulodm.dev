@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 
 import { PT_INFOS } from '../content/resume/pt-br';
-import { EN_INFOS } from '../content/resume/en.us';
+import { EN_INFOS } from '../content/resume/en-us';
 
 export default function getInformation() {
     const { i18n } = useTranslation();
