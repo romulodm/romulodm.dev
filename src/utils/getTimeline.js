@@ -1,6 +1,15 @@
-import { PORTUGESE_TIMELINE } from "./timelineData";
+import { useTranslation } from "react-i18next";
 
-export default function getTimeline(){
-    // return with the especific language
-    return PORTUGESE_TIMELINE
+import { PT_TIMELINE } from "../content/timeline/pt-br";
+import { EN_TIMELINE } from "../content/timeline/en-us";
+
+export default function getTimeline() {
+    const { i18n } = useTranslation();
+    const actualLanguage = i18n.language;
+
+    if (actualLanguage == "pt-BR") {
+        return PT_TIMELINE
+    } else {
+        return EN_TIMELINE
+    }
 }
