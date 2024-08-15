@@ -3,7 +3,7 @@ import getInformation from "../../utils/getInformation";
 
 export default function Initial() {
     const personalInformations = getInformation();
-    const { t } = useTranslation();
+    const { t } = useTranslation('resume');
 
     return (
         <div className="flex flex-col w-full">
@@ -22,11 +22,11 @@ export default function Initial() {
                     </div>
                     <div>
                         <h3 className="font-bold">LinkedIn:</h3>
-                        <p><a className="underline text-blue-500 " href={personalInformations.contact.linkedin} target="_blank" rel="noopener noreferrer">{t("resume.linkedin")}</a></p>
+                        <p><a className="underline text-blue-500 " href={personalInformations.contact.linkedin} target="_blank" rel="noopener noreferrer">{t("linkedin")}</a></p>
                     </div>
                     <div>
                         <h3 className="font-bold">GitHub:</h3>
-                        <p><a className="underline text-blue-500" href={personalInformations.contact.github} target="_blank" rel="noopener noreferrer">{t("resume.github")}</a></p>
+                        <p><a className="underline text-blue-500" href={personalInformations.contact.github} target="_blank" rel="noopener noreferrer">{t("github")}</a></p>
                     </div>
                 </div>
             </div>
