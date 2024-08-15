@@ -1,0 +1,25 @@
+{
+    "title": "The opinions expressed here are personal reflections that relate to my views on technology and other matters; feel free to interact, share your ideas and send suggestions.",
+    "filter": {
+        "search": "Search post",
+        "random": "Random post",
+        "filter": "Filter posts"
+    },
+    "newsletter": {
+        "title": "Want receive new posts?",
+        "content": "Subscribe in our newsletter and stay on top of everything.",
+        "btn": "Subscribe",
+        "privacy": "Privacy policy"
+    },
+    "about-portfolio": {
+        "title": "Want to know how this site was built?",
+        "content": "Check out the post I made about the code and architecture builted.",
+        "btn": "View post"
+    },
+    "suggestions": {
+        "title": "Want to suggest a topic?",
+        "content": "Send a suggestion about a topic in the field.",
+        "btn": "Submit suggestion",
+        "privacy": "Privacy Policy"
+    }
+}
