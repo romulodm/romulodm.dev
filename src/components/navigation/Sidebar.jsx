@@ -31,10 +31,12 @@ export default function Sidebar() {
     const actualRoute = getActualRoute();
 
     return (
-        <div id="navbar" className="fixed top-0 left-0 h-screen w-fit bg-white px-2 border border-y-0 shadow-xl flex flex-col justify-between gap-5">
+        <div id="navbar" className="fixed top-0 left-0 h-screen w-fit px-2 border border-y-0 flex flex-col justify-between gap-5">
             <div className="flex flex-col flex-1 justify-between">
-                <div className="flex justify-center items-center px-4 py-3 text-gray-700 rounded-lg">
-                    <LogoDevOutlinedIcon />
+                <div className="flex justify-center items-center px-4 py-5 text-gray-700 rounded-lg">
+                    <NavLink to="/home">
+                        <LogoDevOutlinedIcon />
+                    </NavLink>
                 </div>
 
                 <nav className="flex flex-col py-5 gap-5">
