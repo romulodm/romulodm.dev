@@ -1,11 +1,29 @@
 import { NavLink } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+
 import LogoDevOutlinedIcon from '@mui/icons-material/LogoDevOutlined';
 
 import getActualRoute from "../../utils/getActualRoute";
 import ThemeSelector from "./ThemeSelector";
 import LanguageSelector from "./LanguageSelector";
 
+import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
+import { styled } from '@mui/material/styles';
+
+const ItemTooltip = styled(({ className, ...props }) => (
+    <Tooltip {...props} arrow classes={{ popper: className }} />
+))(({ theme }) => ({
+    [`& .${tooltipClasses.arrow}`]: {
+        color: theme.palette.common.black,
+    },
+    [`& .${tooltipClasses.tooltip}`]: {
+        backgroundColor: theme.palette.common.black,
+        fontSize: '13px',
+    },
+}));
+
 export default function Navbar() {
+    const { t } = useTranslation('navigation');
     const actualRoute = getActualRoute();
 
     const defaultClassName = "relative flex justify-center items-center text-gray-600 rounded-lg hover:text-blue-600 hover:underline-hover";
@@ -24,13 +42,13 @@ export default function Navbar() {
             <nav className="flex flex-row gap-5">
                 <NavLink to="/home">
                     <div className={actualRoute === "home" ? activeClassName : defaultClassName}>
-                        Home
+                        {t('home')}
                     </div>
                 </NavLink>
 
                 <NavLink to="/resume">
                     <div className={actualRoute === "resume" ? activeClassName : defaultClassName}>
-                        Resume
+                        {t('resume')}
                     </div>
                 </NavLink>
 
@@ -42,13 +60,17 @@ export default function Navbar() {
             </nav>
 
             <div className="flex flex-row gap-5">
-                <div className="flex-col justify-center items-center px-4 py-3 text-gray-700 rounded-lg">
-                    <ThemeSelector /> 
-                </div>
+                <ItemTooltip title={t('theme')} placement="bottom">
+                    <div className="flex-col justify-center items-center px-4 py-3 text-gray-700 rounded-lg">
+                        <ThemeSelector /> 
+                    </div>
+                </ItemTooltip> 
 
-                <div className="flex justify-center items-center px-4 py-3 text-gray-700 rounded-lg">
-                    <LanguageSelector />
-                </div>
+                <ItemTooltip title={t('language')} placement="bottom">
+                    <div className="flex justify-center items-center px-4 py-3 text-gray-700 rounded-lg">
+                        <LanguageSelector />
+                    </div>
+                </ItemTooltip>
             </div>
         </nav>
     );

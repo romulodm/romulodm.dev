@@ -1,6 +1,7 @@
 import './navigation.css'
 
 import { NavLink } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 import LanguageSelector from "./LanguageSelector";
 import ThemeSelector from "./ThemeSelector";
@@ -28,6 +29,8 @@ const ItemTooltip = styled(({ className, ...props }) => (
 }));
 
 export default function Sidebar() {
+    const { t } = useTranslation('navigation');
+
     const actualRoute = getActualRoute();
 
     return (
@@ -41,7 +44,7 @@ export default function Sidebar() {
 
                 <nav className="flex flex-col py-5 gap-5">
                     <NavLink to="/home">
-                        <ItemTooltip title="Início" placement="right">
+                        <ItemTooltip title={t('home')} placement="right">
                             <div className={`flex justify-center items-center px-4 py-3 rounded-lg ${actualRoute === "home" ? "active-navicon" : "desactive-navicon"}`}>
                                 <HomeOutlinedIcon />
                             </div>
@@ -49,7 +52,7 @@ export default function Sidebar() {
                     </NavLink>
 
                     <NavLink to="/resume">
-                        <ItemTooltip title="Currículo" placement="right">
+                        <ItemTooltip title={t('resume')} placement="right">
                             <div className={`flex justify-center items-center px-4 py-3 rounded-lg ${actualRoute === "resume" ? "active-navicon" : "desactive-navicon"}`}>
                                 <ListAltOutlinedIcon />
                             </div>
@@ -66,13 +69,13 @@ export default function Sidebar() {
                 </nav>
 
                 <div className="flex flex-col py-5 gap-5">
-                    <ItemTooltip title="Tema" placement="right">
+                    <ItemTooltip title={t('theme')} placement="right">
                         <div className="flex justify-center items-center px-4 py-3 rounded-lg">
                             <ThemeSelector />
                         </div>
                     </ItemTooltip>
                     
-                    <ItemTooltip title="Linguagem" placement="right">
+                    <ItemTooltip title={t('language')} placement="right">
                         <div className="flex justify-center items-center px-4 py-3 rounded-lg">
                             <LanguageSelector showTitle={true}/>
                         </div>
