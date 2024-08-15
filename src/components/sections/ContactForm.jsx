@@ -8,7 +8,7 @@ import { FaQuestionCircle } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 
 export default function ContactForm() {
-  const { t } = useTranslation();
+  const { t } = useTranslation('contact');
 
 
   const [loading, setLoading] = useState(false);
@@ -85,7 +85,7 @@ export default function ContactForm() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="pl-10 py-2 px-4 block w-full border border-gray-300 rounded-md focus:border-[#f9305b]/70 focus:ring-opacity-20 focus:outline-none focus:ring focus:ring-[#f9305b]"
-              placeholder={t('contact.form-email')}
+              placeholder={t('form-email')}
             />
           </div>
         </div>
@@ -102,7 +102,7 @@ export default function ContactForm() {
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="pl-10 py-2 px-4 block w-full border border-gray-300 rounded-md focus:border-[#f9305b]/70 focus:ring-opacity-20 focus:outline-none focus:ring focus:ring-[#f9305b]"
-              placeholder={t('contact.form-name')}
+              placeholder={t('form-name')}
             />
           </div>
         </div>
@@ -114,7 +114,7 @@ export default function ContactForm() {
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             className="py-2 px-4 block w-full border border-gray-300 rounded-md focus:border-[#f9305b]/70 focus:ring-opacity-20 focus:outline-none focus:ring focus:ring-[#f9305b]"
-            placeholder={t('contact.form-text')}
+            placeholder={t('form-text')}
             rows="4"
           />
         </div>
@@ -131,7 +131,7 @@ export default function ContactForm() {
                 ) : (
                     <>
                     <MdSend className="mr-2" />
-                    {t('contact.form-button')}
+                    {t('form-button')}
                     </>
                 )}
             </button>
@@ -143,8 +143,8 @@ export default function ContactForm() {
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-white bg-opacity-50 z-20 transition-all duration-300">
             <div className="send-email w-fit h-fit rounded-lg p-10 relative email-message">
                 <BsSendCheck className="text-[#f9305b] text-6xl mx-auto mb-4" />
-                <h2 className="text-2xl font-bold mb-2">{t('contact.sended-title')}</h2>
-                <p className="text-gray-600">{t('contact.sended-content')}</p>
+                <h2 className="text-2xl font-bold mb-2">{t('sended-title')}</h2>
+                <p className="text-gray-600">{t('sended-content')}</p>
             </div>
         </div>
       )}

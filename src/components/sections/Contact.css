@@ -88,3 +88,28 @@
             drop-shadow(0 0.4rem 0 rgba(var(--color-instagram-rgb), 0.2))
             drop-shadow(0 0.6rem 0 rgba(var(--color-instagram-rgb), 0.1))
 }
+
+.shadow-glow:hover {
+    box-shadow: 0 0 15px 5px rgba(249, 48, 91, 0.7);
+  }
+  
+  .email-message {
+    position: relative;
+  }
+  
+  .send-email::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 5.5px;
+    background-color: #f9305b;
+    animation: progress-bar 9s linear forwards;
+  }
+  
+  @keyframes progress-bar {
+    100% {
+      width: 0;
+    }
+  }
