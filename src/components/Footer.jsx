@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 
 export default function Footer() {
-    const { t } = useTranslation();
+    const { t } = useTranslation('footer');
 
     return (
         <div className="flex flex-col w-full">
@@ -11,7 +11,7 @@ export default function Footer() {
             </div>
             
             <footer className="text-gray-400 text-center text-sm py-2 px-10">
-                Romulo de Moraes 2024 © {t('footer.content')}
+                Romulo de Moraes 2024 © {t('content')}
             </footer> 
 
         </div>
