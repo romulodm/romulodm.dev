@@ -8,20 +8,25 @@ import CommentBankOutlinedIcon from '@mui/icons-material/CommentBankOutlined';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 
 import MobilebarTooltip from './MobilebarTooltip';
+import getActualRoute from '../../utils/getActualRoute';
 
 export default function Mobilebar() {
     const { t } = useTranslation('navigation');
     const [showTooltip, setShowTooltip] = useState(false);
 
+    const actualRoute = getActualRoute();
+    const defaultClassName = "gap-1 inline-flex flex-col items-center justify-center px-5 group text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-500"
+    const activeClassName = "gap-1 inline-flex flex-col items-center justify-center px-5 group text-blue-600 dark:text-blue-500"
+
     return (
     <div className="fixed bottom-0 left-0 z-50 w-full h-16 bg-white/80 backdrop-blur-md border-t border-t border-gray-200 dark:bg-gray-950/80 dark:border-gray-600">
         <nav className="grid h-full max-w-lg grid-cols-4 mx-auto font-medium">
-            <NavLink to="/home" className="gap-1 inline-flex flex-col items-center justify-center px-5 group text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-500">
+            <NavLink to="/home" className={actualRoute === "home" ? activeClassName : defaultClassName}>
                 <HomeOutlinedIcon/>
                 <span className="text-xs">{t('home')}</span>
             </NavLink>
 
-            <NavLink to="/resume" className="gap-1 inline-flex flex-col items-center justify-center px-5 group text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-500">
+            <NavLink to="/resume" className={actualRoute === "resume" ? activeClassName : defaultClassName}>
                 <ListAltOutlinedIcon/>
                 <span className="text-xs">{t('resume')}</span>
             </NavLink>
@@ -47,7 +52,7 @@ export default function Mobilebar() {
 
             )}
            
-            <NavLink to="/blog" className="gap-1 inline-flex flex-col items-center justify-center px-5 group text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-500">
+            <NavLink to="/blog" className={actualRoute === "blog" ? activeClassName : defaultClassName}>
                 <CommentBankOutlinedIcon/>
                 <span className="text-xs">Blog</span>
             </NavLink>
