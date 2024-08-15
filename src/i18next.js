@@ -11,6 +11,17 @@ i18n
     returnEmptyString: false,
     debug: true,
     fallbackLng: 'en',
+    interpolation: {
+      escapeValue: false,
+    },
+    ns: ['blog', 'contact', 'home', 'footer', 'hero', 'home', 'resume'],
+    defaultNS: 'blog',
+    backend: {
+      loadPath: '/locales/{{lng}}/{{ns}}.json',
+    },
+    react: {
+      useSuspense: false,
+    },
   });
 
 export default i18n;
