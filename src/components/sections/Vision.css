@@ -1,0 +1,29 @@
+:root{
+    --card-color: white;
+    --grid-color: #e5e7eb;
+}
+
+#card {
+    background-color: var(--card-color);
+}
+
+#card .flex {
+    display: flex;
+    align-items: center;
+}
+  
+#card .dashed-line {
+    position: absolute;
+    top: 50%;
+    left: 100%;
+    width: 2rem;
+    height: 0;
+    border-top: 2px dashed rgb(155, 155, 155); 
+    transform: translateY(-50%);
+}
+
+.grid-background {
+    background-image: linear-gradient(var(--grid-color) 1px, transparent 1px), linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+    background-size: 37px 37px, 37px 37px;
+    mask-image: radial-gradient(circle, black 30%, transparent 99%);
+  }
