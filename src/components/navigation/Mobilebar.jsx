@@ -8,7 +8,6 @@ import CommentBankOutlinedIcon from '@mui/icons-material/CommentBankOutlined';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 
 import MobilebarTooltip from './MobilebarTooltip';
-import getActualRoute from "../../utils/getActualRoute";
 
 export default function Mobilebar() {
     const { t } = useTranslation('navigation');
