@@ -30,7 +30,6 @@ export const BlogList = ({ data = [] }) => {
 export default function Blog() {
   const { t } = useTranslation('blog');
 
-
   const [blogs, setBlogs] = useState([]);
   const [isLoading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -55,7 +54,7 @@ export default function Blog() {
 
   return (
     <>
-      <Title text="Romulo - Home" />
+      <Title text={t('page-title')} />
       <div className="flex flex-col w-full items-center justify-center h-full pt-4 md:pt-7 lg:pt-5">
         <div className="responsive-content">
 

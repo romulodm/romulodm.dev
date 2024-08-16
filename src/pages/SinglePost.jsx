@@ -29,7 +29,7 @@ export default function SinglePost() {
 
     return (
         <>
-        <Title text={`${post ? post.title : "Post"} - romulodm.dev`} />
+        <Title text={`${post ? post.title : "Post"} - Romulo de Moraes`} />
             
             <div className="h-full pt-0 md:pt-16 lg:pt-10">
                 <div className="flex flex-col lg:flex-row gap-3 w-full justify-center items-center lg:items-start">  {/* Altere items-center para items-start */}
