@@ -24,7 +24,7 @@
 
 .responsive-content {
     width: 82%;
-    max-width: 65rem;
+    max-width: 70rem;
 }
 
 @media (max-width: 1000px) {
