@@ -303,21 +303,6 @@ export default function Vision() {
                 <Cursor step={animationStep}/>
                 <Container step={animationStep}/>
             </div>
-
-            <hr className="mt-1 mb-5"/>
-            
-            <div className="flex items-center justify-between w-full py-4 px-2 sm:py-8 sm:px-6 bg-gray-200 border rounded-lg flex-col sm:flex-row text-center sm:text-left items-center">
-                <div className="mb-2 sm:mb-0">
-                    <p className="text-slate-700 font-bold mb-1 text-lg sm:text-2xl">Quer saber mais? 📝</p>
-                    <p className="text-slate-500 text-sm sm:text-lg">Você pode ver mais sobre o que eu penso no meu blog.</p>
-                </div>
-                <NavLink to="/blog">
-                    <button className="flex px-5 min-w-44 text-sm md:text-md justify-center w-full font-semibold items-center gap-2 p-3 bg-green-600 hover:bg-green-500 rounded-lg text-white">
-                        Ver postagens
-                        <FaArrowRightLong/>
-                    </button>
-                </NavLink>
-            </div>
             
         </Parallax>
       </div>

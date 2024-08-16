@@ -1,10 +1,11 @@
 import './styles.css'
-
+import { NavLink, Link } from 'react-router-dom';
 import { useTranslation } from "react-i18next";
+
 import { FiAtSign, FiCode, FiUser } from "react-icons/fi";
 import { GoCodeOfConduct } from 'react-icons/go';
+import { FaArrowRightLong } from 'react-icons/fa6';
 
-import WelcomeAnimation from "../components/welcome/WelcomeAnimation";
 import Title from "../components/Title";
 import Hero from "../components/sections/Hero";
 import Vision from "../components/sections/Vision"
@@ -13,18 +14,15 @@ import Timeline from '../components/timeline/Timeline';
 import Projects from '../components/sections/Projects';
 import Contact from '../components/sections/Contact';
 import Footer from '../components/Footer';
-import { NavLink } from 'react-router-dom';
-import { FaArrowRightLong } from 'react-icons/fa6';
-import Experience from '../components/infos/Experience';
 import TerminalExperience from '../components/terminal/TerminalExperience';
 
 export default function Home() {
     const { t } = useTranslation('home');
-    const mobile = null;
 
     return (
     <>
-        <Title text="Romulo - Home" />
+        <Title text={t('page-title')} />
+
         <div className="flex flex-col w-full items-center justify-center h-full">
             <div className="responsive-content">
                 {/*Título inicial*/}
@@ -41,8 +39,8 @@ export default function Home() {
                                 <FiUser />
                             </div>
                             <div className="flex flex-row items-center text-3xl font-bold gap-1 mt-4">
-                                <p className="text-gray-900">Visão geral de</p>
-                                <p id="resume-title" className='text-blue-700'>Perfil</p>
+                                <p className="text-gray-900">{t('profile.title')}</p>
+                                <p id="resume-title" className='text-blue-700'>{t('profile.title-colored')}</p>
                             </div>
                         </div>
                     </div>
@@ -61,12 +59,12 @@ export default function Home() {
 
                     <div className="flex items-center justify-between w-full py-4 px-2 sm:py-8 sm:px-6 bg-gray-200 border rounded-lg flex-col sm:flex-row text-center sm:text-left items-center">
                         <div className="mb-2 sm:mb-0">
-                            <p className="text-slate-700 font-bold mb-1 text-lg sm:text-2xl">Quer ver meu currículo? 📋</p>
-                            <p className="text-slate-500 text-sm sm:text-lg">Resumi minhas experiências e disponibilizei o download.</p>
+                            <p className="text-slate-700 font-bold mb-1 text-lg sm:text-2xl">{t('profile.link-title')} 📋</p>
+                            <p className="text-slate-500 text-sm sm:text-lg">{t('profile.link-content')}</p>
                         </div>
                         <NavLink to="/resume">
-                            <button className="flex min-w-44 px-5 text-sm md:text-md justify-center w-full font-semibold items-center gap-2 p-3 bg-blue-600 hover:bg-blue-700 rounded-lg text-white">
-                                Ver currículo online
+                            <button className="flex min-w-44 w-fit px-5 text-sm md:text-md justify-center w-full font-semibold items-center gap-2 p-3 bg-blue-600 hover:bg-blue-700 rounded-lg text-white">
+                                {t('profile.link-button')}
                                 <FaArrowRightLong/>
                             </button>
                         </NavLink>
@@ -84,14 +82,29 @@ export default function Home() {
                                     <FiCode />
                                 </div>
                                 <div className="flex flex-row items-center text-3xl font-bold gap-1 mt-4">
-                                    <p className="text-gray-900">Alguns</p>
-                                    <p id="resume-title" className='text-purple-800'>Projetos</p>
+                                    <p className="text-gray-900">{t('projects.title')}</p>
+                                    <p id="resume-title" className='text-purple-800'>{t('projects.title-colored')}</p>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <Projects/>
+
+                    <hr className="mt-6 mb-5"/>
+
+                    <div className="flex items-center justify-between w-full py-4 px-2 sm:py-8 sm:px-6 bg-gray-200 border rounded-lg flex-col sm:flex-row text-center sm:text-left items-center">
+                        <div className="mb-2 sm:mb-0">
+                            <p className="text-slate-700 font-bold mb-1 text-lg sm:text-2xl">{t('projects.link-title')} 🤖</p>
+                            <p className="text-slate-500 text-sm sm:text-lg">{t('projects.link-content')}</p>
+                        </div>
+                        <Link to="https://github.com/romulodm?tab=repositories" target="_blank">
+                            <button className="flex min-w-44 px-5 text-sm md:text-md justify-center w-full font-semibold items-center gap-2 p-3 bg-purple-800 hover:bg-purple-700 rounded-lg text-white">
+                                {t('projects.link-button')}
+                                <FaArrowRightLong/>
+                            </button>
+                        </Link>
+                    </div>
                 </div>
 
                 {/*Visão*/}
@@ -103,13 +116,28 @@ export default function Home() {
                                 <GoCodeOfConduct />
                             </div>
                             <div className="flex flex-row items-center text-3xl font-bold gap-1 mt-4">
-                                <p className="text-gray-900">Visão sobre</p>
-                                <p id="resume-title" className='text-green-600'>Software</p>
+                                <p className="text-gray-900">{t('vision.title')}</p>
+                                <p id="resume-title" className='text-green-600'>{t('vision.title-colored')}</p>
                             </div>                        
                         </div>
                     </div>
       
                     <Vision/>
+
+                    <hr className="mt-1 mb-5"/>
+            
+                    <div className="flex items-center justify-between w-full py-4 px-2 sm:py-8 sm:px-6 bg-gray-200 border rounded-lg flex-col sm:flex-row text-center sm:text-left items-center">
+                        <div className="mb-2 sm:mb-0">
+                            <p className="text-slate-700 font-bold mb-1 text-lg sm:text-2xl">{t('profile.link-title')} 📝</p>
+                            <p className="text-slate-500 text-sm sm:text-lg">{t('profile.link-content')}</p>
+                        </div>
+                        <NavLink to="/blog">
+                            <button className="flex px-5 min-w-44 text-sm md:text-md justify-center w-full font-semibold items-center gap-2 p-3 bg-green-600 hover:bg-green-500 rounded-lg text-white">
+                                {t('profile.link-button')}
+                                <FaArrowRightLong/>
+                            </button>
+                        </NavLink>
+                    </div>
 
                 </div>
 
