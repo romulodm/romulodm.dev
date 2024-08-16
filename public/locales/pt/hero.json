@@ -1,0 +1,17 @@
+{
+    "greeting-1": "Bom dia",
+    "greeting-2": "Boa tarde",
+    "greeting-3": "Boa noite",
+    "greeting-4": "Boa noite",
+    "visitor-1": "visitante",
+    "visitor-2": "querido(a)",
+    "visitor-3": "desenvolvedor(a)",
+    "visitor-4": "pessoa",
+    "visitor-5": "visitante",
+    "visitor-6": "amigo",
+    "content": "Me chamo Romulo de Moraes, sou estudante e desenvolvedor full-stack. Criei esse site com a intenção de mostrar um pouco de quem sou eu, do que eu fiz, o que pretendo fazer e compartilhar algumas ideias.",
+    "star-title": "Dê uma estrela",
+    "star-content": "Acesse o repositório desse site.",
+    "resume-title": "Acesse o currículo",
+    "resume-content": "Dinâmico, interativo e atualizado."
+}

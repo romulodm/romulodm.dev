@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 
-export default function TypeWriter({
+export default function HeroWriter({
   mainText,
   wordToType,
   typeInterval = 40,
