@@ -1,9 +1,13 @@
+import { useTranslation } from "react-i18next";
+
 import { IoIosCode } from "react-icons/io";
 import { FiExternalLink, FiGithub } from "react-icons/fi";
 import { AiTwotoneCode } from "react-icons/ai";
 import { FaCodeBranch, FaStar } from "react-icons/fa6";
 
 export default function ProjectCard({project}){
+    const { t } = useTranslation('home');
+
     return(
         <div className="flex px-4 flex-col border rounded-lg">
             <div className="flex mt-4 items-center gap-2">
@@ -21,7 +25,7 @@ export default function ProjectCard({project}){
                             className="flex items-center gap-2 p-2 w-24 justify-center font-medium bg-purple-800 hover:bg-purple-700 text-white rounded-md"
                         >
                             <FiExternalLink />
-                            Preview
+                            {t('projects.preview')}
                         </a>
                     )}
 
@@ -56,7 +60,7 @@ export default function ProjectCard({project}){
                     className="flex items-center gap-2 p-3 w-24 justify-center font-semibold bg-purple-50 hover:bg-purple-200 text-gray-500 rounded-md"
                 >
                     <AiTwotoneCode />
-                    Código
+                    {t('projects.code')}
                 </a>
             </div>
 

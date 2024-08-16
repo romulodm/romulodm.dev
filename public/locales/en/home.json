@@ -1,6 +1,31 @@
 {
+    "page-title": "Romulo de Moraes",
+    "profile": {
+        "title": "Overview of",
+        "title-colored": "Profile",
+        "link-title": "Want to see my resume?",
+        "link-content": "I summarized my experiences and made the download available.",
+        "link-button": "View online resume"
+    },
+    "projects": {
+        "title": "Some",
+        "title-colored": "Projects",
+        "code": "Code",
+        "preview": "Preview",
+        "public": "public repositories",
+        "link-title": "Interested?",
+        "link-content": "You can see more of my projects and attempts.",
+        "link-button": "View more projects"
+    },
+    "vision": {
+        "title": "Vision on",
+        "title-colored": "Software",
+        "link-title": "Want to know more?",
+        "link-content": "You can see more about what I think on my blog.",
+        "link-button": "View posts"
+    },
     "contact": {
-        "title": "Send a",
-        "title-colored": "Message"
+        "title": "Get in",
+        "title-colored": "Touch"
     }
 }
