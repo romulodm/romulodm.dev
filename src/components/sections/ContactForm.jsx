@@ -121,7 +121,7 @@ export default function ContactForm() {
         <div className='w-full flex justify-start'>
             <button
                 type="submit"
-                className="shadow-glow w-full text-sm inline-flex justify-center items-center px-4 py-2 bg-[#f9305b] text-white rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-200"
+                className="shadow-glow w-full text-sm inline-flex justify-center items-center px-4 py-2 bg-[#f9305b] hover:bg-[#f9305b]/95 text-white rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-200"
                 disabled={loading}
             >
                 {loading ? (
