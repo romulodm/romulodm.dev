@@ -54,7 +54,7 @@ export default function LinkCarousel() {
         id:'twitch'
       },
       {
-        url: 'https://www.linkedin.com/in/romulo-de-moraes-918793258/',
+        url: 'https://www.linkedin.com/in/romulodm',
         icon: <FaLinkedin />,
         color: '#0a66c2',
         title: 'LinkedIn',

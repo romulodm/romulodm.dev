@@ -14,7 +14,7 @@ export const PT_INFOS = {
   contact: {
     address: 'Rio Grande, Brasil',
     email: 'romulotg12@gmail.com',
-    linkedin: 'https://www.linkedin.com/in/romulo-de-moraes-918793258/',
+    linkedin: 'https://www.linkedin.com/in/romulodm',
     github: 'https://www.github.com/romulodm',
   },
   education: [
