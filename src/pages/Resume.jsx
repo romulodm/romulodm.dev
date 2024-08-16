@@ -1,21 +1,28 @@
 import './styles.css'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+
+import { DownloadOutlined, ExpandLess, ExpandMore, SchoolOutlined, Translate } from '@mui/icons-material'
+import WorkOutlineOutlinedIcon from '@mui/icons-material/WorkOutlineOutlined';
 
 import Initial from '../components/infos/Initial'
 import Experience from '../components/infos/Experience'
 import Education from '../components/infos/Education'
 import Languages from '../components/infos/Languages'
-
-import { DownloadOutlined, ExpandLess, ExpandMore, SchoolOutlined, Translate } from '@mui/icons-material'
-import WorkOutlineOutlinedIcon from '@mui/icons-material/WorkOutlineOutlined';
+import Title from '../components/Title';
 
 export default function Resume() {
+    const { t } = useTranslation('resume');
+
     const [showExperience, setShowExperience] = useState(true);
     const [showEducation, setShowEducation] = useState(true);
     const [showLanguages, setShowLanguages] = useState(true);
     const [showDownload, setShowDownload] = useState(false);
 
     return (
+        <>
+        <Title text={t('page-title')} />
+
         <div className="flex flex-col w-full  py-3 sm:mt-10 lg:mt-4 items-center justify-center h-full">
             <div className="responsive-content">
                 <Initial/>
@@ -98,5 +105,6 @@ export default function Resume() {
 
             </div>
         </div>
+    </>
     );
 }
