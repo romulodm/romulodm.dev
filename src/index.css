@@ -4,14 +4,6 @@
 @tailwind components;
 @tailwind utilities;
 
-html[data-theme='light'] {
-  @import '~highlight.js/styles/atom-one-light.scss';
-}
-
-html[data-theme='dark'] {
-  @import '~highlight.js/styles/atom-one-dark.scss';
-}
-
 @layer base {
   :root {
     --color-bgBase: 39deg 85% 95%;
@@ -96,7 +88,6 @@ html[data-theme='dark'] {
   bottom: 0;
 }
 
-
 .scroll-stylized {
   overflow: hidden;
   overflow-y: scroll;
@@ -130,68 +121,4 @@ html[data-theme='dark'] {
 .carousel-slide.active {
   opacity: 1;
   pointer-events: auto;
-}
-
-.bg-primary-color {
-  background-color: var(--primary-color);
-}
-
-.bg-background-color {
-  background-color: var(--background-color);
-}
-
-.bg-redcard-color {
-  background-color: var(--red-card-color);
-}
-
-.bg-greencard-color {
-  background-color: var(--green-card-color);
-}
-
-.bg-blackcard-color {
-  background-color: var(--black-card-color);
-}
-
-.bg-game-color {
-  background-color: var(--game-background-color);
-}
-
-.bg-lightgray-color {
-  background-color: var(--lightgray-color);
-}
-
-.text-main-color {
-  color: var(--font-main-color);
-}
-
-#nav-hover:hover {
-  background-color: var(--hover-navbar-color);
-}
-
-.text-tech-title {
-  color: var(--title-tech-color)
-}
-
-.text-tech-content {
-  color: var(--content-tech-color)
-}
-
-.text-techCard-content {
-  color: var(--cardText-tech-color)
-}
-
-.bg-card-color {
-  background-color: var(--cardBg-tech-color);
-}
-
-.bg-cardIconBg-color {
-  background-color: var(--cardIconBg-tech-color);
-}
-
-.bg-cardIconText-color {
-  color: var(--cardIconText-tech-color);
-}
-
-.bg-cardIconBorder-color {
-  border-color: var(--cardIconBorder-tech-color);
 }
