@@ -36,7 +36,7 @@ export default function Languages() {
     const personalInformations = getInformation();
 
     return (
-        <div className="flex flex-wrap gap-2.5 pt-1">
+        <div className="flex flex-wrap gap-2.5 pt-1 mb-3">
             {personalInformations.languages.map((language) => (
                 <div key={language.name} className={`flex items-center gap-2 border rounded-lg p-2 font-bold text-sm ${colorMain(language.level)}`}>
                     <div className={`flex items-center justify-center p-2 rounded-lg text-white text-xs font-semibold ${colorLevel(language.level)}`}>
