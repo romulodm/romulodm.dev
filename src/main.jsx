@@ -4,6 +4,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
 import { GoogleOAuthProvider } from '@react-oauth/google';
+import { Analytics } from "@vercel/analytics/react"
 
 import { PortfolioThemeProvider } from './context/ThemeContext.jsx';
 import { AuthProvider } from './context/AuthContext.jsx';
@@ -16,15 +17,19 @@ import './i18next.js';
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <GoogleOAuthProvider clientId={`${GOOGLE_CLIENT_ID}`}>
-    <ThemeProvider theme={theme}>
-      <ToastProvider>
-          <PortfolioThemeProvider>
-            <AuthProvider>
-                <App />
-            </AuthProvider>
-          </PortfolioThemeProvider>
-      </ToastProvider>
-    </ThemeProvider>
-  </GoogleOAuthProvider>
+  <>
+    <Analytics/>
+    
+    <GoogleOAuthProvider clientId={`${GOOGLE_CLIENT_ID}`}>
+      <ThemeProvider theme={theme}>
+        <ToastProvider>
+            <PortfolioThemeProvider>
+              <AuthProvider>
+                  <App />
+              </AuthProvider>
+            </PortfolioThemeProvider>
+        </ToastProvider>
+      </ThemeProvider>
+    </GoogleOAuthProvider>
+  </>
 )
