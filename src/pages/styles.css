@@ -1,29 +1,41 @@
 :root {
     --resume-color: #2563eb;
     --resume-color-rgb: 37, 99, 235; /* #2563eb */
-    --projects-color: #6d28d9;
-    --projects-color-rgb: 109, 40, 217; /* #6d28d9 */
+    --resume-background: #2a3b54; /* Alterado para um tom mais escuro */
+
+    --projects-color: #7c3aed; /* Alterado para um tom de roxo mais vibrante */
+    --projects-color-rgb: 124, 58, 237; /* #7c3aed */
+    --projects-background: #312450; /* Alterado para um tom de roxo mais escuro */
+
     --vision-color: #00C74D; 
     --vision-color-rgb: 0, 199, 77; /* #00C74D */ 
+    --vision-background: #2a5939; /* mantido */
+
     --contact-color: #f9305b;
     --contact-color-rgb: 249, 48, 91; /* #f9305b */
-
+    --contact-background: #742a3b; /* mantido */
 }
 
 [data-theme="light"] {
     --resume-color: #2563eb;
     --resume-color-rgb: 37, 99, 235; /* #2563eb */
+    --resume-background: #e0f2fe;
+
     --projects-color: #6d28d9;
     --projects-color-rgb: 109, 40, 217; /* #6d28d9 */
+    --projects-background: #ede9fe;
+
     --vision-color: #00C74D; 
     --vision-color-rgb: 0, 199, 77; /* #00C74D */ 
+    --vision-background: #dcfce7;
+
     --contact-color: #f9305b;
     --contact-color-rgb: 249, 48, 91; /* #f9305b */
-
+    --contact-background: #fee2e2;
 }
 
 .responsive-content {
-    width: 82%;
+    width: 80%;
     max-width: 70rem;
 }
 
@@ -38,9 +50,9 @@
 }
 
 #resume-icon {
-    background-color: #e0f2fe;
+    background-color: var(--resume-background);
     outline: 2px solid var(--resume-color);
-    box-shadow: 0 0 40px 5px rgba(var(--resume-color-rgb), 0.6);
+    box-shadow: 0 0 40px 5px rgba(var(--resume-color-rgb), .9);
 }
 
 #projects-line {
@@ -48,9 +60,9 @@
 }
 
 #projects-icon {
-    background-color: #ede9fe;
+    background-color: var(--projects-background);
     outline: 2px solid var(--projects-color);
-    box-shadow: 0 0 40px 5px rgba(var(--projects-color-rgb), 0.6);
+    box-shadow: 0 0 40px 5px rgba(var(--projects-color-rgb), .9);
 }
 
 #vision-line {
@@ -58,9 +70,9 @@
 }
 
 #vision-icon {
-    background-color: #dcfce7;
+    background-color: var(--vision-background);
     outline: 2px solid var(--vision-color);
-    box-shadow: 0 0 40px 5px rgba(var(--vision-color-rgb), 0.6);
+    box-shadow: 0 0 40px 5px rgba(var(--vision-color-rgb), .9);
 }
 
 #contact-line {
@@ -68,9 +80,9 @@
 }
 
 #contact-icon {
-    background-color: #fee2e2;
+    background-color: var(--contact-background);
     outline: 2px solid var(--contact-color);
-    box-shadow: 0 0 40px 5px rgba(var(--contact-color-rgb), 0.6);
+    box-shadow: 0 0 40px 5px rgba(var(--contact-color-rgb), .8);
 }
 
 .emoji-home {
