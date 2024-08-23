@@ -48,12 +48,12 @@ export const AuthProvider = ({ children }) => {
         {children}
         <div 
           onClick={handleUser}
-          className="fixed bottom-[65px] sm:bottom-5 right-[12px] sm:right-5 w-10 h-10 rounded-full bg-gray-300 flex justify-center items-center cursor-pointer"
+          className="fixed bottom-[65px] sm:bottom-5 right-[12px] sm:right-5 w-10 h-10 rounded-full bg-gray-300 dark:bg-[#2f3031] flex justify-center items-center cursor-pointer"
         >
             {user ? (
               <img src={user.picture} alt="User" className="rounded-full w-full h-full" />
             ) : (
-              <MdPerson size={25} className="text-gray-500" />
+              <MdPerson size={25} className="text-gray-500 dark:text-gray-400" />
             )}
         </div>
 

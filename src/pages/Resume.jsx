@@ -23,23 +23,23 @@ export default function Resume() {
         <>
         <Title text={t('page-title')} />
 
-        <div className="flex flex-col w-full  py-3 sm:mt-10 lg:mt-4 items-center justify-center h-full">
+        <div className="flex flex-col w-full py-0 sm:mt-10 lg:mt-4 items-center justify-center h-full">
             <div className="responsive-content">
                 <Initial/>
                 
                 <div className="flex flex-col items-center w-full pb-2">
                     <div className="flex flex-row justify-between w-full">
                         <div className="flex flex-row items-center gap-1.5">
-                            <div className="flex bg-gray-200 justify-center w-5 h-5 items-center rounded-md p-4">
-                                <WorkOutlineOutlinedIcon style={{fontSize: '.85rem'}} className="text-center text-gray-900"/>
+                            <div className="flex bg-gray-200 dark:bg-[#2f3031] text-dark dark:text-white justify-center w-5 h-5 items-center rounded-md p-4">
+                                <WorkOutlineOutlinedIcon style={{fontSize: '.85rem'}} className="text-center"/>
                             </div>
 
-                            <p className='font-bold'>Experiências</p>
+                            <p className='font-bold dark:text-neutral-300'>Experiências</p>
                         </div>
 
                         <button
                             onClick={() => setShowExperience(!showExperience)} 
-                            className="flex bg-gray-200 hover:bg-gray-300 items-center justify-center w-5 h-5 rounded-lg p-4"
+                            className="flex bg-gray-200 hover:bg-gray-300 dark:bg-[#2f3031] dark:hover:bg-neutral-700 text-dark dark:text-white items-center justify-center w-5 h-5 rounded-lg p-4"
                         >
                             {showExperience ? (
                                 <ExpandMore style={{fontSize: '1rem'}}/>
@@ -48,7 +48,7 @@ export default function Resume() {
                             )}
                         </button>
                     </div>
-                    <div className="w-full mt-2 h-[1px] bg-gray-200"/>
+                    <div className="w-full mt-2 h-[1px] bg-gray-200 dark:bg-[#2f3031]"/>
                 </div>
                 
                 {showExperience && <Experience/>}
@@ -56,15 +56,15 @@ export default function Resume() {
                 <div className="flex flex-col mt-4 items-center w-full py-2">
                     <div className="flex flex-row justify-between w-full">
                         <div className="flex flex-row items-center gap-1.5">
-                            <div className="flex bg-gray-200 justify-center w-5 h-5 items-center rounded-md p-4">
-                                <SchoolOutlined style={{fontSize: '1rem'}} className="text-gray-900"/>
+                            <div className="flex bg-gray-200 dark:bg-[#2f3031] text-dark dark:text-white justify-center w-5 h-5 items-center rounded-md p-4">
+                                <SchoolOutlined style={{fontSize: '1rem'}} className="text-center"/>
                             </div>
-                            <p className='font-bold'>Educação</p>
+                            <p className='font-bold dark:text-neutral-300'>Educação</p>
                         </div>
 
                         <button 
                             onClick={() => setShowEducation(!showEducation)}
-                            className="flex bg-gray-200 hover:bg-gray-300 items-center justify-center w-5 h-5 rounded-lg p-4"
+                            className="flex bg-gray-200 hover:bg-gray-300 dark:bg-[#2f3031] dark:hover:bg-neutral-700 text-dark dark:text-white items-center justify-center w-5 h-5 rounded-lg p-4"
                         >
                             {showEducation ? (
                                 <ExpandMore style={{fontSize: '1rem'}}/>
@@ -73,7 +73,7 @@ export default function Resume() {
                             )}
                         </button>
                     </div>
-                    <div className="w-full mt-2 h-[1px] bg-gray-200"/>
+                    <div className="w-full mt-2 h-[1px] bg-gray-200 dark:bg-[#2f3031]"/>
                 </div>
 
                 {showEducation && <Education/>}
@@ -81,15 +81,15 @@ export default function Resume() {
                 <div className="flex flex-col mt-4 items-center w-full py-2">
                     <div className="flex flex-row justify-between w-full">
                         <div className="flex flex-row items-center gap-1.5">
-                            <div className="flex bg-gray-200 justify-center w-5 h-5 items-center rounded-md p-4">
-                                <Translate style={{fontSize: '.85rem'}} className="text-gray-900"/>
+                            <div className="flex bg-gray-200 dark:bg-[#2f3031] text-dark dark:text-white justify-center w-5 h-5 items-center rounded-md p-4">
+                                <Translate style={{fontSize: '.85rem'}} className="text-center"/>
                             </div>
-                            <p className='font-bold'>Idiomas</p>
+                            <p className='font-bold dark:text-neutral-300'>Idiomas</p>
                         </div>
 
                         <button 
                             onClick={() => setShowLanguages(!showLanguages)}
-                            className="flex bg-gray-200 hover:bg-gray-300 items-center justify-center w-5 h-5 rounded-lg p-4"
+                            className="flex bg-gray-200 hover:bg-gray-300 dark:bg-[#2f3031] dark:hover:bg-neutral-700 text-dark dark:text-white items-center justify-center w-5 h-5 rounded-lg p-4"
                         >
                             {showLanguages ? (
                                 <ExpandMore style={{fontSize: '1rem'}}/>
@@ -98,7 +98,7 @@ export default function Resume() {
                             )}
                         </button>
                     </div>
-                    <div className="w-full mt-2 h-[1px] bg-gray-200"/>
+                    <div className="w-full mt-2 h-[1px] bg-gray-200 dark:bg-[#2f3031]"/>
                 </div>
 
                 {showLanguages && <Languages/>}

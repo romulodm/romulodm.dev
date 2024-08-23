@@ -59,10 +59,10 @@ export default function Blog() {
         <div className="responsive-content">
 
           <div className="mx-auto sm:mt-10 lg:mt-4 max-w-screen-lg text-center mb-4">
-            <p className="font-light text-gray-500 text-sm sm:text-lg">{t('title')}</p>
+            <p className="font-light text-gray-500 dark:text-neutral-400/80 text-sm sm:text-lg">{t('title')}</p>
           </div> 
 
-          <hr/>
+          <hr className="dark:border-[#2f3031]"/>
 
           <Carousel/>
           
