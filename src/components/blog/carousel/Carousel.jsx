@@ -68,15 +68,15 @@ export default function Carousel() {
                     overflow: "hidden",
                 }}
             >
-                <div className="carousel-item items-center bg-blue-900 w-full min-h-[185px]" aria-hidden={currentSlide !== 0} style={{ translate: `${-100 * currentSlide}%` }}>
+                <div className="carousel-item items-center bg-blue-900 dark:bg-sky-800 w-full min-h-[185px]" aria-hidden={currentSlide !== 0} style={{ translate: `${-100 * currentSlide}%` }}>
                     <CarouselNewsletter />
                 </div>
 
-                <div className="carousel-item items-center bg-blue-900 w-full min-h-[185px]" aria-hidden={currentSlide !== 1} style={{ translate: `${-100 * currentSlide}%` }}>
+                <div className="carousel-item items-center bg-blue-900 dark:bg-sky-800 w-full min-h-[185px]" aria-hidden={currentSlide !== 1} style={{ translate: `${-100 * currentSlide}%` }}>
                     <CarouselSuggestions />
                 </div>
 
-                <div className="carousel-item items-center bg-blue-900 w-full min-h-[185px]" aria-hidden={currentSlide !== 1} style={{ translate: `${-100 * currentSlide}%` }}>
+                <div className="carousel-item items-center bg-blue-900 dark:bg-sky-800 w-full min-h-[185px]" aria-hidden={currentSlide !== 1} style={{ translate: `${-100 * currentSlide}%` }}>
                     <CarouselAbout />
                 </div>
             </div>
@@ -101,7 +101,7 @@ export default function Carousel() {
 
             <div className="absolute z-30 flex -translate-x-1/2 bottom-2 left-1/2 space-x-2 rtl:space-x-reverse">
                 {[...Array(3)].map((_, index) => (
-                    <button key={index} className={`w-2.5 h-2.5 rounded-full ${index === currentSlide ? 'bg-gray-100' : 'bg-blue-950'}`} onClick={() => handleSlideChange(index)} />
+                    <button key={index} className={`w-2.5 h-2.5 rounded-full ${index === currentSlide ? 'bg-gray-100' : 'bg-blue-950 dark:bg-sky-950'}`} onClick={() => handleSlideChange(index)} />
                 ))}
             </div>
         </div>
