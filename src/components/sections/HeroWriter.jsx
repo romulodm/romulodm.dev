@@ -38,13 +38,13 @@ export default function HeroWriter({
 
   return (
 
-    <h1 className="w-full text-gray-800 py-5 text-5xl sm:text-6xl z-50 font-extrabold tracking-tight leading-none">
+    <h1 className="w-full text-gray-800 dark:text-neutral-400 py-5 text-5xl sm:text-6xl z-50 font-extrabold tracking-tight leading-none">
       {mainText},
       <span> </span>
       <br className="sm:hidden"/>
-      <p className="inset-0 z-50 bg-white text-blue-600" style={{ display: 'inline-block' }}>{currentWord}</p>
+      <p className="inset-0 z-50 bg-white dark:bg-neutral-950 text-blue-500 dark:text-blue-500/80" style={{ display: 'inline-block' }}>{currentWord}</p>
       
-      <p ref={cursorRef} className="text-black" style={{ fontWeight: '200', display: 'inline-block' }}>|</p>
+      <p ref={cursorRef} className="text-black dark:text-white" style={{ fontWeight: '200', display: 'inline-block' }}>|</p>
     </h1>
   );
 }
