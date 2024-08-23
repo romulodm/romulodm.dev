@@ -7,7 +7,7 @@ export default function ThemeSelector() {
     const { darkThemeActive, setLightMode, setDarkMode } = useContext(ThemeContext);
 
     return (
-        <div className="h-full flex items-center">
+        <div className="h-full flex items-center dark:text-white">
             {darkThemeActive() ? (
                 <button onClick={setLightMode} className="flex flex-col text-xs items-center justify-center rounded-md">
                     <DarkModeOutlinedIcon/>

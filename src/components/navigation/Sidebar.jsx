@@ -15,28 +15,32 @@ import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import { styled } from '@mui/material/styles';
 
 import getActualRoute from "../../utils/getActualRoute";
+import { useContext } from 'react';
+import { ThemeContext } from '../../context/ThemeContext';
 
 const ItemTooltip = styled(({ className, ...props }) => (
     <Tooltip {...props} arrow classes={{ popper: className }} />
-))(({ theme }) => ({
+))(({ theme, currentTheme }) => ({
     [`& .${tooltipClasses.arrow}`]: {
-        color: theme.palette.common.black,
+        color: currentTheme === 'dark' ? '#27272A' : '#27272A',
     },
     [`& .${tooltipClasses.tooltip}`]: {
-        backgroundColor: theme.palette.common.black,
+        backgroundColor: currentTheme === 'dark' ? '#27272A' : '#27272A',
+        color: currentTheme === 'dark' ? '#FFFFFF' : '#FFFFFFF',
         fontSize: '13px',
     },
 }));
 
 export default function Sidebar() {
     const { t } = useTranslation('navigation');
+    const { theme } = useContext(ThemeContext);
 
     const actualRoute = getActualRoute();
 
     return (
-        <div id="navbar" className="fixed top-0 left-0 h-screen w-fit px-2 border border-y-0 flex flex-col justify-between gap-5">
+        <div id="navbar" className="fixed top-0 left-0 h-screen w-fit px-2 border-r border-y-0 dark:border-neutral-800 flex flex-col justify-between gap-5">
             <div className="flex flex-col flex-1 justify-between">
-                <div className="flex justify-center items-center px-4 py-5 text-gray-700 rounded-lg">
+                <div className="flex justify-center items-center px-4 py-5 text-gray-700 dark:text-white/70 rounded-lg">
                     <NavLink to="/home">
                         <LogoDevOutlinedIcon />
                     </NavLink>
@@ -44,24 +48,24 @@ export default function Sidebar() {
 
                 <nav className="flex flex-col py-5 gap-5">
                     <NavLink to="/home">
-                        <ItemTooltip title={t('home')} placement="right">
-                            <div className={`flex justify-center items-center px-4 py-3 rounded-lg ${actualRoute === "home" ? "active-navicon" : "desactive-navicon"}`}>
+                        <ItemTooltip title={t('home')} placement="right" currentTheme={theme}>
+                            <div className={`flex justify-center dark:text-[white] items-center px-4 py-3 rounded-lg ${actualRoute === "home" ? "active-navicon" : "desactive-navicon"}`}>
                                 <HomeOutlinedIcon />
                             </div>
                         </ItemTooltip>
                     </NavLink>
 
                     <NavLink to="/resume">
-                        <ItemTooltip title={t('resume')} placement="right">
-                            <div className={`flex justify-center items-center px-4 py-3 rounded-lg ${actualRoute === "resume" ? "active-navicon" : "desactive-navicon"}`}>
+                        <ItemTooltip title={t('resume')} placement="right" currentTheme={theme}>
+                            <div className={`flex justify-center dark:text-white items-center px-4 py-3 rounded-lg ${actualRoute === "resume" ? "active-navicon" : "desactive-navicon"}`}>
                                 <ListAltOutlinedIcon />
                             </div>
                         </ItemTooltip>
                     </NavLink>
                     
                     <NavLink to="/blog">
-                        <ItemTooltip title="Blog" placement="right">
-                            <div className={`flex justify-center items-center px-4 py-3 rounded-lg ${actualRoute === "blog" ? "active-navicon" : "desactive-navicon"}`}>
+                        <ItemTooltip title="Blog" placement="right" currentTheme={theme}>
+                            <div className={`flex justify-center dark:text-white items-center px-4 py-3 rounded-lg ${actualRoute === "blog" ? "active-navicon" : "desactive-navicon"}`}>
                                 <CommentBankOutlinedIcon />
                             </div>
                         </ItemTooltip>
@@ -69,13 +73,13 @@ export default function Sidebar() {
                 </nav>
 
                 <div className="flex flex-col py-5 gap-5">
-                    <ItemTooltip title={t('theme')} placement="right">
+                    <ItemTooltip title={t('theme')} placement="right" currentTheme={theme}>
                         <div className="flex justify-center items-center px-4 py-3 rounded-lg">
                             <ThemeSelector />
                         </div>
                     </ItemTooltip>
                     
-                    <ItemTooltip title={t('language')} placement="right">
+                    <ItemTooltip title={t('language')} placement="right" currentTheme={theme}>
                         <div className="flex justify-center items-center px-4 py-3 rounded-lg">
                             <LanguageSelector showTitle={true}/>
                         </div>
