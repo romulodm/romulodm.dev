@@ -12,7 +12,7 @@ export default function Announcement(){
     }
 
     return (
-        <div className="bg-sky-500 mt-0 lg:mb-[-20px] lg:mt-10 md:mt-14 text-white flex items-center justify-center h- relative">
+        <div className="bg-sky-500 dark:bg-[#2f3031] mt-0 lg:mb-[-20px] lg:mt-10 md:mt-14 text-white flex items-center justify-center h- relative">
             <p className="uppercase text-xs tracking-widest text-center px-4 py-3">
                 {t('content')}
             </p>
