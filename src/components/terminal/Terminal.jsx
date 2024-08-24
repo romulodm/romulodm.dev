@@ -5,6 +5,7 @@ import TerminalExperience from "./TerminalExperience";
 import TerminalFunctional from "./TerminalFunctional";
 import { DefaultMessage, InitialMessage, HelpMessage, CatsMessage, InterMessage, UnknowMessage, WhoMessage, WhoamiMessage, SecretMessage, SecretHintMessage, SecretWrongMessage, SecretCorrectMessage, SpotifyMessage, FollowMessage } from './TerminalMessages';
 import CustomTooltip from './CustomTooltip';
+import { useTranslation } from "react-i18next";
 
 const SECRET_PASSWORD = import.meta.env.VITE_TERMINAL_SECRET_PASSWORD;
 
@@ -22,6 +23,8 @@ const commands = {
 };
 
 export default function Terminal() {
+    const { t } = useTranslation('terminal');
+
     const loadingTime = useState(Math.floor(Math.random() * 300));
     const [showTooltip, setShowTooltip] = useState(true);
 
@@ -117,7 +120,7 @@ export default function Terminal() {
                         </>
                     ) : (
                         showTooltip ? (
-                            <CustomTooltip position="bottom" content={'You can use this terminal'} onClose={() => setShowTooltip(false)}>
+                            <CustomTooltip position="bottom" content={t('tooltip')} onClose={() => setShowTooltip(false)}>
                                 <button 
                                     onClick={() => openAndChangeTab()}
                                     className="flex cursor-pointer bg-neutral-200 hover:bg-neutral-300 dark:bg-neutral-900 dark:hover:dark:bg-neutral-800 dark:text-white px-3 ml-1.5 flex-row h-8 rounded-lg items-center justify-between"
