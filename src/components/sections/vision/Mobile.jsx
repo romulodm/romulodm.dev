@@ -1,3 +1,3 @@
 export default function useMobileMode() {
-    return window.innerWidth < 768;
+    return window.innerWidth < 740;
   }

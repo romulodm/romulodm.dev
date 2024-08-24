@@ -2,8 +2,11 @@ import './Vision.css'
 
 import { useEffect, useMemo } from 'react';
 import { useSpring, animated } from '@react-spring/web';
+import useMobileMode from './Mobile';
 
 export default function Cursor({ step }) {
+    const mobile = useMobileMode()
+
     const labelTransforms = {
       left: 'translate(calc(-100% + 6px), 18px)',
       right: 'translate(calc(100% + 0px), 18px)',
@@ -11,13 +14,13 @@ export default function Cursor({ step }) {
     };
   
     const states = [
-      { top: '0', left: '20%', rotate: '0deg', opacity: '0' },
-      { top: '21%', left: '49%', rotate: '0deg', opacity: '1' },
-      { top: '37%', left: '29.5%', rotate: '0deg', opacity: '1' },
-      { top: '47%', left: '62%', rotate: '-90deg', opacity: '1' },
-      { top: '80.5%', left: '50.8%', rotate: '0deg', opacity: '1' },
-      { top: '92%', left: '97%', rotate: '-90deg', opacity: '1' },
-      { top: '105%', left: '48%', rotate: '0deg', opacity: '0' },
+      { top: mobile ?'0' : '0', left: mobile ?'70%' :'20%', rotate: '0deg', opacity: '0' },
+      { top: mobile ?'27%' : '21%', left: mobile ? '10%' : '49%', rotate: '0deg', opacity: '1' },
+      { top: mobile ?'41%' : '37%', left: mobile ? '30%' : '24%', rotate: '0deg', opacity: '1' },
+      { top: mobile ?'52.5%' : '47%', left: mobile ? '10%' : '55%', rotate: '-90deg', opacity: '1' },
+      { top: mobile ?'55%' : '73.7%', left: mobile ? '63%' : '50.2%', rotate: '0deg', opacity: '1' },
+      { top: mobile ?'77%' : '92%', left: mobile ? '65%' : '97%', rotate: '-90deg', opacity: '1' },
+      { top: mobile ?'105%' : '105%', left: mobile ? '50%' : '48%', rotate: '0deg', opacity: '0' },
     ];
   
     const currentState = useMemo(() => {
