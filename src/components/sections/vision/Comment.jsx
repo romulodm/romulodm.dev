@@ -1,0 +1,35 @@
+
+import { useEffect } from 'react';
+import { useSpring, animated } from '@react-spring/web';
+import useMobileMode from './Mobile';
+
+export default function Comment({ step }) {
+    const mobile = useMobileMode();
+    const [opacity, api] = useSpring(() => ({ opacity: 0 }));
+  
+    useEffect(() => {
+      api.start({ opacity: step >= 3 ? 1 : 0 });
+    }, [step, api]);
+  
+    return (
+      <animated.div
+        className="absolute w-72 bg-white dark:bg-neutral-700/70 shadow-lg flex flex-row items-center gap-2.5 p-2.5 border-red-500 border rounded-tl-none rounded-3xl"
+        style={{ top: 'calc(1rem + 100%)', left: mobile ? '10%' : '50%', opacity }}
+      >
+        <div className="bg-red-500 text-white rounded-full w-8 h-8 p-1 flex items-center justify-center">
+          M
+        </div>
+        <div>
+          <p className="text-sm font-semibold text-gray-700 dark:text-neutral-300">
+            Manager
+            {' • '}
+            <span className="text-gray-500 dark:text-neutral-400/90">2 hours ago</span>
+          </p>
+          <p className="text-sm text-gray-700 dark:text-neutral-400 mr-2">
+            Don&apos;t forget the daily, mate!
+  
+          </p>
+        </div>
+      </animated.div>
+    );
+  }
