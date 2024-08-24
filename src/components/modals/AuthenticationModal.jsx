@@ -38,7 +38,7 @@ const modalContentStyle = {
 };
 
 export default function AuthenticationModal(props) {
-    const { t } = useTranslation();
+    const { t } = useTranslation("auth");
 
     const { showToast } = useContext(ToastContext);
     const { theme } = useContext(ThemeContext);
@@ -95,12 +95,12 @@ export default function AuthenticationModal(props) {
                     style={modalContentStyle}
                     className="w-full h-full sm:h-fit sm:w-96"
                 >
-                    <div className="flex flex-col h-full sm:rounded-md bg-gray-50 dark:bg-gray-950 sm:py-7 px-4">
+                    <div className="flex flex-col h-full sm:rounded-md bg-gray-50 dark:bg-neutral-800 sm:py-7 px-4">
                         <div className="relative sm:hidden py-4">
                             <div className="flex justify-between items-center">
                                 <button
                                     type="button"
-                                    className="text-gray-800 dark:text-gray-50 hover:bg-gray-300 hover:dark:bg-gray-800 hover:text-gray-950 hover:dark:text-gray-300 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center"
+                                    className="text-gray-800 dark:text-gray-50 hover:bg-gray-300 hover:dark:bg-neutral-900/70 hover:text-gray-950 hover:dark:text-gray-300 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center"
                                     onClick={handleClose}
                                 >
                                     <CloseIcon/>
@@ -113,7 +113,7 @@ export default function AuthenticationModal(props) {
                                 
                                 <img className="w-10 h-10" src="./icon.svg"></img>            
                                 
-                                <p className="text-dark dark:text-white mb-3 font-medium mt-3 text-sm sm:text-md">{t('auth.title')}</p>
+                                <p className="text-dark dark:text-white mb-3 font-medium mt-3 text-sm sm:text-md">{t('title')}</p>
                                 {!isLoading ? (
                                     <GoogleLogin 
                                         onSuccess={credentialResponse => {

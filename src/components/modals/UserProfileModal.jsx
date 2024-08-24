@@ -70,7 +70,7 @@ export default function UserProfileModal(props) {
                     style={modalContentStyle}
                     className="w-full h-full sm:h-fit sm:w-96"
                 >
-                    <div className="flex flex-col h-full sm:rounded-md bg-gray-50 dark:bg-gray-950 sm:py-7 px-4">
+                    <div className="flex flex-col h-full sm:rounded-md bg-gray-50 dark:bg-neutral-800 sm:py-7 px-4">
                         <div className="relative sm:hidden py-4">
                             <div className="flex justify-between items-center">
                                 <button
