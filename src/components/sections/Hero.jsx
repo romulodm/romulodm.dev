@@ -74,7 +74,7 @@ export default function Hero() {
 
         <div className="flex w-full flex-col sm:flex-row mb-4 space-y-4 sm:justify-center sm:space-y-0 sm:space-x-4">
           <NavLink to="/resume">
-            <button id="resume-button" className="inline-flex w-72 justify-center sm:justify-between items-center p-2 text-gray-700 dark:text-neutral-400 bg-gray-100 hover:bg-gray-200 dark:bg-[#27272A]/90 dark:hover:bg-[#27272A] dark:hover:shadow-[0_0_20px_rgba(255,255,255,0.1)] rounded-lg">
+            <button id="resume-button" className="inline-flex w-[260px] justify-center sm:justify-between items-center p-2 text-gray-700 dark:text-neutral-400 bg-gray-100 hover:bg-gray-200 dark:bg-[#27272A]/90 dark:hover:bg-[#27272A] dark:hover:shadow-[0_0_20px_rgba(255,255,255,0.1)] rounded-lg">
               <span className="flex items-center bg-blue-500 dark:bg-blue-500/80 rounded-full text-white p-2 mr-2">
                 <ListAltOutlined style={{fontSize: '1.3rem'}} />
               </span>
@@ -91,7 +91,7 @@ export default function Hero() {
           </NavLink>
 
           <a href="https://github.com/romulodm/my-portfolio" target="_blank" rel="noopener noreferrer">
-            <button id="resume-button" className="inline-flex w-72 justify-center sm:justify-between items-center p-2 text-gray-700 dark:text-neutral-400 bg-gray-100 hover:bg-gray-200 dark:bg-[#27272A]/90 dark:hover:bg-[#27272A] dark:hover:shadow-[0_0_20px_rgba(255,255,255,0.1)] rounded-lg">
+            <button id="resume-button" className="inline-flex w-[260px] justify-center sm:justify-between items-center p-2 text-gray-700 dark:text-neutral-400 bg-gray-100 hover:bg-gray-200 dark:bg-[#27272A]/90 dark:hover:bg-[#27272A] dark:hover:shadow-[0_0_20px_rgba(255,255,255,0.1)] rounded-lg">
               <span className="flex items-center bg-blue-500 dark:bg-blue-500/80 rounded-full text-white p-2 mr-2">
                 <StarBorderOutlined style={{fontSize: '1.3rem'}} />
               </span>
