@@ -27,7 +27,7 @@ function Link({ url, icon, title, color, id }) {
           target="_blank"
           id={id}
           rel="noopener noreferrer"
-          className="link-carrousel block p-3.5 rounded-lg transition-transform bg-white duration-200 border-2 hover:-translate-y-1.5"
+          className="link-carrousel block p-3.5 rounded-lg transition-transform bg-white dark:bg-neutral-900 duration-200 border-2 hover:-translate-y-1.5"
         >
           <div className="flex items-center text-lg">
             {icon}
@@ -98,8 +98,9 @@ export default function LinkCarousel() {
               <Link key={index} {...link} />
             ))}
           </div>
-          <div className="absolute top-0 left-0 w-28 h-full bg-gradient-to-r from-white via-transparent to-transparent pointer-events-none"/>
-          <div className="absolute top-0 right-0 w-28 h-full bg-gradient-to-l from-white via-transparent to-transparent pointer-events-none"/>
+          <div className="absolute top-0 left-0 w-28 h-full bg-gradient-to-r from-white via-transparent to-transparent pointer-events-none dark:from-neutral-950"/>
+          <div className="absolute top-0 right-0 w-28 h-full bg-gradient-to-l from-white via-transparent to-transparent pointer-events-none dark:from-neutral-950"/>
+
         </div>
       </div>
     );

@@ -24,15 +24,15 @@ export default function Education() {
               <div className="flex flex-row gap-2 items-center">
                 <a
                   href={item.url}
-                  className="text-lg font-medium hover:underline"
+                  className="text-md text-neutral-950 dark:text-neutral-100 font-medium hover:underline"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
                   {item.school}
                 </a>
-                <p className="text-sm text-gray-500">{item.start} - {item.end}</p>
+                <p className="text-sm text-neutral-500 dark:text-neutral-400">{item.start} - {item.end}</p>
               </div>
-              <div className="flex text-gray-600 flex-row items-center gap-2">
+              <div className="flex text-neutral-500 dark:text-neutral-400 flex-row items-center gap-2">
                 <p>{item.degree}</p>
                 <p>|</p>
                 <p>{item.major}</p>

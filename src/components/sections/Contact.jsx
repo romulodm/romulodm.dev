@@ -11,7 +11,7 @@ export default function Contact() {
 
   return (
     <div className="flex flex-col w-full h-fit justify-center gap-6 mb-10 text-center">
-      <p className="text-gray-500">
+      <p className="text-gray-500 dark:text-neutral-500">
         {t('text')}
       </p>
       <LinkCarousel/>

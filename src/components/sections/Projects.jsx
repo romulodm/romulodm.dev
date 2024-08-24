@@ -45,8 +45,8 @@ export default function Projects() {
             </div>
 
             <div className="w-full flex items-center justify-center">
-                <div className="flex mt-4 items-center gap-2 text-purple-800 font-bold">
-                    <div className="flex items-center p-2 bg-purple-50 border border-purple-800 rounded-md">
+                <div className="flex mt-4 items-center gap-2 text-purple-800 dark:text-purple-400 font-bold">
+                    <div className="flex items-center p-2 bg-purple-50 dark:bg-purple-900 dark:text-white border border-purple-800 rounded-md">
                         <FiGithub/>
                     </div>
                     <div>+ {projectsLength - projects.length} {t('projects.public')}</div>

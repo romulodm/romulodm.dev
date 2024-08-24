@@ -6,18 +6,29 @@
     --color-linkedin: #0a66c2;
     --color-linkedin-rgb: 10, 102, 194;
     --color-github: #333;
+    --color-github: #a3a3a3;
     --color-github-rgb: 51, 51, 51;
     --color-discord: #7289da;
     --color-discord-rgb: 114, 137, 218;
     --color-instagram: #c13584;
     --color-instagram-rgb: 193, 53, 132;
+
+    --link-color: #a3a3a3;
+    --border-link: #525252;
+    
+}
+
+[data-theme="light"] {
+    --link-color: #4b5563;
+    --color-github: #333;
+    --border-link: #6b7280;
 }
 
 .link-carrousel {
     position: relative;
     transition: transform 0.3s, filter 0.3s;
-    border-color: #6b7280;
-    color: #4b5563;
+    border-color: var(--border-link);
+    color: var(--link-color);
     background-color: white;
 }
 

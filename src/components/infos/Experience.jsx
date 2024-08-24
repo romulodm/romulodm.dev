@@ -29,17 +29,17 @@ export default function Experience() {
                     <div className="flex flex-rol gap-1 items-center">
                         <a
                             href={item.url}
-                            className="text-md font-medium hover:underline"
+                            className="text-md text-neutral-950 dark:text-neutral-100 font-medium hover:underline"
                             target="_blank"
                             rel="noopener noreferrer"
                         >
                             {item.company}
                         </a>
 
-                        <p className="text-sm text-gray-500">{item.contract} - {item.location}</p>
+                        <p className="text-sm text-neutral-500 dark:text-neutral-400">{item.contract} - {item.location}</p>
                     </div>
 
-                    <div className="flex flex-row items-center text-sm gap-2">
+                    <div className="flex flex-row items-center text-neutral-950 dark:text-neutral-300 text-sm gap-2">
                         <p>
                             {item.position}
                         </p>
@@ -58,14 +58,14 @@ export default function Experience() {
                         {item.skills.map((skill, skillIndex) => (
                         <p
                             key={skillIndex}
-                            className="px-1 py-1 border border-gray-200 rounded-md bg-gray-50 text-xs text-gray-500"
+                            className="px-1 py-1 border border-gray-200 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-[#2f3031] text-xs text-gray-500 dark:text-white"
                         >
                             {skill}
                         </p>
                         ))}
                     </div>
                     
-                    <div className="text-[.82rem] pt-2 text-neutral-500 text-justify">
+                    <div className="text-[.82rem] pt-2 text-neutral-500 dark:text-neutral-400 text-justify">
                         <div>
                             {item.about}
                         </div>

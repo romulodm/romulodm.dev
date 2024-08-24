@@ -1,9 +1,17 @@
+:root {
+    --conector-color: #2f3031;
+}
+
+[data-theme="light"] {
+    --conector-color: #d1d5db;
+}
+
 .timeline-connector::before {
     content: "";
     position: absolute;
     width: .92px;
     height: calc(100% - 3rem);
-    background: #d1d5db;
+    background: var(--conector-color);
     left: calc(1.75rem - 5px);
     top: calc(3rem + 12px);
 }
@@ -13,7 +21,7 @@
     position: absolute;
     width: .9px;
     height: calc(100% - 3rem);
-    background: linear-gradient(to bottom, #d1d5db, transparent); 
+    background: linear-gradient(to bottom, var(--conector-color), transparent); 
     left: calc(1.75rem - 5px);
     top: calc(3rem + 12px);
 }

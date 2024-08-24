@@ -69,7 +69,7 @@ export default function FakeTimeline() {
             <div className="-mx-2 flex md:hidden h-20 px-4 xl:mx-0 scroll-stylized">
                 {Object.entries(timelineObject).map(([year, events]) => (
                     <div key={year} className="relative">
-                        <header className="absolute left-0 -translate-x-1/2 select-none text-xs font-semibold text-gray-400">
+                        <header className="absolute left-0 -translate-x-1/2 select-none text-xs font-semibold text-gray-400 dark:text-neutral-500">
                             {year}
                         </header>
 
@@ -93,8 +93,8 @@ export default function FakeTimeline() {
                                             className="absolute flex -translate-x-1/2 flex-col items-center px-2 hfa:outline-none"
                                         >
                                             <span className="sr-only">{`${year} - ${heading}`}</span>
-                                            <div className="h-6 w-0.5 transition-all bg-gray-500"/>
-                                            <Icon className="mt-1 h-4 w-4 transition-all text-gray-500"/>
+                                            <div className="h-6 w-0.5 transition-all bg-gray-500 dark:bg-neutral-600"/>
+                                            <Icon className="mt-1 h-4 w-4 transition-all text-gray-500 dark:text-neutral-500"/>
                                         </a>
 
                                         <div className={`absolute top-0 left-px h-2 w-[79px] bg-[image:linear-gradient(90deg,transparent_0px,transparent_9px,var(--line-color)_10px,var(--line-color)_10px)] bg-[length:10px_10px] transition-all [--line-color:theme(colors.gray.500)]`} />
@@ -110,7 +110,7 @@ export default function FakeTimeline() {
             <div className="-mx-4 hidden md:flex h-28  px-6 xl:mx-0 scroll-stylized">
                 {Object.entries(timelineObject).map(([year, events]) => (
                     <div key={year} className="relative">
-                        <header className="absolute left-0 -translate-x-1/2 select-none text-xs font-semibold text-gray-400">
+                        <header className="absolute left-0 -translate-x-1/2 select-none text-xs font-semibold text-gray-400 dark:text-neutral-500">
                             {year}
                         </header>
 
@@ -134,11 +134,11 @@ export default function FakeTimeline() {
                                             className="absolute flex -translate-x-1/2 flex-col items-center px-3 hfa:outline-none"
                                         >
                                             <span className="sr-only">{`${year} - ${heading}`}</span>
-                                            <div className="h-8 w-0.5 transition-all bg-gray-500"/>
-                                            <Icon className="mt-2 h-5 w-5 transition-all text-gray-500"/>
+                                            <div className="h-8 w-0.5 transition-all bg-gray-500 dark:bg-neutral-600"/>
+                                            <Icon className="mt-2 h-5 w-5 transition-all text-gray-500 dark:text-neutral-500"/>
                                         </a>
 
-                                        <div className={`absolute top-0 left-px h-2.5 w-[119px] bg-[image:linear-gradient(90deg,transparent_0px,transparent_9px,var(--line-color)_10px,var(--line-color)_10px)] bg-[length:10px_10px] transition-all [--line-color:theme(colors.gray.500)]`} />
+                                        <div className={`absolute dark:bg-[#2f3031]top-0 left-px h-2.5 w-[119px] bg-[image:linear-gradient(90deg,transparent_0px,transparent_9px,var(--line-color)_10px,var(--line-color)_10px)] bg-[length:10px_10px] transition-all [--line-color:theme(colors.gray.500)]`} />
                                     </section>
                                 );
                             })}

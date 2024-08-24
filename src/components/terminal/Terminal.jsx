@@ -1,4 +1,3 @@
-import './Terminal.css';
 import { useState } from "react";
 import { IoAddOutline } from "react-icons/io5";
 import { VscChromeClose, VscChromeMaximize, VscChromeMinimize, VscTerminalPowershell } from "react-icons/vsc";
@@ -73,12 +72,12 @@ export default function Terminal() {
 
     return (
         <div className="flex flex-col overflow-hidden rounded-lg shadow-xl">
-            <div className="flex flex-row justify-between bg-gray-100 w-full border-t rounded-tl-lg rounded-tr-lg shadow-3xl">
+            <div className="flex flex-row justify-between bg-gray-100 w-full border-t rounded-tl-lg rounded-tr-lg shadow-3xl dark:bg-neutral-700 dark:border-neutral-700">
                 <div className="flex flex-row items-center text-sm py-1.5">
                     <button
                         onClick={() => setDisplayedNavigationTab(0)}
-                        className={`${displayedNavigationTab === 0 ? 'active-nav' : 'desactive-nav'} flex cursor-default px-3 ml-1.5 py-1 flex-row w-56 h-8 rounded-lg items-center justify-between`}
-                    >
+                        className={`${displayedNavigationTab === 0 ? 'bg-neutral-300 dark:bg-neutral-800' : 'cursor-pointer bg-neutral-200 hover:bg-neutral-300 dark:bg-neutral-900 dark:hover:dark:bg-neutral-800/70'} dark:text-white flex cursor-default px-3 ml-1.5 py-1 flex-row w-56 h-8 rounded-lg items-center justify-between`}
+                        >
                         <div className="flex flex-row items-center gap-2">
                             <VscTerminalPowershell />
                             <p>pwsh in romulodm</p>
@@ -92,8 +91,8 @@ export default function Terminal() {
                         <>
                             <button 
                                 onClick={() => setDisplayedNavigationTab(1)}
-                                className={`${displayedNavigationTab === 1 ? 'active-nav' : 'desactive-nav'} flex cursor-default px-3 ml-1.5 py-1 flex-row w-56 h-8 rounded-lg items-center justify-between`}
-                            >
+                                className={`${displayedNavigationTab === 1 ? 'bg-neutral-300 dark:bg-neutral-800' : 'cursor-pointer bg-neutral-200 hover:bg-neutral-300 dark:bg-neutral-900 dark:hover:dark:bg-neutral-800/70'} dark:text-white flex cursor-default px-3 ml-1.5 py-1 flex-row w-56 h-8 rounded-lg items-center justify-between`}
+                                >
                                 <div className="flex flex-row items-center gap-2">
                                     <VscTerminalPowershell />
                                     <p>pwsh in romulodm</p>
@@ -111,7 +110,7 @@ export default function Terminal() {
 
                             <button 
                                 onClick={() => setShowSecondNavigationTab(true)}
-                                className="flex px-3 ml-1.5 flex-row h-8 rounded-lg bg-gray-200 items-center justify-between"
+                                className="flex cursor-pointer bg-neutral-200 hover:bg-neutral-300 dark:bg-neutral-900 dark:hover:dark:bg-neutral-800 dark:text-white px-3 ml-1.5 flex-row h-8 rounded-lg items-center justify-between"
                             >
                                 <IoAddOutline />
                             </button>
@@ -121,15 +120,15 @@ export default function Terminal() {
                             <CustomTooltip position="bottom" content={'You can use this terminal'} onClose={() => setShowTooltip(false)}>
                                 <button 
                                     onClick={() => openAndChangeTab()}
-                                    className="flex px-3 ml-1.5 flex-row h-8 rounded-lg bg-gray-200 items-center justify-between"
-                                >
+                                    className="flex cursor-pointer bg-neutral-200 hover:bg-neutral-300 dark:bg-neutral-900 dark:hover:dark:bg-neutral-800 dark:text-white px-3 ml-1.5 flex-row h-8 rounded-lg items-center justify-between"
+                                    >
                                     <IoAddOutline />
                                 </button>
                             </CustomTooltip>
                         ) : (
                             <button 
                                 onClick={() => openAndChangeTab()}
-                                className="flex px-3 ml-1.5 flex-row h-8 rounded-lg bg-gray-200 items-center justify-between"
+                                className="flex cursor-pointer bg-neutral-200 hover:bg-neutral-300 dark:bg-neutral-900 dark:hover:dark:bg-neutral-800 dark:text-white px-3 ml-1.5 flex-row h-8 rounded-lg items-center justify-between"
                             >
                                 <IoAddOutline />
                             </button>
@@ -138,19 +137,19 @@ export default function Terminal() {
                 </div>
 
                 <div className="flex flex-row">
-                    <div className="flex justify-center items-center px-4">
+                    <div className="flex cursor-pointer justify-center items-center px-4 dark:text-white hover:bg-neutral-300/80 dark:hover:bg-neutral-800/80">
                         <VscChromeMinimize />
                     </div>
-                    <div className="flex justify-center items-center px-4">
+                    <div className="flex cursor-pointer justify-center items-center px-4 dark:text-white hover:bg-neutral-300/80 dark:hover:bg-neutral-800/80">
                         <VscChromeMaximize />
                     </div>
-                    <div className="flex justify-center items-center px-4">
+                    <div className="flex cursor-pointer justify-center items-center px-4 dark:text-white hover:bg-neutral-300/80 dark:hover:bg-neutral-800/80">
                         <VscChromeClose />
                     </div>
                 </div>
             </div>
 
-            <div className="flex flex-row p-2 h-110 overflow-auto border rounded-bl-lg rounded-br-lg">
+            <div className="flex flex-row p-2 h-110 overflow-auto border dark:bg-neutral-900 dark:border-neutral-800 rounded-bl-lg rounded-br-lg default-scroll">
                 {displayedNavigationTab === 0 ? (
                     <TerminalExperience loadingTime={loadingTime}/>
                 ) : (

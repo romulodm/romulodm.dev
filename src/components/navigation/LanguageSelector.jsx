@@ -18,7 +18,7 @@ export default function LanguageSelector({showTitle}) {
         <button className="flex flex-col items-center gap-1" onClick={changeSystemsLanguage}  >
             <img className="w-5 h-5 rounded-full object-cover" src={locales[actualLanguage].iconPath} alt={locales[actualLanguage].title} />
             {showTitle && (
-                <div className="text-xs">{locales[actualLanguage].title}</div>
+                <div className="text-xs dark:text-white">{locales[actualLanguage].title}</div>
             )}
         </button>        
     );

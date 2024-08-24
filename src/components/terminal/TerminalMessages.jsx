@@ -14,7 +14,7 @@ const availableCommands = {
 export function DefaultMessage() {
     return(
         <div className="font-mono text-sm">
-            <div className="text-gray-500">
+            <div className="text-gray-500 dark:text-neutral-400/90">
                     Powershell 3.9.22
             </div>
         </div>
@@ -25,10 +25,10 @@ export function UnknowMessage({ command }) {
     return (
         <div className="font-mono text-sm">
             <div className="flex flex-row gap-1">
-                <div className="text-blue-600 font-semibold">visitor@romulodm:~$&nbsp;</div>
-                <div className="whitespace-nowrap font-bold">{command}</div>
+                <div className="text-blue-600 font-semibold dark:text-sky-400">visitor@romulodm:~$&nbsp;</div>
+                <div className="whitespace-nowrap font-bold dark:text-white/80">{command}</div>
             </div>
-            <div className="flex flex-row text-gray-500 gap-1">
+            <div className="flex flex-row text-gray-500 dark:text-neutral-400/90 gap-1">
                 <p>Command not found, type</p> <p className="strong font-bold text-red-500">'help'</p> for a list of commands.
             </div>
         </div>
@@ -40,10 +40,10 @@ export function HelpMessage() {
         <div>
             <div className="font-mono text-sm">
                 <div className="flex flex-row gap-1">
-                    <div className="text-blue-600 font-semibold">visitor@romulodm:~$&nbsp;</div>
-                    <div className="whitespace-nowrap font-semibold">{`help`}</div>
+                    <div className="text-blue-600 font-semibold dark:text-sky-400">visitor@romulodm:~$&nbsp;</div>
+                    <div className="whitespace-nowrap font-semibold dark:text-white/80">{`help`}</div>
                 </div>
-                <div className="text-gray-500">
+                <div className="text-gray-500 dark:text-neutral-400/90">
                     Loading help message took 20 ms.
                 </div>
                 <div className="flex px-2 py-3">
@@ -54,7 +54,7 @@ export function HelpMessage() {
                     </div>
                     <div>
                         {Object.values(availableCommands).map((description, index) => (
-                            <p className="text-gray-500" key={index}>{description}</p>
+                            <p className="text-gray-500 dark:text-neutral-400/90" key={index}>{description}</p>
                         ))}
                     </div>
                 </div>
@@ -68,15 +68,15 @@ export function InitialMessage() {
         <div>
             <div className="font-mono text-sm">
                 <div className="flex flex-row gap-1">
-                    <div className="text-blue-600 font-semibold">visitor@romulodm:~$&nbsp;</div>
-                    <div className="whitespace-nowrap font-semibold">{`inital`}</div>
+                    <div className="text-blue-600 font-semibold dark:text-sky-400">visitor@romulodm:~$&nbsp;</div>
+                    <div className="whitespace-nowrap font-semibold dark:text-white/80">{`inital`}</div>
 
                 </div>
-                <div className="text-gray-500">
+                <div className="text-gray-500 dark:text-neutral-400/90">
                     Loading follow message took 29 ms.
                 </div>
             </div>
-            <pre className="text-gray-600">
+            <pre className="text-gray-600 dark:text-neutral-300">
                 {`                   
    ____                           | |         | |          
   / __ \\ _ __ ___  _ __ ___  _   _| | ___   __| |_ __ ___  
@@ -88,7 +88,7 @@ export function InitialMessage() {
             </pre>
 
             <div className="font-mono text-sm">
-                <div className="flex flex-row text-gray-500 gap-1">
+                <div className="flex flex-row text-gray-500 dark:text-neutral-400/90 gap-1">
                     <p>For a list of available commands, type</p> <p className="strong font-bold text-red-500">'help'</p>.
                 </div>
             </div>
@@ -101,11 +101,11 @@ export function FollowMessage() {
         <div>
             <div className="font-mono text-sm">
                 <div className="flex flex-row gap-1">
-                    <div className="text-blue-600 font-semibold">visitor@romulodm:~$&nbsp;</div>
-                    <div className="whitespace-nowrap font-semibold">{`follow`}</div>
+                    <div className="text-blue-600 font-semibold dark:text-sky-400">visitor@romulodm:~$&nbsp;</div>
+                    <div className="whitespace-nowrap font-semibold dark:text-white/80">{`follow`}</div>
 
                 </div>
-                <div className="text-gray-500">
+                <div className="text-gray-500 dark:text-neutral-400/90">
                     Loading socials message took 1337 ms.
                 </div>
 
@@ -126,14 +126,14 @@ export function WhoMessage() {
         <div>
             <div className="font-mono text-sm">
                 <div className="flex flex-row gap-1">
-                    <div className="text-blue-600 font-semibold">visitor@romulodm:~$&nbsp;</div>
-                    <div className="whitespace-nowrap font-semibold">{`who`}</div>
+                    <div className="text-blue-600 font-semibold dark:text-sky-400">visitor@romulodm:~$&nbsp;</div>
+                    <div className="whitespace-nowrap font-semibold dark:text-white/80">{`who`}</div>
 
                 </div>
-                <div className="text-gray-500">
+                <div className="text-gray-500 dark:text-neutral-400/90">
                     Loading this useless infos took 20 years.
                 </div>
-                <div className="text-gray-500 flex flex-row">
+                <div className="text-gray-500 dark:text-neutral-400/90 flex flex-row">
                 So... <br/>
                 I'm 20 years old, a mere student and technology enthusiast who likes 
                 to play games, read books and do some other nerdy things. 🤓
@@ -148,15 +148,15 @@ export function WhoamiMessage() {
         <div>
             <div className="font-mono text-sm">
                 <div className="flex flex-row gap-1">
-                    <div className="text-blue-600 font-semibold">visitor@romulodm:~$&nbsp;</div>
-                    <div className="whitespace-nowrap font-semibold">{`whoami`}</div>
+                    <div className="text-blue-600 font-semibold dark:text-sky-400">visitor@romulodm:~$&nbsp;</div>
+                    <div className="whitespace-nowrap font-semibold dark:text-white/80">{`whoami`}</div>
 
                 </div>
-                <div className="text-gray-500">
+                <div className="text-gray-500 dark:text-neutral-400/90">
                     Loading this pill took 2 ms.
                 </div>
 
-                <div className="text-gray-500 flex flex-row">
+                <div className="text-gray-500 dark:text-neutral-400/90 flex flex-row">
                 <br/>
                 “Life is not a mystery to be solved, but an experience to be lived.” 
                 <br/><br/>
@@ -185,14 +185,14 @@ export function CatsMessage() {
         <div>
             <div className="font-mono text-sm">
                 <div className="flex flex-row gap-1">
-                    <div className="text-blue-600 font-semibold">visitor@romulodm:~$&nbsp;</div>
-                    <div className="whitespace-nowrap font-semibold">{`cats`}</div>
+                    <div className="text-blue-600 font-semibold dark:text-sky-400">visitor@romulodm:~$&nbsp;</div>
+                    <div className="whitespace-nowrap font-semibold dark:text-white/80">{`cats`}</div>
                 </div>
-                <div className="text-gray-500">
+                <div className="text-gray-500 dark:text-neutral-400/90">
                     Loading follow message took 164 ms.
                 </div>
             </div>
-            <pre>
+            <pre className="dark:text-neutral-400">
 {`
    ,-.       _,---._ __   / \\         ,_    ,_ 
   /  )    .-'       \`./  /   \\        |\\_, -~/
@@ -217,10 +217,10 @@ export function InterMessage() {
         <div>
             <div className="font-mono text-sm">
                 <div className="flex flex-row gap-1">
-                    <div className="text-blue-600 font-semibold">visitor@romulodm:~$&nbsp;</div>
-                    <div className="whitespace-nowrap font-semibold">{`inter`}</div>
+                    <div className="text-blue-600 font-semibold dark:text-sky-400">visitor@romulodm:~$&nbsp;</div>
+                    <div className="whitespace-nowrap font-semibold dark:text-white/80">{`inter`}</div>
                 </div>
-                <div className="text-gray-500">
+                <div className="text-gray-500 dark:text-neutral-400/90">
                     Loading SC Iternacional logo took 1909 ms.
                 </div>
             </div>
@@ -256,10 +256,10 @@ export function SpotifyMessage() {
         <div>
             <div className="font-mono text-sm">
                 <div className="flex flex-row gap-1">
-                    <div className="text-blue-600 font-semibold">visitor@romulodm:~$&nbsp;</div>
-                    <div className="whitespace-nowrap font-semibold">{`spotify`}</div>
+                    <div className="text-blue-600 font-semibold dark:text-sky-400">visitor@romulodm:~$&nbsp;</div>
+                    <div className="whitespace-nowrap font-semibold dark:text-white/80">{`spotify`}</div>
                 </div>
-                <div className="text-gray-500">
+                <div className="text-gray-500 dark:text-neutral-400/90">
                     Loading this amazing playlist took 1337 ms.
                 </div>
                 
@@ -273,7 +273,7 @@ export function SpotifyMessage() {
                     allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
                     loading="lazy">
                 </iframe>
-                <div className="text-gray-500 pt-2">
+                <div className="text-gray-500 dark:text-neutral-400/90 pt-2">
                     Be careful with the volume too high and enjoy in moderation!
                 </div>
             </div>
@@ -288,13 +288,13 @@ export function SecretMessage() {
         <div>
             <div className="font-mono text-sm">
                 <div className="flex flex-row gap-1">
-                    <div className="text-blue-600 font-semibold">visitor@romulodm:~$&nbsp;</div>
-                    <div className="whitespace-nowrap font-semibold">{`secret`}</div>
+                    <div className="text-blue-600 font-semibold dark:text-sky-400">visitor@romulodm:~$&nbsp;</div>
+                    <div className="whitespace-nowrap font-semibold dark:text-white/80">{`secret`}</div>
                 </div>
-                <div className="text-gray-500">
+                <div className="text-gray-500 dark:text-neutral-400/90">
                     Loading this puzzle took 666 ms.
                 </div>
-                <div className="flex flex-col text-gray-500 ">
+                <div className="flex flex-col text-gray-500 dark:text-neutral-400/90">
                 <p className="flex flex-row gap-1">
                     To see the mysterious message you need to type 
                     <p className="strong font-bold text-red-500">secret --pass 'your try'</p>
@@ -314,13 +314,13 @@ export function SecretHintMessage() {
         <div>
             <div className="font-mono text-sm">
                 <div className="flex flex-row gap-1">
-                    <div className="text-blue-600 font-semibold">visitor@romulodm:~$&nbsp;</div>
-                    <div className="whitespace-nowrap font-semibold">{`secret --get_hint`}</div>
+                    <div className="text-blue-600 font-semibold dark:text-sky-400">visitor@romulodm:~$&nbsp;</div>
+                    <div className="whitespace-nowrap font-semibold dark:text-white/80">{`secret --get_hint`}</div>
                 </div>
-                <div className="text-gray-500">
+                <div className="text-gray-500 dark:text-neutral-400/90">
                     Come on man, these messages don't take time to get across...
                 </div>
-                <div className="text-gray-500">
+                <div className="text-gray-500 dark:text-neutral-400/90">
                     The hint is: it's a year 🤯 wow, awesome hint! One more, this year appears in a message here at the terminal...                
                 </div>
             </div>
@@ -334,10 +334,10 @@ export function SecretWrongMessage({ command }) {
         <div>
             <div className="font-mono text-sm">
                 <div className="flex flex-row gap-1">
-                    <div className="text-blue-600 font-semibold">visitor@romulodm:~$&nbsp;</div>
-                    <div className="whitespace-nowrap font-semibold">{command}</div>
+                    <div className="text-blue-600 font-semibold dark:text-sky-400">visitor@romulodm:~$&nbsp;</div>
+                    <div className="whitespace-nowrap font-semibold dark:text-white/80">{command}</div>
                 </div>
-                <div className="text-gray-500">
+                <div className="text-gray-500 dark:text-neutral-400/90">
                     This check it didn't take any time.
                 </div>
             </div>
@@ -351,10 +351,10 @@ export function SecretCorrectMessage({ command }) {
         <div>
             <div className="font-mono text-sm">
                 <div className="flex flex-row gap-1">
-                    <div className="text-blue-600 font-semibold">visitor@romulodm:~$&nbsp;</div>
-                    <div className="whitespace-nowrap font-semibold">{command}</div>
+                    <div className="text-blue-600 font-semibold dark:text-sky-400">visitor@romulodm:~$&nbsp;</div>
+                    <div className="whitespace-nowrap font-semibold dark:text-white/80">{command}</div>
                 </div>
-                <div className="text-gray-500">
+                <div className="text-gray-500 dark:text-neutral-400/90">
                     Correct! Your reward here: <a className="text-purple-400 underline" target="_blank" href={import.meta.env.VITE_TERMINAL_SECRET_REWARD}>reward</a>
                 </div>
             </div>
