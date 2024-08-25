@@ -42,7 +42,7 @@ export default function HeroWriter({
       {mainText},
       <span> </span>
       <br className="sm:hidden"/>
-      <p className="inset-0 z-50 bg-white dark:bg-neutral-950 text-blue-500 dark:text-blue-500/80" style={{ display: 'inline-block' }}>{currentWord}</p>
+      <p className="inset-0 z-50 bg-transparent text-blue-500 dark:text-blue-500/80" style={{ display: 'inline-block' }}>{currentWord}</p>
       
       <p ref={cursorRef} className="text-black dark:text-white" style={{ fontWeight: '200', display: 'inline-block' }}>|</p>
     </h1>
