@@ -1,15 +1,28 @@
-const availableCommands = {
-    "- help": "List of commands",
-    "- clear": "Clear terminal",
-    "- initial": "Display the header",
-    "- follow": "My social networks",
-    "- who": "Who is Romulo?",
-    "- whoami": "Who is you?",
-    "- cats": "Wonderful cat art",
-    "- inter": "The biggest football club in the world",
-    "- spotify": "One of my playlists",
-    "- secret": "Simple puzzle, what are the password?",
-};
+import { useTranslation } from "react-i18next";
+
+function Visitor(){
+    const { t } = useTranslation('terminal');
+
+    return(
+        <div className="text-blue-600 font-semibold dark:text-sky-400">{t('visitor')}@romulodm:~$&nbsp;</div>
+    )
+}
+
+function availableCommands(){
+    const { t } = useTranslation('terminal');
+    return {
+        "- help": t('commands.help'),
+        "- clear": t('commands.clear'),
+        "- initial": t('commands.initial'),
+        "- follow": t('commands.follow'),
+        "- who": t('commands.who'),
+        "- whoami": t('commands.whoam'),
+        "- cats": t('commands.cats'),
+        "- inter": t('commands.inter'),
+        "- spotify": t('commands.spotify'),
+        "- secret": t('commands.secret'),
+    }
+}
 
 export function DefaultMessage() {
     return(
@@ -22,38 +35,42 @@ export function DefaultMessage() {
 }
 
 export function UnknowMessage({ command }) {
+    const { t } = useTranslation('terminal');
+
     return (
         <div className="font-mono text-sm">
             <div className="flex flex-row gap-1">
-                <div className="text-blue-600 font-semibold dark:text-sky-400">visitor@romulodm:~$&nbsp;</div>
+                <Visitor/>
                 <div className="whitespace-nowrap font-bold dark:text-white/80">{command}</div>
             </div>
             <div className="flex flex-row text-gray-500 dark:text-neutral-400/90 gap-1">
-                <p>Command not found, type</p> <p className="strong font-bold text-red-500">'help'</p> for a list of commands.
+                <p>{t('not-found-first')}</p> <p className="strong font-bold text-red-500">'help'</p>{t('not-found-second')}
             </div>
         </div>
     );
 }
 
 export function HelpMessage() {
+    const { t } = useTranslation('terminal');
+
     return (
         <div>
             <div className="font-mono text-sm">
                 <div className="flex flex-row gap-1">
-                    <div className="text-blue-600 font-semibold dark:text-sky-400">visitor@romulodm:~$&nbsp;</div>
+                    <Visitor/>
                     <div className="whitespace-nowrap font-semibold dark:text-white/80">{`help`}</div>
                 </div>
                 <div className="text-gray-500 dark:text-neutral-400/90">
-                    Loading help message took 20 ms.
+                    {t('loadings.help')} 20 ms.
                 </div>
                 <div className="flex px-2 py-3">
                     <div className="w-32 pr-1">
-                        {Object.keys(availableCommands).map((command, index) => (
+                        {Object.keys(availableCommands()).map((command, index) => (
                             <p className="font-semibold text-red-500" key={index}>{command}</p>
                         ))}
                     </div>
                     <div>
-                        {Object.values(availableCommands).map((description, index) => (
+                        {Object.values(availableCommands()).map((description, index) => (
                             <p className="text-gray-500 dark:text-neutral-400/90" key={index}>{description}</p>
                         ))}
                     </div>
@@ -64,16 +81,18 @@ export function HelpMessage() {
 }
 
 export function InitialMessage() {
+    const { t } = useTranslation('terminal');
+
     return (
         <div>
             <div className="font-mono text-sm">
                 <div className="flex flex-row gap-1">
-                    <div className="text-blue-600 font-semibold dark:text-sky-400">visitor@romulodm:~$&nbsp;</div>
+                    <Visitor/>
                     <div className="whitespace-nowrap font-semibold dark:text-white/80">{`inital`}</div>
 
                 </div>
                 <div className="text-gray-500 dark:text-neutral-400/90">
-                    Loading follow message took 29 ms.
+                    {t('loadings.initial')} 29 ms.
                 </div>
             </div>
             <pre className="text-gray-600 dark:text-neutral-300">
@@ -89,7 +108,7 @@ export function InitialMessage() {
 
             <div className="font-mono text-sm">
                 <div className="flex flex-row text-gray-500 dark:text-neutral-400/90 gap-1">
-                    <p>For a list of available commands, type</p> <p className="strong font-bold text-red-500">'help'</p>.
+                    <p>{t('initial.content')}</p> <p className="strong font-bold text-red-500">'help'</p>.
                 </div>
             </div>
         </div>
@@ -97,19 +116,21 @@ export function InitialMessage() {
 }
 
 export function FollowMessage() {
+    const { t } = useTranslation('terminal');
+
     return (
         <div>
             <div className="font-mono text-sm">
                 <div className="flex flex-row gap-1">
-                    <div className="text-blue-600 font-semibold dark:text-sky-400">visitor@romulodm:~$&nbsp;</div>
+                    <Visitor/>
                     <div className="whitespace-nowrap font-semibold dark:text-white/80">{`follow`}</div>
 
                 </div>
                 <div className="text-gray-500 dark:text-neutral-400/90">
-                    Loading socials message took 1337 ms.
+                    {t('loadings.follow')} 1337 ms.
                 </div>
 
-                <div className="flex ml-5 flex-col text-purple-400 underline">
+                <div className="flex ml-5 w-fit flex-col text-purple-400 underline">
                     <a target="_blank" href="https://github.com/romulodm">- GitHub</a>
                     <a target="_blank" href="https://www.linkedin.com/in/romulo-de-moraes-918793258/">- LinkedIn</a>
                     <a target="_blank" href="https://steamcommunity.com/id/rdmzao/">- Steam</a>
@@ -122,21 +143,22 @@ export function FollowMessage() {
 }
 
 export function WhoMessage() {
+    const { t } = useTranslation('terminal');
+
     return (
         <div>
             <div className="font-mono text-sm">
                 <div className="flex flex-row gap-1">
-                    <div className="text-blue-600 font-semibold dark:text-sky-400">visitor@romulodm:~$&nbsp;</div>
+                    <Visitor/>
                     <div className="whitespace-nowrap font-semibold dark:text-white/80">{`who`}</div>
 
                 </div>
                 <div className="text-gray-500 dark:text-neutral-400/90">
-                    Loading this useless infos took 20 years.
+                    {t('loadings.who')} 20 {t('loadings.who-years')}.
                 </div>
-                <div className="text-gray-500 dark:text-neutral-400/90 flex flex-row">
-                So... <br/>
-                I'm 20 years old, a mere student and technology enthusiast who likes 
-                to play games, read books and do some other nerdy things. 🤓
+                <div className="text-gray-500 max-w-[30rem] dark:text-neutral-400/90 flex flex-row">
+                    {t('who.so')} <br/>
+                    {t('who.about')} 
                 </div>
             </div>
         </div>
@@ -144,36 +166,31 @@ export function WhoMessage() {
 }
 
 export function WhoamiMessage() {
+    const { t } = useTranslation('terminal');
+
     return (
         <div>
             <div className="font-mono text-sm">
                 <div className="flex flex-row gap-1">
-                    <div className="text-blue-600 font-semibold dark:text-sky-400">visitor@romulodm:~$&nbsp;</div>
+                    <Visitor/>
                     <div className="whitespace-nowrap font-semibold dark:text-white/80">{`whoami`}</div>
 
                 </div>
                 <div className="text-gray-500 dark:text-neutral-400/90">
-                    Loading this pill took 2 ms.
+                    {t('loadings.whoami')} 2 ms.
                 </div>
 
-                <div className="text-gray-500 dark:text-neutral-400/90 flex flex-row">
-                <br/>
-                “Life is not a mystery to be solved, but an experience to be lived.” 
-                <br/><br/>
-                I saw this phrase in the movie Dune and I thought about it a lot. 
-                I believe that we often <br/> make our insignificance a form of martyrdom and doubt,
-                when in fact things should be <br/>simpler than they really are.
-                <br/><br/>
-                You and I are not mere candidates for a place in heaven. If you always live thinking <br/> about
-                a future reward, you end up forgetting to live for today and forget who you are.
-                <br/><br/>
-                According to Jean-Paul Sartre, an existence precedes an essence. This means that<br/> 
-                human beings do not have a predetermined nature. You create your own nature through<br/> your 
-                actions and choices. Therefore, this question does not have a correct answer. The <br/>responsibilities
-                you assume and the choices you make throughout your life determine <br/>who you are.
-                <br/><br/>
-                Today you can be a programmer, a student, a professional... However, tomorrow you <br/>could be a 
-                totally different person, it all depends on you.       
+                <div className="text-gray-500 max-w-[25rem] text-justify dark:text-neutral-400/90 flex flex-row">
+                    <br/>
+                    {t('whoami.title')}
+                    <br/><br/>
+                    {t('whoami.paragraph1')}
+                    <br/><br/>
+                    {t('whoami.paragraph2')}
+                    <br/><br/>
+                    {t('whoami.paragraph3')}
+                    <br/><br/>
+                    {t('whoami.paragraph4')}
                 </div>
             </div>
         </div>
@@ -181,15 +198,17 @@ export function WhoamiMessage() {
 }
 
 export function CatsMessage() {
+    const { t } = useTranslation('terminal');
+
     return (
         <div>
             <div className="font-mono text-sm">
                 <div className="flex flex-row gap-1">
-                    <div className="text-blue-600 font-semibold dark:text-sky-400">visitor@romulodm:~$&nbsp;</div>
+                    <Visitor/>
                     <div className="whitespace-nowrap font-semibold dark:text-white/80">{`cats`}</div>
                 </div>
                 <div className="text-gray-500 dark:text-neutral-400/90">
-                    Loading follow message took 164 ms.
+                    {t('loadings.cats')} 164 ms.
                 </div>
             </div>
             <pre className="dark:text-neutral-400">
@@ -213,15 +232,17 @@ export function CatsMessage() {
 }
 
 export function InterMessage() {
+    const { t } = useTranslation('terminal');
+
     return (
         <div>
             <div className="font-mono text-sm">
                 <div className="flex flex-row gap-1">
-                    <div className="text-blue-600 font-semibold dark:text-sky-400">visitor@romulodm:~$&nbsp;</div>
+                    <Visitor/>
                     <div className="whitespace-nowrap font-semibold dark:text-white/80">{`inter`}</div>
                 </div>
                 <div className="text-gray-500 dark:text-neutral-400/90">
-                    Loading SC Iternacional logo took 1909 ms.
+                    {t('loadings.inter')} 1909 ms.
                 </div>
             </div>
             <pre className="bg-red-600 mt-2 mb-2 w-fit text-white">
@@ -248,6 +269,8 @@ export function InterMessage() {
 }
 
 export function SpotifyMessage() {
+    const { t } = useTranslation('terminal');
+
     const iframeStyle = {
         borderRadius: '0px'
     };
@@ -256,11 +279,11 @@ export function SpotifyMessage() {
         <div>
             <div className="font-mono text-sm">
                 <div className="flex flex-row gap-1">
-                    <div className="text-blue-600 font-semibold dark:text-sky-400">visitor@romulodm:~$&nbsp;</div>
+                    <Visitor/>
                     <div className="whitespace-nowrap font-semibold dark:text-white/80">{`spotify`}</div>
                 </div>
                 <div className="text-gray-500 dark:text-neutral-400/90">
-                    Loading this amazing playlist took 1337 ms.
+                    {t('loadings.spotify')} 1337 ms.
                 </div>
                 
             </div>
@@ -274,7 +297,7 @@ export function SpotifyMessage() {
                     loading="lazy">
                 </iframe>
                 <div className="text-gray-500 dark:text-neutral-400/90 pt-2">
-                    Be careful with the volume too high and enjoy in moderation!
+                    {t('spotify.alert')}
                 </div>
             </div>
 
@@ -284,24 +307,26 @@ export function SpotifyMessage() {
 
 
 export function SecretMessage() {
+    const { t } = useTranslation('terminal');
+
     return (
         <div>
             <div className="font-mono text-sm">
                 <div className="flex flex-row gap-1">
-                    <div className="text-blue-600 font-semibold dark:text-sky-400">visitor@romulodm:~$&nbsp;</div>
+                    <Visitor/>
                     <div className="whitespace-nowrap font-semibold dark:text-white/80">{`secret`}</div>
                 </div>
                 <div className="text-gray-500 dark:text-neutral-400/90">
-                    Loading this puzzle took 666 ms.
+                    {t('loadings.secret')} 666 ms.
                 </div>
                 <div className="flex flex-col text-gray-500 dark:text-neutral-400/90">
                 <p className="flex flex-row gap-1">
-                    To see the mysterious message you need to type 
-                    <p className="strong font-bold text-red-500">secret --pass 'your try'</p>
-                    , with your try being a four-digit number.
+                    {t('secret.how-fisrt')}
+                    <p className="strong font-bold text-red-500">secret --pass '{t('secret.how-try')}'</p>
+                    {t('secret.how-second')}
                 </p>
 
-                <p className="flex flex-row gap-1">To see a hint type <p className="strong font-bold text-red-500">'secret --get_hint'</p>.</p>
+                <p className="flex flex-row gap-1">{t('secret.how-hint')}<p className="strong font-bold text-red-500">'secret --get_hint'</p>.</p>
                 </div>
             </div>
             
@@ -310,18 +335,20 @@ export function SecretMessage() {
 }
 
 export function SecretHintMessage() {
+    const { t } = useTranslation('terminal');
+
     return (
         <div>
             <div className="font-mono text-sm">
                 <div className="flex flex-row gap-1">
-                    <div className="text-blue-600 font-semibold dark:text-sky-400">visitor@romulodm:~$&nbsp;</div>
+                    <Visitor/>
                     <div className="whitespace-nowrap font-semibold dark:text-white/80">{`secret --get_hint`}</div>
                 </div>
                 <div className="text-gray-500 dark:text-neutral-400/90">
-                    Come on man, these messages don't take time to get across...
+                    {t('secret.hint-time')} 
                 </div>
                 <div className="text-gray-500 dark:text-neutral-400/90">
-                    The hint is: it's a year 🤯 wow, awesome hint! One more, this year appears in a message here at the terminal...                
+                    {t('secret.hint')}              
                 </div>
             </div>
             
@@ -330,15 +357,17 @@ export function SecretHintMessage() {
 }
 
 export function SecretWrongMessage({ command }) {
+    const { t } = useTranslation('terminal');
+
     return (
         <div>
             <div className="font-mono text-sm">
                 <div className="flex flex-row gap-1">
-                    <div className="text-blue-600 font-semibold dark:text-sky-400">visitor@romulodm:~$&nbsp;</div>
+                    <Visitor/>
                     <div className="whitespace-nowrap font-semibold dark:text-white/80">{command}</div>
                 </div>
                 <div className="text-gray-500 dark:text-neutral-400/90">
-                    This check it didn't take any time.
+                    {t('secret.wrong')}
                 </div>
             </div>
             
@@ -347,15 +376,17 @@ export function SecretWrongMessage({ command }) {
 }
 
 export function SecretCorrectMessage({ command }) {
+    const { t } = useTranslation('terminal');
+
     return (
         <div>
             <div className="font-mono text-sm">
                 <div className="flex flex-row gap-1">
-                    <div className="text-blue-600 font-semibold dark:text-sky-400">visitor@romulodm:~$&nbsp;</div>
+                    <Visitor/>
                     <div className="whitespace-nowrap font-semibold dark:text-white/80">{command}</div>
                 </div>
                 <div className="text-gray-500 dark:text-neutral-400/90">
-                    Correct! Your reward here: <a className="text-purple-400 underline" target="_blank" href={import.meta.env.VITE_TERMINAL_SECRET_REWARD}>reward</a>
+                    {t('secret.reward')} <a className="text-purple-400 underline" target="_blank" href={import.meta.env.VITE_TERMINAL_SECRET_REWARD}>reward</a>
                 </div>
             </div>
             

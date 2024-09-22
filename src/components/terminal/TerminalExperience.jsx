@@ -1,7 +1,10 @@
+import { useTranslation } from "react-i18next";
 import Education from "../infos/Education";
 import Experience from "../infos/Experience";
 
 export default function TerminalExperience({ loadingTime }) {
+    const { t } = useTranslation('terminal');
+
     // Verificar se loadingTime é um número válido
     const parsedLoadingTime = parseFloat(loadingTime);
     const anotherTime = !isNaN(parsedLoadingTime) ? parsedLoadingTime / 2 + 3 : 0;
@@ -14,12 +17,12 @@ export default function TerminalExperience({ loadingTime }) {
                 </div>
                 <div className="flex flex-nowrap gap-1">
                     <div className="text-blue-600 font-semibold dark:text-sky-400">root@romulodm:~$&nbsp;</div>
-                    <div className="whitespace-nowrap font-semibold dark:text-white/80">{`romulo.exe --experience`}</div>
+                    <div className="whitespace-nowrap font-semibold dark:text-white/80">{`romulo.exe --${t('xp')}`}</div>
                 </div>
                 <div className="text-gray-500 dark:text-neutral-400/90">
-                    Lookin for experiences...
+                    {t('loading-xp-title')}
                     <br />
-                    Loading system experiences took {anotherTime} ms.
+                    {t('loading-xp')} {anotherTime} ms.
                 </div>
             </div>
 
@@ -30,12 +33,12 @@ export default function TerminalExperience({ loadingTime }) {
             <div className="font-mono text-sm">
                 <div className="flex flex-nowrap gap-1">
                 <div className="text-blue-600 font-semibold dark:text-sky-400">root@romulodm:~$&nbsp;</div>
-                    <div className="whitespace-nowrap font-semibold dark:text-white/80">{`romulo.exe --education`}</div>
+                    <div className="whitespace-nowrap font-semibold dark:text-white/80">{`romulo.exe --${t('education')}`}</div>
                 </div>
                 <div className="text-gray-500 dark:text-neutral-400/90">
-                    Lookin for education...
+                    {t('loading-education-title')}
                     <br />
-                    Loading system education took {loadingTime} ms.
+                    {t('loading-education')} {loadingTime} ms.
                 </div>
             </div>
 
