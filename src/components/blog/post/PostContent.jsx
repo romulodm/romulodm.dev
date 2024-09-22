@@ -49,6 +49,7 @@ const serializers = {
 export default function PostContent({content}) {
   return (
     <BlockContent
+      className="dark:text-neutral-400"
       serializers={serializers}
       blocks={content}
     />

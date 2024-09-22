@@ -8,21 +8,21 @@ export default function Infos() {
         <div className="flex w-full px-1 md:px-0 flex-row justify-between py-2">
             <div className="flex gap-7">
                 <div className="flex items-center justify-center flex-row group">
-                    <button className="flex flex-row items-center justify-center gap-1 hover:text-red-500">
+                    <button className="flex flex-row items-center justify-center gap-1 dark:text-neutral-300 hover:text-red-500">
                         <IoMdHeartEmpty className="text-md"/>
                         <div className="text-xs">0</div>
                     </button>
                 </div>
 
                 <div className="flex items-center justify-center flex-row">
-                    <button className="flex flex-row items-center justify-center gap-1 hover:text-blue-400">
+                    <button className="flex flex-row items-center justify-center gap-1 dark:text-neutral-300 hover:text-blue-400">
                         <GoComment className="text-md "/>
                         <div className="text-xs">0</div>
                     </button>
                 </div>
 
                 <div className="flex items-center justify-center flex-row">
-                    <div className="flex flex-row items-center justify-center gap-1 hover:text-green-500">
+                    <div className="flex flex-row items-center justify-center gap-1 dark:text-neutral-300 hover:text-green-500">
                         <IoEyeOutline className="text-lg"/>
                         <div className="text-xs">0</div>
                     </div>
@@ -31,7 +31,7 @@ export default function Infos() {
 
             <div className="flex gap-7">
                 <div className="flex items-center justify-center flex-row">
-                    <div className="flex flex-row items-center justify-center  gap-1 hover:text-[#00acee]">
+                    <div className="flex flex-row items-center justify-center gap-1 dark:text-neutral-200 hover:text-[#00acee]">
                         <CiTwitter className="text-lg"/>
                     </div>
                 </div>

@@ -12,9 +12,9 @@ moment.locale('pt-br')
 
 export default function Post(props){
     return(
-        <div className="flex w-full flex-col md:border rounded border-gray-200 overflow-hidden">
+        <div className="flex w-full flex-col  overflow-hidden">
             <div className="w-full">
-                <div className="p-2 md:p-5 w-full bg-white">
+                <div className="p-2 md:p-5 w-full rounded border bg-white dark:bg-neutral-900 dark:border-neutral-800">
                     <img
                         className="w-full mb-3 h-72 rounded-lg"
                         src={props.post.titleImage}
@@ -28,8 +28,8 @@ export default function Post(props){
                                 alt="avatar"
                                 />
                             <div className="flex flex-col">
-                                <div className="font-bold">{props.post.author.name}</div>
-                                <div className="text-sm text-gray-600">
+                                <div className="font-bold dark:text-neutral-300">{props.post.author.name}</div>
+                                <div className="text-sm text-gray-600 dark:text-neutral-400">
                                     {moment(props.post.createdAt).format('LL')}
                                 </div>
                             </div>
@@ -39,7 +39,7 @@ export default function Post(props){
                             {props.post.categories.map((item, index) => (
                                 <div
                                 key={index}
-                                className="bg-blue-100 text-blue-900 text-sm font-medium flex items-center gap-1 px-[2.5px] py-1 rounded"
+                                className="bg-blue-100 dark:bg-sky-950/60 text-blue-900 dark:text-neutral-200 text-sm font-medium flex items-center gap-1 px-[2.5px] py-1 rounded"
                                 >
                                     <IoMdPricetag />
                                     {item}
@@ -48,14 +48,15 @@ export default function Post(props){
                         </div>
                     </p>
 
-                    <hr className="mt-3 mb-3" />
-                    <Infos/>
-                    <hr className="mt-3 mb-3" />
-
-                    <h1 className="text-3xl font-bold">{props.post.title}</h1>
-                    <h2 className="blog-detail-header-subtitle mb-3">
+                    <h1 className="text-3xl font-bold mt-3 dark:text-neutral-200">{props.post.title}</h1>
+                    <h2 className="blog-detail-header-subtitle mb-3 dark:text-neutral-400">
                         {props.post.smallDescription}
                     </h2>
+
+                    <div className="mt-3 mb-3 h-[1px] bg-neutral-200 dark:bg-neutral-600" />
+                    <Infos/>
+                    <div className="mt-3 mb-3 h-[1px] bg-neutral-200 dark:bg-neutral-600" />
+
                     
                     <PostContent content={props.post.content} />
                 </div>

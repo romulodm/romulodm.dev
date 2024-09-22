@@ -29,7 +29,7 @@ export default function BlogCard({author, language, title, titleImage, smallDesc
 
             <div className="flex w-full gap-x-1.5 py-2 mt-1">
                 {categories.map((item, index) => (
-                    <div key={index} className="bg-blue-100 dark:bg-sky-950/60 text-blue-900 dark:text-neutral-400 text-sm font-medium flex items-center gap-1 px-[2.5px] py-1 rounded">
+                    <div key={index} className="bg-blue-100 dark:bg-sky-950/60 text-blue-900 dark:text-neutral-200 text-sm font-medium flex items-center gap-1 px-[2.5px] py-1 rounded">
                             <IoMdPricetag />
                             {item}
                     </div>
