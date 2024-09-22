@@ -23,5 +23,7 @@
         "content": "Mande uma sugestão sobre algum assunto da área.",
         "btn": "Enviar sugestão",
         "privacy": "Política de privacidade"
-    }
+    },
+    "not-found-title": "Bem, isso não deveria acontecer...",
+    "not-found-content": "Não encontrei nenhuma postagem que corresponda aos seus critérios de pesquisa. Tente pesquisar por títulos ou temas..."
 }
