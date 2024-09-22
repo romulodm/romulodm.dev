@@ -7,13 +7,7 @@ const apiRequest = axios.create({
 });
 
 export async function getGitHubProjects() {
-    const response = await apiRequest.get(`/repos`, {
-        headers: {
-            'Authorization': `token ${GITHUB_TOKEN}`
-        }
-    });
-
-    return response.data;
+    return await apiRequest.get(`/repos`);
 }
 
 function transformGitHubRepoToProject(repo) {
