@@ -9,12 +9,26 @@ i18n
   .use(initReactI18next)
   .init({
     returnEmptyString: false,
-    debug: true,
-    fallbackLng: 'en',
+    debug: false,
+    fallbackLng: 'en-US',
     interpolation: {
       escapeValue: false,
     },
-    ns: ['blog', 'contact', 'home', 'footer', 'hero', 'home', 'resume'],
+    ns: [
+      '404', 
+      'announcement',
+      'auth', 
+      'blog', 
+      'contact', 
+      'footer', 
+      'hero', 
+      'home', 
+      'navigation',
+      'post',
+      'resume',
+      'terminal',
+      'vision' 
+    ],
     defaultNS: 'blog',
     backend: {
       loadPath: '/locales/{{lng}}/{{ns}}.json',
