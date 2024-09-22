@@ -1,20 +1,34 @@
 import { useState, useEffect } from 'react';
-import { getAllBlogs } from '../data/sanity/api';
+import { MdFindReplace } from "react-icons/md";
+import { useTranslation } from 'react-i18next';
+
 import Title from '../components/Title';
+import Carousel from '../components/blog/carousel/Carousel';
 import FilteringMenu from '../components/blog/FilteringMenu';
 import BlogCard from '../components/blog/BlogCard';
 import BlogCardSkeleton from '../components/blog/BlogCardSkeleton';
-import { useTranslation } from 'react-i18next';
+import { FaRegFaceGrinBeamSweat } from "react-icons/fa6";
+
+import { getAllBlogs } from '../data/sanity/api';
+
 import moment from 'moment';
 import 'moment/dist/locale/pt-br';
-import Carousel from '../components/blog/carousel/Carousel';
 moment.locale('pt-br');
 
 const NoResults = () => {
+  const { t } = useTranslation('blog')
   return (
-    <div>
-      <h2>Nenhum resultado encontrado</h2>
-      <p>Tente ajustar sua busca ou adicionar novos filtros.</p>
+    <div className="flex w-full items-center justify-center py-5 px-2 border dark:border-neutral-600">
+      
+      <div className="w-full max-w-xl flex flex-row gap-5 items-center">
+        <FaRegFaceGrinBeamSweat className="w-32 h-full text-gray-300 dark:text-neutral-800"/>
+        
+        <div className="flex flex-col">
+          <p className="font-bold md:text-3xl text-xl sm:text-2xl dark:text-neutral-300">{t('not-found-title')}</p>
+          <p className="text-sm md:text-md text-gray-600 dark:text-neutral-600">{t('not-found-content')}</p>
+        </div>
+      </div>
+  
     </div>
   );
 };
@@ -24,19 +38,24 @@ export const BlogList = ({ data = [] }) => {
     return <NoResults/>
   }
   
-  return data.map(blog => (
-    <BlogCard
-      key={blog.slug}
-      author={blog.author}
-      language={blog.language}
-      title={blog.title}
-      titleImage={blog.titleImage}
-      smallDescription={blog.smallDescription}
-      categories={blog.categories}
-      date={moment(blog.createdAt).fromNow()}
-      slug={blog.slug}
-    />
-  ));
+  return(
+    <div className="w-full grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-3 mb-3.5">
+      {data.map(blog => (
+        <BlogCard
+          key={blog.slug}
+          author={blog.author}
+          language={blog.language}
+          title={blog.title}
+          titleImage={blog.titleImage}
+          smallDescription={blog.smallDescription}
+          categories={blog.categories}
+          date={moment(blog.createdAt).fromNow()}
+          slug={blog.slug}
+        />
+      ))}
+    </div>
+  )
+  
 };
 
 
@@ -100,9 +119,7 @@ export default function Blog() {
               ))}
             </div>
           ) : (
-            <div className="w-full grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-3 mb-3.5">
-              <BlogList data={filteredBlogs} />
-            </div>
+            <BlogList data={filteredBlogs} />
           )}
         </div>
       </div>

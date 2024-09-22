@@ -23,5 +23,7 @@
         "content": "Send a suggestion about a topic in the field.",
         "btn": "Submit suggestion",
         "privacy": "Privacy Policy"
-    }
+    },
+    "not-found-title": "Well, that shouldn't happen...",
+    "not-found-content": "I didn't find any posts that match your search criteria. Try searching by titles or themes..."
 }
