@@ -19,6 +19,7 @@ import TerminalExperience from '../components/terminal/TerminalExperience';
 export default function Home() {
     const { t } = useTranslation('home');
 
+
     return (
     <>
         <Title text={t('page-title')} />
