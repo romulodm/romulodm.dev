@@ -20,6 +20,8 @@ class ErrorBoundary extends Component {
           <div className="text-center">
             <h1 className="font-black text-gray-200 dark:text-neutral-800 text-9xl">{t('error')}</h1>
 
+            <div className="fixed z-50 bottom-[69px] sm:bottom-5 right-[5px] sm:right-5 w-10 h-10 rounded-full bg-white dark:bg-neutral-950 flex justify-center items-center"/>
+
             <p className="text-2xl font-bold tracking-tight text-gray-900 dark:text-neutral-600 sm:text-4xl">
               Uhh!
             </p>
