@@ -47,13 +47,13 @@ const mainProjects = [
         extraLanguages: []
     },
     {
-        name: '2048',
+        name: 'git-minicourse-saicc',
         extraLanguages: []
     },
     {
-        name: 'git-minicurso-saicc',
+        name: '2048',
         extraLanguages: []
-    }
+    },
 ];
 
 export async function getMainProjects() {
