@@ -6,7 +6,7 @@ export default function BlogCard({author, language, title, titleImage, smallDesc
     const { t } = useTranslation('blog')
     
     return (
-        <article className="p-6 bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-600">
+        <article className="p-6 bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700">
             <div className="flex justify-between items-center mb-5 text-gray-500">
                 <span className="bg-blue-100 dark:bg-sky-950/60 text-blue-900 dark:text-neutral-400 text-sm font-medium flex items-center gap-1 px-1.5 py-0.5 rounded">
                         <img className="w-6 h-4 rounded object-cover" src={`./${language.code}.svg`} alt={language.code} />
@@ -46,7 +46,7 @@ export default function BlogCard({author, language, title, titleImage, smallDesc
 
             <div className="flex justify-between items-center">
                 <div className="flex items-center space-x-1.5">
-                    <img className="w-7 h-7 rounded-full object-cover" src={author?.image} alt="Author avatar." />
+                    <img className="w-12 h-12 rounded-full object-cover" src={author?.image} alt="Author avatar." />
                     <p className="font-medium dark:text-neutral-300">
                         {author?.name}
                     </p>

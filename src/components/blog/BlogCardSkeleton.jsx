@@ -1,6 +1,6 @@
 export default function BlogCardSkeleton() {
     return(  
-        <div className="p-6 bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-600 animate-pulse">
+        <div className="p-6 bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700 animate-pulse">
             <div className="flex items-center justify-between mb-6">
                 <div className="h-4 bg-gray-300 dark:bg-neutral-700 rounded w-40"></div>
                 <div className="h-2.5 bg-gray-300 dark:bg-neutral-700 rounded-full w-14"></div>
@@ -11,19 +11,27 @@ export default function BlogCardSkeleton() {
                     <path d="M5 5V.13a2.96 2.96 0 0 0-1.293.749L.879 3.707A2.98 2.98 0 0 0 .13 5H5Z"/>
                 </svg>
             </div>
-            <div className="h-4 bg-gray-300 dark:bg-neutral-700 rounded w-48 mb-4"></div>
-            <div className="h-2 bg-gray-300 dark:bg-neutral-700 rounded-full mb-2.5"></div>
-            <div className="h-2 bg-gray-300 dark:bg-neutral-700 rounded-full"></div>
+            
+            <div className="flex items-center gap-4">
+                <div className="h-4 bg-gray-300 dark:bg-neutral-700 rounded w-12 mb-4"/>
+                <div className="h-4 bg-gray-300 dark:bg-neutral-700 rounded w-28 mb-4"/>
+            </div>
+            <div className="h-4 bg-gray-300 dark:bg-neutral-700 rounded max-w-72 mb-4"/>
+
+            <div className="h-2 bg-gray-300 dark:bg-neutral-700 rounded-full mb-2.5"/>
+            <div className="h-2  bg-gray-300 dark:bg-neutral-700 rounded-full mb-2.5"/>
+            <div className="h-2 max-w-72 bg-gray-300 dark:bg-neutral-700 rounded-full"/>
+
             <div className="flex justify-between items-center mt-4">
                 <div className="flex items-center">
-                    <svg className="w-10 h-10 me-3 text-gray-300 dark:text-gray-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-12 h-12 me-3 text-gray-300 dark:text-neutral-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M10 0a10 10 0 1 0 10 10A10.011 10.011 0 0 0 10 0Zm0 5a3 3 0 1 1 0 6 3 3 0 0 1 0-6Zm0 13a8.949 8.949 0 0 1-4.951-1.488A3.987 3.987 0 0 1 9 13h2a3.987 3.987 0 0 1 3.951 3.512A8.949 8.949 0 0 1 10 18Z"/>
                     </svg>
                     
                     <div className="h-2.5 bg-gray-300 dark:bg-neutral-700 rounded-full w-20"></div>
                 </div>
                 
-                <div className="h-2.5 bg-gray-300 dark:bg-neutral-700 rounded-full w-20"></div>
+                <div className="h-12 w-28 bg-gray-300 dark:bg-neutral-700 rounded"></div>
             </div>
             
             <span className="sr-only">Loading...</span>
