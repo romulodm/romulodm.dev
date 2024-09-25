@@ -13,7 +13,7 @@ const DefaultLayout = () => {
                     <Sidebar />
                 </div>
                 
-                <div className="hidden sm:block lg:hidden">
+                <div className="hidden md:block lg:hidden">
                     <Navbar />
                 </div>
 
@@ -24,7 +24,7 @@ const DefaultLayout = () => {
                     </div>
                 </main>
 
-                <div className="block sm:hidden">
+                <div className="block md:hidden">
                     <Mobilebar />
                 </div>
             </div>
