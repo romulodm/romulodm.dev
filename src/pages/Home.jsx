@@ -13,8 +13,8 @@ import Terminal from '../components/terminal/Terminal';
 import Timeline from '../components/timeline/Timeline';
 import Projects from '../components/sections/Projects';
 import Contact from '../components/sections/Contact';
-import Footer from '../components/Footer';
 import TerminalExperience from '../components/terminal/TerminalExperience';
+import Footer from '../components/Footer';
 
 export default function Home() {
     const { t } = useTranslation('home');
@@ -160,9 +160,8 @@ export default function Home() {
                     <Contact/>
 
                 </div>
-
-
-                <Footer/>
+                
+                <Footer showHand={true}/>
 
             </div>
         </div>
