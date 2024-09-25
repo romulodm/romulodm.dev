@@ -5,7 +5,8 @@
     "filter": {
         "search": "Search post",
         "random": "Random post",
-        "filter": "Filter posts"
+        "filter": "Filter posts",
+        "filter-all": "All"
     },
     "newsletter": {
         "title": "Want receive new posts?",

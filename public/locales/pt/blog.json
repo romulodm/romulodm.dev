@@ -5,7 +5,8 @@
     "filter": {
         "search": "Buscar postagem",
         "random": "Postagem aleatória",
-        "filter": "Filtar postagens"
+        "filter": "Filtrar postagens",
+        "filter-all": "Todas"
     },
     "newsletter": {
         "title": "Quer receber as novas postagens?",
