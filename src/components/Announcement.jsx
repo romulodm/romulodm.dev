@@ -12,14 +12,14 @@ export default function Announcement(){
     }
 
     return (
-        <div className="bg-sky-500 dark:bg-[#2f3031] mt-0 lg:mb-[-20px] lg:mt-10 md:mt-14 text-white flex items-center justify-center h- relative">
-            <p className="uppercase text-xs tracking-widest text-center px-4 py-3">
+        <div className="bg-sky-500 dark:bg-[#2f3031] mt-0 lg:mb-[-20px] lg:mt-10 md:mt-14 text-white flex  items-center justify-between sm:justify-center relative">
+            <p className="uppercase text-xs tracking-wider sm:tracking-widest text-center px-3 sm:px-4 py-3">
                 {t('content')}
             </p>
 
             <button 
                 onClick={() => setIsVisible(false)} 
-                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-white text-lg"
+                className="absolute right-3 sm:right-4 top-1/2 transform -translate-y-1/2 text-white text-lg"
             >
                 <IoClose />
             </button>
