@@ -22,7 +22,6 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-
   function login(userData) {
     console.log(userData.user)
     setUser(userData.user);
@@ -44,11 +43,11 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout, handleUser }}>
         {children}
-        <div 
+        <div
           onClick={handleUser}
-          className="fixed bottom-[69px] sm:bottom-5 right-[5px] sm:right-5 w-10 h-10 rounded-full bg-gray-300 dark:bg-[#2f3031] flex justify-center items-center cursor-pointer"
+          className="fixed hidden lg:flex bottom-[69px] sm:bottom-5 right-[5px] sm:right-5 w-10 h-10 rounded-full bg-gray-300 dark:bg-[#2f3031] flex justify-center items-center cursor-pointer"
         >
             {user ? (
               <img src={user.picture} alt="User" className="rounded-full w-full h-full" />

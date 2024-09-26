@@ -19,7 +19,7 @@ export default function Mobilebar() {
     const activeClassName = "gap-1 inline-flex flex-col items-center justify-center px-5 group text-blue-600 dark:text-blue-500"
 
     return (
-    <div className="fixed bottom-0 left-0 z-50 w-full h-16 bg-white/80 backdrop-blur-md border-t border-t border-gray-200 dark:bg-gray-950/80 dark:border-gray-600">
+    <div className="fixed bottom-0 left-0 z-50 w-full h-16 bg-white/80 backdrop-blur-md border-t border-t border-gray-200 dark:bg-gray-950/80 dark:border-neutral-700">
         <nav className="grid h-full max-w-lg grid-cols-4 mx-auto font-medium">
             <NavLink to="/home" className={actualRoute === "home" ? activeClassName : defaultClassName}>
                 <HomeOutlinedIcon/>
@@ -56,7 +56,6 @@ export default function Mobilebar() {
                 <CommentBankOutlinedIcon/>
                 <span className="text-xs">Blog</span>
             </NavLink>
-
 
         </nav>
     </div>
