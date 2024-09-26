@@ -12,9 +12,9 @@ moment.locale('pt-br')
 
 export default function Post(props){
     return(
-        <div className="flex w-full flex-col  overflow-hidden">
+        <div className="flex w-full flex-col overflow-hidden">
             <div className="w-full">
-                <div className="p-2 md:p-5 w-full rounded border bg-white dark:bg-neutral-900 dark:border-neutral-800">
+                <div className="p-2 md:p-5 w-full md:rounded md:border bg-white dark:bg-neutral-900 dark:border-neutral-800">
                     <img
                         className="w-full mb-3 h-72 rounded-lg"
                         src={props.post.titleImage}
