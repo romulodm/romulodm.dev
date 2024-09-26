@@ -7,7 +7,7 @@ export default function ThemeSelector() {
     const { darkThemeActive, setLightMode, setDarkMode } = useContext(ThemeContext);
 
     return (
-        <div className="h-full flex items-center dark:text-white">
+        <div className="h-full flex items-center">
             {darkThemeActive() ? (
                 <button onClick={setLightMode} className="flex flex-col text-xs items-center justify-center rounded-md transition-all duration-300">
                     <DarkModeOutlinedIcon style={{ transition: 'transform 0.3s ease-in-out', transform: 'rotate(360deg)' }}/>

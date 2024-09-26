@@ -15,7 +15,7 @@ export default function Mobilebar() {
     const [showTooltip, setShowTooltip] = useState(false);
 
     const actualRoute = getActualRoute();
-    const defaultClassName = "gap-1 inline-flex flex-col items-center justify-center px-5 group text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-500"
+    const defaultClassName = "gap-1 inline-flex flex-col items-center justify-center px-5 group text-gray-600 dark:text-neutral-400 hover:text-blue-600 dark:hover:text-blue-500"
     const activeClassName = "gap-1 inline-flex flex-col items-center justify-center px-5 group text-blue-600 dark:text-blue-500"
 
     return (
@@ -34,7 +34,7 @@ export default function Mobilebar() {
             { showTooltip ? (
                 <MobilebarTooltip position="bottom" onClose={() => setShowTooltip(false)}>
                     <button 
-                        className="gap-1 inline-flex flex-col items-center justify-center px-5 group text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-500"
+                        className="gap-1 inline-flex flex-col items-center justify-center px-5 group text-gray-600 dark:text-neutral-400 hover:text-blue-600 dark:hover:text-blue-500"
                         onClick={() => setShowTooltip(false)}
                     >
                         <SettingsOutlinedIcon/>
@@ -43,7 +43,7 @@ export default function Mobilebar() {
                 </MobilebarTooltip>
             ) : (
                 <button 
-                    className="gap-1 inline-flex flex-col items-center justify-center px-5 group text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-500"
+                    className="gap-1 inline-flex flex-col items-center justify-center px-5 group text-gray-600 dark:text-neutral-400 hover:text-blue-600 dark:hover:text-blue-500"
                     onClick={() => setShowTooltip(true)}
                 >
                     <SettingsOutlinedIcon/>

@@ -77,13 +77,13 @@ export default function Navbar() {
                         {user ? (
                             <img src={user.picture} alt="User" className="rounded-full w-6 h-6" />
                         ) : (
-                            <PersonOutlineOutlinedIcon className="text-gray-700 dark:text-white"/>
+                            <PersonOutlineOutlinedIcon className="text-gray-700 dark:text-neutral-400"/>
                         )}
                     </div>
                 </ItemTooltip>
 
                 <ItemTooltip title={t('theme')} placement="bottom">
-                    <div className="flex-col justify-center items-center px-4 py-3 text-gray-700 rounded-lg">
+                    <div className="flex-col justify-center items-center px-4 py-3 text-gray-700 dark:text-neutral-400 rounded-lg">
                         <ThemeSelector /> 
                     </div>
                 </ItemTooltip>
