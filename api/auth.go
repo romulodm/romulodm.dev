@@ -1,7 +1,9 @@
 package api
 
 import (
+	"context"
 	"database/sql"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -99,7 +101,7 @@ func (server *Server) googleAuth(ctx *gin.Context) {
 			EmailVerified: user.EmailVerified,
 			Name:          user.Name,
 			FullName:      user.FullName,
-			Picture:       user.Picture,
+			Picture:       req.Picture,
 			Admin:         user.Admin,
 			CreatedAt:     user.CreatedAt,
 			UpdatedAt:     user.UpdatedAt,
@@ -107,4 +109,20 @@ func (server *Server) googleAuth(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, rsp)
+
+	if user.Picture != req.Picture {
+		go func() {
+			arg := db.UpdateUserPictureParams{
+				ID:      user.ID,
+				Picture: req.Picture,
+			}
+
+			updateCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+			defer cancel()
+
+			if err := server.store.UpdateUserPicture(updateCtx, arg); err != nil {
+				fmt.Println("Failed to update user picture: ", err)
+			}
+		}()
+	}
 }

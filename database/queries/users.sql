@@ -18,6 +18,12 @@ INSERT INTO users (email, sub, email_verified, name, full_name, picture)
 VALUES ($1, $2, $3, $4, $5, $6)
 RETURNING *;
 
+-- name: UpdateUserPicture :exec
+UPDATE users
+SET picture = $2, updated_at = NOW()
+WHERE id = $1
+RETURNING *;
+
 -- name: UpdateAdminById :exec
 UPDATE users
 SET admin = $2, updated_at = NOW()
