@@ -58,7 +58,7 @@ export default function Hero() {
 
   return (
     <div className="flex flex-col items-center justify-center mb-2">
-      <div className="responsive-content sm:pt-10 lg:pt-6 mx-auto text-center">
+      <div className="responsive-content md:pt-12 lg:pt-8 mx-auto text-center">
         
         <HeroWriter
           key={key}
