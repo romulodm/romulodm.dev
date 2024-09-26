@@ -33,7 +33,7 @@ export default function Footer({ showHand = false }: { showHand: boolean }) {
             </div>
         )}
 
-        <footer className="w-full sm:mb-16 z-50 bg-white dark:bg-[#09090b] flex gap-7 py-10 border-t dark:border-neutral-700 justify-between w-full items-center text-gray-400 dark:text-neutral-500 text-center text-sm">
+        <footer className="w-full sm:mb-16 md:mb-0 z-50 bg-white dark:bg-[#09090b] flex gap-7 py-10 border-t dark:border-neutral-700 justify-between w-full items-center text-gray-400 dark:text-neutral-500 text-center text-sm">
             
             <div className="text-xs sm:text-[.87rem] flex flex-row dark:font-semibold">
                 <p>© 2024 Romulo de Moraes, {t('rights')}</p>
