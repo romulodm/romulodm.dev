@@ -18,12 +18,12 @@ moment.locale('pt-br');
 const NoResults = () => {
   const { t } = useTranslation('blog');
   return (
-    <div className="flex w-full items-center justify-center py-5 px-2 border dark:border-neutral-600">
+    <div className="flex mb-3 w-full items-center justify-center py-5 px-2 border dark:border-neutral-700">
       <div className="w-full max-w-xl flex flex-row gap-5 items-center">
         <FaRegFaceGrinBeamSweat className="w-32 h-full text-gray-300 dark:text-neutral-800"/>
         <div className="flex flex-col">
           <p className="font-bold md:text-3xl text-xl sm:text-2xl dark:text-neutral-300">{t('not-found-title')}</p>
-          <p className="text-sm md:text-md text-gray-600 dark:text-neutral-600">{t('not-found-content')}</p>
+          <p className="text-sm md:text-md text-gray-600 dark:text-neutral-500">{t('not-found-content')}</p>
         </div>
       </div>
     </div>

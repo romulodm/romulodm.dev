@@ -19,8 +19,8 @@ const links = [
 
 export default function Extras(){
     return(
-        <div className="flex flex-col gap-3 w-full md:w-72 lg:mr-3">
-            <div className="w-full bg-gray-50 border rounded border-gray-200 dark:bg-neutral-900 dark:border-neutral-800 px-3 py-3.5">
+        <div className="flex flex-col gap-3 w-full lg:w-72 lg:mr-3">
+            <div className="w-full md:border md:rounded border-gray-200 md:dark:bg-neutral-900 dark:border-neutral-800 px-3 py-3.5">
                 <div className="w-full justify-center dark:text-neutral-200 pb-3">
                     Tem alguma sugestão de postagem?
                 </div>
@@ -30,7 +30,7 @@ export default function Extras(){
                 </button>
             </div>
 
-            <div className="w-full bg-gray-50 border rounded border-gray-200 dark:bg-neutral-900 dark:border-neutral-800 px-3 py-4">
+            <div className="w-full md:border md:rounded border-gray-200 md:dark:bg-neutral-900 dark:border-neutral-800 px-3 py-3.5">
                 <div className="w-full justify-center dark:text-neutral-200 pb-3">
                     Tem alguma sugestão de postagem?
                 </div>

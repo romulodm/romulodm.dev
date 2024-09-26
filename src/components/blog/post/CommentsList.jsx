@@ -8,7 +8,7 @@ import { useTranslation } from "react-i18next";
 export default function CommentsList({ data = [] }) {
     const { t } = useTranslation('post')
     return (
-    <div className="bg-white dark:bg-neutral-900 dark:border-neutral-800 py-5 md:border rounded lg:mb-4">
+    <div className=" md:dark:bg-neutral-900 dark:border-neutral-800 md:py-5 md:border rounded lg:mb-4">
         <div className="p-2 md:p-5">
             <div className="flex justify-between items-center mb-6">
                 <h2 className="text-lg lg:text-2xl font-bold text-gray-900 dark:text-white/90">{t('comment-title')}</h2>
