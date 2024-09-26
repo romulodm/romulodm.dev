@@ -20,13 +20,13 @@ export default function Experience() {
                         color="neutral"
                         variant="soft"
                         size="2xl"
-                        className="border rounded-md w-12 h-12"
+                        className="border dark:border-neutral-700 rounded-md w-12 h-12"
                         src={item.icon}
                     />
                 </div>
 
                 <div className="flex flex-col">
-                    <div className="flex flex-rol gap-1 items-center">
+                    <div className="flex pt-[1px] flex-rol gap-1 items-center">
                         <a
                             href={item.url}
                             className="text-md text-neutral-950 dark:text-neutral-100 font-medium hover:underline"
