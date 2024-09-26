@@ -3,6 +3,7 @@ import { LiaRandomSolid } from 'react-icons/lia';
 import * as Popover from '@radix-ui/react-popover';
 import { useRef, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 
 export default function FilteringMenu({ onChange, filter, blogs }) {
   const { t } = useTranslation('blog');
@@ -28,7 +29,6 @@ export default function FilteringMenu({ onChange, filter, blogs }) {
   const allBlogsCount = blogs.length;
 
   const [search, setSearch] = useState(filter.search || '');
-  const [language, setLanguage] = useState(filter.language || 'all');
   
   const handleSearchChange = (e) => {
     setSearch(e.target.value);
@@ -38,7 +38,15 @@ export default function FilteringMenu({ onChange, filter, blogs }) {
   const handleThemeChange = (theme) => {
     setTheme(theme);
     onChange({ ...filter, theme });
-    setIsPopoverOpen(false); // Fecha o Popover após selecionar um tema
+    setIsPopoverOpen(false);
+  };
+
+  const getRandomSlug = () => {
+    if (blogs.length > 0) {
+      const randomIndex = Math.floor(Math.random() * blogs.length);
+      return blogs[randomIndex].slug.current;
+    }
+    return null;
   };
 
   return (
@@ -56,10 +64,12 @@ export default function FilteringMenu({ onChange, filter, blogs }) {
         />
       </div>
 
-      <button className="mt-1 px-4 py-2 border-0 w-full bg-blue-900 dark:bg-sky-800 flex items-center gap-2 text-white focus:ring-neutral-500 focus:border-neutral-500">
+      <Link to={'/blog/post/' + getRandomSlug()}
+        className="mt-1 px-4 py-2 border-0 w-full bg-blue-900 dark:bg-sky-800 flex items-center gap-2 text-white focus:ring-neutral-500 focus:border-neutral-500"
+      >
         <LiaRandomSolid />
         {t('filter.random')}
-      </button>
+      </Link>
 
       <Popover.Root open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
         <Popover.Trigger asChild>
