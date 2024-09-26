@@ -41,7 +41,7 @@ export default function Sidebar() {
       className="fixed top-0 left-0 h-screen w-fit px-2 border-r border-y-0 dark:border-neutral-800 bg-white/70 dark:bg-[#09090b]/90 backdrop-blur-md z-75 flex flex-col justify-between gap-5"
     >
       <div className="flex flex-col flex-1 justify-between">
-        <div className="flex justify-center items-center px-4 py-5 text-gray-700 dark:text-white/70 rounded-lg">
+        <div className="flex justify-center items-center px-4 py-5 text-neutral-700 dark:text-white/70 rounded-lg">
           <NavLink to="/home">
             <LogoDevOutlinedIcon />
           </NavLink>
@@ -89,7 +89,7 @@ export default function Sidebar() {
 
         <div className="flex flex-col py-5 gap-5">
           <ItemTooltip title={t('theme')} placement="right">
-            <div className="flex justify-center items-center px-4 py-3 rounded-lg">
+            <div className="flex justify-center items-center px-4 py-3 rounded-lg dark:text-white">
               <ThemeSelector />
             </div>
           </ItemTooltip>
