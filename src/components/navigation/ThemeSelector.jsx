@@ -10,11 +10,11 @@ export default function ThemeSelector() {
         <div className="h-full flex items-center">
             {darkThemeActive() ? (
                 <button onClick={setLightMode} className="flex flex-col text-xs items-center justify-center rounded-md transition-all duration-300">
-                    <DarkModeOutlinedIcon style={{ transition: 'transform 0.3s ease-in-out', transform: 'rotate(360deg)' }}/>
+                    <DarkModeOutlinedIcon style={{ transition: 'transform 0.3s ease-in-out', transform: 'rotate(360deg)' }} />
                 </button>
             ) : (
                 <button onClick={setDarkMode} className="flex flex-col text-xs items-center justify-center rounded-md transition-all duration-300">
-                    <LightModeOutlinedIcon style={{ transition: 'transform 0.3s ease-in-out', transform: 'rotate(360deg)' }}/>
+                    <LightModeOutlinedIcon style={{ transition: 'transform 0.3s ease-in-out', transform: 'rotate(360deg)' }} />
                 </button>
             )}
         </div>

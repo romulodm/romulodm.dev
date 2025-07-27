@@ -26,14 +26,14 @@ export default function Projects() {
             setLoading(false);
         });
     }, []);
-    
+
 
     if (isLoading) {
         return <div className="w-full grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {Array(6).fill().map((_, index) => (
-                        <ProjectCardSkeleton key={index} />
-                    ))}
-                </div>
+            {Array(6).fill().map((_, index) => (
+                <ProjectCardSkeleton key={index} />
+            ))}
+        </div>
     }
 
     return (
@@ -46,8 +46,8 @@ export default function Projects() {
 
             <div className="w-full flex items-center justify-center">
                 <div className="flex mt-4 items-center gap-2 text-purple-800 dark:text-purple-400 font-bold">
-                    <div className="flex items-center p-2 bg-purple-50 dark:bg-purple-900 dark:text-white border border-purple-800 rounded-md">
-                        <FiGithub/>
+                    <div className="flex items-center p-2 bg-purple-50 dark:bg-purple-600 dark:text-white border-2 border-purple-800 dark:border-purple-1000 rounded-md">
+                        <FiGithub />
                     </div>
                     <div>+ {projectsLength - projects.length} {t('projects.public')}</div>
                 </div>
