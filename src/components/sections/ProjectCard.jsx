@@ -5,14 +5,14 @@ import { FiExternalLink, FiGithub } from "react-icons/fi";
 import { AiTwotoneCode } from "react-icons/ai";
 import { FaCodeBranch, FaStar } from "react-icons/fa6";
 
-export default function ProjectCard({project}){
+export default function ProjectCard({ project }) {
     const { t } = useTranslation('home');
 
-    return(
+    return (
         <div className="flex px-4 flex-col border rounded-lg dark:border-neutral-800 dark:bg-neutral-900">
             <div className="flex mt-4 items-center gap-2">
-                <div className="flex items-center p-3 border rounded-md dark:border-neutral-600 dark:text-white dark:bg-neutral-800">
-                    <FiGithub/>
+                <div className="flex items-center p-3 border rounded-md border-neutral-200 text-neutral-700 dark:border-neutral-600 dark:text-white dark:bg-neutral-800">
+                    <FiGithub />
                 </div>
 
                 <div className="w-full items-center flex justify-between text-gray-900 dark:text-neutral-300">
@@ -33,7 +33,7 @@ export default function ProjectCard({project}){
             </div>
 
             <div className="flex py-2 items-center gap-2 text-sm text-gray-500 dark:text-neutral-400">
-                <IoIosCode/>
+                <IoIosCode />
                 <div>{project.language} {project.extraLanguages}</div>
             </div>
 
@@ -42,7 +42,7 @@ export default function ProjectCard({project}){
             </div>
 
             <div className="flex py-2 items-center justify-between text-sm text-gray-500">
-                <div className="flex gap-3">    
+                <div className="flex gap-3">
                     <div className="flex items-center gap-1 dark:text-neutral-400">
                         <FaStar />
                         {project.interactions.stars}
@@ -53,7 +53,7 @@ export default function ProjectCard({project}){
                         {project.interactions.forks}
                     </div>
                 </div>
-                
+
                 <a
                     href={project.source}
                     target="_blank"

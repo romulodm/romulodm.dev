@@ -17,17 +17,17 @@ import getActualRoute from '../../utils/getActualRoute';
 import { ThemeContext } from '../../context/ThemeContext';
 
 const ItemTooltip = styled(({ className, ...props }) => (
-    <Tooltip {...props} arrow classes={{ popper: className }} />
-  ))(({ theme }) => ({
-    [`& .${tooltipClasses.arrow}`]: {
-      color: theme.palette.mode === 'dark' ? '#27272A' : '#27272A',
-    },
-    [`& .${tooltipClasses.tooltip}`]: {
-      backgroundColor: theme.palette.mode === 'dark' ? '#27272A' : '#27272A',
-      color: theme.palette.mode === 'dark' ? '#FFFFFF' : '#FFFFFF',
-      fontSize: '13px',
-    },
-  }));
+  <Tooltip {...props} arrow classes={{ popper: className }} />
+))(({ theme }) => ({
+  [`& .${tooltipClasses.arrow}`]: {
+    color: theme.palette.mode === 'dark' ? '#27272A' : '#27272A',
+  },
+  [`& .${tooltipClasses.tooltip}`]: {
+    backgroundColor: theme.palette.mode === 'dark' ? '#27272A' : '#27272A',
+    color: theme.palette.mode === 'dark' ? '#FFFFFF' : '#FFFFFF',
+    fontSize: '13px',
+  },
+}));
 
 export default function Sidebar() {
   const { t } = useTranslation('navigation');
@@ -51,9 +51,8 @@ export default function Sidebar() {
           <NavLink to="/home">
             <ItemTooltip title={t('home')} placement="right">
               <div
-                className={`flex justify-center dark:text-[white] items-center px-4 py-3 rounded-lg ${
-                  actualRoute === 'home' ? 'active-navicon' : 'desactive-navicon'
-                }`}
+                className={`flex justify-center dark:text-[white] items-center px-4 py-3 rounded-lg ${actualRoute === 'home' ? 'active-navicon' : 'desactive-navicon'
+                  }`}
               >
                 <HomeOutlinedIcon />
               </div>
@@ -63,11 +62,10 @@ export default function Sidebar() {
           <NavLink to="/resume">
             <ItemTooltip title={t('resume')} placement="right">
               <div
-                className={`flex justify-center dark:text-white items-center px-4 py-3 rounded-lg ${
-                  actualRoute === 'resume'
+                className={`flex justify-center dark:text-white items-center px-4 py-3 rounded-lg ${actualRoute === 'resume'
                     ? 'active-navicon'
                     : 'desactive-navicon'
-                }`}
+                  }`}
               >
                 <ListAltOutlinedIcon />
               </div>
@@ -77,9 +75,8 @@ export default function Sidebar() {
           <NavLink to="/blog">
             <ItemTooltip title="Blog" placement="right">
               <div
-                className={`flex justify-center dark:text-white items-center px-4 py-3 rounded-lg ${
-                  actualRoute === 'blog' ? 'active-navicon' : 'desactive-navicon'
-                }`}
+                className={`flex justify-center dark:text-white items-center px-4 py-3 rounded-lg ${actualRoute === 'blog' ? 'active-navicon' : 'desactive-navicon'
+                  }`}
               >
                 <CommentBankOutlinedIcon />
               </div>
@@ -89,7 +86,7 @@ export default function Sidebar() {
 
         <div className="flex flex-col py-5 gap-5">
           <ItemTooltip title={t('theme')} placement="right">
-            <div className="flex justify-center items-center px-4 py-3 rounded-lg dark:text-white">
+            <div className="flex justify-center items-center px-4 py-3 rounded-lg text-neutral-700 dark:text-white">
               <ThemeSelector />
             </div>
           </ItemTooltip>
