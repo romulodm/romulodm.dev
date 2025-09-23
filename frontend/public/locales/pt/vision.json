@@ -1,0 +1,31 @@
+{
+    "icons": {
+        "first-title": "Inovação",
+        "first-content": "Definindo as regras do amanhã.",
+        "second-title": "Comunidade",
+        "second-content": "Facilitando a vida das pessoas."
+    },
+    "frame": {
+        "one": "Design.",
+        "two": "Prototipar.",
+        "three": "Desenvolver.",
+        "four": "Aprimorar."
+    },
+    "productivity": {
+        "title": "Produtividade em sua melhor forma.",
+        "word-1": "Com ",
+        "bold-1": "qualidade ",
+        "word-2": "e ",
+        "bold-2": "sustentabilidade ",
+        "word-3": "no coração."
+    },
+    "development": {
+        "left": "Segurança",
+        "center": "Desenvolvimento colaborativo",
+        "right": "Flexibilidade"
+    },
+    "comment": {
+        "time": "2 horas atrás",
+        "content": "Não se esqueça da reunião, amigo!"
+    }
+}

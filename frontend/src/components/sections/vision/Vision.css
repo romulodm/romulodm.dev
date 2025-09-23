@@ -1,0 +1,30 @@
+:root{
+    --grid-color: #e5e7eb;
+    --dashed: rgb(155, 155, 155);
+}
+
+[data-theme="dark"] {
+    --grid-color: #27272A;
+    --dashed: rgb(95, 92, 92);
+}
+
+#card .flex {
+    display: flex;
+    align-items: center;
+}
+  
+.dashed-line {
+    position: absolute;
+    top: 50%;
+    left: 100%;
+    width: 2rem;
+    height: 0;
+    border-top: 2px dashed var(--dashed); 
+    transform: translateY(-50%);
+}
+
+.grid-background {
+    background-image: linear-gradient(var(--grid-color) 1px, transparent 1px), linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+    background-size: 37px 37px, 37px 37px;
+    mask-image: radial-gradient(circle, black 35%, transparent 99%);
+}

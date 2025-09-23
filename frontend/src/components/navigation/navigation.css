@@ -1,0 +1,51 @@
+@import "../../theme/colors.css";
+
+:root {
+    --navitem-color: #27272A;
+    --hover-color: #0ea5e9; 
+}
+
+[data-theme="light"] {
+    --navitem-color: #2f3031;
+    --hover-color: #3b82f6;
+}
+
+#navbar{
+    z-index: 1000;
+}
+
+.underline-active:after, .underline-hover:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    margin-top: 5px;
+    width: 20px;
+    height: 1.5px;
+    border-radius: 35px;
+    background-color: var(--hover-color);
+    transform: translateX(-50%) scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.underline-active:after {
+    transform: translateX(-50%) scaleX(1);
+}
+
+.underline-hover:hover:after {
+    transform: translateX(-50%) scaleX(1);
+}
+
+.active-navicon {
+    color: #ffffff;
+    background-color: var(--navitem-color);
+}
+
+.desactive-navicon {
+    color: #4b5563;
+}
+
+.desactive-navicon:hover {
+    color: #ffffff;
+    background-color: var(--navitem-color);
+}
