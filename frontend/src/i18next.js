@@ -8,31 +8,39 @@ i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
-    returnEmptyString: false,
     debug: false,
     fallbackLng: 'en-US',
+
+    saveMissing: false,
+    returnEmptyString: false,
+    returnObjects: false,
+    parseMissingKeyHandler: () => '',
+
     interpolation: {
       escapeValue: false,
     },
+
     ns: [
-      '404', 
+      '404',
       'announcement',
-      'auth', 
-      'blog', 
-      'contact', 
-      'footer', 
-      'hero', 
-      'home', 
+      'auth',
+      'blog',
+      'contact',
+      'footer',
+      'hero',
+      'home',
       'navigation',
       'post',
       'resume',
       'terminal',
-      'vision' 
+      'vision'
     ],
     defaultNS: 'blog',
+
     backend: {
       loadPath: '/locales/{{lng}}/{{ns}}.json',
     },
+
     react: {
       useSuspense: false,
     },
