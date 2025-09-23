@@ -1,0 +1,9 @@
+:root {
+    --primary-color: #2563eb;
+    --background-color: #09090b;
+}
+
+[data-theme="light"] {
+    --primary-color: #2563eb;
+    --background-color: #ffffff;
+}

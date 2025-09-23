@@ -1,0 +1,31 @@
+{
+    "icons": {
+        "first-title": "Innovation",
+        "first-content": "Defining tomorrow's rules.",
+        "second-title": "Community",
+        "second-content": "Making people's lives easier."
+    },
+    "frame": {
+        "one": "Design.",
+        "two": "Prototipe.",
+        "three": "Develop.",
+        "four": "Improve."
+    },
+    "productivity": {
+        "title": "Productivity at its finest.",
+        "word-1": "With ",
+        "bold-1": "quality ",
+        "word-2": "and ",
+        "bold-2": "sustainability ",
+        "word-3": "at heart."
+    },  
+    "development": {
+        "left": "Security",
+        "center": "Collaborative development",
+        "right": "Flexibility"
+    },
+    "comment": {
+        "time": "2 hours ago",
+        "content": "Don't forget the daily, mate!"
+    }
+}

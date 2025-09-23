@@ -1,0 +1,64 @@
+{
+    "xp": "experiência",
+    "loading-xp-title": "Procurando por experiências...",
+    "loading-xp": "Carregar as experiências do sistema levou ",
+    "education": "formação",
+    "loading-education-title": "Procurando por formação...",
+    "loading-education": "Carregar a formação levou ",
+    "visitor": "visitante",
+    "tooltip": "Você pode usar este terminal",
+    "loading": "Carregando a mensagem de acompanhamento levou ",
+    "not-found-fisrt": "Comando não encontrado, digite ",
+    "not-found-second": " para uma lista de comandos.",
+    "loadings": {
+        "help": "Carregar a mensagem de ajuda levou ",
+        "initial": "Carregar a mensagem inicial levou ",
+        "follow": "Carregar as redes sociais levou ",
+        "who": "Carregar estas informações inúteis levou ",
+        "who-years": " anos",
+        "whoami": "Carregar esta pílula levou ",
+        "cats": "Carregar estes gatos incríveis levou ",
+        "inter": "Carregar o logo do SC Internacional levou ",
+        "spotify": "Carregar esta playlist incrível levou ",
+        "secret": "Carregar este enigma levou "
+    },
+    "commands": {
+        "help": "Lista de comandos",
+        "clear": "Limpar o terminal",
+        "initial": "Exibir o cabeçalho",
+        "follow": "Minhas redes sociais",
+        "who": "Quem é Romulo?",
+        "whoami": "Quem é você?",
+        "cats": "Arte de gatos maravilhosos",
+        "inter": "O maior clube de futebol do mundo",
+        "spotify": "Uma das minhas playlists",
+        "secret": "Enigma simples, qual é a senha?"
+    },
+    "initial": {
+        "content": "Para uma lista de comandos disponíveis, digite "
+    },
+    "who": {
+        "so": "Então...",
+        "about": "Tenho 20 anos, sou apenas um estudante e entusiasta de tecnologia que gosta de jogar, ler livros e fazer outras coisas nerds. 🤓"
+    },
+    "whoami": {
+        "title": "A vida não é um mistério a ser resolvido, mas uma experiência a ser vivida.",
+        "paragraph1": "Vi essa frase no filme Duna e pensei muito sobre ela. Acredito que muitas vezes tornamos nossa insignificância uma forma de martírio e dúvida, quando na verdade as coisas deveriam ser mais simples do que realmente são.",
+        "paragraph2": "Você e eu não somos meros candidatos a um lugar no céu. Se você sempre vive pensando em uma recompensa futura, acaba esquecendo de viver o presente e se esquece de quem você é.",
+        "paragraph3": "Segundo Jean-Paul Sartre, a existência precede a essência. Isso significa que os seres humanos não têm uma natureza pré-determinada. Você cria sua própria natureza por meio de suas ações e escolhas. Portanto, essa pergunta não tem uma resposta correta. As responsabilidades que você assume e as escolhas que faz ao longo da sua vida determinam quem você é.",
+        "paragraph4": "Hoje você pode ser um programador, um estudante, um profissional... No entanto, amanhã você pode ser uma pessoa totalmente diferente, tudo depende de você."
+    },
+    "spotify": {
+        "alert": "Cuidado com o volume muito alto e aproveite com moderação!"
+    },
+    "secret": {
+        "how-first": "Para ver a mensagem misteriosa você precisa digitar ",
+        "how-try": "sua tentativa",
+        "how-second": ", sendo sua tentativa um número de quatro dígitos.",
+        "how-hint": "Para ver uma dica, digite ",
+        "hint-time": "Vamos lá, cara, essas mensagens não demoram para ser exibidas...",
+        "hint": "A dica é: é um ano 🤯 uau, dica incrível! Mais uma, esse ano aparece em uma mensagem aqui no terminal...",
+        "wrong": "Esta verificação não levou nenhum tempo.",
+        "reward": "Correto! Sua recompensa aqui: "
+    }
+}

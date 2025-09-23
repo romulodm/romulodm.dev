@@ -1,0 +1,30 @@
+{
+    "page-title": "Blog - Romulo de Moraes",
+    "title": "As opiniões expressas aqui são reflexões pessoais que dizem respeito à minha visão sobre tecnologia e outros assuntos; sinta-se à vontade para interagir, compartilhar suas ideias e enviar sugestões.",
+    "card-button": "Leia mais",
+    "filter": {
+        "search": "Buscar postagem",
+        "random": "Postagem aleatória",
+        "filter": "Filtrar postagens",
+        "filter-all": "Todas"
+    },
+    "newsletter": {
+        "title": "Quer receber as novas postagens?",
+        "content": "Se inscreva em nossa newsletter.",
+        "btn": "Inscreva-se",
+        "privacy": "Política de privacidade"
+    },
+    "about-portfolio": {
+        "title": "Quer saber como esse site foi construído?",
+        "content": "Veja a publicação que fiz sobre o código e a arquitetura construída.",
+        "btn": "Ver postagem"
+    },
+    "suggestions": {
+        "title": "Quer sugerir algum tema?",
+        "content": "Mande uma sugestão sobre algum assunto da área.",
+        "btn": "Enviar sugestão",
+        "privacy": "Política de privacidade"
+    },
+    "not-found-title": "Bem, isso não deveria acontecer...",
+    "not-found-content": "Não encontrei nenhuma postagem que corresponda aos seus critérios de pesquisa. Tente pesquisar por títulos ou temas..."
+}

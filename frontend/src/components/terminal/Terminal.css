@@ -1,0 +1,11 @@
+.active-nav {
+    background-color: #cbd5e1;
+}
+
+.desactive-nav:hover {
+    background-color: #cbd5e1;
+}
+
+.desactive-nav {
+    background-color: #e2e8f0;
+}

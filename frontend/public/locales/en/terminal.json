@@ -1,0 +1,65 @@
+{
+    "xp": "experience",
+    "loading-xp-title": "Lookin for experiences...",
+    "loading-xp": "Loading system experiences took ",
+    "education": "education",
+    "loading-education-title": "Lookin for education...",
+    "loading-education": "Loading system education took ",
+    "visitor": "visitor",
+    "tooltip": "You can use this terminal",
+    "loading": "Loading follow message took ",
+    "not-found-fisrt": "Command not found, type ",
+    "not-found-second": " for a list of commands.",
+    "loadings": {
+        "help": "Loading help message took ",
+        "initial": "Loading initial message took ",
+        "follow": "Loading socials message took ",
+        "who": "Loading this useless infos took ",
+        "who-years": " years",
+        "whoami": "Loading this pill took ",
+        "cats": "Loading this amazing cats took ",
+        "inter": "Loading SC Iternacional logo took ",
+        "spotify": "Loading this amazing playlist took ",
+        "secret": "Loading this puzzle took "
+    },
+    "commands": {
+        "help": "List of commands",
+        "clear": "Clear terminal",
+        "initial": "Display the header",
+        "follow": "My social networks",
+        "who": "Who is Romulo?",
+        "whoami": "Who is you?",
+        "cats": "Wonderful cat art",
+        "inter": "The biggest football club in the world",
+        "spotify": "One of my playlists",
+        "secret": "Simple puzzle, what are the password?"
+    },
+    "initial": {
+        "content": "For a list of available commands, type "
+    },
+    "who": {
+        "so": "So...",
+        "about": "I'm 20 years old, a mere student and technology enthusiast who likes to play games, read books and do some other nerdy things. 🤓"
+    },
+    "whoami": {
+        "title": "Life is not a mystery to be solved, but an experience to be lived.",
+        "paragraph1": "I saw this phrase in the movie Dune and I thought about it a lot. I believe that we often make our insignificance a form of martyrdom and doubt, when in fact things should be simpler than they really are.",
+        "paragraph2": "You and I are not mere candidates for a place in heaven. If you always live thinking about a future reward, you end up forgetting to live for today and forget who you are.",
+        "paragraph3": "According to Jean-Paul Sartre, an existence precedes an essence. This means that human beings do not have a predetermined nature. You create your own nature through your actions and choices. Therefore, this question does not have a correct answer. The responsibilities you assume and the choices you make throughout your life determine who you are.",
+        "paragraph4": "Today you can be a programmer, a student, a professional... However, tomorrow you could be a totally different person, it all depends on you."
+    },
+    "spotify": {
+        "alert": "Be careful with the volume too high and enjoy in moderation!"
+    },
+    "secret": {
+        "how-first": "To see the mysterious message you need to type ",
+        "how-try": "your try",
+        "how-second": ", with your try being a four-digit number.",
+        "how-hint": "To see a hint type ",
+        "hint-time": "Come on man, these messages don't take time to get across...",
+        "hint": "The hint is: it's a year 🤯 wow, awesome hint! One more, this year appears in a message here at the terminal...",
+        "wrong": "This check it didn't take any time.",
+        "reward": "Correct! Your reward here: "
+    }
+
+}
