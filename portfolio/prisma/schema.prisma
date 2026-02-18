@@ -10,16 +10,41 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum AuthProvider {
+  EMAIL_PASSWORD
+  GOOGLE
+}
+
 model User {
-  id        String   @id @default(cuid())
-  username  String?
-  email     String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            String   @id @default(cuid())
+  admin         Boolean  @default(false)
+  username      String   @unique
+  password      String?  @db.VarChar(255)
+  email         String   @unique
+  emailVerified Boolean  @default(false)
+  image         String? //URL
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  provider            AuthProvider
+  sub                 String? // provider-specific user ID
+  passwordResetTokens PasswordResetToken[]
 
   comments  Comment[]
   votes     CommentVote[]
   postLikes PostLike[]
+}
+
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  token     String    @unique
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId])
 }
 
 enum PostStatus {
