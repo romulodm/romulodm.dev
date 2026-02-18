@@ -10,6 +10,18 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id        String   @id @default(cuid())
+  username  String?
+  email     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  comments  Comment[]
+  votes     CommentVote[]
+  postLikes PostLike[]
+}
+
 enum PostStatus {
   DRAFT
   PUBLISHED
@@ -22,24 +34,88 @@ model Post {
   excerpt         String?    @db.Text
   contentMarkdown String     @db.Text
   coverImageUrl   String?
-  coverVideoUrl   String?
-  tags            String[]
   status          PostStatus @default(DRAFT)
   publishedAt     DateTime?
   canonicalUrl    String?
   createdAt       DateTime   @default(now())
   updatedAt       DateTime   @updatedAt
 
+  views Int @default(0)
+  likes Int @default(0)
+
+  postTags  PostTag[]
+  comments  Comment[]
+  postLikes PostLike[]
+
   @@index([status, publishedAt])
   @@index([slug])
 }
 
-model Subscriber {
-  id          String    @id @default(cuid())
-  email       String    @unique
-  verified    Boolean   @default(false)
-  unsubToken  String    @unique @default(cuid())
-  createdAt   DateTime  @default(now())
+model PostLike {
+  id        String   @id @default(cuid())
+  postId    String
+  userId    String
+  createdAt DateTime @default(now())
 
-  @@index([email])
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, userId])
+  @@index([postId])
+  @@index([userId])
+}
+
+model PostTag {
+  id     String @id @default(cuid())
+  postId String
+  tag    String
+
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, tag])
+  @@index([postId])
+  @@index([tag])
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  postId    String
+  parentId  String?
+  authorId  String
+  bodyMd    String   @db.VarChar(2000)
+  score     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  // tree
+  parent  Comment?  @relation("CommentTree", fields: [parentId], references: [id], onDelete: Cascade)
+  replies Comment[] @relation("CommentTree")
+
+  votes CommentVote[]
+
+  @@index([postId, createdAt])
+  @@index([postId, parentId, createdAt])
+  @@index([postId, parentId, score])
+  @@index([parentId, createdAt])
+  @@index([authorId, createdAt])
+}
+
+model CommentVote {
+  id        String   @id @default(cuid())
+  commentId String
+  userId    String
+  value     Int // +1 or -1
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  comment Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([commentId, userId])
+  @@index([commentId])
+  @@index([userId])
 }
