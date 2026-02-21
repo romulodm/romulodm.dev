@@ -1,49 +1,203 @@
-import { getIronSession } from 'iron-session'
-import { cookies } from 'next/headers'
-import bcrypt from 'bcryptjs'
+// lib/auth.ts
+import type { NextAuthOptions } from "next-auth";
+import GoogleProvider from "next-auth/providers/google";
+import CredentialsProvider from "next-auth/providers/credentials";
+import bcrypt from "bcryptjs";
+import { prisma } from "@/lib/prisma";
 
-export interface SessionData {
-  isAdmin: boolean
+function normalizeUsername(input: string) {
+  return input
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "")
+    .slice(0, 24);
 }
 
-const sessionOptions = {
-  password: process.env.SESSION_SECRET!,
-  cookieName: 'portfolio-blog-session',
-  cookieOptions: {
-    secure: process.env.NODE_ENV === 'production',
-    httpOnly: true,
-    sameSite: 'lax' as const,
-    maxAge: 60 * 60 * 24 * 7, // 7 days
+async function generateUniqueUsername(email: string, name?: string | null) {
+  const base = normalizeUsername(name?.length ? name : email.split("@")[0]) || "user";
+
+  // tenta base, base1, base2...
+  for (let i = 0; i < 50; i++) {
+    const candidate = i === 0 ? base : `${base}${i}`;
+    const exists = await prisma.user.findUnique({
+      where: { username: candidate },
+      select: { id: true },
+    });
+    if (!exists) return candidate;
+  }
+
+  // fallback garantido
+  return `${base}${Date.now().toString().slice(-6)}`;
+}
+
+export const authOptions: NextAuthOptions = {
+  debug: true,
+  providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      // opcional: garante um fluxo mais estável (use só se você realmente precisar)
+      // authorization: { params: { prompt: "consent", access_type: "offline", response_type: "code" } }
+    }),
+
+    CredentialsProvider({
+      name: "credentials",
+      credentials: {
+        email: { label: "E-mail", type: "email" },
+        password: { label: "Senha", type: "password" },
+      },
+      async authorize(credentials) {
+        const email = credentials?.email?.trim().toLowerCase();
+        const password = credentials?.password;
+
+        if (!email || !password) return null;
+
+        const user = await prisma.user.findUnique({
+          where: { email },
+          select: {
+            id: true,
+            email: true,
+            username: true,
+            image: true,
+            admin: true,
+            provider: true,
+            password: true,
+          },
+        });
+
+        // não existe
+        if (!user) return null;
+
+        // se a conta é GOOGLE, não deixa usar senha
+        if (user.provider !== "EMAIL_PASSWORD") return null;
+
+        // sem hash = inválido
+        if (!user.password) return null;
+
+        const ok = await bcrypt.compare(password, user.password);
+        if (!ok) return null;
+
+        return {
+          id: user.id,
+          email: user.email,
+          name: user.username ?? undefined,
+          image: user.image ?? undefined,
+          provider: user.provider,
+          admin: user.admin,
+          username: user.username,
+        };
+      },
+    }),
+  ],
+
+  session: { strategy: "jwt" },
+
+  callbacks: {
+    async signIn({ user, account }) {
+      // ----- GOOGLE LOGIN FLOW -----
+      if (account?.provider === "google") {
+        const email = user.email?.trim().toLowerCase();
+        if (!email) return false;
+
+        const sub = account.providerAccountId; // id estável do provider (Google "sub")
+
+        const existing = await prisma.user.findUnique({
+          where: { email },
+          select: { id: true, provider: true, sub: true, admin: true, username: true },
+        });
+
+        // existe mas foi criado com senha -> bloqueia Google
+        if (existing && existing.provider !== "GOOGLE") {
+          // você pode tratar isso na UI via pages.error + query param
+          return false;
+        }
+
+        // não existe -> cria com GOOGLE
+        if (!existing) {
+          const username = await generateUniqueUsername(email, user.name);
+
+          const created = await prisma.user.create({
+            data: {
+              email,
+              provider: "GOOGLE",
+              sub,
+              username,
+              image: user.image ?? null,
+              emailVerified: true, // geralmente ok pra Google
+            },
+            select: { id: true, admin: true, username: true },
+          });
+
+          user.id = created.id; // ok em runtime
+          (user as any).provider = "GOOGLE";
+          (user as any).admin = created.admin;
+          (user as any).username = created.username;
+          return true;
+        }
+
+        // existe e é GOOGLE -> garante sub e atualiza se necessário
+        if (existing.sub && existing.sub !== sub) return false;
+
+        if (!existing.sub) {
+          await prisma.user.update({
+            where: { id: existing.id },
+            data: { sub },
+          });
+        }
+
+        user.id = existing.id;
+        (user as any).provider = "GOOGLE";
+        (user as any).admin = existing.admin;
+        (user as any).username = existing.username;
+        return true;
+      }
+
+      // ----- CREDENTIALS FLOW -----
+      return true;
+    },
+
+    async jwt({ token, user }) {
+      // primeira vez após login
+      if (user) {
+        token.id = user.id;
+        token.provider = (user as any).provider;
+        token.admin = (user as any).admin;
+        token.username = (user as any).username ?? null;
+      }
+
+      // garante que token tenha provider/admin quando refresh
+      if (token.email && (!token.id || !token.provider)) {
+        const dbUser = await prisma.user.findUnique({
+          where: { email: token.email },
+          select: { id: true, provider: true, admin: true, username: true },
+        });
+
+        if (dbUser) {
+          token.id = dbUser.id;
+          token.provider = dbUser.provider;
+          token.admin = dbUser.admin;
+          token.username = dbUser.username;
+        }
+      }
+
+      return token;
+    },
+
+    async session({ session, token }) {
+      if (session.user) {
+        session.user.id = token.id as string;
+        session.user.provider = token.provider as any;
+        session.user.admin = Boolean(token.admin);
+        session.user.username = (token.username as string) ?? null;
+      }
+      return session;
+    },
   },
-}
 
-export async function getSession() {
-  return getIronSession<SessionData>(cookies(), sessionOptions)
-}
+  pages: {
+    signIn: "/",
+    error: "/",
+  },
 
-export async function isAuthenticated(): Promise<boolean> {
-  const session = await getSession()
-  return session.isAdmin === true
-}
-
-export async function requireAuth() {
-  const authenticated = await isAuthenticated()
-  if (!authenticated) {
-    throw new Error('Unauthorized')
-  }
-}
-
-export async function validatePassword(password: string): Promise<boolean> {
-  const adminPassword = process.env.ADMIN_PASSWORD
-  if (!adminPassword) {
-    throw new Error('ADMIN_PASSWORD not configured')
-  }
-  
-  // Se a senha no env já estiver hasheada (começa com $2)
-  if (adminPassword.startsWith('$2')) {
-    return bcrypt.compare(password, adminPassword)
-  }
-  
-  // Se for senha em texto plano (apenas para desenvolvimento)
-  return password === adminPassword
-}
+  secret: process.env.NEXTAUTH_SECRET,
+};
