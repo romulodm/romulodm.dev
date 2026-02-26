@@ -21,7 +21,6 @@ export function CommentsSection({
     const [comments, setComments] = useState<CommentData[]>(initialComments);
     const [nextCursor, setNextCursor] = useState<string | null>(initialNextCursor);
     const [loading, setLoading] = useState(false);
-    const [replyingTo, setReplyingTo] = useState<string | null>(null);
 
     const loadMore = async () => {
         if (!nextCursor) return;
@@ -46,24 +45,6 @@ export function CommentsSection({
         }
     }, [postId]);
 
-    const handleReply = (parentId: string) => {
-        setReplyingTo((prev) => (prev === parentId ? null : parentId));
-    };
-
-    // Recursively finds if a commentId is nested somewhere in a comment tree
-    function findCommentById(list: CommentData[], id: string): CommentData | null {
-        for (const c of list) {
-            if (c.id === id) return c;
-            if (c.replies) {
-                const found = findCommentById(c.replies, id);
-                if (found) return found;
-            }
-        }
-        return null;
-    }
-
-    const replyingComment = replyingTo ? findCommentById(comments, replyingTo) : null;
-
     return (
         <section className="mt-12 pt-8 border-t border-border">
             <h2 className="text-lg font-semibold mb-6">
@@ -77,30 +58,7 @@ export function CommentsSection({
                 <CommentComposer postId={postId} onSuccess={refresh} />
             </div>
 
-            {/* Reply composer (floating context) */}
-            {replyingTo && replyingComment && (
-                <div className="mb-6 rounded-lg border border-border/60 bg-accent/20 p-3">
-                    <p className="text-xs text-muted-foreground mb-2 flex items-center gap-1">
-                        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                                d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
-                        </svg>
-                        Respondendo @{replyingComment.author.username}
-                    </p>
-                    <CommentComposer
-                        postId={postId}
-                        parentId={replyingTo}
-                        autoFocus
-                        onSuccess={() => {
-                            setReplyingTo(null);
-                            refresh();
-                        }}
-                        onCancel={() => setReplyingTo(null)}
-                    />
-                </div>
-            )}
-
-            {/* Comment list */}
+            {/* Comment list — reply composers open inline inside each CommentCard */}
             <div className="space-y-2">
                 {comments.length === 0 && !loading && (
                     <p className="text-sm text-muted-foreground py-10 text-center">
@@ -112,8 +70,9 @@ export function CommentsSection({
                     <CommentCard
                         key={comment.id}
                         comment={comment}
+                        postId={postId}
                         depth={0}
-                        onReply={handleReply}
+                        onReplySuccess={refresh}
                     />
                 ))}
             </div>
@@ -131,9 +90,7 @@ export function CommentsSection({
                                 <span className="w-4 h-4 border-2 border-foreground/20 border-t-foreground rounded-full animate-spin" />
                                 Carregando…
                             </span>
-                        ) : (
-                            "Carregar mais comentários"
-                        )}
+                        ) : "Carregar mais comentários"}
                     </button>
                 </div>
             )}
