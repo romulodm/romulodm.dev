@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { CommentCard, CommentData } from "@/components/comments/CommentCard";
-import { CommentComposer } from "@/components//comments/CommentComposer";
+import { CommentComposer } from "@/components/comments/CommentComposer";
 import { listPostComments } from "@/lib/comments";
 
 interface CommentsSectionProps {
@@ -28,7 +28,7 @@ export function CommentsSection({
         setLoading(true);
         try {
             const result = await listPostComments({ postId, cursor: nextCursor });
-            setComments(prev => [...prev, ...result.items]);
+            setComments((prev) => [...prev, ...result.items]);
             setNextCursor(result.nextCursor);
         } finally {
             setLoading(false);
@@ -47,73 +47,74 @@ export function CommentsSection({
     }, [postId]);
 
     const handleReply = (parentId: string) => {
-        setReplyingTo(prev => prev === parentId ? null : parentId);
+        setReplyingTo((prev) => (prev === parentId ? null : parentId));
     };
+
+    // Recursively finds if a commentId is nested somewhere in a comment tree
+    function findCommentById(list: CommentData[], id: string): CommentData | null {
+        for (const c of list) {
+            if (c.id === id) return c;
+            if (c.replies) {
+                const found = findCommentById(c.replies, id);
+                if (found) return found;
+            }
+        }
+        return null;
+    }
+
+    const replyingComment = replyingTo ? findCommentById(comments, replyingTo) : null;
 
     return (
         <section className="mt-12 pt-8 border-t border-border">
             <h2 className="text-lg font-semibold mb-6">
-                {totalCount > 0 ? `${totalCount} comentário${totalCount !== 1 ? "s" : ""}` : "Comentários"}
+                {totalCount > 0
+                    ? `${totalCount} comentário${totalCount !== 1 ? "s" : ""}`
+                    : "Comentários"}
             </h2>
 
-            {/* New comment */}
+            {/* New top-level comment */}
             <div className="mb-8">
-                <CommentComposer
-                    postId={postId}
-                    onSuccess={refresh}
-                    placeholder="O que você achou? Compartilhe sua opinião..."
-                />
+                <CommentComposer postId={postId} onSuccess={refresh} />
             </div>
 
-            {/* List */}
-            <div className="space-y-1 divide-y divide-border/50">
+            {/* Reply composer (floating context) */}
+            {replyingTo && replyingComment && (
+                <div className="mb-6 rounded-lg border border-border/60 bg-accent/20 p-3">
+                    <p className="text-xs text-muted-foreground mb-2 flex items-center gap-1">
+                        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+                        </svg>
+                        Respondendo @{replyingComment.author.username}
+                    </p>
+                    <CommentComposer
+                        postId={postId}
+                        parentId={replyingTo}
+                        autoFocus
+                        onSuccess={() => {
+                            setReplyingTo(null);
+                            refresh();
+                        }}
+                        onCancel={() => setReplyingTo(null)}
+                    />
+                </div>
+            )}
+
+            {/* Comment list */}
+            <div className="space-y-2">
                 {comments.length === 0 && !loading && (
-                    <p className="text-sm text-muted-foreground py-8 text-center">
+                    <p className="text-sm text-muted-foreground py-10 text-center">
                         Nenhum comentário ainda. Seja o primeiro!
                     </p>
                 )}
 
-                {comments.map(comment => (
-                    <div key={comment.id} className="py-3">
-                        <CommentCard
-                            comment={comment}
-                            depth={0}
-                            onReply={handleReply}
-                        />
-                        {replyingTo === comment.id && (
-                            <div className="ml-9 mt-3">
-                                <CommentComposer
-                                    postId={postId}
-                                    parentId={comment.id}
-                                    autoFocus
-                                    placeholder={`Respondendo @${comment.author.username}...`}
-                                    onSuccess={() => {
-                                        setReplyingTo(null);
-                                        refresh();
-                                    }}
-                                    onCancel={() => setReplyingTo(null)}
-                                />
-                            </div>
-                        )}
-                        {/* Nested replies reply boxes */}
-                        {comment.replies?.map(reply => (
-                            replyingTo === reply.id && (
-                                <div key={`reply-composer-${reply.id}`} className="ml-16 mt-3">
-                                    <CommentComposer
-                                        postId={postId}
-                                        parentId={reply.id}
-                                        autoFocus
-                                        placeholder={`Respondendo @${reply.author.username}...`}
-                                        onSuccess={() => {
-                                            setReplyingTo(null);
-                                            refresh();
-                                        }}
-                                        onCancel={() => setReplyingTo(null)}
-                                    />
-                                </div>
-                            )
-                        ))}
-                    </div>
+                {comments.map((comment) => (
+                    <CommentCard
+                        key={comment.id}
+                        comment={comment}
+                        depth={0}
+                        onReply={handleReply}
+                    />
                 ))}
             </div>
 
@@ -130,7 +131,9 @@ export function CommentsSection({
                                 <span className="w-4 h-4 border-2 border-foreground/20 border-t-foreground rounded-full animate-spin" />
                                 Carregando…
                             </span>
-                        ) : "Carregar mais comentários"}
+                        ) : (
+                            "Carregar mais comentários"
+                        )}
                     </button>
                 </div>
             )}
