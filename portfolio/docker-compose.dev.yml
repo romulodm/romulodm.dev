@@ -19,6 +19,18 @@ services:
     networks:
       - romulodm-network
 
+  mailcatcher:
+    image: sj26/mailcatcher
+    container_name: mailcatcher
+    env_file:
+      - .env
+    expose:
+      - '${EMAIL_SMTP_PORT}'
+      - '${EMAIL_HTTP_PORT}'
+    ports:
+      - '${EMAIL_SMTP_PORT}:1025'
+      - '${EMAIL_HTTP_PORT}:1080'
+
   minio:
     image: minio/minio:latest
     container_name: romulodm-minio
@@ -57,26 +69,6 @@ services:
       - "6379:6379"
     volumes:
       - redis_data:/data
-    networks:
-      - romulodm-network
-
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: romulodm-app
-    restart: unless-stopped
-    environment:
-      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/portfolio_blog?schema=public
-      - MINIO_ENDPOINT=minio
-      - MINIO_PORT=9000
-      - MINIO_PUBLIC_URL=http://localhost:9000
-    ports:
-      - "3000:3000"
-    depends_on:
-      - postgres
-      - minio
-      - redis
     networks:
       - romulodm-network
 
