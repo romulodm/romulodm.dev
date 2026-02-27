@@ -1,9 +1,0 @@
-version: "2"
-sql:
-  - engine: "postgresql"
-    queries: "./database/queries"
-    schema: "./database/sql/schema.sql"
-    gen:
-      go:
-        package: "db"
-        out: "./database/sqlc"
