@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { markdownToHtml } from '@/lib/markdown'
 
 interface MarkdownPreviewProps {
   title: string
@@ -18,27 +19,7 @@ export function MarkdownPreview({
   const [html, setHtml] = useState('')
 
   useEffect(() => {
-    // Convert markdown to HTML on client side
-    const convertMarkdown = async () => {
-      const { unified } = await import('unified')
-      const remarkParse = (await import('remark-parse')).default
-      const remarkGfm = (await import('remark-gfm')).default
-      const remarkRehype = (await import('remark-rehype')).default
-      const rehypeHighlight = (await import('rehype-highlight')).default
-      const rehypeStringify = (await import('rehype-stringify')).default
-
-      const result = await unified()
-        .use(remarkParse)
-        .use(remarkGfm)
-        .use(remarkRehype)
-        .use(rehypeHighlight)
-        .use(rehypeStringify)
-        .process(contentMarkdown)
-
-      setHtml(result.toString())
-    }
-
-    convertMarkdown()
+    markdownToHtml(contentMarkdown).then(setHtml)
   }, [contentMarkdown])
 
   return (

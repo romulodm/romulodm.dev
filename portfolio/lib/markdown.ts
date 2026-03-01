@@ -1,8 +1,14 @@
+/**
+ * Pipeline única de conversão — usada tanto no servidor (page.tsx)
+ * quanto no cliente (MarkdownPreview). Garante output idêntico nos dois lugares.
+ */
+
 import { unified } from 'unified'
 import remarkParse from 'remark-parse'
 import remarkGfm from 'remark-gfm'
 import remarkRehype from 'remark-rehype'
 import rehypeHighlight from 'rehype-highlight'
+import rehypeExternalLinks from 'rehype-external-links'
 import rehypeStringify from 'rehype-stringify'
 
 export async function markdownToHtml(markdown: string): Promise<string> {
@@ -11,6 +17,10 @@ export async function markdownToHtml(markdown: string): Promise<string> {
     .use(remarkGfm)
     .use(remarkRehype as any)
     .use(rehypeHighlight)
+    .use(rehypeExternalLinks, {
+      target: '_blank',
+      rel: ['noopener', 'noreferrer'],
+    })
     .use(rehypeStringify)
     .process(markdown)
 
