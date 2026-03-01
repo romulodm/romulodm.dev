@@ -146,16 +146,25 @@ export async function POST(request: NextRequest) {
     }
 
     // ── Create ────────────────────────────────────────────────────────────────
-    const comment = await prisma.comment.create({
-        data: {
-            postId,
-            parentId: parentId ?? null,
-            authorId: session.user.id,
-            bodyMd: bodyMd.trim(),
-        },
-        include: {
-            author: { select: { id: true, username: true, image: true } },
-        },
+    const comment = await prisma.$transaction(async (tx) => {
+        const created = await tx.comment.create({
+            data: {
+                postId,
+                parentId: parentId ?? null,
+                authorId: session.user.id,
+                bodyMd: bodyMd.trim(),
+            },
+            include: {
+                author: { select: { id: true, username: true, image: true } },
+            },
+        });
+
+        await tx.post.update({
+            where: { id: postId },
+            data: { commentsCount: { increment: 1 } },
+        });
+
+        return created;
     });
 
     return NextResponse.json(comment, { status: 201 });
