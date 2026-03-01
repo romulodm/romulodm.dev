@@ -1,5 +1,6 @@
 // lib/auth.ts
 import type { NextAuthOptions } from "next-auth";
+import { getServerSession } from "next-auth/next";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
@@ -14,7 +15,8 @@ function normalizeUsername(input: string) {
 }
 
 async function generateUniqueUsername(email: string, name?: string | null) {
-  const base = normalizeUsername(name?.length ? name : email.split("@")[0]) || "user";
+  const base =
+    normalizeUsername(name?.length ? name : email.split("@")[0]) || "user";
 
   // tenta base, base1, base2...
   for (let i = 0; i < 50; i++) {
@@ -36,7 +38,6 @@ export const authOptions: NextAuthOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-      // opcional: garante um fluxo mais estável (use só se você realmente precisar)
       // authorization: { params: { prompt: "consent", access_type: "offline", response_type: "code" } }
     }),
 
@@ -65,7 +66,6 @@ export const authOptions: NextAuthOptions = {
           },
         });
 
-        // não existe
         if (!user) return null;
 
         // se a conta é GOOGLE, não deixa usar senha
@@ -108,7 +108,6 @@ export const authOptions: NextAuthOptions = {
 
         // existe mas foi criado com senha -> bloqueia Google
         if (existing && existing.provider !== "GOOGLE") {
-          // você pode tratar isso na UI via pages.error + query param
           return false;
         }
 
@@ -123,12 +122,12 @@ export const authOptions: NextAuthOptions = {
               sub,
               username,
               image: user.image ?? null,
-              emailVerified: true, // geralmente ok pra Google
+              emailVerified: true,
             },
             select: { id: true, admin: true, username: true },
           });
 
-          user.id = created.id; // ok em runtime
+          user.id = created.id;
           (user as any).provider = "GOOGLE";
           (user as any).admin = created.admin;
           (user as any).username = created.username;
@@ -185,10 +184,10 @@ export const authOptions: NextAuthOptions = {
 
     async session({ session, token }) {
       if (session.user) {
-        session.user.id = token.id as string;
-        session.user.provider = token.provider as any;
-        session.user.admin = Boolean(token.admin);
-        session.user.username = (token.username as string) ?? null;
+        (session.user as any).id = token.id as string;
+        (session.user as any).provider = token.provider as any;
+        (session.user as any).admin = Boolean(token.admin);
+        (session.user as any).username = (token.username as string) ?? null;
       }
       return session;
     },
@@ -201,3 +200,26 @@ export const authOptions: NextAuthOptions = {
 
   secret: process.env.NEXTAUTH_SECRET,
 };
+
+/**
+ * Helpers para rotas server-side (Route Handlers / Server Actions)
+ */
+
+export async function isAuthenticated() {
+  const session = await getServerSession(authOptions);
+  return Boolean(session?.user && (session.user as any).id);
+}
+
+export async function requireAdmin() {
+  const session = await getServerSession(authOptions);
+
+  if (!session?.user || !(session.user as any).id) {
+    return { ok: false as const, status: 401 as const };
+  }
+
+  if (!(session.user as any).admin) {
+    return { ok: false as const, status: 403 as const };
+  }
+
+  return { ok: true as const, session };
+}
