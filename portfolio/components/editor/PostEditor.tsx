@@ -11,6 +11,7 @@ interface PostEditorProps {
     contentMarkdown?: string
     coverImageUrl?: string
     tags?: string[]
+    youtubeUrl?: string
   }
   onSave: (data: {
     title: string
@@ -18,8 +19,21 @@ interface PostEditorProps {
     coverImageUrl: string
     tags: string[]
     status: 'DRAFT' | 'PUBLISHED'
+    youtubeUrl: string
   }) => Promise<void>
   onCancel?: () => void
+}
+
+/** Extrai o ID de um link YouTube em qualquer formato */
+function extractYoutubeId(url: string): string | null {
+  const patterns = [
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/,
+  ]
+  for (const pattern of patterns) {
+    const match = url.match(pattern)
+    if (match) return match[1]
+  }
+  return null
 }
 
 export function PostEditor({ initialData, onSave, onCancel }: PostEditorProps) {
@@ -28,10 +42,21 @@ export function PostEditor({ initialData, onSave, onCancel }: PostEditorProps) {
   const [contentMarkdown, setContentMarkdown] = useState(initialData?.contentMarkdown || '')
   const [coverImageUrl, setCoverImageUrl] = useState(initialData?.coverImageUrl || '')
   const [tags, setTags] = useState<string[]>(initialData?.tags || [])
+  const [youtubeUrl, setYoutubeUrl] = useState(initialData?.youtubeUrl || '')
+  const [youtubeError, setYoutubeError] = useState('')
   const [isUploading, setIsUploading] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const handleYoutubeChange = (value: string) => {
+    setYoutubeUrl(value)
+    if (value && !extractYoutubeId(value)) {
+      setYoutubeError('Link inválido. Use um link do YouTube (ex: https://youtu.be/xxxxx)')
+    } else {
+      setYoutubeError('')
+    }
+  }
 
   const handleCoverImageUpload = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -40,7 +65,6 @@ export function PostEditor({ initialData, onSave, onCancel }: PostEditorProps) {
     try {
       setIsUploading(true)
 
-      // 1. Get presigned URL
       const presignRes = await fetch('/api/uploads/presign', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -51,13 +75,11 @@ export function PostEditor({ initialData, onSave, onCancel }: PostEditorProps) {
         }),
       })
 
-      if (!presignRes.ok) {
-        throw new Error('Failed to get upload URL')
-      }
+      if (!presignRes.ok) throw new Error('Failed to get upload URL')
 
       const { uploadUrl, publicUrl } = await presignRes.json()
 
-      // 2. Upload file directly to MinIO
+      // Upload direto para MinIO — sem headers extras de checksum
       const uploadRes = await fetch(uploadUrl, {
         method: 'PUT',
         body: file,
@@ -66,17 +88,16 @@ export function PostEditor({ initialData, onSave, onCancel }: PostEditorProps) {
         },
       })
 
-      if (!uploadRes.ok) {
-        throw new Error('Failed to upload file')
-      }
+      if (!uploadRes.ok) throw new Error('Failed to upload file')
 
-      // 3. Save public URL
       setCoverImageUrl(publicUrl)
     } catch (error) {
       console.error('Upload error:', error)
-      alert('Failed to upload image. Please try again.')
+      alert('Falha ao fazer upload da imagem. Tente novamente.')
     } finally {
       setIsUploading(false)
+      // Reset input para permitir re-upload do mesmo arquivo
+      if (fileInputRef.current) fileInputRef.current.value = ''
     }
   }
 
@@ -94,37 +115,28 @@ export function PostEditor({ initialData, onSave, onCancel }: PostEditorProps) {
         }),
       })
 
-      if (!presignRes.ok) {
-        throw new Error('Failed to get upload URL')
-      }
+      if (!presignRes.ok) throw new Error('Failed to get upload URL')
 
       const { uploadUrl, publicUrl } = await presignRes.json()
 
       const uploadRes = await fetch(uploadUrl, {
         method: 'PUT',
         body: file,
-        headers: {
-          'Content-Type': file.type,
-        },
+        headers: { 'Content-Type': file.type },
       })
 
-      if (!uploadRes.ok) {
-        throw new Error('Failed to upload file')
-      }
+      if (!uploadRes.ok) throw new Error('Failed to upload file')
 
-      // Insert image markdown at cursor
       const textarea = textareaRef.current
       if (textarea) {
         const start = textarea.selectionStart
         const end = textarea.selectionEnd
-        const text = contentMarkdown
-        const before = text.substring(0, start)
-        const after = text.substring(end)
+        const before = contentMarkdown.substring(0, start)
+        const after = contentMarkdown.substring(end)
         const imageMarkdown = `![Image description](${publicUrl})`
-        
+
         setContentMarkdown(before + imageMarkdown + after)
-        
-        // Set cursor after inserted image
+
         setTimeout(() => {
           textarea.focus()
           textarea.setSelectionRange(
@@ -135,7 +147,7 @@ export function PostEditor({ initialData, onSave, onCancel }: PostEditorProps) {
       }
     } catch (error) {
       console.error('Upload error:', error)
-      alert('Failed to upload image. Please try again.')
+      alert('Falha ao fazer upload da imagem. Tente novamente.')
     } finally {
       setIsUploading(false)
     }
@@ -143,58 +155,49 @@ export function PostEditor({ initialData, onSave, onCancel }: PostEditorProps) {
 
   const handleSave = async (status: 'DRAFT' | 'PUBLISHED') => {
     if (!title.trim()) {
-      alert('Please enter a title')
+      alert('Por favor, insira um título')
       return
     }
-
     if (!contentMarkdown.trim()) {
-      alert('Please enter some content')
+      alert('Por favor, insira o conteúdo do post')
+      return
+    }
+    if (youtubeUrl && youtubeError) {
+      alert('O link do YouTube é inválido. Corrija ou deixe em branco.')
       return
     }
 
     try {
       setIsSaving(true)
-      await onSave({
-        title,
-        contentMarkdown,
-        coverImageUrl,
-        tags,
-        status,
-      })
+      await onSave({ title, contentMarkdown, coverImageUrl, tags, status, youtubeUrl })
     } catch (error) {
       console.error('Save error:', error)
-      alert('Failed to save post. Please try again.')
+      alert('Falha ao salvar o post. Tente novamente.')
     } finally {
       setIsSaving(false)
     }
   }
 
+  const youtubePreviewId = extractYoutubeId(youtubeUrl)
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 sticky top-0 z-10">
         <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <h1 className="text-xl font-bold">Create Post</h1>
-          </div>
+          <h1 className="text-xl font-bold">Create Post</h1>
           <div className="flex items-center gap-2">
             <button
               onClick={() => setMode('edit')}
-              className={`px-4 py-2 rounded-md font-medium ${
-                mode === 'edit'
-                  ? 'text-gray-900'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
+              className={`px-4 py-2 rounded-md font-medium ${mode === 'edit' ? 'text-gray-900' : 'text-gray-600 hover:text-gray-900'
+                }`}
             >
               Edit
             </button>
             <button
               onClick={() => setMode('preview')}
-              className={`px-4 py-2 rounded-md font-medium ${
-                mode === 'preview'
-                  ? 'text-gray-900'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
+              className={`px-4 py-2 rounded-md font-medium ${mode === 'preview' ? 'text-gray-900' : 'text-gray-600 hover:text-gray-900'
+                }`}
             >
               Preview
             </button>
@@ -207,13 +210,14 @@ export function PostEditor({ initialData, onSave, onCancel }: PostEditorProps) {
           <div className="bg-white rounded-lg shadow-sm border border-gray-200">
             {/* Cover Image */}
             <div className="p-6 border-b border-gray-200">
+              <p className="text-sm font-medium text-gray-700 mb-3">Imagem de capa</p>
               <div className="flex gap-3">
                 <button
                   onClick={() => fileInputRef.current?.click()}
                   disabled={isUploading}
                   className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50"
                 >
-                  {isUploading ? 'Uploading...' : 'Upload Cover Image'}
+                  {isUploading ? 'Enviando...' : 'Upload Cover Image'}
                 </button>
                 <input
                   ref={fileInputRef}
@@ -234,9 +238,50 @@ export function PostEditor({ initialData, onSave, onCancel }: PostEditorProps) {
                     onClick={() => setCoverImageUrl('')}
                     className="absolute top-2 right-2 px-3 py-1 bg-red-600 text-white rounded-md hover:bg-red-700"
                   >
-                    Remove
+                    Remover
                   </button>
                 </div>
+              )}
+            </div>
+
+            {/* YouTube Video */}
+            <div className="p-6 border-b border-gray-200">
+              <p className="text-sm font-medium text-gray-700 mb-2">
+                Vídeo do YouTube <span className="text-gray-400 font-normal">(opcional)</span>
+              </p>
+              <input
+                type="url"
+                value={youtubeUrl}
+                onChange={(e) => handleYoutubeChange(e.target.value)}
+                placeholder="https://www.youtube.com/watch?v=xxxxx"
+                className={`w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${youtubeError ? 'border-red-400' : 'border-gray-300'
+                  }`}
+              />
+              {youtubeError && (
+                <p className="mt-1 text-xs text-red-500">{youtubeError}</p>
+              )}
+              {/* Preview inline do vídeo */}
+              {youtubePreviewId && !youtubeError && (
+                <div className="mt-4">
+                  <p className="text-xs text-gray-500 mb-2">Preview:</p>
+                  <div className="aspect-video w-full max-w-xl rounded-lg overflow-hidden border border-gray-200">
+                    <iframe
+                      src={`https://www.youtube.com/embed/${youtubePreviewId}`}
+                      title="YouTube preview"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      className="w-full h-full"
+                    />
+                  </div>
+                </div>
+              )}
+              {youtubeUrl && youtubePreviewId && (
+                <button
+                  onClick={() => { setYoutubeUrl(''); setYoutubeError('') }}
+                  className="mt-2 text-xs text-red-500 hover:text-red-700"
+                >
+                  Remover vídeo
+                </button>
               )}
             </div>
 
@@ -292,7 +337,7 @@ export function PostEditor({ initialData, onSave, onCancel }: PostEditorProps) {
             disabled={isSaving || isUploading}
             className="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 font-medium"
           >
-            {isSaving ? 'Publishing...' : 'Publish'}
+            {isSaving ? 'Publicando...' : 'Publish'}
           </button>
           <button
             onClick={() => handleSave('DRAFT')}
