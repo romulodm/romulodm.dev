@@ -86,14 +86,14 @@ export function CommentsSection({
                 </h2>
 
                 {/* Sort tab-pills */}
-                <div className="flex items-center gap-1 rounded-lg border border-border p-0.5 bg-accent/20">
+                <div className="flex items-center gap-1 rounded-lg border border-border p-0.5 bg-gray-300/30 dark:bg-neutral-800/50">
                     {SORT_OPTIONS.map(({ value, label, icon: Icon }) => (
                         <button
                             key={value}
                             onClick={() => handleSortChange(value)}
                             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all
                                 ${sort === value
-                                    ? "bg-background text-foreground shadow-sm"
+                                    ? "bg-gray-400/40 dark:bg-neutral-800 text-foreground shadow-sm"
                                     : "text-muted-foreground hover:text-foreground"
                                 }`}
                         >
