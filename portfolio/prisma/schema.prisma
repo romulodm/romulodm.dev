@@ -23,8 +23,11 @@ model User {
   email         String   @unique
   emailVerified Boolean  @default(false)
   image         String? //URL
+  about         String?  @db.VarChar(1000)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+  githubUrl     String?
+  linkedinUrl   String?
 
   provider            AuthProvider
   sub                 String? // provider-specific user ID
@@ -33,6 +36,7 @@ model User {
   comments  Comment[]
   votes     CommentVote[]
   postLikes PostLike[]
+  posts     Post[]
 }
 
 model PasswordResetToken {
@@ -55,25 +59,32 @@ enum PostStatus {
 model Post {
   id              String     @id @default(cuid())
   title           String
+  summary         String?    @db.VarChar(500)
+  readingTime     Int        @default(0)
   slug            String     @unique
   excerpt         String?    @db.Text
   contentMarkdown String     @db.Text
   coverImageUrl   String?
+  youtubeUrl      String?
   status          PostStatus @default(DRAFT)
   publishedAt     DateTime?
   canonicalUrl    String?
   createdAt       DateTime   @default(now())
   updatedAt       DateTime   @updatedAt
 
-  views Int @default(0)
-  likes Int @default(0)
+  views         Int @default(0)
+  likes         Int @default(0)
+  commentsCount Int @default(0)
 
+  authorId  String
+  author    User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
   postTags  PostTag[]
   comments  Comment[]
   postLikes PostLike[]
 
   @@index([status, publishedAt])
   @@index([slug])
+  @@index([authorId])
 }
 
 model PostLike {
@@ -103,14 +114,15 @@ model PostTag {
 }
 
 model Comment {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   postId    String
   parentId  String?
   authorId  String
-  bodyMd    String   @db.VarChar(2000)
-  score     Int      @default(0)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  bodyMd    String    @db.VarChar(2000)
+  score     Int       @default(0)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  editedAt  DateTime?
 
   post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
 
