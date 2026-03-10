@@ -5,7 +5,7 @@ import { ArrowRight, Github, Mail } from "lucide-react";
 import dynamic from "next/dynamic";
 
 // Carrega o canvas 3D só depois que o JS principal já rodou
-const LanyardDisplay = dynamic(() => import("@/components/LanyardDisplay"), {
+const LanyardDisplay = dynamic(() => import("@/components/lanyard/LanyardDisplay"), {
     ssr: false,
     loading: () => null, // sem spinner, sem nada — o espaço fica vazio
 });
