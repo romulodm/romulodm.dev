@@ -19,17 +19,34 @@ services:
     networks:
       - romulodm-network
 
+  umami-db:
+    image: postgres:16-alpine
+    container_name: romulodm-umami-db
+    env_file:
+      - .env
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${UMAMI_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${UMAMI_POSTGRES_PASSWORD}
+      POSTGRES_DB: ${UMAMI_DB}
+    ports:
+      - "5433:5432"
+    volumes:
+      - umami_postgres_data:/var/lib/postgresql/data
+    networks:
+      - romulodm-network
+
   mailcatcher:
     image: sj26/mailcatcher
     container_name: mailcatcher
     env_file:
       - .env
     expose:
-      - '${EMAIL_SMTP_PORT}'
-      - '${EMAIL_HTTP_PORT}'
+      - '${SMTP_PORT}'
+      - '${HTTP_PORT}'
     ports:
-      - '${EMAIL_SMTP_PORT}:1025'
-      - '${EMAIL_HTTP_PORT}:1080'
+      - '${SMTP_PORT}:1025'
+      - '${HTTP_PORT}:1080'
 
   minio:
     image: minio/minio:latest
@@ -48,6 +65,31 @@ services:
       - minio_data:/data
     networks:
       - romulodm-network
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  minio-init:
+    image: minio/mc:latest
+    container_name: romulodm-minio-init
+    env_file:
+      - .env
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+        mc alias set local http://minio:9000 $${MINIO_ROOT_USER} $${MINIO_ROOT_PASSWORD} &&
+        mc mb --ignore-existing local/$${MINIO_BUCKET_NAME} &&
+        mc anonymous set download local/$${MINIO_BUCKET_NAME} &&
+        echo '✅ Bucket $${MINIO_BUCKET_NAME} pronto.'
+      "
+    networks:
+      - romulodm-network
+    restart: "no"
 
   umami:
     image: ghcr.io/umami-software/umami:postgresql-latest
@@ -57,9 +99,14 @@ services:
       - '${UMAMI_PORT}:3000'
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${UMAMI_DB}
+      APP_SECRET: ${APP_SECRET}
+      APP_URL: http://localhost:3001
+      DEBUG: umami:*
     depends_on:
       - postgres
     restart: unless-stopped
+    networks:
+      - romulodm-network
 
   redis:
     image: redis:7-alpine
@@ -72,8 +119,32 @@ services:
     networks:
       - romulodm-network
 
+  # app:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   container_name: romulodm-app
+  #   env_file:
+  #     - .env
+  #   restart: unless-stopped
+  #   environment:
+  #     - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?schema=public
+  #     - MINIO_ENDPOINT=${MINIO_ENDPOINT}
+  #     - MINIO_PORT=${MINIO_PORT}
+  #     - MINIO_PUBLIC_URL=${MINIO_PUBLIC_URL}
+  #     - REDIS_URL=${REDIS_URL}
+  #   ports:
+  #     - "3000:3000"
+  #   depends_on:
+  #     - postgres
+  #     - minio
+  #     - redis
+  #   networks:
+  #     - romulodm-network
+
 volumes:
   postgres_data:
+  umami_postgres_data:
   minio_data:
   redis_data:
 
