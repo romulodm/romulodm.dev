@@ -9,6 +9,8 @@ const s3Client = new S3Client({
     secretAccessKey: process.env.MINIO_SECRET_KEY!,
   },
   forcePathStyle: true,
+  requestChecksumCalculation: 'WHEN_REQUIRED',
+  responseChecksumValidation: 'WHEN_REQUIRED',
 })
 
 export interface PresignedUploadResult {
@@ -32,7 +34,10 @@ export async function generatePresignedUpload(
     ContentType: contentType,
   })
 
-  const uploadUrl = await getSignedUrl(s3Client, command, { expiresIn: 3600 })
+  const uploadUrl = await getSignedUrl(s3Client, command, {
+    expiresIn: 3600,
+    unhoistableHeaders: new Set(['x-amz-checksum-crc32', 'x-amz-sdk-checksum-algorithm']),
+  })
 
   const publicUrl = `${process.env.MINIO_PUBLIC_URL}/${process.env.MINIO_BUCKET_NAME}/${key}`
 
@@ -43,7 +48,6 @@ export async function generatePresignedUpload(
   }
 }
 
-// Validação de tipos de arquivo permitidos
 export const ALLOWED_IMAGE_TYPES = [
   'image/jpeg',
   'image/jpg',
@@ -52,16 +56,12 @@ export const ALLOWED_IMAGE_TYPES = [
   'image/webp',
 ]
 
-export const ALLOWED_VIDEO_TYPES = [
-  'video/mp4',
-  'video/webm',
-]
 
 export const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB
 
 export function validateFileUpload(contentType: string, size?: number) {
-  const allowedTypes = [...ALLOWED_IMAGE_TYPES, ...ALLOWED_VIDEO_TYPES]
-  
+  const allowedTypes = [...ALLOWED_IMAGE_TYPES]
+
   if (!allowedTypes.includes(contentType)) {
     throw new Error(`Invalid content type: ${contentType}`)
   }
