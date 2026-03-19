@@ -40,9 +40,9 @@ export default function Hero() {
                     transition={{ duration: 0.2, ease: "easeOut" }}
                     className="w-full lg:w-1/2"
                 >
-                    <div className="flex items-center gap-2 mb-6">
+                    <div className="flex items-center gap-2 mb-4">
                         <span className="inline-block w-2 h-2 rounded-full bg-primary animate-pulse" />
-                        <span className="text-sm font-mono text-muted-foreground">Available for opportunities</span>
+                        <span className="text-base font-mono text-muted-foreground">Available for opportunities</span>
                     </div>
 
                     <h1 className="text-5xl md:text-6xl font-bold tracking-tight text-foreground mb-4">
