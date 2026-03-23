@@ -108,6 +108,16 @@ services:
     networks:
       - romulodm-network
 
+
+  waha:
+    image: devlikeapro/waha
+    ports:
+      - "3002:3000"
+    volumes:
+      - ./waha-data:/app/.sessions
+    environment:
+      - WHATSAPP_DEFAULT_ENGINE=WEBJS
+
   redis:
     image: redis:7-alpine
     container_name: romulodm-redis
