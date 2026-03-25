@@ -1,0 +1,9 @@
+{
+    "name": "romulodm",
+    "private": true,
+    "workspaces": [
+        "packages/*",
+        "portfolio",
+        "worker"
+    ]
+}
