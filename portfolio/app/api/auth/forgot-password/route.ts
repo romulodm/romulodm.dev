@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { randomBytes } from "crypto"
 import { z } from "zod"
-import { prisma } from "@/lib/prisma"
+import { prisma } from "@romulo/database"
 import { sendPasswordResetEmail } from "@/lib/mail"
 
 const schema = z.object({ email: z.string().email() })
