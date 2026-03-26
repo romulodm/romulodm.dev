@@ -129,6 +129,20 @@ services:
     networks:
       - romulodm-network
 
+  worker:
+    build:
+      context: .            
+      dockerfile: worker/Dockerfile
+    container_name: romulodm-worker
+    env_file:
+      - .env
+    restart: unless-stopped
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - romulodm-network
+
   # app:
   #   build:
   #     context: .
