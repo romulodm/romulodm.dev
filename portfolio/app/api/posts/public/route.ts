@@ -1,6 +1,6 @@
 // app/api/posts/public/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { prisma } from "@romulo/database";
 
 export type PostSortOption = 'newest' | 'oldest' | 'most_liked' | 'most_viewed';
 

@@ -1,6 +1,6 @@
 // app/api/posts/[id]/view/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { prisma } from "@romulo/database";
 import { redis } from '@/lib/redis'
 
 const VIEW_COOLDOWN_SECONDS = 30 * 60; // 30 min por usuário/sessão

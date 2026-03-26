@@ -1,8 +1,9 @@
 // app/api/posts/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { isAdminAuthenticated } from "@/lib/auth-helpers";
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@romulo/database";
 import { generateSlug, generateExcerpt } from "@/lib/markdown";
+import { requireAdmin } from "@/lib/auth";
 
 // GET /api/posts - List posts (admin only)
 export async function GET(request: NextRequest) {
@@ -35,12 +36,15 @@ export async function GET(request: NextRequest) {
 // POST /api/posts - Create new post (admin only)
 export async function POST(request: NextRequest) {
   try {
-    if (!(await isAdminAuthenticated())) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const auth = await requireAdmin();
+    if (!auth.ok) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: auth.status });
     }
 
+    const userId = (auth.session.user as any).id as string;
+
     const data = await request.json();
-    const { title, contentMarkdown, coverImageUrl, youtubeUrl, tags, status, canonicalUrl, excerpt } = data;
+    const { title, summary, readingTime, contentMarkdown, coverImageUrl, youtubeUrl, tags, status, canonicalUrl, excerpt } = data;
 
     if (!title || !contentMarkdown) {
       return NextResponse.json(
@@ -68,10 +72,13 @@ export async function POST(request: NextRequest) {
         excerpt: resolvedExcerpt,
         contentMarkdown,
         coverImageUrl: coverImageUrl || null,
+        summary: summary || null,
+        readingTime: readingTime || 0,
         youtubeUrl: youtubeUrl || null,
         status: isPublished ? "PUBLISHED" : "DRAFT",
         publishedAt: isPublished ? new Date() : null,
         canonicalUrl: canonicalUrl || null,
+        authorId: userId,
         // Create PostTag rows in the same transaction
         postTags: tags?.length
           ? { create: (tags as string[]).map((tag) => ({ tag: tag.trim().toLowerCase() })) }
