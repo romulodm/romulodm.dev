@@ -1,8 +1,9 @@
 // app/api/comments/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { prisma } from "@romulo/database";
 import { getServerSession } from 'next-auth';
 import { authOptions } from "@/lib/auth";
+import { notificationQueue } from '@/lib/queues/notification.queue';
 
 // In-memory rate limiter: userId -> timestamps[]
 const rateLimitMap = new Map<string, number[]>();
@@ -128,7 +129,11 @@ export async function POST(request: NextRequest) {
     // ── Validate post ─────────────────────────────────────────────────────────
     const post = await prisma.post.findUnique({
         where: { id: postId, status: "PUBLISHED" },
-        select: { id: true },
+        select: {
+            id: true,
+            slug: true,
+            title: true
+        },
     });
     if (!post) {
         return NextResponse.json({ error: "Post não encontrado." }, { status: 404 });
@@ -164,8 +169,17 @@ export async function POST(request: NextRequest) {
             data: { commentsCount: { increment: 1 } },
         });
 
+
         return created;
     });
+
+    const job = await notificationQueue.add('comment', {
+        type: 'comment',
+        author: comment.author.username,
+        postTitle: post.title,
+        postSlug: post.slug,
+    })
+    console.log(`[Queue] Job publicado: ${job.id}`)
 
     return NextResponse.json(comment, { status: 201 });
 }
