@@ -2,5 +2,287 @@
     "ResumePDFButton": {
         "view": "View",
         "download": "Download"
+    },
+    "auth": {
+        "title": "Sign in to your account and start interacting."
+    },
+    "blog": {
+        "page-title": "Blog - Romulo de Moraes",
+        "title": "The opinions expressed here are personal reflections regarding my views on technology and other subjects; feel free to interact, share your ideas and send suggestions.",
+        "card-button": "Read more",
+        "filter": {
+            "search": "Search post",
+            "random": "Random post",
+            "filter": "Filter posts",
+            "filter-all": "All"
+        },
+        "newsletter": {
+            "title": "Want to receive new posts?",
+            "content": "Subscribe to our newsletter.",
+            "btn": "Subscribe",
+            "privacy": "Privacy policy"
+        },
+        "about-portfolio": {
+            "title": "Want to know how this site was built?",
+            "content": "Check out the post I wrote about the code and architecture behind it.",
+            "btn": "View post"
+        },
+        "suggestions": {
+            "title": "Want to suggest a topic?",
+            "content": "Send a suggestion about something in the field.",
+            "btn": "Send suggestion",
+            "privacy": "Privacy policy"
+        },
+        "not-found-title": "Well, this shouldn't have happened...",
+        "not-found-content": "I couldn't find any post matching your search criteria. Try searching by titles or topics..."
+    },
+    "contact": {
+        "text": "Feel free to contact me if you have any questions or suggestions. I'm open to ideas and opportunities.",
+        "form-email": "Your email",
+        "form-name": "Your name",
+        "form-text": "What's on your mind?",
+        "form-button": "Send",
+        "sended-title": "Thank you for reaching out!",
+        "sended-content": "Your message has been sent successfully."
+    },
+    "hero": {
+        "greeting-1": "Good morning",
+        "greeting-2": "Good afternoon",
+        "greeting-3": "Good evening",
+        "greeting-4": "Good night",
+        "visitor-1": "visitor!",
+        "visitor-2": "dear!",
+        "visitor-3": "dev :)",
+        "visitor-4": "person.",
+        "visitor-5": "visitor :)",
+        "visitor-6": "friend.",
+        "content": "My name is Romulo de Moraes, I decided to create this site to show a little of who I am, what I've done, what I've learned and what I plan to achieve as a full-stack developer and student.",
+        "star-title": "Give a star",
+        "star-content": "Access this site's repository.",
+        "resume-title": "View my resume",
+        "resume-content": "Dynamic, interactive and up to date."
+    },
+    "about": {
+        "eyebrow": "About us",
+        "headline": "On a mission to empower remote teams",
+        "subheadline": "Aliquet nec orci mattis amet quisque ullamcorper neque, nibh sem. At arcu, sit dui mi, nibh dui, diam eget aliquam. Quisque id at vitae feugiat egestas.",
+        "missionTitle": "Our mission",
+        "missionParagraph1": "Faucibus commodo massa rhoncus, volutpat. Dignissim sed eget risus enim. Mattis mauris semper sed amet vitae sed turpis id. Id dolor praesent donec est. Odio penatibus risus viverra tellus varius sit neque erat velit. Faucibus commodo massa rhoncus, volutpat. Dignissim sed eget risus enim. Mattis mauris semper sed amet vitae sed turpis id.",
+        "missionParagraph2": "Et vitae blandit facilisi magna lacus commodo. Vitae sapien duis odio id et. Id blandit molestie auctor fermentum dignissim. Lacus diam tincidunt ac cursus in vel. Mauris varius vulputate et ultrices hac adipiscing egestas. Iaculis convallis ac tempor et ut. Ac lorem vel integer orci.",
+        "theNumbers": "The numbers",
+        "stats": {
+            "raised": "Raised",
+            "companies": "Companies",
+            "deals": "Deals Closed",
+            "leads": "Leads Generated"
+        }
+    },
+    "home": {
+        "page-title": "Romulo de Moraes",
+        "profile": {
+            "title": "Overview of",
+            "title-colored": "Profile",
+            "link-title": "Want to see my resume?",
+            "link-content": "I summarized my experiences and made it available for download.",
+            "link-button": "View online resume"
+        },
+        "projects": {
+            "title": "Some",
+            "title-colored": "Projects",
+            "code": "Code",
+            "preview": "Visit",
+            "public": "public repositories",
+            "link-title": "Interested?",
+            "link-content": "You can see more of my projects and experiments.",
+            "link-button": "See more projects"
+        },
+        "vision": {
+            "title": "Vision on",
+            "title-colored": "Software",
+            "link-title": "Want to know more?",
+            "link-content": "You can read more about what I think on my blog.",
+            "link-button": "View posts"
+        },
+        "contact": {
+            "title": "Get in",
+            "title-colored": "Touch"
+        }
+    },
+    "navigation": {
+        "home": "Home",
+        "resume": "Resume",
+        "settings": "Settings",
+        "theme": "Theme",
+        "language": "Language",
+        "user": "User"
+    },
+    "post": {
+        "comment-title": "Leave a comment",
+        "comment-placeholder": "Write your comment here...",
+        "comment-button": "Post comment",
+        "comments-empty": "No comments yet."
+    },
+    "resume": {
+        "page-title": "Online Resume - Romulo de Moraes",
+        "linkedin": "LinkedIn Profile",
+        "github": "GitHub Profile",
+        "titles": {
+            "xp": "Experience",
+            "education": "Education",
+            "lang": "Languages"
+        }
+    },
+    "terminal": {
+        "xp": "experience",
+        "loading-xp-title": "Looking for experience...",
+        "loading-xp": "Loading system experience took ",
+        "education": "education",
+        "loading-education-title": "Looking for education...",
+        "loading-education": "Loading education took ",
+        "visitor": "visitor",
+        "tooltip": "You can use this terminal",
+        "loading": "Loading the follow-up message took ",
+        "not-found-fisrt": "Command not found, type ",
+        "not-found-second": " for a list of commands.",
+        "loadings": {
+            "help": "Loading the help message took ",
+            "initial": "Loading the initial message took ",
+            "follow": "Loading social networks took ",
+            "who": "Loading this useless info took ",
+            "who-years": " years",
+            "whoami": "Loading this pill took ",
+            "cats": "Loading these amazing cats took ",
+            "inter": "Loading SC Internacional's logo took ",
+            "spotify": "Loading this awesome playlist took ",
+            "secret": "Loading this riddle took "
+        },
+        "commands": {
+            "help": "List of commands",
+            "clear": "Clear the terminal",
+            "initial": "Display the header",
+            "follow": "My social networks",
+            "who": "Who is Romulo?",
+            "whoami": "Who are you?",
+            "cats": "Wonderful cat art",
+            "inter": "The greatest football club in the world",
+            "spotify": "One of my playlists",
+            "secret": "Simple riddle, what's the password?"
+        },
+        "initial": {
+            "content": "For a list of available commands, type "
+        },
+        "who": {
+            "so": "So...",
+            "about": "I'm 20 years old, just a student and tech enthusiast who likes to play games, read books and do other nerdy stuff. 🤓"
+        },
+        "whoami": {
+            "title": "Life is not a mystery to be solved, but an experience to be lived.",
+            "paragraph1": "I saw this quote in the movie Dune and thought a lot about it. I believe that many times we turn our insignificance into a form of martyrdom and doubt, when in reality things should be simpler than they actually are.",
+            "paragraph2": "You and I are not mere candidates for a place in heaven. If you always live thinking about a future reward, you end up forgetting to live in the present and forgetting who you are.",
+            "paragraph3": "According to Jean-Paul Sartre, existence precedes essence. This means that human beings have no predetermined nature. You create your own nature through your actions and choices. Therefore, this question has no correct answer. The responsibilities you take on and the choices you make throughout your life determine who you are.",
+            "paragraph4": "Today you might be a programmer, a student, a professional... However, tomorrow you might be a completely different person — it all depends on you."
+        },
+        "spotify": {
+            "alert": "Watch out for the volume and enjoy in moderation!"
+        },
+        "secret": {
+            "how-first": "To see the mysterious message you need to type ",
+            "how-try": "your attempt",
+            "how-second": ", your attempt being a four-digit number.",
+            "how-hint": "To see a hint, type ",
+            "hint-time": "Come on, man, these messages don't take long to show up...",
+            "hint": "The hint is: it's a year 🤯 wow, amazing hint! One more — this year appears in a message here in the terminal...",
+            "wrong": "This check took no time at all.",
+            "reward": "Correct! Your reward here: "
+        }
+    },
+    "vision": {
+        "icons": {
+            "first-title": "Innovation",
+            "first-content": "Defining tomorrow's rules.",
+            "second-title": "Community",
+            "second-content": "Making people's lives easier."
+        },
+        "frame": {
+            "one": "Design.",
+            "two": "Prototype.",
+            "three": "Develop.",
+            "four": "Improve."
+        },
+        "productivity": {
+            "title": "Productivity at its best.",
+            "word-1": "With ",
+            "bold-1": "quality ",
+            "word-2": "and ",
+            "bold-2": "sustainability ",
+            "word-3": "at heart."
+        },
+        "development": {
+            "left": "Security",
+            "center": "Collaborative development",
+            "right": "Flexibility"
+        },
+        "comment": {
+            "time": "2 hours ago",
+            "content": "Don't forget the meeting, friend!"
+        }
+    },
+    "404": {
+        "error": "error",
+        "title": "Something went wrong.",
+        "button": "Try again"
+    },
+    "announcement": {
+        "content": "Hey, this portfolio is still under development, ok? 🤠"
+    },
+    "footer": {
+        "cta": {
+            "title": "Have a project in mind?",
+            "button": "Get in touch",
+            "disclaimer": "Let's build something together."
+        },
+        "newsletter": {
+            "title": "Stay Updated",
+            "subtitle": "Get notified about new posts, projects, and ideas straight to your inbox.",
+            "placeholder": "Enter your email",
+            "subscribe": "Subscribe"
+        },
+        "nav": {
+            "resources": {
+                "title": "Resources",
+                "links": {
+                    "home": "Home",
+                    "resume": "Resume",
+                    "blog": "Blog",
+                    "profile": "Profile"
+                }
+            },
+            "newsletter": {
+                "title": "Newsletter",
+                "links": {
+                    "about": "About",
+                    "login": "Sign in",
+                    "logout": "Sign out",
+                    "privacy": "Privacy policy"
+                }
+            },
+            "legal": {
+                "title": "Legal",
+                "links": {
+                    "privacy": "Privacy policy",
+                    "terms": "Terms of service",
+                    "notices": "Legal notices"
+                }
+            },
+            "about": {
+                "title": "About this site",
+                "description": "I believe that building in public is the best way to grow. I created this portfolio and blog to share ideas, projects, and lessons learned along the journey.",
+                "community": "If you're here, you're already part of this community."
+            }
+        },
+        "legal": {
+            "madeWith": "Made with ",
+            "copyright": "© {year} — All rights reserved."
+        }
     }
 }
