@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@romulo/database";
 
 export async function POST(req: NextRequest) {
     const body = await req.json().catch(() => null);
