@@ -1,65 +1,39 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
-import { z } from 'zod'
+// src/app/api/newsletter/subscribe/route.ts
+import { NextRequest, NextResponse } from "next/server";
+import { subscribe } from "@/lib/newsletter/newsletter.service";
+import { rateLimit } from "@/lib/rate-limit"; // see note below
 
-const subscribeSchema = z.object({
-  email: z.string().email('Invalid email address'),
-})
-
-export async function POST(request: NextRequest) {
-  try {
-    const body = await request.json()
-    
-    // Validate email
-    const result = subscribeSchema.safeParse(body)
-    if (!result.success) {
-      return NextResponse.json(
-        { error: result.error.errors[0].message },
-        { status: 400 }
-      )
-    }
-
-    const { email } = result.data
-
-    // Check if already subscribed
-    const existing = await prisma.subscriber.findUnique({
-      where: { email },
-    })
-
-    if (existing) {
-      if (existing.verified) {
-        return NextResponse.json(
-          { error: 'Email already subscribed' },
-          { status: 400 }
-        )
-      }
-      // Resend verification email
-      // TODO: Implement email sending
-      console.log(`Resending verification email to: ${email}`)
-      return NextResponse.json({
-        success: true,
-        message: 'Verification email sent',
-      })
-    }
-
-    // Create new subscriber
-    const subscriber = await prisma.subscriber.create({
-      data: { email },
-    })
-
-    // TODO: Send verification email
-    console.log(`Verification email should be sent to: ${email}`)
-    console.log(`Verification token: ${subscriber.unsubToken}`)
-
-    return NextResponse.json({
-      success: true,
-      message: 'Subscription successful! Please check your email to verify.',
-    })
-  } catch (error) {
-    console.error('Subscribe error:', error)
+export async function POST(req: NextRequest) {
+  // Basic rate limiting: 5 subscribe attempts per IP per 10 minutes
+  const ip = req.headers.get("x-forwarded-for") ?? "anonymous";
+  const limited = await rateLimit(`newsletter:subscribe:${ip}`, 5, 600);
+  if (limited) {
     return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    )
+      { error: "Muitas tentativas. Tente novamente em alguns minutos." },
+      { status: 429 },
+    );
+  }
+
+  let body: { email?: string };
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ error: "Corpo inválido." }, { status: 400 });
+  }
+
+  const email = (body.email ?? "").trim().toLowerCase();
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return NextResponse.json({ error: "E-mail inválido." }, { status: 400 });
+  }
+
+  try {
+    await subscribe(email);
+    // Always return the same message (prevents email enumeration)
+    return NextResponse.json({
+      message: "Verifique seu e-mail para confirmar a inscrição.",
+    });
+  } catch (err) {
+    console.error("[subscribe]", err);
+    return NextResponse.json({ error: "Erro interno. Tente novamente." }, { status: 500 });
   }
 }
