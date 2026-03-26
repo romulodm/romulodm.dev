@@ -1,6 +1,6 @@
 // app/api/posts/random/route.ts
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { prisma } from "@romulo/database";
 
 export async function GET() {
     // Conta posts publicados

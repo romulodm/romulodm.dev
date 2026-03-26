@@ -1,6 +1,6 @@
 // app/api/posts/[id]/like/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { prisma } from "@romulo/database";
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 

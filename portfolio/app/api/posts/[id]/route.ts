@@ -1,7 +1,7 @@
 // app/api/posts/[id]/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { isAdminAuthenticated } from "@/lib/auth-helpers";
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@romulo/database";
 import { generateSlug, generateExcerpt } from "@/lib/markdown";
 
 // GET /api/posts/[id]
@@ -41,7 +41,18 @@ export async function PATCH(
     }
 
     const data = await request.json();
-    const { title, contentMarkdown, coverImageUrl, tags, status, canonicalUrl, excerpt } = data;
+    const {
+      title,
+      contentMarkdown,
+      coverImageUrl,
+      youtubeUrl,
+      tags,
+      status,
+      canonicalUrl,
+      excerpt,
+      summary,
+      readingTime,
+    } = data;
 
     const existingPost = await prisma.post.findUnique({
       where: { id: params.id },
@@ -77,8 +88,11 @@ export async function PATCH(
     }
 
     if (excerpt !== undefined) updateData.excerpt = excerpt;
-    if (coverImageUrl !== undefined) updateData.coverImageUrl = coverImageUrl;
-    if (canonicalUrl !== undefined) updateData.canonicalUrl = canonicalUrl;
+    if (summary !== undefined) updateData.summary = summary || null;
+    if (readingTime !== undefined) updateData.readingTime = readingTime ?? 0;
+    if (coverImageUrl !== undefined) updateData.coverImageUrl = coverImageUrl || null;
+    if (youtubeUrl !== undefined) updateData.youtubeUrl = youtubeUrl || null;
+    if (canonicalUrl !== undefined) updateData.canonicalUrl = canonicalUrl || null;
 
     if (status !== undefined) {
       updateData.status = status;
@@ -87,8 +101,6 @@ export async function PATCH(
       }
     }
 
-    // Handle tags: delete all existing, re-create
-    // We do this in a transaction to keep it atomic
     const [post] = await prisma.$transaction([
       prisma.post.update({
         where: { id: params.id },
@@ -107,7 +119,6 @@ export async function PATCH(
         : []),
     ]);
 
-    // Re-fetch after tag update so response is consistent
     const updated = await prisma.post.findUnique({
       where: { id: params.id },
       include: { postTags: { select: { tag: true } } },

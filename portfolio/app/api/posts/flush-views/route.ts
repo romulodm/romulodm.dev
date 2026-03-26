@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
-import { Redis } from 'ioredis';
-
-const redis = new Redis(process.env.REDIS_URL!);
+import { prisma } from "@romulo/database";
+import { redis } from '@/lib/redis';
 const BATCH_KEY = 'views:batch';
 
 /**
