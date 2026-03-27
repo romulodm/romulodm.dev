@@ -185,8 +185,16 @@ enum CampaignStatus {
   FAILED
 }
 
+// POST_BASED  → linked to a Post; subject/content generated from the post
+// CUSTOM      → free-form HTML content written by the admin
+enum CampaignType {
+  POST_BASED
+  CUSTOM
+}
+
 model Campaign {
   id          String         @id @default(cuid())
+  type        CampaignType   @default(CUSTOM)
   subject     String
   previewText String?
   content     String         @db.Text
@@ -209,6 +217,7 @@ model Campaign {
 
   @@index([status, scheduledAt])
   @@index([postId])
+  @@index([type])
 }
 
 model CampaignRecipient {
