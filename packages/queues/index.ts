@@ -37,7 +37,7 @@ export interface CampaignEmailJob {
 }
 
 export type NotificationJob =
-    | { type: "comment"; author: string; postTitle: string; postSlug: string }
+    | { type: "comment"; id: string; author: string; postTitle: string; postSlug: string }
     | { type: "daily-status" };
 
 // ── Opções padrão ─────────────────────────────────────────────────────────────
@@ -63,3 +63,4 @@ export function createQueue<T>(
         ...opts,
     });
 }
+
