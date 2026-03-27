@@ -175,6 +175,7 @@ export async function POST(request: NextRequest) {
 
     const job = await notificationQueue.add('comment', {
         type: 'comment',
+        id: comment.id,
         author: comment.author.username,
         postTitle: post.title,
         postSlug: post.slug,
