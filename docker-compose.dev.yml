@@ -98,16 +98,16 @@ services:
     ports:
       - '${UMAMI_PORT}:3000'
     environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${UMAMI_DB}
+      DATABASE_URL: postgresql://${UMAMI_POSTGRES_USER}:${UMAMI_POSTGRES_PASSWORD}@umami-db:5432/${UMAMI_DB}
       APP_SECRET: ${APP_SECRET}
-      APP_URL: http://localhost:3001
       DEBUG: umami:*
+      REDIS_URL: redis://redis:6379
     depends_on:
-      - postgres
+      - umami-db
+      - redis
     restart: unless-stopped
     networks:
       - romulodm-network
-
 
   waha:
     image: devlikeapro/waha
