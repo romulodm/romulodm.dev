@@ -29,6 +29,11 @@ model User {
   githubUrl     String?
   linkedinUrl   String?
 
+  banned   Boolean   @default(false)
+  bannedAt DateTime?
+
+  suspiciousComments SuspiciousComment[]
+
   provider            AuthProvider
   sub                 String? // provider-specific user ID
   passwordResetTokens PasswordResetToken[]
@@ -76,12 +81,13 @@ model Post {
   likes         Int @default(0)
   commentsCount Int @default(0)
 
-  authorId  String
-  author    User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  postTags  PostTag[]
-  comments  Comment[]
-  postLikes PostLike[]
-  campaigns Campaign[]
+  authorId           String
+  author             User                @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  postTags           PostTag[]
+  comments           Comment[]
+  postLikes          PostLike[]
+  campaigns          Campaign[]
+  suspiciousComments SuspiciousComment[]
 
   @@index([status, publishedAt])
   @@index([slug])
@@ -112,6 +118,23 @@ model PostTag {
   @@unique([postId, tag])
   @@index([postId])
   @@index([tag])
+}
+
+model SuspiciousComment {
+  id        String   @id @default(cuid())
+  postId    String
+  parentId  String?
+  authorId  String
+  bodyMd    String   @db.VarChar(2000)
+  reason    String?
+  createdAt DateTime @default(now())
+
+  post   Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([authorId])
+  @@index([postId])
+  @@index([createdAt])
 }
 
 model Comment {
@@ -242,4 +265,42 @@ model CampaignRecipient {
   @@index([campaignId, status])
   @@index([subscriberId])
   @@index([trackingId])
+}
+
+enum DonationProvider {
+  STRIPE
+  PIX
+  ETH
+}
+
+enum DonationStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  EXPIRED
+}
+
+model Donation {
+  id        String           @id @default(cuid())
+  name      String?          @db.VarChar(100)
+  message   String?          @db.VarChar(500)
+  coffees   Int              @default(1)
+  amount    Int
+  currency  String           @default("BRL")
+  provider  DonationProvider
+  status    DonationStatus   @default(PENDING)
+  isPrivate Boolean          @default(false)
+  isMonthly Boolean          @default(false)
+
+  stripePaymentIntentId String? @unique
+  abacatePayChargeId    String? @unique
+  txHash                String? @unique
+  walletAddress         String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status, createdAt])
+  @@index([amount])
+  @@index([provider])
 }
