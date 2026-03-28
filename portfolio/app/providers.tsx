@@ -1,5 +1,6 @@
 // app/providers.tsx
 "use client";
+import { AuthModalProvider } from "@/components/auth/AuthModalProvider";
 import { SessionProvider, type SessionProviderProps } from "next-auth/react";
 import type { ReactNode } from "react";
 import { ParallaxProvider } from "react-scroll-parallax";
@@ -13,9 +14,11 @@ export default function Providers({
 }) {
     return (
         <SessionProvider session={session}>
-            <ParallaxProvider>
-                {children}
-            </ParallaxProvider>
+            <AuthModalProvider>
+                <ParallaxProvider>
+                    {children}
+                </ParallaxProvider>
+            </AuthModalProvider>
         </SessionProvider>
     );
 };
