@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState, useRef } from 'react';
 import { useLocale } from 'next-intl';
 
 import { getTimelineData } from '@/data/timeline';
@@ -24,47 +24,17 @@ export default function TimelineClient(): JSX.Element {
     const timelineObject: TimelineObject = getTimelineData(locale);
 
     const [currentItem, setCurrentItem] = useState<number>(0);
-    const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
-    const [isMouseOver, setIsMouseOver] = useState<boolean>(false);
-
-    const totalEvents = Object.values(timelineObject).reduce((acc, events) => acc + events.length, 0);
-    let globalIndex = 0;
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
 
     const handleItemChange = (index: number): void => {
         setCurrentItem(index);
     };
 
-    const startInterval = (): void => {
-        if (intervalId) clearInterval(intervalId);
-
-        const id = setInterval(() => {
-            if (!isMouseOver) {
-                setCurrentItem((prevItem) => (prevItem === totalEvents - 1 ? 0 : prevItem + 1));
-            }
-        }, 8000);
-
-        setIntervalId(id);
-    };
-
-    useEffect(() => {
-        startInterval();
-        return () => {
-            if (intervalId) clearInterval(intervalId);
-        };
-    }, [isMouseOver]);
-
-    const handleMouseEnter = (index: number): void => {
-        setIsMouseOver(true);
-        handleItemChange(index);
-    };
-
-    const handleMouseLeave = (): void => {
-        setIsMouseOver(false);
-    };
+    let globalIndex = 0;
 
     return (
         <section id="timeline" className="mt-5 w-full">
-            <div className="flex h-80 overflow-x-auto scroll-stylized px-4">
+            <div ref={scrollContainerRef} className="flex h-80 overflow-x-auto scroll-stylized px-4">
                 {Object.entries(timelineObject).map(([year, events]) => (
                     <div key={year} className="relative">
                         <header className="absolute left-0 -translate-x-1/2 text-xs font-semibold text-gray-400 dark:text-neutral-500">
@@ -83,11 +53,9 @@ export default function TimelineClient(): JSX.Element {
                                     <section
                                         key={heading + year}
                                         className="relative"
-                                        onMouseEnter={() => handleMouseEnter(globalEventIndex)}
-                                        onMouseLeave={handleMouseLeave}
+                                        onMouseEnter={() => handleItemChange(globalEventIndex)}
                                     >
                                         <button
-                                            key={globalEventIndex}
                                             className="absolute flex -translate-x-1/2 flex-col items-center"
                                             onClick={() => handleItemChange(globalEventIndex)}
                                         >
@@ -96,7 +64,7 @@ export default function TimelineClient(): JSX.Element {
                                             <Icon className={`mt-2 h-5 w-5 transition-all ${currentItem === globalEventIndex ? 'text-sky-500' : 'text-gray-500 dark:text-neutral-500'}`} />
                                         </button>
 
-                                        <div className={`absolute top-0 left-px h-2.5 w-[119px] bg-[image:linear-gradient(90deg,transparent_0px,transparent_9px,var(--line-color)_10px,var(--line-color)_10px)] bg-[length:10px_10px] transition-all [--line-color:theme(colors.gray.500)]`} />
+                                        <div className="absolute top-0 left-px h-2.5 w-[119px] bg-[image:linear-gradient(90deg,transparent_0px,transparent_9px,var(--line-color)_10px,var(--line-color)_10px)] bg-[length:10px_10px] [--line-color:theme(colors.gray.500)]" />
 
                                         {currentItem === globalEventIndex && (
                                             <main
