@@ -1,13 +1,7 @@
-// src/lib/redis.ts
-import IORedis from "ioredis";
+import { Redis } from "ioredis";
 
-function createConnection(): IORedis {
-  return new IORedis(process.env.REDIS_URL ?? "redis://localhost:6379", {
-    maxRetriesPerRequest: null, // required by BullMQ
+export const redis = new Redis(process.env.REDIS_URL_WORKER ?? "redis://localhost:6379", {
+    maxRetriesPerRequest: null,
     enableReadyCheck: false,
     lazyConnect: true,
-  });
-}
-
-/** Shared Redis connection reused across all workers in this process */
-export const redis = createConnection();
+});

@@ -1,10 +1,10 @@
-// src/lib/email/providers/smtp.provider.ts
 import nodemailer from "nodemailer";
+import type SMTPPool from "nodemailer/lib/smtp-pool/index.js";
 import type { EmailProvider, SendEmailOptions, SendResult } from "./base.provider";
 
 export class SmtpProvider implements EmailProvider {
   readonly name = "smtp";
-  private transporter: ReturnType<typeof nodemailer.createTransport>;
+  private transporter: nodemailer.Transporter<SMTPPool.SentMessageInfo>;
   private fromAddress: string;
   private fromName: string;
 
