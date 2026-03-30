@@ -1,4 +1,4 @@
-import { Worker, Queue } from "bullmq";
+import { Worker } from "bullmq";
 
 import {
   createRedisConnection,
@@ -11,8 +11,6 @@ import {
 import { notifyComment, sendDailyStatus } from "../lib/whatsapp";
 
 const redis = createRedisConnection();
-
-// ── Worker ───────────────────────────────────────────────────────────────────
 
 export const notificationWorker = new Worker<NotificationJob>(
   QUEUE_NOTIFICATIONS,
@@ -37,8 +35,6 @@ export const notificationWorker = new Worker<NotificationJob>(
   { connection: redis, concurrency: 1 },
 );
 
-// ── Daily-status repeatable job ───────────────────────────────────────────────
-
 const notificationQueue = createQueue<NotificationJob>(QUEUE_NOTIFICATIONS, redis, {
   defaultJobOptions: {
     attempts: 3,
@@ -62,7 +58,7 @@ export async function scheduleDailyStatus(): Promise<void> {
     { type: "daily-status" },
     {
       repeat: {
-        pattern: "* 8 * * *",
+        pattern: "0 8 * * *",
         tz: "America/Sao_Paulo",
       },
     },

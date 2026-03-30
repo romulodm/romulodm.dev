@@ -1,12 +1,9 @@
-// src/lib/email/email.service.ts
-//
-// Single entry-point for sending emails.
-// Provider chosen via EMAIL_PROVIDER env var (default: smtp).
-// Includes a circuit breaker to avoid hammering a failing SMTP server.
-//
 import type { EmailProvider, SendEmailOptions } from "./providers/base.provider";
+import { SmtpProvider } from "./providers/smtp.provider";
 
-// ── Circuit Breaker ──────────────────────────────────────────────────────────
+function createProvider(): EmailProvider {
+  return new SmtpProvider();
+}
 
 type CBState = "CLOSED" | "OPEN" | "HALF_OPEN";
 
@@ -18,7 +15,7 @@ class CircuitBreaker {
   constructor(
     private readonly threshold = 5,
     private readonly cooldownMs = 60_000,
-  ) {}
+  ) { }
 
   async run<T>(fn: () => Promise<T>): Promise<T> {
     if (this.state === "OPEN") {
@@ -58,21 +55,6 @@ class CircuitBreaker {
     return this.state === "OPEN" && Date.now() < this.nextAttempt;
   }
 }
-
-// ── Factory ──────────────────────────────────────────────────────────────────
-
-function createProvider(): EmailProvider {
-  // To add more providers, uncomment and extend this switch:
-  // const name = process.env.EMAIL_PROVIDER ?? "smtp";
-  // switch (name) {
-  //   case "resend": { ... }
-  //   case "sendgrid": { ... }
-  //   default:
-  const { SmtpProvider } = require("./providers/smtp.provider");
-  return new SmtpProvider();
-}
-
-// ── Service ──────────────────────────────────────────────────────────────────
 
 class EmailService {
   private provider: EmailProvider;
