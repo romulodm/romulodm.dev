@@ -7,14 +7,16 @@ import { Logo } from './Logo'
 import { FaLinkedinIn } from 'react-icons/fa'
 import { BsGithub, BsInstagram } from 'react-icons/bs'
 import { FaArrowRightLong } from 'react-icons/fa6'
-import { Mail, MapPin, Phone } from 'lucide-react'
+import { Mail, MapPin } from 'lucide-react'
 import { TermsModal } from './modals/TermsModal'
+import { ContactModal } from './modals/ContactModal' // ajuste o caminho se necessário
 
 export function Footer() {
     const t = useTranslations('footer')
     const currentYear = new Date().getFullYear()
 
-    const [termsOpen, setTermsOpen] = useState(false);
+    const [termsOpen, setTermsOpen] = useState(false)
+    const [contactOpen, setContactOpen] = useState(false)  // ← novo estado
 
     return (
         <footer
@@ -25,22 +27,10 @@ export function Footer() {
                 fontFamily: "'DM Sans', sans-serif",
             }}
         >
-            {/* <svg
-                className="absolute inset-0 w-full h-full pointer-events-none"
-                viewBox="0 0 1440 800"
-                preserveAspectRatio="xMidYMid slice"
-                xmlns="http://www.w3.org/2000/svg"
-            >
-                <polygon points="980,0 1440,0 1440,480 980,0" fill="#A5FF82" opacity="0.55" />
-                <polygon points="0,520 220,800 0,800" fill="#A5FF82" opacity="0.45" />
-                <polygon points="1260,600 1440,480 1440,800 1260,800" fill="#A5FF82" opacity="0.3" />
-                <polygon points="0,200 320,0 0,0" fill="#A5FF82" opacity="0.25" />
-            </svg> */}
-
             {/* ── CTA ── */}
             <div className="relative z-[2] text-center max-w-[740px] mx-auto mb-10 px-4">
                 <h2
-                    className="font-extrabold text-white text-[#0e0e0e] leading-[1.06] tracking-tight mb-5"
+                    className="font-extrabold text-white leading-[1.06] tracking-tight mb-5"
                     style={{
                         fontSize: 'clamp(2rem, 5.5vw, 4.2rem)',
                         letterSpacing: '-0.025em',
@@ -48,18 +38,19 @@ export function Footer() {
                 >
                     {t('cta.title')}
                 </h2>
-                <a
 
-                    href="mailto:demoraes.romulo@hotmail.com"
-                    className="inline-flex items-center gap-2.5 bg-[#0e0e0e] text-white text-[0.95rem] font-medium px-[22px] py-[13px] rounded-full no-underline hover:opacity-90 transition-opacity"
+                {/* Botão agora abre o modal */}
+                <button
+                    onClick={() => setContactOpen(true)}
+                    className="inline-flex items-center gap-2.5 bg-[#0e0e0e] text-white text-[0.95rem] font-medium px-[22px] py-[13px] rounded-full hover:opacity-90 transition-opacity"
                 >
                     {t('cta.button')}
-                    <span className="bg-[#00C74D] text-white text-[#0e0e0e] w-[26px] h-[26px] rounded-full flex items-center justify-center text-[0.85rem]">
+                    <span className="bg-[#00C74D] text-white w-[26px] h-[26px] rounded-full flex items-center justify-center text-[0.85rem]">
                         <FaArrowRightLong />
                     </span>
-                </a>
+                </button>
 
-                <p className="mt-[18px] text-sm sm:text-base text-white font-semilbold">
+                <p className="mt-[18px] text-sm sm:text-base text-white font-semibold">
                     {t('cta.disclaimer')}
                 </p>
             </div>
@@ -101,7 +92,6 @@ export function Footer() {
                             <button
                                 onClick={() => setTermsOpen(true)}
                                 className="text-[0.78rem] text-white/50 no-underline leading-snug hover:text-white/80 transition-colors"
-                                title="Terms of Service"
                             >
                                 {t('nav.legal.links.terms')}
                             </button>
@@ -109,7 +99,7 @@ export function Footer() {
                         <FooterLink href="/legal">{t('nav.legal.links.notices')}</FooterLink>
                     </FooterCol>
 
-                    {/* About — ocupa linha inteira no mobile */}
+                    {/* About */}
                     <div className="col-span-2 md:col-span-1">
                         <h4 className="text-sm font-semibold text-white mb-4 tracking-[0.01em]">
                             {t('nav.about.title')}
@@ -126,20 +116,19 @@ export function Footer() {
                                     <Mail className="h-4 w-4" />
                                 </div>
                                 <a
-                                    href="mailto:hello@aiagency.com"
+                                    href="mailto:romulo@romulodm.dev"
                                     className="text-sm text-white/50 hover:text-white transition-colors duration-300"
                                 >
                                     romulo@romulodm.dev
                                 </a>
                             </div>
-
                             <div className="flex items-center space-x-2 text-gray-300">
                                 <div className="p-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg">
                                     <MapPin className="h-4 w-4" />
                                 </div>
                                 <a
-                                    href='https://maps.app.goo.gl/RVpzZiEVoMxdtNuN7'
-                                    target='_blank'
+                                    href="https://maps.app.goo.gl/RVpzZiEVoMxdtNuN7"
+                                    target="_blank"
                                     className="text-sm text-white/50 hover:text-white transition-colors duration-300"
                                 >
                                     Av. Itália Carreiros, Rio Grande
@@ -147,7 +136,6 @@ export function Footer() {
                             </div>
                         </div>
                     </div>
-
                 </div>
 
                 {/* ── Socials ── */}
@@ -163,10 +151,9 @@ export function Footer() {
                             <BsInstagram />
                         </SocialBtn>
                     </div>
-
                     <iframe
                         className="hidden sm:block"
-                        src={`https://ghbtns.com/github-btn.html?user=romulodm&repo=go-chess&type=star&count=true&v=2&dark=1`}
+                        src="https://ghbtns.com/github-btn.html?user=romulodm&repo=go-chess&type=star&count=true&v=2&dark=1"
                         width="80"
                         height="20"
                         title="Star on GitHub"
@@ -181,7 +168,7 @@ export function Footer() {
                     </p>
                     <p className="text-xs text-white/30 flex items-center">
                         {t('legal.madeWith')}
-                        <span className='px-1'>
+                        <span className="px-1">
                             <picture>
                                 <source src="https://fonts.gstatic.com/s/e/notoemoji/latest/2764_fe0f/512.webp" type="image/webp" />
                                 <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/2764_fe0f/512.gif" alt="❤" width="18" height="18" />
@@ -195,6 +182,9 @@ export function Footer() {
             {termsOpen && (
                 <TermsModal open={termsOpen} onClose={() => setTermsOpen(false)} />
             )}
+
+            {/* Modal de contato */}
+            <ContactModal open={contactOpen} onOpenChange={setContactOpen} />
         </footer>
     )
 }
@@ -204,12 +194,8 @@ export function Footer() {
 function FooterCol({ title, children }: { title: string; children: React.ReactNode }) {
     return (
         <div>
-            <h4 className="text-sm font-semibold text-white mb-4 tracking-[0.01em]">
-                {title}
-            </h4>
-            <ul className="list-none p-0 m-0 flex flex-col gap-2.5">
-                {children}
-            </ul>
+            <h4 className="text-sm font-semibold text-white mb-4 tracking-[0.01em]">{title}</h4>
+            <ul className="list-none p-0 m-0 flex flex-col gap-2.5">{children}</ul>
         </div>
     )
 }
