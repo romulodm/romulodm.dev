@@ -22,11 +22,22 @@ export function Footer() {
         <footer
             className="relative z-[5] overflow-hidden pt-10 px-4 sm:px-5 mt-10"
             style={{
-                backgroundColor: '#00C74D',
+                backgroundColor: '#5A7CE2',
                 borderRadius: '56px 56px 0 0',
                 fontFamily: "'DM Sans', sans-serif",
             }}
         >
+            <div
+                className="absolute inset-0"
+                style={{
+                    backgroundImage: 'url("/grain.png")',
+                    backgroundSize: "60px 60px",
+                    backgroundRepeat: "repeat",
+                    backgroundBlendMode: "overlay",
+                    backgroundPosition: "left top",
+                    mixBlendMode: "overlay",
+                }}
+            />
             {/* ── CTA ── */}
             <div className="relative z-[2] text-center max-w-[740px] mx-auto mb-10 px-4">
                 <h2
@@ -45,12 +56,12 @@ export function Footer() {
                     className="inline-flex items-center gap-2.5 bg-[#0e0e0e] text-white text-[0.95rem] font-medium px-[22px] py-[13px] rounded-full hover:opacity-90 transition-opacity"
                 >
                     {t('cta.button')}
-                    <span className="bg-[#00C74D] text-white w-[26px] h-[26px] rounded-full flex items-center justify-center text-[0.85rem]">
+                    <span className="bg-[#F9733D] text-white w-[26px] h-[26px] rounded-full flex items-center justify-center text-[0.85rem]">
                         <FaArrowRightLong />
                     </span>
                 </button>
 
-                <p className="mt-[18px] text-sm sm:text-base text-white font-semibold">
+                <p className="mt-[18px] text-sm sm:text-base text-white font-semibold opacity-80">
                     {t('cta.disclaimer')}
                 </p>
             </div>
