@@ -1,3 +1,5 @@
 *.env
 *node_modules/
 *waha-data
+**/node_modules
+.next
