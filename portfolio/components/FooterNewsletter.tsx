@@ -71,17 +71,18 @@ export function FooterNewsletter() {
                                     }}
                                     disabled={state === "loading"}
                                     className="flex-1 px-4 py-3 bg-white/5 border border-white/10 rounded
-                             text-white placeholder-white/30
-                             focus:outline-none focus:ring-2 focus:ring-[#8DF868]/50
-                             disabled:opacity-50 disabled:cursor-not-allowed
-                             transition-all"
+                                                text-white placeholder-white/30
+                                                focus:outline-none focus:ring-2 focus:ring-[#F9733D]/50
+                                                disabled:opacity-50 disabled:cursor-not-allowed
+                                                transition-all
+                                                "
                                 />
                                 <button
                                     type="submit"
                                     disabled={state === "loading" || !email}
-                                    className="w-full sm:w-auto px-6 py-3 bg-[#8DF868] text-[#0e0e0e] rounded
-                             font-semibold hover:bg-[#7ae055] transition-colors
-                             disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="w-full sm:w-auto px-6 py-3 bg-[#F9733D] text-[#0e0e0e] rounded
+                             font-semibold hover:bg-[#F9733D]/90 transition-colors
+                              disabled:cursor-not-allowed"
                                 >
                                     {state === "loading" ? "Enviando..." : "Inscrever-se"}
                                 </button>
