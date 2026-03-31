@@ -47,6 +47,8 @@ services:
     ports:
       - '${SMTP_PORT}:1025'
       - '${HTTP_PORT}:1080'
+    networks:
+    - romulodm-network
 
   minio:
     image: minio/minio:latest
@@ -117,6 +119,8 @@ services:
       - ./waha-data:/app/.sessions
     environment:
       - WHATSAPP_DEFAULT_ENGINE=WEBJS
+    networks:
+      - romulodm-network
 
   redis:
     image: redis:7-alpine
@@ -143,28 +147,24 @@ services:
     networks:
       - romulodm-network
 
-  # app:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #   container_name: romulodm-app
-  #   env_file:
-  #     - .env
-  #   restart: unless-stopped
-  #   environment:
-  #     - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?schema=public
-  #     - MINIO_ENDPOINT=${MINIO_ENDPOINT}
-  #     - MINIO_PORT=${MINIO_PORT}
-  #     - MINIO_PUBLIC_URL=${MINIO_PUBLIC_URL}
-  #     - REDIS_URL=${REDIS_URL}
-  #   ports:
-  #     - "3000:3000"
-  #   depends_on:
-  #     - postgres
-  #     - minio
-  #     - redis
-  #   networks:
-  #     - romulodm-network
+  app:
+    build:
+      context: .
+      dockerfile: portfolio/Dockerfile
+    container_name: romulodm-app
+    env_file:
+      - .env
+    restart: unless-stopped
+    environment:
+      - .env
+    ports:
+      - '${NEXT_PORT}:${NEXT_PORT}'
+    depends_on:
+      - postgres
+      - minio
+      - redis
+    networks:
+      - romulodm-network
 
 volumes:
   postgres_data:
