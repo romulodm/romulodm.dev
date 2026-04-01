@@ -1,4 +1,4 @@
-// worker/workers/newsletter.worker.ts
+// src/workers/email.worker.ts
 
 import { Worker } from "bullmq";
 import { prisma } from "@romulo/database";
@@ -16,9 +16,9 @@ import {
   confirmationTemplate,
   welcomeTemplate,
   unsubscribeConfirmTemplate,
+  passwordResetTemplate,
   campaignTemplate,
 } from "../lib/email/templates";
-
 
 export async function markCampaignCompleteIfDone(campaignId: string) {
   const campaign = await prisma.campaign.findUnique({
@@ -37,12 +37,9 @@ export async function markCampaignCompleteIfDone(campaignId: string) {
   if (done >= campaign.totalRecipients) {
     await prisma.campaign.update({
       where: { id: campaignId },
-      data: {
-        status: "SENT",
-        sentAt: new Date(),
-      },
+      data: { status: "SENT", sentAt: new Date() },
     });
-    console.log(`[dispatchCampaign] Campaign ${campaignId} completed — status → SENT`);
+    console.log(`[CampaignWorker] Campaign ${campaignId} completed — status → SENT`);
   }
 }
 
@@ -51,8 +48,6 @@ function getAppName() {
 }
 
 const redis = createRedisConnection();
-
-// ── Transactional Worker ─────────────────────────────────────────────────────
 
 export const transactionalWorker = new Worker<TransactionalEmailJob>(
   QUEUE_TRANSACTIONAL,
@@ -84,23 +79,30 @@ export const transactionalWorker = new Worker<TransactionalEmailJob>(
         });
         break;
 
+      // ── Novo: recuperação de senha ───────────────────────────────────────
+      case "PASSWORD_RESET":
+        await emailService.send({
+          to: data.email,
+          subject: `Seu código de recuperação — ${getAppName()}`,
+          html: passwordResetTemplate({
+            code: data.code,
+            expiresInMinutes: data.expiresInMinutes,
+          }),
+        });
+        break;
+
       default:
-        throw new Error(
-          `Unknown transactional job type: ${(data as { type: string }).type}`,
-        );
+        throw new Error(`Unknown transactional job type: ${(data as { type: string }).type}`);
     }
   },
   { connection: redis, concurrency: 10 },
 );
-
-// ── Campaign Worker ──────────────────────────────────────────────────────────
 
 export const campaignWorker = new Worker<CampaignEmailJob>(
   QUEUE_CAMPAIGN,
   async (job) => {
     const { data } = job;
 
-    // Skip if already sent (idempotency guard)
     const recipient = await prisma.campaignRecipient.findUnique({
       where: { id: data.recipientId },
     });
@@ -128,19 +130,13 @@ export const campaignWorker = new Worker<CampaignEmailJob>(
         data: { sentCount: { increment: 1 } },
       });
 
-      console.log(
-        `[CampaignWorker] ✅ Sent to ${data.email} (campaign ${data.campaignId})`,
-      );
+      console.log(`[CampaignWorker] ✅ Sent to ${data.email} (campaign ${data.campaignId})`);
     } catch (err: unknown) {
-      const message =
-        err instanceof Error ? err.message : "Unknown error";
+      const message = err instanceof Error ? err.message : "Unknown error";
 
       await prisma.campaignRecipient.update({
         where: { id: data.recipientId },
-        data: {
-          status: "FAILED",
-          errorMessage: message.slice(0, 500),
-        },
+        data: { status: "FAILED", errorMessage: message.slice(0, 500) },
       });
 
       await prisma.campaign.update({
@@ -148,13 +144,9 @@ export const campaignWorker = new Worker<CampaignEmailJob>(
         data: { failedCount: { increment: 1 } },
       });
 
-      console.error(
-        `[CampaignWorker] ❌ Failed for ${data.email}: ${message}`,
-      );
-
-      throw err; // BullMQ will retry per backoff config
+      console.error(`[CampaignWorker] ❌ Failed for ${data.email}: ${message}`);
+      throw err;
     } finally {
-      // After every job (success or failure), check if the campaign is fully done
       await markCampaignCompleteIfDone(data.campaignId).catch((e) =>
         console.error("[CampaignWorker] markCampaignCompleteIfDone error:", e),
       );
