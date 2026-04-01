@@ -4,6 +4,7 @@
 //
 
 const BRAND_COLOR = "#22c55e"; // green-500
+
 function getAppName() {
   return process.env.NEXT_PUBLIC_APP_NAME ?? "Your Blog";
 }
@@ -33,7 +34,7 @@ function wrapper(body: string): string {
         <!-- Header -->
         <tr>
           <td style="background:${BRAND_COLOR};padding:24px 40px;text-align:center;">
-            <a href="${getBaseUrl}" style="color:#ffffff;font-size:22px;font-weight:700;text-decoration:none;">${getAppName()}</a>
+            <a href="${getBaseUrl()}" style="color:#ffffff;font-size:22px;font-weight:700;text-decoration:none;">${getAppName()}</a>
           </td>
         </tr>
 
@@ -147,6 +148,49 @@ export function unsubscribeConfirmTemplate(unsubscribeUrl: string): string {
         </table>
         <p style="margin:0;color:#9ca3af;font-size:12px;">
           Se não foi você, pode ignorar este e-mail com segurança. Sentiremos sua falta! 😢
+        </p>
+      </td>
+    </tr>
+  `);
+}
+
+export function passwordResetTemplate(opts: {
+  code: string;
+  expiresInMinutes?: number;
+}): string {
+  const expires = opts.expiresInMinutes ?? 15;
+
+  return wrapper(`
+    <tr>
+      <td style="padding:40px;">
+        <h2 style="margin:0 0 16px;color:#111827;font-size:20px;font-weight:700;">
+          Recuperação de senha 🔐
+        </h2>
+        <p style="margin:0 0 24px;color:#6b7280;font-size:16px;line-height:1.6;">
+          Use o código abaixo para redefinir sua senha. Ele é válido por ${expires} minutos
+          e pode ser usado apenas uma vez.
+        </p>
+
+        <!-- Code block -->
+        <table width="100%" cellpadding="0" cellspacing="0" role="presentation">
+          <tr>
+            <td align="center" style="padding:8px 0 32px;">
+              <div style="display:inline-block;padding:20px 40px;
+                          background:#f4f4f5;border-radius:8px;
+                          border:2px dashed #d1d5db;">
+                <span style="font-size:36px;font-weight:800;
+                             letter-spacing:10px;color:#111827;
+                             font-family:'Courier New',Courier,monospace;">
+                  ${opts.code}
+                </span>
+              </div>
+            </td>
+          </tr>
+        </table>
+
+        <p style="margin:0;color:#9ca3af;font-size:13px;line-height:1.6;">
+          Se você não solicitou a recuperação de senha, ignore este e-mail. Sua conta
+          permanece segura.
         </p>
       </td>
     </tr>
