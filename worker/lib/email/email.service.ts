@@ -1,8 +1,22 @@
+// src/lib/email/email.service.ts
+//
+// Seleciona o provider via EMAIL_PROVIDER=ses|smtp (padrão: smtp).
+//
+
 import type { EmailProvider, SendEmailOptions } from "./providers/base.provider";
 import { SmtpProvider } from "./providers/smtp.provider";
+import { SesProvider } from "./providers/ses.provider";
 
 function createProvider(): EmailProvider {
-  return new SmtpProvider();
+  const chosen = (process.env.EMAIL_PROVIDER ?? "smtp").toLowerCase();
+
+  switch (chosen) {
+    case "ses":
+      return new SesProvider();
+    case "smtp":
+    default:
+      return new SmtpProvider();
+  }
 }
 
 type CBState = "CLOSED" | "OPEN" | "HALF_OPEN";
