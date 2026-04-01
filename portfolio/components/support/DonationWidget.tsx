@@ -185,9 +185,11 @@ export function DonationWidget() {
                             key={q}
                             type="button"
                             onClick={() => setForm((f) => ({ ...f, coffees: q, customCoffees: '' }))}
-                            className={`w-10 h-10 rounded-full font-bold text-sm border transition-all ${form.coffees === q && !form.customCoffees
-                                ? 'bg-primary text-primary-foreground border-primary'
-                                : 'border-border hover:border-primary text-foreground'
+                            className={`w-10 h-10 rounded-full font-bold text-sm border transition-all
+                                        ${q === 3 ? 'hidden sm:flex items-center justify-center' : ''}
+                                        ${form.coffees === q && !form.customCoffees
+                                    ? 'bg-primary text-primary-foreground border-primary'
+                                    : 'border-border hover:border-primary text-foreground'
                                 }`}
                         >
                             {q}
@@ -201,7 +203,12 @@ export function DonationWidget() {
                         placeholder="?"
                         value={form.customCoffees}
                         onChange={(e) => setForm((f) => ({ ...f, customCoffees: e.target.value }))}
-                        className="w-14 h-10 rounded-full border border-border text-center text-sm bg-background text-foreground focus:outline-none focus:border-primary"
+                        className={`w-10 h-10 rounded-full border text-center text-sm bg-background text-foreground focus:outline-none transition-all
+                                    [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none
+                                    ${form.customCoffees
+                                ? 'bg-primary text-primary-foreground border-primary'
+                                : 'border-border hover:border-primary text-foreground'
+                            }`}
                     />
                 </div>
             </div>
@@ -270,7 +277,7 @@ export function DonationWidget() {
                 disabled={loading}
                 className="w-full py-3 rounded-lg bg-primary text-primary-foreground font-bold text-base hover:opacity-90 transition disabled:opacity-50"
             >
-                {loading ? 'Aguarde...' : `Apoiar R$ ${total},00`}
+                {loading ? 'Aguarde...' : `Apoiar com R$ ${total},00`}
             </button>
         </div>
     )
