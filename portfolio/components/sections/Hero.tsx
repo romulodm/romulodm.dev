@@ -1,10 +1,7 @@
 'use client'
 
-import { motion } from "framer-motion";
-import { ArrowRight, Github, Mail } from "lucide-react";
-import { useTheme } from "next-themes";
+import { ChevronDown } from "lucide-react";
 import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
 
 const LanyardDisplay = dynamic(() => import("@/components/lanyard/LanyardDisplay"), {
     ssr: false,
@@ -23,14 +20,9 @@ const StaticCardDisplay = dynamic(() => import("@/components/lanyard/StaticCardD
 export default function Hero() {
     return (
         <section className="relative h-[113vh] min-h-screen overflow-hidden">
-            {/* 
-            <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(hsl(0_0%_0%_/_0.06)_1px,transparent_1px),linear-gradient(90deg,hsl(0_0%_0%_/_0.06)_1px,transparent_1px)] bg-[size:64px_64px] opacity-90 dark:bg-[linear-gradient(hsl(var(--foreground)_/_0.06)_1px,transparent_1px),linear-gradient(90deg,hsl(var(--foreground)_/_0.06)_1px,transparent_1px)] dark:opacity-40" />
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,hsl(142_72%_50%_/_0.05),transparent_60%)] pointer-events-none" /> 
-            */}
 
             <div className="absolute inset-0">
                 {/* Spline como background */}
-
                 <span className="dark:hidden">
                     <iframe
                         src={'https://my.spline.design/animatedbackgroundgradientforweb-eNmu3GwlWtMWzIk1ENC16Pb5/'}
@@ -49,7 +41,7 @@ export default function Hero() {
                     />
                 </span>
 
-                {/* Grain por cima */}
+                {/* Grain overlay */}
                 <div
                     className="absolute inset-0 pointer-events-none"
                     style={{
@@ -62,7 +54,7 @@ export default function Hero() {
                 />
             </div>
 
-            {/* Grain overlay */}
+            {/* Grain overlay (second layer) */}
             <div
                 className="absolute inset-0"
                 style={{
@@ -91,41 +83,54 @@ export default function Hero() {
                 <StaticCardDisplay />
             </div>
 
-            {/* Conteúdo principal */}
-            <div className="hidden md:block relative max-w-7xl mx-auto px-6 flex flex-col lg:flex-row lg:items-center min-h-screen pt-20 pb-16">
-                <div className="absolute left-6 top-1/2 -translate-y-1/2 max-w-xs text-left">
-                    <div className="backdrop-blur-md bg-black/30 dark:bg-black/50 rounded-2xl p-6">
-                        <h2 className="text-2xl font-bold text-white dark:text-white/90 mb-2">
-                            Seu título aqui
-                        </h2>
-                        <p className="text-sm text-white/80 dark:text-white/70">
-                            Sua descrição aqui com o texto alinhado à esquerda.
-                        </p>
-                    </div>
+            {/* Desktop text content */}
+            <div className="hidden sm:block absolute inset-0 pointer-events-none">
+
+                {/* ── LEFT: Headline estilo ABRAhub ── */}
+                <div className="absolute left-5 lg:left-32 bottom-[20vh] max-w-sm">
+
+                    {/* Big headline */}
+                    <h1
+                        className="text-[2.6rem] leading-[1.05] font-black uppercase tracking-tight"
+                        style={{ fontFamily: 'inherit' }}
+                    >
+                        {/* First lines — adapts to light/dark */}
+                        <span className="block text-black/85 dark:text-white/90">
+                            O CÓDIGO
+                        </span>
+                        <span className="block text-black/85 dark:text-white/90">
+                            NÃO É ESCRITO,
+                        </span>
+                        {/* Last line — accent color (coral/orange, matches the lanyard) */}
+                        <span
+                            className="block"
+                            style={{ color: '#f97316' }}
+                        >
+                            É PENSADO.
+                        </span>
+                    </h1>
                 </div>
 
-                <div className="hidden md:block absolute right-6 top-1/2 -translate-y-1/2 max-w-xs text-right">
-                    <div className="backdrop-blur-md bg-black/30 dark:bg-black/50 rounded-2xl p-6">
-                        <h2 className="text-2xl font-bold text-white dark:text-white/90 mb-2">
-                            Seu título aqui
-                        </h2>
-                        <p className="text-sm text-white/80 dark:text-white/70">
-                            Sua descrição aqui com o texto alinhado à direita.
-                        </p>
-                    </div>
+                {/* ── RIGHT: Quote ── */}
+                <div className="absolute right-5 lg:right-32 bottom-[20vh] max-w-[260px] text-left border-l border-black dark:border-white pl-4">
+                    <p className="text-[0.95rem] leading-relaxed text-black dark:text-white font-medium">
+                        Transformo problemas complexos em interfaces simples, elegantes e que as pessoas adoram usar.
+                    </p>
                 </div>
 
-                <div className="absolute right-1/2 bottom-5 translate-x-1/2 max-w-xs text-right">
-                    <h2 className="text-base text-black/60 dark:text-white/40 mb-2">
-                        View more
-                    </h2>
-                </div>
-            </div >
+            </div>
+
+            {/* "View more" label — bottom center */}
+            <div className="absolute bottom-[17vh] left-0 right-0 flex justify-center pointer-events-none">
+                <span className="flex items-center gap-1 text-sm text-black/80 dark:text-white/80 tracking-widest uppercase">
+                    View more <ChevronDown />
+                </span>
+            </div>
 
             {/* Fade bottom */}
-            < div className="absolute bottom-14 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent" />
+            <div className="absolute bottom-14 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent" />
             <div className="absolute bottom-0 left-0 right-0 bg-background h-14" />
 
-        </section >
+        </section>
     );
 }
