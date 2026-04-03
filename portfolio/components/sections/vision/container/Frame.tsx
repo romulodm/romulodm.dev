@@ -6,18 +6,11 @@ export default function Frame() {
   const t = useTranslations('vision');
 
   return (
-    <div className="absolute bg-white z-50 dark:bg-neutral-700 sm:top-[23%] sm:left-[25%] right-auto top-[42%] left-[65%]">
-      <div className="p-2.5 border-2 dark:border-neutral-500/80 shadow-lg">
-        <h3 className="text-lg font-bold">
-          <span className="text-gray-500 dark:text-neutral-400">{t('frame.one')}</span>
-          <br />
-          <span className="text-gray-700 dark:text-white/80">{t('frame.two')}</span>
-          <br />
-          <span className="text-green-500">{t('frame.three')}</span>
-          <br />
-          <span className="text-black dark:text-neutral-900">{t('frame.four')}</span>
-        </h3>
-      </div>
+    <div className="absolute top-[22%] left-[25%] max-sm:top-auto max-sm:bottom-[60%] max-sm:left-[5%] bg-white dark:bg-neutral-800 border-2 border-black/15 dark:border-white/10 shadow-xl dark:shadow-black/50 rounded-sm p-4 z-40 leading-relaxed">
+      <p className="font-bold text-base text-neutral-400 dark:text-neutral-500">{t('frame.one')}</p>
+      <p className="font-bold text-base text-neutral-800 dark:text-neutral-100">{t('frame.two')}</p>
+      <p className="font-bold text-base text-green-500 dark:text-green-400">{t('frame.three')}</p>
+      <p className="font-bold text-base text-neutral-800/30 dark:text-neutral-100/25">{t('frame.four')}</p>
     </div>
   );
 }

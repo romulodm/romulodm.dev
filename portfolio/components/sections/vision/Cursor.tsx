@@ -12,11 +12,11 @@ export default function Cursor({ step }: CursorProps) {
 
   const states = [
     { top: '0%', left: mobile ? '70%' : '20%', rotate: 0, opacity: 0 },
-    { top: mobile ? '27%' : '21%', left: mobile ? '10%' : '49%', rotate: 0, opacity: 1 },
-    { top: mobile ? '41%' : '37%', left: mobile ? '30%' : '24%', rotate: 0, opacity: 1 },
-    { top: mobile ? '52.5%' : '47%', left: mobile ? '10%' : '55%', rotate: -90, opacity: 1 },
-    { top: mobile ? '55%' : '73.7%', left: mobile ? '63%' : '50.2%', rotate: 0, opacity: 1 },
-    { top: mobile ? '77%' : '92%', left: mobile ? '65%' : '97%', rotate: -90, opacity: 1 },
+    { top: mobile ? '27%' : '21%', left: mobile ? '10%' : '49.3%', rotate: 0, opacity: 1 },
+    { top: mobile ? '41%' : '36%', left: mobile ? '30%' : '24.5%', rotate: 0, opacity: 1 },
+    { top: mobile ? '52.5%' : '54%', left: mobile ? '10%' : '47%', rotate: -90, opacity: 1 },
+    { top: mobile ? '55%' : '82.5%', left: mobile ? '63%' : '52.6%', rotate: -90, opacity: 1 },
+    { top: mobile ? '60%' : '92%', left: mobile ? '65%' : '97%', rotate: -90, opacity: 1 },
     { top: '105%', left: mobile ? '50%' : '48%', rotate: 0, opacity: 0 },
   ];
 

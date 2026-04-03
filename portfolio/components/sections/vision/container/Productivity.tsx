@@ -1,75 +1,59 @@
 'use client';
 
-import { MdRocketLaunch } from 'react-icons/md';
-import useMobileMode from '../Mobile';
 import { useTranslations } from 'next-intl';
+import { MdRocketLaunch } from 'react-icons/md';
 
 interface ProductivityProps {
-  cardScrollProgress: number;
+  step: number; // 0–6, vem direto do animationStep do Vision
 }
 
-export default function Productivity({ cardScrollProgress }: ProductivityProps) {
+const commitTexts = [
+  '1 new commit',
+  '5 new commits',
+  '8 new commits',
+  '13 new commits',
+  '18 new commits',
+  '25 new commits',
+  '33 new commits',
+];
+
+export default function Productivity({ step }: ProductivityProps) {
   const t = useTranslations('vision');
-  const mobile = useMobileMode();
 
-  const cardColors = ['bg-red-500', 'bg-yellow-400', 'bg-green-500'] as const;
-  const cardColorIndex = Math.min(Math.floor(cardScrollProgress * 3), 2);
-  const cardColor = cardColors[cardColorIndex];
-
-  const getCommitText = (progress: number): string => {
-    if (progress < 0.35) return '1 new commit';
-    if (progress < 0.45) return '5 new commits';
-    if (progress < 0.50) return '8 new commits';
-    if (progress < 0.55) return '13 new commits';
-    if (progress < 0.65) return '18 new commits';
-    if (progress < 0.70) return '21 new commits';
-    if (progress < 0.75) return '25 new commits';
-    return '33 new commits';
-  };
-
-  const commitText = getCommitText(cardScrollProgress);
+  // Clipa o índice para nunca ultrapassar o array
+  const commitText = commitTexts[Math.min(step, commitTexts.length - 1)];
 
   return (
-    <div
-      className="absolute"
-      style={{
-        top: mobile ? '32%' : '37%',
-        left: mobile ? '2%' : '41.3%',
-      }}
-    >
-      <div className="flex justify-center p-4 bg-white dark:bg-neutral-800 border-2 dark:border-neutral-600/80 shadow-lg relative gap-2 items-center">
-        <div className="flex text-xl bg-purple-400 text-white rounded-lg w-10 h-10 items-center justify-center">
+    <div className="absolute  top-[42%] left-[37%] max-sm:top-[47%] max-sm:left-[20%] z-40">
+      <div className="relative flex items-center gap-3 bg-white dark:bg-neutral-800 border-2 dark:border-neutral-600/80 shadow-lg shadow-xl dark:shadow-black/50 p-3 max-sm:max-w-[340px]">
+        <div className="w-10 h-10 text-white text-xl rounded-lg bg-purple-400 flex items-center justify-center flex-shrink-0">
           <MdRocketLaunch />
         </div>
+
         <div>
-          <h5 className="text-xl font-bold dark:text-white/80">
+          <p className="text-sm sm:text-lg font-bold text-neutral-800 dark:text-neutral-100">
             {t('productivity.title')}
-          </h5>
-          <p className="text-sm text-gray-700 dark:text-neutral-400/90">
+          </p>
+          <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5 leading-relaxed">
             {t('productivity.word-1')}
-            <span className="font-bold text-black dark:text-neutral-300">
+            <span className="font-bold text-neutral-800 dark:text-neutral-200">
               {t('productivity.bold-1')}
             </span>
             {t('productivity.word-2')}
-            <span className="font-bold text-black dark:text-neutral-300">
+            <span className="font-bold text-neutral-800 dark:text-neutral-200">
               {t('productivity.bold-2')}
             </span>
             {t('productivity.word-3')}
           </p>
         </div>
-        <div
-          className={`hidden sm:absolute w-32 text-center p-1 border-dashed border-2 dark:border-neutral-500/80 dark:text-white ${cardColor} indicator`}
-          style={{
-            top: '50%',
-            left: 'calc(100% + 2rem)',
-            transform: 'translateY(-50%)',
-          }}
-        >
-          <code className="w-full text-sm text-center z-50 shadow-lg">
+
+        {/* Badge de commits — visível só em telas maiores */}
+        <div className="hidden sm:flex absolute left-[calc(100%+1px)] top-1/2 -translate-y-1/2 items-center">
+          <div className="w-7 h-px border-t-2 border-dashed border-neutral-300 dark:border-neutral-600" />
+          <span className="bg-green-500 text-white text-xs font-semibold px-2.5 py-1 rounded-md shadow-md whitespace-nowrap transition-all duration-300">
             {commitText}
-          </code>
+          </span>
         </div>
-        <div className="hidden sm:relative dashed-line" />
       </div>
     </div>
   );
