@@ -40,18 +40,21 @@ const BlogCard = ({
                     <img
                         src={typeof image === "string" ? image : image.src}
                         alt={title}
-                        className="w-full h-auto object-cover transition-transform duration-500 hover:scale-[1.02]"
+                        className="w-full h-full object-cover transition-transform duration-500"
                         loading="lazy"
                     />
                 </div>
             )}
 
-            <span
-                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-semibold tracking-wide ${badgeStyles[category]}`}
-            >
-                <span>{categoryIcon}</span>
-                {categoryLabel}
-            </span>
+            {!image && (
+                <span
+                    className={`inline-flex items-center gap-1.5 py-1 rounded-md text-xs font-semibold tracking-wide ${badgeStyles[category]}`}
+                >
+                    <span>{categoryIcon}</span>
+                    {categoryLabel}
+                </span>
+            )}
+
 
             <h3
                 className={`font-bold text-card-foreground mt-3 mb-2 leading-snug ${isFeatured ? "text-2xl" : "text-xl"
@@ -59,18 +62,6 @@ const BlogCard = ({
             >
                 {title}
             </h3>
-
-            {author && isFeatured && (
-                <div className="flex items-center gap-3 mb-3">
-                    <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-xs font-bold text-muted-foreground">
-                        {author.name.charAt(0)}
-                    </div>
-                    <div>
-                        <p className="text-sm font-semibold text-card-foreground leading-none">{author.name}</p>
-                        <p className="text-xs text-muted-foreground mt-0.5">{author.date}</p>
-                    </div>
-                </div>
-            )}
 
             <p className="text-muted-foreground text-sm leading-relaxed mb-3 line-clamp-3">
                 {excerpt}
