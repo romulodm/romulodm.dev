@@ -1,36 +1,37 @@
 'use client';
 
-import Comment from './Comment';
 import { MdSecurity } from 'react-icons/md';
 import { SiTeespring } from 'react-icons/si';
 import { FaCode } from 'react-icons/fa';
 import { useTranslations } from 'next-intl';
+import Comment from './Comment';
 
-interface DevelopmentProps {
-  step: number;
+interface ProductivityProps {
+  step: number; // 0–6, vem direto do animationStep do Vision
 }
 
-export default function Development({ step }: DevelopmentProps) {
+export default function Development({ step }: ProductivityProps) {
   const t = useTranslations('vision');
 
   return (
-    <div className="absolute min-w-72 top-[58%] left-1/2 -translate-x-1/2 flex flex-col sm:flex-row gap-2 overflow-visible">
-      <button className="flex items-center justify-center gap-1 bg-white dark:bg-neutral-700 dark:text-neutral-200 border-2 dark:border-neutral-500/80 shadow-lg rounded-lg p-2">
-        <MdSecurity />
+    <div className="absolute bottom-[16%] sm:bottom-[30%] left-1/2 -translate-x-1/2 flex flex-row max-sm:flex-col max-sm:w-[86%] gap-2 z-40 overflow-visible">
+      <button className="flex items-center justify-center gap-1.5 bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-200 border-2 border-black/15 dark:border-white/10 shadow-md dark:shadow-black/40 rounded-lg px-3 py-2 text-sm font-semibold whitespace-nowrap">
+        <MdSecurity className="shrink-0" />
         {t('development.left')}
       </button>
 
-      <button className="flex sm:w-72 justify-center items-center gap-1 bg-green-600 text-white border-2 dark:border-neutral-300/80 shadow-lg rounded-lg p-2">
-        <FaCode />
+      <button className="flex items-center justify-center gap-1.5 bg-green-600 dark:bg-green-500 text-white border-2 border-transparent shadow-lg shadow-green-600/25 rounded-lg px-3 py-2 text-sm font-semibold whitespace-nowrap sm:min-w-[220px]">
+        <FaCode className="shrink-0" />
         {t('development.center')}
       </button>
 
-      <button className="flex items-center justify-center gap-1 bg-white dark:bg-neutral-700 dark:text-neutral-200 border-2 dark:border-neutral-500/80 shadow-lg rounded-lg p-2">
-        <SiTeespring />
+      <button className="flex items-center justify-center gap-1.5 bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-200 border-2 border-black/15 dark:border-white/10 shadow-md dark:shadow-black/40 rounded-lg px-3 py-2 text-sm font-semibold whitespace-nowrap">
+        <SiTeespring className="shrink-0" />
         {t('development.right')}
       </button>
 
-      <Comment step={step} />
+      <Comment visible={step >= 3} />
+
     </div>
   );
 }

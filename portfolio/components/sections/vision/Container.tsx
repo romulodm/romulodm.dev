@@ -2,7 +2,6 @@
 
 import './Vision.css';
 
-import { useState } from 'react';
 import { Parallax } from 'react-scroll-parallax';
 import Icons from './container/Icons';
 import Frame from './container/Frame';
@@ -14,17 +13,12 @@ interface ContainerProps {
 }
 
 export default function Container({ step }: ContainerProps) {
-  const [cardScrollProgress, setCardScrollProgress] = useState(0);
-
   return (
-    <Parallax
-      shouldAlwaysCompleteAnimation
-      onProgressChange={(progress) => setCardScrollProgress(progress)}
-    >
-      <div className="relative grid-background w-full h-[43rem] sm:h-[40rem] bg-transparent pointer-events-none overflow-visible">
+    <Parallax>
+      <div className="relative grid-background w-full h-[43rem] sm:h-[32rem] bg-transparent pointer-events-none overflow-visible">
         <Icons />
         <Frame />
-        <Productivity cardScrollProgress={cardScrollProgress} />
+        <Productivity step={step} />
         <Development step={step} />
       </div>
     </Parallax>
