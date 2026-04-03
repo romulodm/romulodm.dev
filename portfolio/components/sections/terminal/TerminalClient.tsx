@@ -155,7 +155,7 @@ export default function TerminalClient({ data, locale }: ResumePageClientProps):
 
     return (
         <div className="flex flex-col overflow-hidden rounded-lg shadow-xl pt-10">
-            <div className="flex flex-row justify-between bg-gray-100 w-full border border-2 shadow-3xl dark:bg-neutral-700 dark:border-neutral-700">
+            <div className="flex flex-row justify-between bg-gray-100 w-full border-t rounded-tl-lg rounded-tr-lg shadow-3xl dark:bg-neutral-700 dark:border-neutral-700">
                 <div className="flex flex-row items-center text-sm py-1.5">
                     <button
                         onClick={() => setDisplayedNavigationTab(0)}
