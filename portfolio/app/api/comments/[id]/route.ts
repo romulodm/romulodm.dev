@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from "@romulo/database";
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
+import { moderate } from '@/lib/moderation';
 
 // GET: Montar tree individual de um comentário específico
 export async function GET(
@@ -83,6 +84,16 @@ export async function PATCH(
     }
     if (bodyMd.length > 2000) {
         return NextResponse.json({ error: 'Comentário muito longo (máx. 2000 caracteres).' }, { status: 400 });
+    }
+
+    const { allowed, reason } = await moderate(bodyMd);
+
+    if (!allowed) {
+        // 201 to avoid revealing that the comment was blocked
+        return NextResponse.json(
+            { id: "pending", bodyMd: bodyMd.trim(), pending: true },
+            { status: 201 }
+        );
     }
 
     const updated = await prisma.comment.update({
