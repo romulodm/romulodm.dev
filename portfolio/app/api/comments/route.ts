@@ -4,6 +4,7 @@ import { prisma } from "@romulo/database";
 import { getServerSession } from 'next-auth';
 import { authOptions } from "@/lib/auth";
 import { notificationQueue } from '@/lib/queues/notification.queue';
+import { moderate } from '@/lib/moderation';
 
 // In-memory rate limiter: userId -> timestamps[]
 const rateLimitMap = new Map<string, number[]>();
@@ -87,13 +88,13 @@ export async function GET(req: NextRequest) {
 
 // POST: Criar comentário
 export async function POST(request: NextRequest) {
-    // ── Auth ─────────────────────────────────────────────────────────────────
+    // ---- Auth----------
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // ── Rate limit ────────────────────────────────────────────────────────────
+    // ---- Rate limit
     if (isRateLimited(session.user.id)) {
         return NextResponse.json(
             { error: "Muitos comentários em pouco tempo. Aguarde um momento." },
@@ -101,7 +102,16 @@ export async function POST(request: NextRequest) {
         );
     }
 
-    // ── Body parsing — guard against empty/malformed body ────────────────────
+    // ---- Ban check
+    const user = await prisma.user.findUnique({
+        where: { id: session.user.id },
+        select: { banned: true },
+    });
+    if (user?.banned) {
+        return NextResponse.json({ error: "Você não pode comentar." }, { status: 403 });
+    }
+
+    // ---- Body parsing — guard against empty/malformed body
     let body: { postId?: string; parentId?: string | null; bodyMd?: string };
     try {
         const text = await request.text();
@@ -115,7 +125,7 @@ export async function POST(request: NextRequest) {
 
     const { postId, parentId, bodyMd } = body;
 
-    // ── Validation ────────────────────────────────────────────────────────────
+    // ---- Validation
     if (!postId || typeof postId !== "string") {
         return NextResponse.json({ error: "postId é obrigatório." }, { status: 400 });
     }
@@ -126,7 +136,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: "Comentário muito longo (máx. 2000 caracteres)." }, { status: 400 });
     }
 
-    // ── Validate post ─────────────────────────────────────────────────────────
+    // ---- Validate post----------------------------------
     const post = await prisma.post.findUnique({
         where: { id: postId, status: "PUBLISHED" },
         select: {
@@ -139,7 +149,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: "Post não encontrado." }, { status: 404 });
     }
 
-    // ── Validate parent ───────────────────────────────────────────────────────
+    // ---- Validate parent
     if (parentId) {
         const parent = await prisma.comment.findUnique({
             where: { id: parentId },
@@ -150,7 +160,27 @@ export async function POST(request: NextRequest) {
         }
     }
 
-    // ── Create ────────────────────────────────────────────────────────────────
+    const { allowed, reason } = await moderate(bodyMd);
+
+    if (!allowed) {
+        await prisma.suspiciousComment.create({
+            data: {
+                postId,
+                parentId: parentId ?? null,
+                authorId: session.user.id,
+                bodyMd: bodyMd.trim(),
+                reason,
+            },
+        });
+
+        // 201 to avoid revealing that the comment was blocked
+        return NextResponse.json(
+            { id: "pending", bodyMd: bodyMd.trim(), pending: true },
+            { status: 201 }
+        );
+    }
+
+    // ---- Create
     const comment = await prisma.$transaction(async (tx) => {
         const created = await tx.comment.create({
             data: {
@@ -173,6 +203,7 @@ export async function POST(request: NextRequest) {
         return created;
     });
 
+    // --- Queue notification
     const job = await notificationQueue.add('comment', {
         type: 'comment',
         id: comment.id,
