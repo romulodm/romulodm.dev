@@ -1,6 +1,6 @@
 "use server";
 
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@romulo/database";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
@@ -39,8 +39,8 @@ export async function listPostComments({
         sort === "score"
             ? [{ score: "desc" as const }, { createdAt: "desc" as const }]
             : sort === "newest"
-            ? [{ createdAt: "desc" as const }]
-            : [{ createdAt: "asc" as const }];
+                ? [{ createdAt: "desc" as const }]
+                : [{ createdAt: "asc" as const }];
 
     const comments = await prisma.comment.findMany({
         where: { postId, parentId: null },

@@ -217,7 +217,7 @@ export function CommentCard({
 
     if (collapsed) {
         return (
-            <div className={`flex items-start gap-0 ${depth > 0 ? "mt-2 -mb-1 border-t border-dashed pt-2 pl-[5px]" : ""}`}>
+            <div className={`flex items-start gap-0 ${depth > 0 ? "mt-2 -mb-1 border border-border py-2 pl-[5px]" : ""}`}>
                 <div className="flex items-center gap-2 text-xs text-muted-foreground pl-1 py-1">
                     <button onClick={() => setCollapsed(false)} className="font-bold text-muted-foreground hover:text-green-600 transition-colors">[+]</button>
                     <Image src={comment.author.image ?? "/default.png"} alt={comment.author.username} width={18} height={18} className="rounded-full w-4 h-4 object-cover opacity-50 shrink-0" />
@@ -235,7 +235,7 @@ export function CommentCard({
         <>
             <DeleteCommentModal open={deleteOpen} onClose={() => setDeleteOpen(false)} onConfirm={doDelete} bodyPreview={localBody} />
 
-            <div className={`flex items-start gap-0 ${depth > 0 ? "mt-3 border-t border-dashed pt-3 pl-[5px]" : ""}`}>
+            <div className={`flex items-start gap-0 ${depth > 0 ? "mt-3 border-t border-border pt-3 pl-[5px]" : ""}`}>
                 <div className="flex items-start gap-2 flex-1 min-w-0">
 
                     {/* LEFT: avatar + vote + collapse bar */}
@@ -247,9 +247,21 @@ export function CommentCard({
 
                         {/* Desktop vote */}
                         <div className="hidden sm:flex flex-col items-center mt-0.5">
-                            <VoteButton direction="up" active={optimisticVote === 1} disabled={isPending} onClick={() => handleVote(1)} />
-                            <span className={`text-xs font-mono font-semibold leading-none my-0.5 ${scoreColor}`}>{optimisticScore}</span>
-                            <VoteButton direction="down" active={optimisticVote === -1} disabled={isPending} onClick={() => handleVote(-1)} />
+                            <VoteButton
+                                direction="up"
+                                active={optimisticVote === 1}
+                                disabled={isPending}
+                                onClick={() => handleVote(1)}
+                            />
+                            <span className={`text-xs font-mono font-semibold leading-none my-0.5 ${scoreColor}`}>
+                                {optimisticScore}
+                            </span>
+                            <VoteButton
+                                direction="down"
+                                active={optimisticVote === -1}
+                                disabled={isPending}
+                                onClick={() => handleVote(-1)}
+                            />
                         </div>
 
                         {/* Collapse bar */}
@@ -261,7 +273,7 @@ export function CommentCard({
                     </div>
 
                     {/* CONTENT */}
-                    <div className="flex-1 min-w-0 pb-2 pl-1">
+                    <div className="flex-1 min-w-0 pb-2 sm:pl-1">
                         {showContext && comment.post && (
                             <div className="mb-2">
                                 <Link href={`/blog/${comment.post.slug}`} className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors">
@@ -324,22 +336,34 @@ export function CommentCard({
 
                         {/* Actions bar */}
                         {!editing && (
-                            <div className="flex items-center gap-1 mt-2 flex-wrap">
+                            <div className="flex items-center sm:gap-1 mt-2 flex-wrap">
                                 {/* Mobile vote */}
                                 <div className="flex sm:hidden items-center gap-0.5 mr-2">
-                                    <VoteButton direction="up" active={optimisticVote === 1} disabled={isPending} onClick={() => handleVote(1)} />
-                                    <span className={`text-xs font-mono font-semibold min-w-[1.5ch] text-center ${scoreColor}`}>{optimisticScore}</span>
-                                    <VoteButton direction="down" active={optimisticVote === -1} disabled={isPending} onClick={() => handleVote(-1)} />
+                                    <VoteButton
+                                        direction="up"
+                                        active={optimisticVote === 1}
+                                        disabled={isPending}
+                                        onClick={() => handleVote(1)}
+                                    />
+                                    <span className={`text-xs font-mono font-semibold min-w-[1.5ch] text-center ${scoreColor}`}>
+                                        {optimisticScore}
+                                    </span>
+                                    <VoteButton
+                                        direction="down"
+                                        active={optimisticVote === -1}
+                                        disabled={isPending}
+                                        onClick={() => handleVote(-1)}
+                                    />
                                 </div>
 
                                 {depth < maxDepth && (
-                                    <button onClick={() => guard(() => setReplying((r) => !r))} className={`flex items-center gap-1 px-2 py-1 text-xs rounded transition-colors ${replying ? "text-foreground bg-accent" : "text-muted-foreground hover:text-foreground hover:bg-accent"}`}>
+                                    <button onClick={() => guard(() => setReplying((r) => !r))} className={`flex items-center gap-1 sm:px-2 py-1 text-xs rounded transition-colors ${replying ? "text-foreground bg-accent" : "text-muted-foreground hover:text-foreground hover:bg-border"}`}>
                                         <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" /></svg>
                                         Responder
                                     </button>
                                 )}
 
-                                <button onClick={handleShare} className="flex items-center gap-1 px-2 py-1 text-xs text-muted-foreground hover:text-foreground hover:bg-accent rounded transition-colors">
+                                <button onClick={handleShare} className="flex items-center gap-1 pl-2 sm:px-2 py-1 text-xs text-muted-foreground hover:text-foreground hover:bg-border rounded transition-colors">
                                     <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" /></svg>
                                     Compartilhar
                                 </button>
