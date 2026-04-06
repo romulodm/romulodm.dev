@@ -62,7 +62,7 @@ export function CommentComposer({
     if (!session) {
         return (
             <div
-                className="rounded-lg border border-dashed border-border p-5 text-center cursor-pointer hover:bg-accent/30 transition-colors"
+                className="rounded-lg border border-dashed border-border p-5 text-center cursor-pointer hover:bg-primary/30 transition-colors"
                 onClick={() => guard(() => { })}
             >
                 <p className="text-sm text-muted-foreground">
