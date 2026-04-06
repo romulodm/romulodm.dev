@@ -1,17 +1,13 @@
 import { redirect } from "next/navigation";
 import { prisma } from "@romulo/database";
 import Link from "next/link";
-import { LogoutButton } from "@/components/ui/LogoutButton";
 import { formatDistanceToNow } from "@/lib/utils";
 import { isAdminAuthenticated } from "@/lib/auth-helpers";
-import Navbar from "@/components/navigation/Navbar";
+import { Plus } from "lucide-react";
 
 export default async function AdminPostsPage() {
   const authenticated = await isAdminAuthenticated();
-
-  if (!authenticated) {
-    redirect("/");
-  }
+  if (!authenticated) redirect("/");
 
   const posts = await prisma.post.findMany({
     orderBy: { updatedAt: "desc" },
@@ -27,127 +23,124 @@ export default async function AdminPostsPage() {
   });
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navbar />
+    <main className="p-8">
+      <div className="flex justify-between items-center mb-6">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">Posts</h1>
+          <p className="text-muted-foreground text-sm mt-1">{posts.length} posts no total</p>
+        </div>
+        <Link
+          href="/admin/posts/new"
+          className="inline-flex items-center gap-2 px-4 py-2.5 bg-primary text-primary-foreground rounded-lg font-semibold text-sm hover:opacity-90 transition shadow-sm"
+        >
+          <Plus className="w-4 h-4" />
+          Novo post
+        </Link>
+      </div>
 
-      <div className="mt-12" />
-
-      <main className="max-w-7xl mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">All Posts</h1>
+      {posts.length === 0 ? (
+        <div className="bg-card rounded-xl border border-border p-12 text-center">
+          <p className="text-muted-foreground mb-4">Nenhum post ainda</p>
           <Link
             href="/admin/posts/new"
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium"
+            className="inline-block px-6 py-3 bg-primary text-primary-foreground rounded-lg font-medium hover:opacity-90 transition"
           >
-            Create New Post
+            Criar primeiro post
           </Link>
         </div>
+      ) : (
+        <div className="bg-card rounded-xl border border-border shadow-sm overflow-hidden">
+          <table className="w-full text-sm">
+            <thead className="bg-muted/50 border-b border-border">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  Título
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  Status
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider hidden md:table-cell">
+                  Tags
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider hidden sm:table-cell">
+                  Atualizado
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  Ações
+                </th>
+              </tr>
+            </thead>
 
-        {posts.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-sm p-12 text-center border border-gray-100">
-            <p className="text-gray-600 mb-4">No posts yet</p>
-            <Link
-              href="/admin/posts/new"
-              className="inline-block px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium"
-            >
-              Create your first post
-            </Link>
-          </div>
-        ) : (
-          <div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
-            <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-200">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Title
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Tags
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Updated
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
+            <tbody className="divide-y divide-border">
+              {posts.map((post) => {
+                const tags = post.postTags.map((t) => t.tag);
 
-              <tbody className="divide-y divide-gray-200">
-                {posts.map((post) => {
-                  const tags = post.postTags.map((t) => t.tag);
-
-                  return (
-                    <tr key={post.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4">
-                        <div className="text-sm font-medium text-gray-900">
-                          {post.title}
+                return (
+                  <tr key={post.id} className="hover:bg-muted/30 transition-colors">
+                    <td className="px-6 py-4">
+                      <div className="text-sm font-medium text-foreground line-clamp-1">
+                        {post.title}
+                      </div>
+                      {post.status === "PUBLISHED" && (
+                        <div className="text-xs text-muted-foreground mt-0.5">
+                          /blog/{post.slug}
                         </div>
-                        {post.status === "PUBLISHED" && (
-                          <div className="text-sm text-gray-500">
-                            /blog/{post.slug}
-                          </div>
-                        )}
-                      </td>
+                      )}
+                    </td>
 
-                      <td className="px-6 py-4">
-                        <span
-                          className={`px-2 py-1 text-xs font-semibold rounded-full ${post.status === "PUBLISHED"
-                            ? "bg-green-100 text-green-800"
-                            : "bg-yellow-100 text-yellow-800"
-                            }`}
-                        >
-                          {post.status}
-                        </span>
-                      </td>
+                    <td className="px-4 py-4">
+                      <span
+                        className={`px-2.5 py-1 text-xs font-semibold rounded-full ${post.status === "PUBLISHED"
+                            ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                            : "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400"
+                          }`}
+                      >
+                        {post.status === "PUBLISHED" ? "Publicado" : "Rascunho"}
+                      </span>
+                    </td>
 
-                      <td className="px-6 py-4">
-                        <div className="flex gap-1 flex-wrap">
-                          {tags.slice(0, 3).map((tag) => (
-                            <span
-                              key={tag}
-                              className="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs rounded"
-                            >
-                              #{tag}
-                            </span>
-                          ))}
-                        </div>
-                      </td>
-
-                      <td className="px-6 py-4 text-sm text-gray-500">
-                        {formatDistanceToNow(post.updatedAt)}
-                      </td>
-
-                      <td className="px-6 py-4 text-sm">
-                        <div className="flex gap-2">
-                          <Link
-                            href={`/admin/posts/${post.id}/edit`}
-                            className="text-blue-600 hover:text-blue-700 font-medium"
+                    <td className="px-4 py-4 hidden md:table-cell">
+                      <div className="flex gap-1 flex-wrap">
+                        {tags.slice(0, 3).map((tag) => (
+                          <span
+                            key={tag}
+                            className="px-2 py-0.5 bg-muted text-muted-foreground text-xs rounded-full"
                           >
-                            Edit
-                          </Link>
+                            #{tag}
+                          </span>
+                        ))}
+                      </div>
+                    </td>
 
-                          {post.status === "PUBLISHED" && (
-                            <Link
-                              href={`/blog/${post.slug}`}
-                              className="text-gray-600 hover:text-gray-700 font-medium"
-                            >
-                              View
-                            </Link>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </main>
-    </div>
+                    <td className="px-4 py-4 text-xs text-muted-foreground hidden sm:table-cell">
+                      {formatDistanceToNow(post.updatedAt)}
+                    </td>
+
+                    <td className="px-4 py-4">
+                      <div className="flex gap-3">
+                        <Link
+                          href={`/admin/posts/${post.id}/edit`}
+                          className="text-primary hover:opacity-70 font-medium text-xs transition"
+                        >
+                          Editar
+                        </Link>
+                        {post.status === "PUBLISHED" && (
+                          <Link
+                            href={`/blog/${post.slug}`}
+                            className="text-muted-foreground hover:text-foreground font-medium text-xs transition"
+                          >
+                            Ver
+                          </Link>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </main>
   );
 }
