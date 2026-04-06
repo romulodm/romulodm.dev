@@ -119,7 +119,7 @@ const Navbar = () => {
                             <>
                                 <button
                                     onClick={openAuthModal}
-                                    className="text-sm mr-2 font-medium bg-primary text-primary-foreground px-4 py-2 rounded hover:opacity-90 transition-opacity"
+                                    className="text-sm mr-2 font-medium bg-primary text-white px-4 py-2 rounded hover:opacity-90 transition-opacity"
                                 >
                                     Login
                                 </button>
