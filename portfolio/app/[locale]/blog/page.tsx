@@ -1,62 +1,66 @@
 // app/[locale]/blog/page.tsx
-import Link from "next/link";
-import { prisma } from "@/lib/prisma";
-import { PostCard } from "@/components/ui/PostCard";
-import { NewsletterForm } from "@/components/ui/NewsletterForm";
-import Navigation from "@/components/navigation/Navigation";
+import { prisma } from "@romulo/database"
+import { BlogListClient } from '@/components/blog/BlogListClient'
+import Navbar from '@/components/navigation/Navbar'
+import { Footer } from '@/components/Footer'
+import { BlogCarrousel } from "@/components/blog/BlogCarrousel"
 
 export const metadata = {
-  title: "Blog - Posts recentes",
-  description: "Artigos sobre desenvolvimento web, JavaScript, TypeScript e muito mais.",
-};
+  title: 'Blog - Posts recentes',
+  description: 'Artigos sobre desenvolvimento web, JavaScript, TypeScript e muito mais.',
+}
 
 export default async function BlogPage() {
-  const posts = await prisma.post.findMany({
-    where: {
-      status: "PUBLISHED",
-      publishedAt: { not: null },
-    },
-    orderBy: { publishedAt: "desc" },
-    select: {
-      id: true,
-      title: true,
-      slug: true,
-      excerpt: true,
-      coverImageUrl: true,
-      publishedAt: true,
-      postTags: { select: { tag: true } }, // <-- tags via relação
-    },
-  });
+  // SSR: carrega posts iniciais (newest) e todas as tags disponíveis em paralelo
+  const [posts, tagRows] = await Promise.all([
+    prisma.post.findMany({
+      where: { status: 'PUBLISHED', publishedAt: { not: null } },
+      orderBy: { publishedAt: 'desc' },
+      take: 9,
+      select: {
+        id: true,
+        title: true,
+        summary: true,
+        readingTime: true,
+        slug: true,
+        excerpt: true,
+        coverImageUrl: true,
+        publishedAt: true,
+        likes: true,
+        views: true,
+        commentsCount: true,
+        postTags: { select: { tag: true } },
+      },
+    }),
+    // Tags distintas de posts publicados
+    prisma.postTag.findMany({
+      where: { post: { status: 'PUBLISHED' } },
+      distinct: ['tag'],
+      select: { tag: true },
+      orderBy: { tag: 'asc' },
+    }),
+  ])
+
+  const allTags = tagRows.map((t) => t.tag)
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Navigation />
-      <div className="mt-20" />
+    <div className="min-h-screen bg-gray-50 dark:bg-background">
+      <Navbar />
 
-      <main className="max-w-6xl mx-auto px-4 py-12">
-        <div className="text-center mb-16">
-          <h1 className="text-5xl font-bold text-gray-900 mb-4">Blog</h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Tutoriais, dicas e experiências sobre desenvolvimento web fullstack
+      <main className="max-w-7xl mx-auto px-4 py-12">
+        <div className="text-center mt-10 mb-5 pb-5 border-b border-border">
+          <p className="text-base text-gray-600 dark:text-muted-foreground max-w-2xl mx-auto">
+            The opinions expressed here are personal reflections that relate to my views on technology and other matters; feel free to interact, share your ideas and send suggestions.
           </p>
         </div>
 
-        <div className="mb-16">
-          <NewsletterForm />
-        </div>
+        <BlogCarrousel />
 
-        {posts.length === 0 ? (
-          <div className="text-center py-16">
-            <p className="text-gray-600 text-lg">Nenhum post publicado ainda.</p>
-          </div>
-        ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {posts.map((post) => (
-              <PostCard key={post.id} post={post} />
-            ))}
-          </div>
-        )}
+        <BlogListClient initialPosts={posts} allTags={allTags} />
       </main>
+
+
+      <Footer />
     </div>
-  );
+  )
 }
