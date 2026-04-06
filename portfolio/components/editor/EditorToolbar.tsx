@@ -12,6 +12,8 @@ import {
   Code,
   FileCode,
   Image,
+  PlayCircle,
+  type LucideIcon,
 } from 'lucide-react'
 
 interface EditorToolbarProps {
@@ -21,6 +23,10 @@ interface EditorToolbarProps {
   onImageUpload: (file: File) => Promise<void>
   isUploading: boolean
 }
+
+type ToolItem =
+  | { type: 'divider' }
+  | { type?: never; icon: LucideIcon; label: string; action: () => void; disabled?: boolean }
 
 export function EditorToolbar({
   textareaRef,
@@ -41,10 +47,8 @@ export function EditorToolbar({
     const text = contentMarkdown
 
     const newText = text.substring(0, start) + before + selectedText + after + text.substring(end)
-    
     setContentMarkdown(newText)
 
-    // Set cursor position
     setTimeout(() => {
       textarea.focus()
       const newCursorPos = start + before.length + selectedText.length
@@ -57,80 +61,44 @@ export function EditorToolbar({
     if (file) {
       await onImageUpload(file)
     }
-    // Reset input
     if (imageInputRef.current) {
       imageInputRef.current.value = ''
     }
   }
 
-  const tools = [
-    {
-      icon: Bold,
-      label: 'Bold',
-      action: () => insertMarkdown('**', '**'),
-    },
-    {
-      icon: Italic,
-      label: 'Italic',
-      action: () => insertMarkdown('*', '*'),
-    },
-    {
-      icon: Link,
-      label: 'Link',
-      action: () => insertMarkdown('[', '](url)'),
-    },
-    {
-      icon: List,
-      label: 'Unordered List',
-      action: () => insertMarkdown('\n- ', ''),
-    },
-    {
-      icon: ListOrdered,
-      label: 'Ordered List',
-      action: () => insertMarkdown('\n1. ', ''),
-    },
-    {
-      icon: Heading2,
-      label: 'Heading',
-      action: () => insertMarkdown('\n## ', ''),
-    },
-    {
-      icon: Quote,
-      label: 'Quote',
-      action: () => insertMarkdown('\n> ', ''),
-    },
-    {
-      icon: Code,
-      label: 'Inline Code',
-      action: () => insertMarkdown('`', '`'),
-    },
-    {
-      icon: FileCode,
-      label: 'Code Block',
-      action: () => insertMarkdown('\n```\n', '\n```\n'),
-    },
-    {
-      icon: Image,
-      label: 'Upload Image',
-      action: () => imageInputRef.current?.click(),
-      disabled: isUploading,
-    },
+  const tools: ToolItem[] = [
+    { icon: Bold, label: 'Bold', action: () => insertMarkdown('**', '**') },
+    { icon: Italic, label: 'Italic', action: () => insertMarkdown('*', '*') },
+    { icon: Link, label: 'Link', action: () => insertMarkdown('[', '](url)') },
+    { icon: List, label: 'Unordered List', action: () => insertMarkdown('\n- ', '') },
+    { icon: ListOrdered, label: 'Ordered List', action: () => insertMarkdown('\n1. ', '') },
+    { icon: Heading2, label: 'Heading', action: () => insertMarkdown('\n## ', '') },
+    { icon: Quote, label: 'Quote', action: () => insertMarkdown('\n> ', '') },
+    { icon: Code, label: 'Inline Code', action: () => insertMarkdown('`', '`') },
+    { icon: FileCode, label: 'Code Block', action: () => insertMarkdown('\n```\n', '\n```\n') },
+    { type: 'divider' },
+    { icon: Image, label: 'Upload Image', action: () => imageInputRef.current?.click(), disabled: isUploading },
+    { icon: PlayCircle, label: 'Embed YouTube', action: () => insertMarkdown(`\n::youtube[title](url)\n`) },
   ]
 
   return (
     <div className="border-t border-b border-gray-200 bg-gray-50 p-2">
-      <div className="flex gap-1">
-        {tools.map((tool, index) => (
-          <button
-            key={index}
-            onClick={tool.action}
-            disabled={tool.disabled}
-            title={tool.label}
-            className="p-2 rounded hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <tool.icon size={18} className="text-gray-700" />
-          </button>
-        ))}
+      <div className="flex gap-1 items-center">
+        {tools.map((tool, index) =>
+          tool.type === 'divider' ? (
+            <div key={index} className="w-px h-5 bg-gray-300 mx-1" />
+          ) : (
+            <button
+              key={index}
+              onClick={tool.action}
+              disabled={tool.disabled}
+              title={tool.label}
+              className="p-2 rounded hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <tool.icon size={18} className="text-gray-700" />
+            </button>
+          )
+        )}
       </div>
       <input
         ref={imageInputRef}
