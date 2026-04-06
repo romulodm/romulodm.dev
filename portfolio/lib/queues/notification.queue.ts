@@ -1,17 +1,14 @@
-// lib/queues/notification.queue.ts
-import { Queue } from 'bullmq'
-import { redisBullMQ } from '@/lib/redis'
+import { createRedisConnection, createQueue, QUEUE_NOTIFICATIONS, type NotificationJob } from "@romulo/queues";
 
-export const notificationQueue = new Queue('notifications', {
-    connection: redisBullMQ,
+const redis = createRedisConnection();
+
+export const notificationQueue = createQueue<NotificationJob>(QUEUE_NOTIFICATIONS, redis, {
     defaultJobOptions: {
         attempts: 3,
-        backoff: { type: 'exponential', delay: 2000 },
+        backoff: { type: "exponential", delay: 2000 },
         removeOnComplete: { age: 24 * 3600, count: 1000 },
         removeOnFail: { age: 7 * 24 * 3600 },
     },
-})
+});
 
-export type NotificationJob =
-    | { type: 'comment'; author: string; postTitle: string; postSlug: string }
-    | { type: 'daily-status' }
+export type { NotificationJob };
