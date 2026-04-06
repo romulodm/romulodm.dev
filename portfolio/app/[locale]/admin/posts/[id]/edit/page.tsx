@@ -62,7 +62,7 @@ export default function EditPostPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="flex-1 flex items-center justify-center min-h-screen">
         <span className="w-6 h-6 border-2 border-border border-t-foreground rounded-full animate-spin" />
       </div>
     )
@@ -70,7 +70,7 @@ export default function EditPostPage() {
 
   if (error || !post) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="flex-1 flex items-center justify-center min-h-screen">
         <p className="text-destructive">{error || 'Post not found'}</p>
       </div>
     )
@@ -82,7 +82,7 @@ export default function EditPostPage() {
         title: post.title,
         contentMarkdown: post.contentMarkdown,
         coverImageUrl: post.coverImageUrl ?? '',
-        tags: post.postTags.map((pt) => pt.tag), // ← era post.tags (não existe)
+        tags: post.postTags.map((pt) => pt.tag),
         youtubeUrl: post.youtubeUrl ?? '',
         summary: post.summary ?? '',
         readingTime: post.readingTime,

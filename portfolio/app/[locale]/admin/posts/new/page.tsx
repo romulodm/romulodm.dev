@@ -6,10 +6,7 @@ import NewPostClient from "./page-client";
 
 export default async function NewPostPage() {
   const isAuthenticated = await isAdminAuthenticated();
-
-  if (!isAuthenticated) {
-    redirect("/");
-  }
+  if (!isAuthenticated) redirect("/");
 
   return <NewPostClient />;
 }
