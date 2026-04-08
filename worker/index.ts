@@ -9,6 +9,7 @@ import {
   notificationWorker,
   scheduleDailyStatus,
 } from "./workers/notification.worker";
+import { scheduleViewsFlush } from "./workers/views.worker";
 
 async function main() {
   console.log("[Worker] Worker Service starting…");
@@ -18,6 +19,7 @@ async function main() {
   });
 
   await scheduleDailyStatus();
+  await scheduleViewsFlush();
 
   attachLogger(transactionalWorker, "email:transactional");
   attachLogger(campaignWorker, "email:campaign");
@@ -27,6 +29,7 @@ async function main() {
   console.log("    • newsletter:transactional");
   console.log("    • newsletter:campaign");
   console.log("    • notifications  (comment + daily-status @ 08:00 BRT)");
+  console.log("    • views flush    (a cada 60 s)");
 }
 
 function attachLogger(worker: { on: Function }, name: string) {
