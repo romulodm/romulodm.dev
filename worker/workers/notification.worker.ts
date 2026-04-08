@@ -1,3 +1,7 @@
+// apps/worker/src/workers/notification.worker.ts  (ATUALIZADO)
+//
+// Adiciona o case "flush-views" ao switch existente.
+
 import { Worker } from "bullmq";
 
 import {
@@ -5,10 +9,12 @@ import {
   createQueue,
   QUEUE_NOTIFICATIONS,
   DAILY_STATUS_JOB_NAME,
+  FLUSH_VIEWS_JOB_NAME,
   type NotificationJob,
 } from "@romulo/queues";
 
 import { notifyComment, sendDailyStatus } from "../lib/whatsapp";
+import { flushViewsBuffer } from "./views.worker";
 
 const redis = createRedisConnection();
 
@@ -24,6 +30,11 @@ export const notificationWorker = new Worker<NotificationJob>(
 
       case "daily-status":
         await sendDailyStatus();
+        break;
+
+      // ── Novo ────────────────────────────────────────────────────────────
+      case "flush-views":
+        await flushViewsBuffer(redis);
         break;
 
       default:
@@ -66,3 +77,15 @@ export async function scheduleDailyStatus(): Promise<void> {
 
   console.log("[NotificationWorker] Daily-status cron scheduled at 08:00 BRT ✅");
 }
+
+// ─── apps/worker/src/main.ts  (trecho a adicionar) ───────────────────────────
+//
+// import { scheduleViewsFlush } from "./workers/views.worker";
+//
+// async function main() {
+//   ...
+//   await scheduleDailyStatus();
+//   await scheduleViewsFlush();        // ← adicione esta linha
+//   ...
+//   console.log("    • views flush   (a cada 60 s)");
+// }
