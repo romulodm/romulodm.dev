@@ -6,10 +6,15 @@ export const QUEUE_CAMPAIGN = "newsletter-campaign";
 export const QUEUE_NOTIFICATIONS = "notifications";
 export const DAILY_STATUS_JOB_NAME = "daily-status-cron";
 
+// ── Views ────────────────────────────────────────────────────────────────────
+export const VIEWS_BUFFER_KEY = "views:buffer";
+export const FLUSH_VIEWS_JOB_NAME = "flush-views-cron";
+
 export type TransactionalEmailJob =
     | { type: "CONFIRMATION"; email: string; confirmationUrl: string }
     | { type: "WELCOME"; email: string; unsubscribeUrl: string }
-    | { type: "UNSUBSCRIBE_CONFIRM"; email: string; unsubscribeUrl: string };
+    | { type: "UNSUBSCRIBE_CONFIRM"; email: string; unsubscribeUrl: string }
+    | { type: "PASSWORD_RESET"; email: string; code: string; expiresInMinutes?: number };
 
 export interface CampaignEmailJob {
     campaignId: string;
@@ -24,7 +29,8 @@ export interface CampaignEmailJob {
 
 export type NotificationJob =
     | { type: "comment"; id: string; author: string; postTitle: string; postSlug: string }
-    | { type: "daily-status" };
+    | { type: "daily-status" }
+    | { type: "flush-views" };  // ← novo
 
 export const defaultJobOptions: QueueOptions["defaultJobOptions"] = {
     attempts: 5,
