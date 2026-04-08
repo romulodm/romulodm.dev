@@ -62,36 +62,47 @@ enum PostStatus {
 }
 
 model Post {
-  id              String     @id @default(cuid())
-  title           String
-  summary         String?    @db.VarChar(500)
-  readingTime     Int        @default(0)
-  slug            String     @unique
-  excerpt         String?    @db.Text
-  contentMarkdown String     @db.Text
-  coverImageUrl   String?
-  youtubeUrl      String?
-  status          PostStatus @default(DRAFT)
-  publishedAt     DateTime?
-  canonicalUrl    String?
-  createdAt       DateTime   @default(now())
-  updatedAt       DateTime   @updatedAt
+  id            String     @id @default(cuid())
+  slug          String     @unique
+  readingTime   Int        @default(0)
+  coverImageUrl String?
+  youtubeUrl    String?
+  status        PostStatus @default(DRAFT)
+  publishedAt   DateTime?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  views         Int        @default(0)
+  likes         Int        @default(0)
+  commentsCount Int        @default(0)
+  authorId      String
 
-  views         Int @default(0)
-  likes         Int @default(0)
-  commentsCount Int @default(0)
-
-  authorId           String
   author             User                @relation(fields: [authorId], references: [id], onDelete: Cascade)
   postTags           PostTag[]
   comments           Comment[]
   postLikes          PostLike[]
   campaigns          Campaign[]
+  translations       PostTranslation[]
   suspiciousComments SuspiciousComment[]
 
   @@index([status, publishedAt])
-  @@index([slug])
   @@index([authorId])
+}
+
+model PostTranslation {
+  id              String  @id @default(cuid())
+  postId          String
+  locale          String
+  title           String
+  summary         String? @db.VarChar(500)
+  excerpt         String? @db.Text
+  contentMarkdown String  @db.Text
+  canonicalUrl    String?
+
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, locale])
+  @@index([postId])
+  @@index([locale])
 }
 
 model PostLike {
