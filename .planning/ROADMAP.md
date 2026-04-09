@@ -43,12 +43,13 @@ Plans:
 2. Protected and admin routes enforce authentication and authorization consistently.
 3. Public mutation endpoints apply rate limiting or equivalent abuse controls.
 4. Error responses no longer leak secrets or unsafe internal details.
-**Plans**: 3 plans
+**Plans**: 4 plans
 
 Plans:
 - [ ] 02-01: Introduce shared validation and sanitization patterns for public and admin APIs
 - [ ] 02-02: Review and harden authentication and authorization flows across admin/content paths
-- [ ] 02-03: Add abuse controls and safer error handling to exposed mutation routes
+- [ ] 02-03: Add production-safe abuse controls to exposed mutation routes
+- [ ] 02-04: Standardize safe public and admin error responses and logging boundaries
 
 ### Phase 3: Test Foundation And Critical Coverage
 **Goal**: Establish automated verification for business logic, APIs, UI components, and the must-not-break user paths.
@@ -80,7 +81,7 @@ Plans:
 Plans:
 - [ ] 04-01: Review and harden BullMQ retry, concurrency, and idempotency behavior for critical jobs
 - [ ] 04-02: Add queue and worker observability signals, structured logging, and failure surfacing
-- [ ] 04-03: Add integration coverage for the worker’s critical async flows
+- [ ] 04-03: Add integration coverage for the worker's critical async flows
 
 ### Phase 5: Performance And Scalability Tuning
 **Goal**: Improve portfolio responsiveness and production load handling using measured bottlenecks and the hardened baseline.
@@ -105,7 +106,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. OSS Safety And Governance | 3/3 | Complete    | 2026-04-09 |
-| 2. API And Auth Hardening | 0/3 | Not started | - |
+| 2. API And Auth Hardening | 0/4 | Not started | - |
 | 3. Test Foundation And Critical Coverage | 0/4 | Not started | - |
 | 4. Worker Reliability And Observability | 0/3 | Not started | - |
 | 5. Performance And Scalability Tuning | 0/3 | Not started | - |
