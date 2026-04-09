@@ -7,15 +7,15 @@
 
 ### Open Source Safety
 
-- [ ] **OSS-01**: Operator can publish the repository publicly without exposing secrets, credentials, or sensitive runtime data in tracked files
-- [ ] **OSS-02**: Operator has a complete `.env.example` or equivalent documented env contract for every required production secret and integration
-- [ ] **OSS-03**: Operator can rely on repository rules or tooling to block future secret leaks before they land in the public repo
+- [x] **OSS-01**: Operator can publish the repository publicly without exposing secrets, credentials, or sensitive runtime data in tracked files
+- [x] **OSS-02**: Operator has a complete `.env.example` or equivalent documented env contract for every required production secret and integration
+- [x] **OSS-03**: Operator can rely on repository rules or tooling to block future secret leaks before they land in the public repo
 
 ### CI and Release Confidence
 
-- [ ] **CI-01**: Operator can run a single documented CI entrypoint locally and in GitHub Actions for the monorepo baseline
-- [ ] **CI-02**: Pull requests automatically run scoped checks for affected apps and packages
-- [ ] **CI-03**: Dependency and security review checks run automatically before changes are merged
+- [x] **CI-01**: Operator can run a single documented CI entrypoint locally and in GitHub Actions for the monorepo baseline
+- [x] **CI-02**: Pull requests automatically run scoped checks for affected apps and packages
+- [x] **CI-03**: Dependency and security review checks run automatically before changes are merged
 
 ### API and Access Security
 
@@ -76,12 +76,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| OSS-01 | Phase 1 | Pending |
-| OSS-02 | Phase 1 | Pending |
-| OSS-03 | Phase 1 | Pending |
-| CI-01 | Phase 1 | Pending |
-| CI-02 | Phase 1 | Pending |
-| CI-03 | Phase 1 | Pending |
+| OSS-01 | Phase 1 | Complete |
+| OSS-02 | Phase 1 | Complete |
+| OSS-03 | Phase 1 | Complete |
+| CI-01 | Phase 1 | Complete |
+| CI-02 | Phase 1 | Complete |
+| CI-03 | Phase 1 | Complete |
 | SEC-01 | Phase 2 | Pending |
 | SEC-02 | Phase 2 | Pending |
 | SEC-03 | Phase 2 | Pending |
@@ -105,4 +105,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-04-08*
-*Last updated: 2026-04-08 after initial definition*
+*Last updated: 2026-04-09 after Phase 1 completion*
