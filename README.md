@@ -40,3 +40,21 @@ Local CI entrypoints:
 - `npm run ci`: fuller Phase 1 baseline including portfolio and frontend builds
 
 Pull requests use the same root commands through GitHub Actions so local and CI expectations stay aligned.
+
+## Publication Checklist
+
+Before making the repository public, confirm:
+- CI workflows are enabled and passing on the default branch
+- secret scanning and push protection are enabled in GitHub repository settings
+- dependency review is required for pull requests
+- the committed `Secret Scan` and `Static Security` workflows are active
+- any real secrets have been rotated out of local history, screenshots, and deployment notes
+
+Security workflow overview:
+- `PR Validation`: scoped checks for apps, packages, worker, and legacy frontend changes
+- `Security Review`: npm audit coverage
+- `Dependency Review`: pull request dependency risk review
+- `Secret Scan`: committed secret-leak detection via gitleaks
+- `Static Security`: baseline CodeQL analysis for JavaScript/TypeScript
+
+GitHub settings such as push protection and secret scanning alerts still need to be enabled in the repository UI. The committed workflows do not replace those admin-level controls.
