@@ -1,23 +1,27 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@romulo/database";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { requireAdmin } from "@/lib/auth";
+import {
+    forbiddenResponse,
+    internalErrorResponse,
+    unauthorizedResponse,
+} from "@/lib/api-errors";
 
-export async function GET(req: NextRequest) {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+export async function GET(_req: NextRequest) {
+    const auth = await requireAdmin();
+    if (!auth.ok) {
+        return auth.status === 401 ? unauthorizedResponse() : forbiddenResponse();
+    }
 
-    const admin = await prisma.user.findUnique({
-        where: { id: session.user.id },
-        select: { admin: true },
-    });
-    if (!admin?.admin) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    try {
+        const users = await prisma.user.findMany({
+            where: { banned: true },
+            orderBy: { bannedAt: "desc" },
+            select: { id: true, username: true, email: true, bannedAt: true },
+        });
 
-    const users = await prisma.user.findMany({
-        where: { banned: true },
-        orderBy: { bannedAt: "desc" },
-        select: { id: true, username: true, email: true, bannedAt: true },
-    });
-
-    return NextResponse.json({ users });
+        return NextResponse.json({ users });
+    } catch (error) {
+        return internalErrorResponse("admin-banned-users-list", error);
+    }
 }

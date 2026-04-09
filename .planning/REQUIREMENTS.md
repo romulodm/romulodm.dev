@@ -19,10 +19,10 @@
 
 ### API and Access Security
 
-- [ ] **SEC-01**: Public API routes validate and sanitize input server-side before executing business logic
-- [ ] **SEC-02**: Protected and admin routes enforce authentication and authorization consistently across the Next.js app
-- [ ] **SEC-03**: High-risk public mutation endpoints apply rate limiting or equivalent abuse controls
-- [ ] **SEC-04**: API routes return safe error responses that do not leak secrets or sensitive internals
+- [x] **SEC-01**: Public API routes validate and sanitize input server-side before executing business logic
+- [x] **SEC-02**: Protected and admin routes enforce authentication and authorization consistently across the Next.js app
+- [x] **SEC-03**: High-risk public mutation endpoints apply rate limiting or equivalent abuse controls
+- [x] **SEC-04**: API routes return safe error responses that do not leak secrets or sensitive internals
 
 ### Test Coverage
 
@@ -82,10 +82,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CI-01 | Phase 1 | Complete |
 | CI-02 | Phase 1 | Complete |
 | CI-03 | Phase 1 | Complete |
-| SEC-01 | Phase 2 | Pending |
-| SEC-02 | Phase 2 | Pending |
-| SEC-03 | Phase 2 | Pending |
-| SEC-04 | Phase 2 | Pending |
+| SEC-01 | Phase 2 | Complete |
+| SEC-02 | Phase 2 | Complete |
+| SEC-03 | Phase 2 | Complete |
+| SEC-04 | Phase 2 | Complete |
 | TEST-01 | Phase 3 | Pending |
 | TEST-02 | Phase 3 | Pending |
 | TEST-03 | Phase 3 | Pending |
@@ -105,4 +105,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-04-08*
-*Last updated: 2026-04-09 after Phase 1 completion*
+*Last updated: 2026-04-09 after Phase 2 completion*

@@ -1,24 +1,34 @@
 // app/api/comments/route.ts
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from "zod";
 import { prisma } from "@romulo/database";
-import { getServerSession } from 'next-auth';
-import { authOptions } from "@/lib/auth";
+import { requireAuth } from "@/lib/auth";
+import {
+    forbiddenResponse,
+    internalErrorResponse,
+    notFoundResponse,
+    rateLimitResponse,
+    unauthorizedResponse,
+    validationErrorResponse,
+} from "@/lib/api-errors";
+import {
+    RequestValidationError,
+    parseJsonBody,
+    sanitizeMultilineText,
+} from "@/lib/api-validation";
 import { notificationQueue } from '@/lib/queues/notification.queue';
 import { moderate } from '@/lib/moderation';
+import { getRequestIp, rateLimit } from '@/lib/rate-limit';
 
-// In-memory rate limiter: userId -> timestamps[]
-const rateLimitMap = new Map<string, number[]>();
-const WINDOW_MS = 60_000;
-const MAX_REQUESTS = 5;
-
-function isRateLimited(userId: string): boolean {
-    const now = Date.now();
-    const prev = rateLimitMap.get(userId) ?? [];
-    const recent = prev.filter((t) => now - t < WINDOW_MS);
-    recent.push(now);
-    rateLimitMap.set(userId, recent);
-    return recent.length > MAX_REQUESTS;
-}
+const createCommentSchema = z.object({
+    postId: z.string().trim().min(1, "postId é obrigatório."),
+    parentId: z.union([z.string().trim().min(1), z.null()]).optional().transform((value) => value ?? null),
+    bodyMd: z
+        .string({ required_error: "Comentário não pode estar vazio." })
+        .transform((value) => sanitizeMultilineText(value, 2000))
+        .refine((value) => value.length > 0, "Comentário não pode estar vazio.")
+        .refine((value) => value.length <= 2000, "Comentário muito longo (máx. 2000 caracteres)."),
+});
 
 // GET: Pegar comentários por relevância ou data
 export async function GET(req: NextRequest) {
@@ -88,130 +98,107 @@ export async function GET(req: NextRequest) {
 
 // POST: Criar comentário
 export async function POST(request: NextRequest) {
-    // ---- Auth----------
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const auth = await requireAuth();
+    if (!auth.ok) {
+        return unauthorizedResponse();
     }
 
-    // ---- Rate limit
-    if (isRateLimited(session.user.id)) {
-        return NextResponse.json(
-            { error: "Muitos comentários em pouco tempo. Aguarde um momento." },
-            { status: 429 }
-        );
-    }
-
-    // ---- Ban check
-    const user = await prisma.user.findUnique({
-        where: { id: session.user.id },
-        select: { banned: true },
-    });
-    if (user?.banned) {
-        return NextResponse.json({ error: "Você não pode comentar." }, { status: 403 });
-    }
-
-    // ---- Body parsing — guard against empty/malformed body
-    let body: { postId?: string; parentId?: string | null; bodyMd?: string };
     try {
-        const text = await request.text();
-        if (!text || text.trim() === "") {
-            return NextResponse.json({ error: "Corpo da requisição vazio." }, { status: 400 });
+        const ip = getRequestIp(request);
+        const limited = await rateLimit(`comments:create:${auth.user.id}:${ip}`, 5, 60);
+        if (limited) {
+            return rateLimitResponse("Muitos comentários em pouco tempo. Aguarde um momento.");
         }
-        body = JSON.parse(text);
-    } catch {
-        return NextResponse.json({ error: "JSON inválido." }, { status: 400 });
-    }
 
-    const { postId, parentId, bodyMd } = body;
-
-    // ---- Validation
-    if (!postId || typeof postId !== "string") {
-        return NextResponse.json({ error: "postId é obrigatório." }, { status: 400 });
-    }
-    if (!bodyMd || typeof bodyMd !== "string" || !bodyMd.trim()) {
-        return NextResponse.json({ error: "Comentário não pode estar vazio." }, { status: 400 });
-    }
-    if (bodyMd.length > 2000) {
-        return NextResponse.json({ error: "Comentário muito longo (máx. 2000 caracteres)." }, { status: 400 });
-    }
-
-    // ---- Validate post----------------------------------
-    const post = await prisma.post.findUnique({
-        where: { id: postId, status: "PUBLISHED" },
-        select: {
-            id: true,
-            slug: true,
-            title: true
-        },
-    });
-    if (!post) {
-        return NextResponse.json({ error: "Post não encontrado." }, { status: 404 });
-    }
-
-    // ---- Validate parent
-    if (parentId) {
-        const parent = await prisma.comment.findUnique({
-            where: { id: parentId },
-            select: { id: true },
+        const user = await prisma.user.findUnique({
+            where: { id: auth.user.id },
+            select: { banned: true },
         });
-        if (!parent) {
-            return NextResponse.json({ error: "Comentário pai não encontrado." }, { status: 404 });
+        if (user?.banned) {
+            return forbiddenResponse("Você não pode comentar.");
         }
+
+        const { postId, parentId, bodyMd } = await parseJsonBody(request, createCommentSchema);
+
+        const post = await prisma.post.findUnique({
+            where: { id: postId, status: "PUBLISHED" },
+            select: {
+                id: true,
+                slug: true,
+                translations: {
+                    select: { title: true, locale: true },
+                },
+            },
+        });
+        if (!post) {
+            return notFoundResponse("Post não encontrado.");
+        }
+
+        if (parentId) {
+            const parent = await prisma.comment.findUnique({
+                where: { id: parentId },
+                select: { id: true },
+            });
+            if (!parent) {
+                return notFoundResponse("Comentário pai não encontrado.");
+            }
+        }
+
+        const { allowed, reason } = await moderate(bodyMd);
+
+        if (!allowed) {
+            await prisma.suspiciousComment.create({
+                data: {
+                    postId,
+                    parentId,
+                    authorId: auth.user.id,
+                    bodyMd,
+                    reason,
+                },
+            });
+
+            return NextResponse.json(
+                { id: "pending", bodyMd, pending: true },
+                { status: 201 }
+            );
+        }
+
+        const comment = await prisma.$transaction(async (tx) => {
+            const created = await tx.comment.create({
+                data: {
+                    postId,
+                    parentId,
+                    authorId: auth.user.id,
+                    bodyMd,
+                },
+                include: {
+                    author: { select: { id: true, username: true, image: true } },
+                },
+            });
+
+            await tx.post.update({
+                where: { id: postId },
+                data: { commentsCount: { increment: 1 } },
+            });
+
+            return created;
+        });
+
+        const job = await notificationQueue.add('comment', {
+            type: 'comment',
+            id: comment.id,
+            author: comment.author.username,
+            postTitle: post.translations[0]?.title ?? post.slug,
+            postSlug: post.slug,
+        });
+        console.log(`[Queue] Job publicado: ${job.id}`);
+
+        return NextResponse.json(comment, { status: 201 });
+    } catch (error) {
+        if (error instanceof z.ZodError || error instanceof RequestValidationError) {
+            return validationErrorResponse(error);
+        }
+
+        return internalErrorResponse("comments-create", error);
     }
-
-    const { allowed, reason } = await moderate(bodyMd);
-
-    if (!allowed) {
-        await prisma.suspiciousComment.create({
-            data: {
-                postId,
-                parentId: parentId ?? null,
-                authorId: session.user.id,
-                bodyMd: bodyMd.trim(),
-                reason,
-            },
-        });
-
-        // 201 to avoid revealing that the comment was blocked
-        return NextResponse.json(
-            { id: "pending", bodyMd: bodyMd.trim(), pending: true },
-            { status: 201 }
-        );
-    }
-
-    // ---- Create
-    const comment = await prisma.$transaction(async (tx) => {
-        const created = await tx.comment.create({
-            data: {
-                postId,
-                parentId: parentId ?? null,
-                authorId: session.user.id,
-                bodyMd: bodyMd.trim(),
-            },
-            include: {
-                author: { select: { id: true, username: true, image: true } },
-            },
-        });
-
-        await tx.post.update({
-            where: { id: postId },
-            data: { commentsCount: { increment: 1 } },
-        });
-
-
-        return created;
-    });
-
-    // --- Queue notification
-    const job = await notificationQueue.add('comment', {
-        type: 'comment',
-        id: comment.id,
-        author: comment.author.username,
-        postTitle: post.title,
-        postSlug: post.slug,
-    })
-    console.log(`[Queue] Job publicado: ${job.id}`)
-
-    return NextResponse.json(comment, { status: 201 });
 }

@@ -1,56 +1,90 @@
-// app/api/auth/login/route.ts
-import { NextResponse } from "next/server"
-import bcrypt from "bcryptjs"
-import { prisma } from "@romulo/database"
-import { SignJWT } from "jose"
+import { NextResponse } from "next/server";
+import bcrypt from "bcryptjs";
+import { z } from "zod";
+import { prisma } from "@romulo/database";
+import { SignJWT } from "jose";
+
+import {
+  internalErrorResponse,
+  rateLimitResponse,
+  unauthorizedResponse,
+  validationErrorResponse,
+} from "@/lib/api-errors";
+import {
+  emailSchema,
+  parseJsonBody,
+  passwordSchema,
+  RequestValidationError,
+} from "@/lib/api-validation";
+import { getRequestIp, rateLimit } from "@/lib/rate-limit";
+
+const loginSchema = z.object({
+  email: emailSchema,
+  password: passwordSchema,
+});
 
 export async function POST(req: Request) {
-    const body = await req.json().catch(() => null)
-    const { email, password } = body ?? {}
+  try {
+    const { email, password } = await parseJsonBody(req, loginSchema);
 
-    if (!email || !password) {
-        return NextResponse.json({ message: "Campos obrigatórios ausentes." }, { status: 400 })
+    const ip = getRequestIp(req);
+    const limited = await rateLimit(`auth:login:${ip}:${email}`, 10, 60);
+    if (limited) {
+      return rateLimitResponse("Muitas tentativas de login. Aguarde um momento.");
     }
 
     const user = await prisma.user.findUnique({
-        where: { email: email.trim().toLowerCase() },
-        select: {
-            id: true,
-            email: true,
-            username: true,
-            password: true,
-            provider: true,
-            admin: true,
-        },
-    })
+      where: { email },
+      select: {
+        id: true,
+        email: true,
+        username: true,
+        password: true,
+        provider: true,
+        admin: true,
+      },
+    });
 
     if (!user || user.provider !== "EMAIL_PASSWORD" || !user.password) {
-        return NextResponse.json({ message: "Credenciais inválidas." }, { status: 401 })
+      return unauthorizedResponse("Credenciais inválidas.");
     }
 
-    const ok = await bcrypt.compare(password, user.password)
+    const ok = await bcrypt.compare(password, user.password);
     if (!ok) {
-        return NextResponse.json({ message: "Credenciais inválidas." }, { status: 401 })
+      return unauthorizedResponse("Credenciais inválidas.");
     }
 
-    const secret = new TextEncoder().encode(process.env.NEXTAUTH_SECRET!)
+    if (!process.env.NEXTAUTH_SECRET) {
+      return internalErrorResponse(
+        "auth-login",
+        new Error("NEXTAUTH_SECRET is not configured"),
+      );
+    }
 
+    const secret = new TextEncoder().encode(process.env.NEXTAUTH_SECRET);
     const token = await new SignJWT({
-        id: user.id,
-        email: user.email,
-        username: user.username,
-        admin: user.admin,
+      id: user.id,
+      email: user.email,
+      username: user.username,
+      admin: user.admin,
     })
-        .setProtectedHeader({ alg: "HS256" })
-        .setIssuedAt()
-        .setExpirationTime("7d")
-        .sign(secret)
+      .setProtectedHeader({ alg: "HS256" })
+      .setIssuedAt()
+      .setExpirationTime("7d")
+      .sign(secret);
 
     return NextResponse.json({
-        id: user.id,
-        email: user.email,
-        username: user.username,
-        admin: user.admin,
-        token, // 👈 JWT para usar no Postman
-    })
+      id: user.id,
+      email: user.email,
+      username: user.username,
+      admin: user.admin,
+      token,
+    });
+  } catch (error) {
+    if (error instanceof z.ZodError || error instanceof RequestValidationError) {
+      return validationErrorResponse(error);
+    }
+
+    return internalErrorResponse("auth-login", error);
+  }
 }

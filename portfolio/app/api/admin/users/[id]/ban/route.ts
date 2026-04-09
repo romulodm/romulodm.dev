@@ -1,31 +1,49 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { prisma } from "@romulo/database";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { requireAdmin } from "@/lib/auth";
+import {
+    forbiddenResponse,
+    internalErrorResponse,
+    unauthorizedResponse,
+    validationErrorResponse,
+} from "@/lib/api-errors";
+import {
+    RequestValidationError,
+    parseJsonBody,
+} from "@/lib/api-validation";
+
+const banSchema = z.object({
+    banned: z.boolean(),
+});
 
 export async function POST(
     req: NextRequest,
     { params }: { params: { id: string } }
 ) {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const auth = await requireAdmin();
+    if (!auth.ok) {
+        return auth.status === 401 ? unauthorizedResponse() : forbiddenResponse();
+    }
 
-    const admin = await prisma.user.findUnique({
-        where: { id: session.user.id },
-        select: { admin: true },
-    });
-    if (!admin?.admin) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    try {
+        const { banned } = await parseJsonBody(req, banSchema);
 
-    const { banned }: { banned: boolean } = await req.json();
+        const updated = await prisma.user.update({
+            where: { id: params.id },
+            data: {
+                banned,
+                bannedAt: banned ? new Date() : null,
+            },
+            select: { id: true, username: true, banned: true, bannedAt: true },
+        });
 
-    const updated = await prisma.user.update({
-        where: { id: params.id },
-        data: {
-            banned,
-            bannedAt: banned ? new Date() : null,
-        },
-        select: { id: true, username: true, banned: true, bannedAt: true },
-    });
+        return NextResponse.json(updated);
+    } catch (error) {
+        if (error instanceof z.ZodError || error instanceof RequestValidationError) {
+            return validationErrorResponse(error);
+        }
 
-    return NextResponse.json(updated);
+        return internalErrorResponse("admin-ban-user", error);
+    }
 }
