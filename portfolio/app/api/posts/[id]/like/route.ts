@@ -1,23 +1,37 @@
 // app/api/posts/[id]/like/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from "@romulo/database";
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
+import { requireAuth } from '@/lib/auth';
+import {
+    internalErrorResponse,
+    rateLimitResponse,
+    unauthorizedResponse,
+} from "@/lib/api-errors";
+import { getRequestIp, rateLimit } from '@/lib/rate-limit';
 
 // POST: Toggle like no post (atômico via transaction)
 export async function POST(
     req: NextRequest,
     { params }: { params: { id: string } }
 ) {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const auth = await requireAuth();
+    if (!auth.ok) {
+        return unauthorizedResponse();
     }
 
     const postId = params.id;
-    const userId = session.user.id;
+    const userId = auth.user.id;
 
     try {
+        const limited = await rateLimit(
+            `posts:like:${userId}:${postId}:${getRequestIp(req)}`,
+            30,
+            60,
+        );
+        if (limited) {
+            return rateLimitResponse();
+        }
+
         const result = await prisma.$transaction(async (tx) => {
             const existing = await tx.postLike.findUnique({
                 where: { postId_userId: { postId, userId } },
@@ -46,8 +60,7 @@ export async function POST(
 
         return NextResponse.json(result);
     } catch (error) {
-        console.error('Like error:', error);
-        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+        return internalErrorResponse('posts-like', error);
     }
 }
 
@@ -56,13 +69,13 @@ export async function GET(
     req: NextRequest,
     { params }: { params: { id: string } }
 ) {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
+    const auth = await requireAuth();
+    if (!auth.ok) {
         return NextResponse.json({ liked: false });
     }
 
     const postId = params.id;
-    const userId = session.user.id;
+    const userId = auth.user.id;
 
     const existing = await prisma.postLike.findUnique({
         where: { postId_userId: { postId, userId } },

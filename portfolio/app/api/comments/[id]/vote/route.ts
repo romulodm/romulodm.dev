@@ -1,63 +1,74 @@
 // app/api/comments/[id]/vote/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { z } from "zod";
 import { prisma } from "@romulo/database";
+import { requireAuth } from "@/lib/auth";
+import {
+    internalErrorResponse,
+    rateLimitResponse,
+    unauthorizedResponse,
+    validationErrorResponse,
+} from "@/lib/api-errors";
+import {
+    RequestValidationError,
+    parseJsonBody,
+} from "@/lib/api-validation";
+import { getRequestIp, rateLimit } from "@/lib/rate-limit";
 
-const voteRateLimit = new Map<string, number[]>();
-const WINDOW_MS = 60_000;
-const MAX_VOTES = 30;
-
-function isRateLimited(userId: string): boolean {
-    const now = Date.now();
-    const timestamps = voteRateLimit.get(userId) ?? [];
-    const recent = timestamps.filter((t) => now - t < WINDOW_MS);
-    recent.push(now);
-    voteRateLimit.set(userId, recent);
-    return recent.length > MAX_VOTES;
-}
+const voteSchema = z.object({
+    value: z.union([z.literal(1), z.literal(-1), z.literal(0)]),
+});
 
 export async function PUT(
     request: NextRequest,
     { params }: { params: { id: string } }
 ) {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const auth = await requireAuth();
+    if (!auth.ok) {
+        return unauthorizedResponse();
     }
 
-    if (isRateLimited(session.user.id)) {
-        return NextResponse.json({ error: "Rate limit exceeded." }, { status: 429 });
-    }
+    try {
+        const limited = await rateLimit(
+            `comments:vote:${auth.user.id}:${params.id}:${getRequestIp(request)}`,
+            30,
+            60,
+        );
+        if (limited) {
+            return rateLimitResponse();
+        }
 
-    const { value } = await request.json(); // +1, -1 or 0
-    if (![1, -1, 0].includes(value)) {
-        return NextResponse.json({ error: "Valor inválido." }, { status: 400 });
-    }
+        const { value } = await parseJsonBody(request, voteSchema);
+        const commentId = params.id;
+        const userId = auth.user.id;
 
-    const commentId = params.id;
-    const userId = session.user.id;
+        if (value === 0) {
+            await prisma.commentVote.deleteMany({ where: { commentId, userId } });
+        } else {
+            await prisma.commentVote.upsert({
+                where: { commentId_userId: { commentId, userId } },
+                create: { commentId, userId, value },
+                update: { value },
+            });
+        }
 
-    if (value === 0) {
-        await prisma.commentVote.deleteMany({ where: { commentId, userId } });
-    } else {
-        await prisma.commentVote.upsert({
-            where: { commentId_userId: { commentId, userId } },
-            create: { commentId, userId, value },
-            update: { value },
+        const agg = await prisma.commentVote.aggregate({
+            where: { commentId },
+            _sum: { value: true },
         });
+        const newScore = agg._sum.value ?? 0;
+
+        await prisma.comment.update({
+            where: { id: commentId },
+            data: { score: newScore },
+        });
+
+        return NextResponse.json({ score: newScore });
+    } catch (error) {
+        if (error instanceof z.ZodError || error instanceof RequestValidationError) {
+            return validationErrorResponse(error);
+        }
+
+        return internalErrorResponse("comments-vote", error);
     }
-
-    const agg = await prisma.commentVote.aggregate({
-        where: { commentId },
-        _sum: { value: true },
-    });
-    const newScore = agg._sum.value ?? 0;
-
-    await prisma.comment.update({
-        where: { id: commentId },
-        data: { score: newScore },
-    });
-
-    return NextResponse.json({ score: newScore });
 }

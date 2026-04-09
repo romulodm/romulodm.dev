@@ -1,5 +1,5 @@
 // lib/auth.ts
-import type { NextAuthOptions } from "next-auth";
+import type { NextAuthOptions, Session } from "next-auth";
 import { getServerSession } from "next-auth/next";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
@@ -210,16 +210,61 @@ export async function isAuthenticated() {
   return Boolean(session?.user && (session.user as any).id);
 }
 
-export async function requireAdmin() {
-  const session = await getServerSession(authOptions);
+export type RouteAuthResult =
+  | {
+      ok: true;
+      session: Session;
+      user: Session["user"] & { id: string; admin: boolean };
+    }
+  | {
+      ok: false;
+      status: 401 | 403;
+      reason: "unauthorized" | "forbidden";
+    };
 
+function getRouteUser(session: Session | null) {
   if (!session?.user || !(session.user as any).id) {
-    return { ok: false as const, status: 401 as const };
+    return null;
   }
 
-  if (!(session.user as any).admin) {
-    return { ok: false as const, status: 403 as const };
+  return session.user as Session["user"] & { id: string; admin: boolean };
+}
+
+export async function requireAuth(): Promise<RouteAuthResult> {
+  const session = await getServerSession(authOptions);
+  const user = getRouteUser(session);
+
+  if (!user) {
+    return { ok: false, status: 401, reason: "unauthorized" };
   }
 
-  return { ok: true as const, session };
+  return { ok: true, session: session!, user };
+}
+
+export async function requireAdmin() {
+  const auth = await requireAuth();
+  if (!auth.ok) {
+    return auth;
+  }
+
+  if (!auth.user.admin) {
+    return { ok: false as const, status: 403 as const, reason: "forbidden" };
+  }
+
+  return auth;
+}
+
+export async function requireOwnerOrAdmin(
+  ownerId: string,
+): Promise<RouteAuthResult> {
+  const auth = await requireAuth();
+  if (!auth.ok) {
+    return auth;
+  }
+
+  if (auth.user.admin || auth.user.id === ownerId) {
+    return auth;
+  }
+
+  return { ok: false, status: 403, reason: "forbidden" };
 }

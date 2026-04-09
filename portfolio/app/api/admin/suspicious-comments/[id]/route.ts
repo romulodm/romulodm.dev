@@ -1,53 +1,56 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@romulo/database";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-
-async function requireAdmin(req: NextRequest) {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) return null;
-    const user = await prisma.user.findUnique({
-        where: { id: session.user.id },
-        select: { admin: true },
-    });
-    return user?.admin ? session : null;
-}
+import { requireAdmin } from "@/lib/auth";
+import {
+    forbiddenResponse,
+    internalErrorResponse,
+    notFoundResponse,
+    unauthorizedResponse,
+} from "@/lib/api-errors";
 
 // POST /api/admin/suspicious-comments/[id] → aprova (vira comentário real)
 export async function POST(
     req: NextRequest,
     { params }: { params: { id: string } }
 ) {
-    const session = await requireAdmin(req);
-    if (!session) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    const auth = await requireAdmin();
+    if (!auth.ok) {
+        return auth.status === 401 ? unauthorizedResponse() : forbiddenResponse();
+    }
 
-    const suspicious = await prisma.suspiciousComment.findUnique({
-        where: { id: params.id },
-        include: { post: { select: { id: true } } },
-    });
-    if (!suspicious) return NextResponse.json({ error: "Not found" }, { status: 404 });
+    try {
+        const suspicious = await prisma.suspiciousComment.findUnique({
+            where: { id: params.id },
+            include: { post: { select: { id: true } } },
+        });
+        if (!suspicious) {
+            return notFoundResponse("Comentário suspeito não encontrado.");
+        }
 
-    const comment = await prisma.$transaction(async (tx) => {
-        const created = await tx.comment.create({
-            data: {
-                postId: suspicious.postId,
-                parentId: suspicious.parentId,
-                authorId: suspicious.authorId,
-                bodyMd: suspicious.bodyMd,
-            },
+        const comment = await prisma.$transaction(async (tx) => {
+            const created = await tx.comment.create({
+                data: {
+                    postId: suspicious.postId,
+                    parentId: suspicious.parentId,
+                    authorId: suspicious.authorId,
+                    bodyMd: suspicious.bodyMd,
+                },
+            });
+
+            await tx.post.update({
+                where: { id: suspicious.postId },
+                data: { commentsCount: { increment: 1 } },
+            });
+
+            await tx.suspiciousComment.delete({ where: { id: params.id } });
+
+            return created;
         });
 
-        await tx.post.update({
-            where: { id: suspicious.postId },
-            data: { commentsCount: { increment: 1 } },
-        });
-
-        await tx.suspiciousComment.delete({ where: { id: params.id } });
-
-        return created;
-    });
-
-    return NextResponse.json(comment);
+        return NextResponse.json(comment);
+    } catch (error) {
+        return internalErrorResponse("admin-suspicious-comments-approve", error);
+    }
 }
 
 // DELETE /api/admin/suspicious-comments/[id] → rejeita e exclui
@@ -55,9 +58,15 @@ export async function DELETE(
     req: NextRequest,
     { params }: { params: { id: string } }
 ) {
-    const session = await requireAdmin(req);
-    if (!session) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    const auth = await requireAdmin();
+    if (!auth.ok) {
+        return auth.status === 401 ? unauthorizedResponse() : forbiddenResponse();
+    }
 
-    await prisma.suspiciousComment.delete({ where: { id: params.id } });
-    return NextResponse.json({ ok: true });
+    try {
+        await prisma.suspiciousComment.delete({ where: { id: params.id } });
+        return NextResponse.json({ ok: true });
+    } catch (error) {
+        return internalErrorResponse("admin-suspicious-comments-delete", error);
+    }
 }
