@@ -26,11 +26,10 @@
 
 ### Test Coverage
 
-- [ ] **TEST-01**: Business logic and shared utilities across `portfolio/`, `worker/`, `packages/`, and `frontend/` have automated unit test coverage
+- [ ] **TEST-01**: Business logic and shared utilities across `portfolio/`, `worker/`, and `packages/` have automated unit test coverage
 - [ ] **TEST-02**: Critical Prisma queries and BullMQ worker flows have automated integration coverage
 - [ ] **TEST-03**: The Next.js portfolio app has E2E coverage for public portfolio uptime paths and authentication-critical flows
 - [ ] **TEST-04**: API endpoints have automated success, auth failure, validation failure, and error-path coverage
-- [ ] **TEST-05**: The legacy Vite frontend has component-level automated test coverage for its critical UI behavior
 
 ### Worker Reliability and Observability
 
@@ -69,6 +68,7 @@
 | Building major new product features during hardening | Production readiness and OSS safety take precedence |
 | Chasing perfect or exhaustive coverage before release | The target is a production-ready baseline with highest-risk gaps closed first |
 | Adding more external integrations during the hardening push | Expands the attack surface and slows baseline stabilization |
+| Investing new test effort in the retiring legacy `frontend/` app | The app is being removed, so Phase 3 focuses on active production surfaces only |
 
 ## Traceability
 
@@ -90,7 +90,6 @@ Which phases cover which requirements. Updated during roadmap creation.
 | TEST-02 | Phase 3 | Pending |
 | TEST-03 | Phase 3 | Pending |
 | TEST-04 | Phase 3 | Pending |
-| TEST-05 | Phase 3 | Pending |
 | WORK-01 | Phase 4 | Pending |
 | WORK-02 | Phase 4 | Pending |
 | WORK-03 | Phase 4 | Pending |
@@ -99,10 +98,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PERF-03 | Phase 5 | Pending |
 
 **Coverage:**
-- v1 requirements: 21 total
-- Mapped to phases: 21
+- v1 requirements: 20 total
+- Mapped to phases: 20
 - Unmapped: 0
 
 ---
 *Requirements defined: 2026-04-08*
-*Last updated: 2026-04-09 after Phase 2 completion*
+*Last updated: 2026-04-09 after Phase 3 context decisions*

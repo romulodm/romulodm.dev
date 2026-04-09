@@ -52,19 +52,19 @@ Plans:
 - [x] 02-04: Standardize safe public and admin error responses and logging boundaries
 
 ### Phase 3: Test Foundation And Critical Coverage
-**Goal**: Establish automated verification for business logic, APIs, UI components, and the must-not-break user paths.
+**Goal**: Establish automated verification for business logic, APIs, active UI surfaces, and the must-not-break user paths.
 **Depends on**: Phase 2
-**Requirements**: [TEST-01, TEST-02, TEST-03, TEST-04, TEST-05]
+**Requirements**: [TEST-01, TEST-02, TEST-03, TEST-04]
 **Success Criteria** (what must be TRUE):
-1. Shared utilities and business logic across the monorepo have repeatable automated unit coverage.
+1. Shared utilities and business logic across the active monorepo production surfaces have repeatable automated unit coverage.
 2. Critical API and integration paths have automated success and failure-path tests.
 3. The public portfolio and authentication-critical flows are covered by E2E tests.
-4. The legacy Vite frontend has component-level automated coverage for critical UI behavior.
+4. Legacy `frontend/` retirement does not block Phase 3 planning or dilute test investment away from active production surfaces.
 **Plans**: 4 plans
 
 Plans:
 - [ ] 03-01: Set up shared testing infrastructure and commands for the monorepo
-- [ ] 03-02: Add unit and component coverage for packages, worker helpers, and frontend/UI modules
+- [ ] 03-02: Add unit and component coverage for packages, worker helpers, and active portfolio/shared UI modules
 - [ ] 03-03: Add API and integration tests for auth, Prisma-backed routes, and error scenarios
 - [ ] 03-04: Add Playwright E2E coverage for the portfolio front door and auth-critical flows
 
