@@ -31,6 +31,12 @@ Repo-safety rules for public release:
 - Safe example files are the only env files that belong in git.
 - Legacy surfaces remain in scope for repo hygiene even when they are not the primary deploy target.
 
-## Phase 1 CI Preview
+## CI
 
-Phase 1 adds a root CI contract and GitHub workflows in later execution waves. Until then, use the per-surface scripts already present in each package/app.
+Phase 1 introduces a root CI contract plus GitHub workflows for pull request validation and security review.
+
+Local CI entrypoints:
+- `npm run ci:phase1`: fast baseline check for packages, worker build, and frontend/portfolio linting
+- `npm run ci`: fuller Phase 1 baseline including portfolio and frontend builds
+
+Pull requests use the same root commands through GitHub Actions so local and CI expectations stay aligned.

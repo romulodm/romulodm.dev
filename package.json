@@ -1,9 +1,24 @@
 {
-    "name": "romulodm",
-    "private": true,
-    "workspaces": [
-        "packages/*",
-        "portfolio",
-        "worker"
-    ]
+  "name": "romulodm",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "portfolio",
+    "worker"
+  ],
+  "scripts": {
+    "lint:portfolio": "npm --prefix portfolio run lint",
+    "build:portfolio": "npm --prefix portfolio run build",
+    "lint:frontend": "npm --prefix frontend run lint",
+    "build:frontend": "npm --prefix frontend run build",
+    "build:database": "npm --prefix packages/database run generate && npm --prefix packages/database run build",
+    "build:queues": "npm --prefix packages/queues run build",
+    "build:worker": "npm --prefix worker run build",
+    "ci:packages": "npm run build:database && npm run build:queues",
+    "ci:portfolio": "npm run lint:portfolio && npm run build:portfolio",
+    "ci:worker": "npm run build:worker",
+    "ci:frontend": "npm run lint:frontend && npm run build:frontend",
+    "ci:phase1": "npm run ci:packages && npm run ci:worker && npm run lint:portfolio && npm run lint:frontend",
+    "ci": "npm run ci:phase1 && npm run build:portfolio && npm run build:frontend"
+  }
 }
