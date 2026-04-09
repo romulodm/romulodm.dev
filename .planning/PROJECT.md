@@ -14,10 +14,10 @@ Safe public deployment of the existing monorepo, with the public portfolio stayi
 
 ### Validated
 
-- ✓ Public portfolio and content delivery already exist in the current codebase
-- ✓ Background worker and queue-backed async processing already exist in the current codebase
-- ✓ Authentication and admin/content management flows already exist in the current codebase
-- ✓ Payment, newsletter, upload, and moderation integrations already exist in the current codebase
+- Public portfolio and content delivery already exist in the current codebase
+- Background worker and queue-backed async processing already exist in the current codebase
+- Authentication and admin/content management flows already exist in the current codebase
+- Payment, newsletter, upload, and moderation integrations already exist in the current codebase
 
 ### Active
 
@@ -30,9 +30,9 @@ Safe public deployment of the existing monorepo, with the public portfolio stayi
 
 ### Out of Scope
 
-- Full architectural rewrite or migration away from the current monorepo layout — hardening is the goal, not a rebuild
-- Perfection-level platform maturity before release — the target is a production-ready baseline with the highest-risk gaps closed first
-- Replacing existing product capabilities with new major features — feature expansion is secondary to reliability, security, and testability
+- Full architectural rewrite or migration away from the current monorepo layout - hardening is the goal, not a rebuild
+- Perfection-level platform maturity before release - the target is a production-ready baseline with the highest-risk gaps closed first
+- Replacing existing product capabilities with new major features - feature expansion is secondary to reliability, security, and testability
 
 ## Context
 
@@ -46,25 +46,26 @@ Safe public deployment of the existing monorepo, with the public portfolio stayi
 - Payments and email are important but temporarily recoverable; portfolio uptime, worker visibility, and auth reliability take precedence
 - Current codebase mapping identified several hardening gaps, including missing first-party automated tests, process-local rate limiting, env-heavy integrations, runtime data in the repo tree, and broad use of ad hoc validation and logging
 - The repository needs to become safe for open-source publication as well as stable for production use, which means both code changes and repository hygiene changes matter
+- Phase 1 established the OSS-safe repo baseline with ignore rules, env contracts, CI entrypoints, PR workflows, secret scanning, dependency review, CodeQL, and publication/security guidance
 
 ## Constraints
 
-- **Architecture**: Keep the existing architecture intact — this is a hardening effort, not a rewrite
-- **Priority Order**: Security before scalability — public safety and secret handling come first
-- **Verification**: All changes must be incremental and testable — every improvement should reduce risk without creating blind spots
-- **Operations**: Single-operator system — observability and safe defaults matter more because there is no separate operations team watching the system
-- **Public Exposure**: Repository will be open-source — code, config patterns, and tracked files must be safe for public visibility
+- **Architecture**: Keep the existing architecture intact - this is a hardening effort, not a rewrite
+- **Priority Order**: Security before scalability - public safety and secret handling come first
+- **Verification**: All changes must be incremental and testable - every improvement should reduce risk without creating blind spots
+- **Operations**: Single-operator system - observability and safe defaults matter more because there is no separate operations team watching the system
+- **Public Exposure**: Repository will be open-source - code, config patterns, and tracked files must be safe for public visibility
 - **Production Baseline**: "Done" means safe to publish and deploy with the highest-risk gaps closed first, not absolute completeness
 
 ## Key Decisions
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| Prioritize security hardening before scalability work | Public repo safety and production trust depend first on eliminating exposure and access risks | — Pending |
-| Keep the existing monorepo architecture | The goal is to harden what already exists without introducing rewrite risk | — Pending |
-| Treat portfolio uptime, worker reliability, and auth control as non-negotiable | These are the most damaging failure modes for the operator and the public system | — Pending |
-| Add comprehensive automated testing across all apps and packages | A production-ready baseline requires repeatable verification before and after changes | — Pending |
-| Aim for a production-ready baseline instead of perfection | The project needs a realistic threshold for release and deployment readiness | — Pending |
+| Prioritize security hardening before scalability work | Public repo safety and production trust depend first on eliminating exposure and access risks | Confirmed in Phase 1 execution and preserved as the roadmap order |
+| Keep the existing monorepo architecture | The goal is to harden what already exists without introducing rewrite risk | Confirmed in Phase 1; repo safety and CI guardrails were added without architectural rewrites |
+| Treat portfolio uptime, worker reliability, and auth control as non-negotiable | These are the most damaging failure modes for the operator and the public system | Confirmed and carried forward into later phase priorities |
+| Add comprehensive automated testing across all apps and packages | A production-ready baseline requires repeatable verification before and after changes | Confirmed; Phase 1 established the CI contract that Phase 3 will extend into full coverage |
+| Aim for a production-ready baseline instead of perfection | The project needs a realistic threshold for release and deployment readiness | Confirmed; Phase 1 focused on highest-risk OSS and governance gaps first |
 
 ## Evolution
 
@@ -84,4 +85,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-08 after initialization*
+*Last updated: 2026-04-09 after Phase 1 completion*
