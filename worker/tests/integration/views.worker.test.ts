@@ -52,7 +52,7 @@ describe("views worker integration", () => {
     await redis.connect();
     const queue = createQueue<NotificationJob>(QUEUE_NOTIFICATIONS, redis);
 
-    await scheduleViewsFlush();
+    await scheduleViewsFlush(redis);
 
     const repeatJobs = await queue.getRepeatableJobs();
     expect(repeatJobs.some((job) => job.name === FLUSH_VIEWS_JOB_NAME)).toBe(true);

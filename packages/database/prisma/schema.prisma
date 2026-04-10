@@ -85,6 +85,8 @@ model Post {
   suspiciousComments SuspiciousComment[]
 
   @@index([status, publishedAt])
+  @@index([status, likes, publishedAt])
+  @@index([status, views, publishedAt])
   @@index([authorId])
 }
 
@@ -312,6 +314,8 @@ model Donation {
   updatedAt DateTime @updatedAt
 
   @@index([status, createdAt])
+  @@index([status, isPrivate, createdAt])
+  @@index([status, isPrivate, currency, amount])
   @@index([amount])
   @@index([provider])
 }

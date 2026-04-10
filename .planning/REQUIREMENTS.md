@@ -39,9 +39,9 @@
 
 ### Performance and Scalability
 
-- [ ] **PERF-01**: The public portfolio app uses a reviewed production caching and build strategy appropriate for real traffic
-- [ ] **PERF-02**: High-value Prisma query paths are reviewed for overfetching, indexing, and obvious performance bottlenecks
-- [ ] **PERF-03**: Queue concurrency, retry, and rate-limit settings are reviewed and tuned for production load rather than local defaults
+- [x] **PERF-01**: The public portfolio app uses a reviewed production caching and build strategy appropriate for real traffic
+- [x] **PERF-02**: High-value Prisma query paths are reviewed for overfetching, indexing, and obvious performance bottlenecks
+- [x] **PERF-03**: Queue concurrency, retry, and rate-limit settings are reviewed and tuned for production load rather than local defaults
 
 ## v2 Requirements
 
@@ -93,9 +93,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | WORK-01 | Phase 4 | Complete |
 | WORK-02 | Phase 4 | Complete |
 | WORK-03 | Phase 4 | Complete |
-| PERF-01 | Phase 5 | Pending |
-| PERF-02 | Phase 5 | Pending |
-| PERF-03 | Phase 5 | Pending |
+| PERF-01 | Phase 5 | Complete |
+| PERF-02 | Phase 5 | Complete |
+| PERF-03 | Phase 5 | Complete |
 
 **Coverage:**
 - v1 requirements: 20 total
@@ -104,4 +104,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-04-08*
-*Last updated: 2026-04-10 after Phase 4 execution*
+*Last updated: 2026-04-10 after Phase 5 execution*

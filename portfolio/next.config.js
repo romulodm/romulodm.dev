@@ -1,9 +1,13 @@
-/** @type {import('next').NextConfig} */
-const createNextIntlPlugin = require("next-intl/plugin");
+const path = require("path");
+require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
 
+/** @type {import('next').NextConfig} */
+
+const createNextIntlPlugin = require("next-intl/plugin");
 const withNextIntl = createNextIntlPlugin();
 
 const nextConfig = {
+  output: 'standalone',
   images: {
     remotePatterns: [
       {

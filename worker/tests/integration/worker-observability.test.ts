@@ -70,8 +70,8 @@ describe("worker observability", () => {
       [QUEUE_NOTIFICATIONS]: createQueue<NotificationJob>(QUEUE_NOTIFICATIONS, redis),
     };
 
-    await scheduleDailyStatus();
-    await scheduleViewsFlush();
+    await scheduleDailyStatus(redis);
+    await scheduleViewsFlush(redis);
 
     const snapshot = await captureWorkerHealthSnapshot(queues, redis, failureTracker);
 
