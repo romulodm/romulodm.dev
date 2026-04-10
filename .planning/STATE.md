@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: ready
-stopped_at: Milestone audit gaps identified
-last_updated: "2026-04-10T22:20:00.000Z"
-last_activity: 2026-04-10 -- Gap closure phases added for milestone blockers
+stopped_at: Phase 6 context captured
+last_updated: "2026-04-10T22:45:00.000Z"
+last_activity: 2026-04-10 -- Phase 06 context captured for view-flow unification
 progress:
   total_phases: 7
   completed_phases: 5
@@ -27,8 +27,8 @@ See: .planning/PROJECT.md (updated 2026-04-09)
 
 Phase: 06 (view-tracking-and-worker-flow-closure) - READY
 Plan: 0 of 0
-Status: Gap closure phases added after milestone audit
-Last activity: 2026-04-10 -- Gap closure phases added for milestone blockers
+Status: Ready to plan with Phase 06 context locked
+Last activity: 2026-04-10 -- Phase 06 context captured for view-flow unification
 
 Progress: [#######---] 71%
 
@@ -72,10 +72,11 @@ Recent decisions affecting current work:
 - Phase 3: Active production surfaces use Vitest for unit/integration coverage and Playwright for narrow portfolio smoke coverage
 - Phase 5: Public portfolio caching is explicit, database hotspot tuning stayed narrow, and worker throughput settings are now conservative and env-driven
 - Milestone audit: v1.0 is blocked on view-flow unification, remaining public API hardening, and PR test enforcement
+- Phase 6: Post views must converge on one canonical worker-backed path, with lightweight centralized dedupe and no request-time direct persistence
 
 ### Pending Todos
 
-- Plan Phase 6 to close the split post-view pipeline and restore a single worker-backed source of truth
+- Plan Phase 6 using the locked view-flow context to close the split post-view pipeline and restore a single worker-backed source of truth
 - Plan Phase 7 to harden the remaining live public mutation routes and wire critical tests into PR validation
 
 ### Blockers/Concerns
@@ -92,6 +93,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-04-10T22:20:00.000Z
-Stopped at: Gap phases created
-Resume file: .planning/v1.0-MILESTONE-AUDIT.md
+Last session: 2026-04-10T22:45:00.000Z
+Stopped at: Phase 6 context captured
+Resume file: .planning/phases/06-view-tracking-and-worker-flow-closure/06-CONTEXT.md
