@@ -1,62 +1,104 @@
 import "./env";
 
-import { redis } from "./lib/redis";
+import { createQueue, QUEUE_CAMPAIGN, QUEUE_NOTIFICATIONS, QUEUE_TRANSACTIONAL } from "@romulo/queues";
 import { prisma } from "@romulo/database";
-import { emailService } from "./lib/email/email.service";
 
-import { transactionalWorker, campaignWorker } from "./workers/email.worker";
+import { emailService } from "./lib/email/email.service";
+import { redis } from "./lib/redis";
 import {
-  notificationWorker,
-  scheduleDailyStatus,
-} from "./workers/notification.worker";
+  createFailureTracker,
+  logWorkerEvent,
+  recordQueueFailure,
+  startWorkerHealthMonitor,
+} from "./lib/worker-observability";
+import { campaignWorker, transactionalWorker } from "./workers/email.worker";
+import { notificationWorker, scheduleDailyStatus } from "./workers/notification.worker";
 import { scheduleViewsFlush } from "./workers/views.worker";
 
+const monitoringQueues = {
+  [QUEUE_TRANSACTIONAL]: createQueue(QUEUE_TRANSACTIONAL, redis),
+  [QUEUE_CAMPAIGN]: createQueue(QUEUE_CAMPAIGN, redis),
+  [QUEUE_NOTIFICATIONS]: createQueue(QUEUE_NOTIFICATIONS, redis),
+};
+
+const failureTracker = createFailureTracker();
+let healthMonitor: ReturnType<typeof startWorkerHealthMonitor> | null = null;
+
 async function main() {
-  console.log("[Worker] Worker Service starting…");
+  logWorkerEvent("info", "worker.starting");
 
   await emailService.verify().catch((err) => {
-    console.warn("[Startup] SMTP verification failed (continuing anyway):", err);
+    logWorkerEvent("warn", "worker.email_verify_failed", {
+      error: err instanceof Error ? err.message : String(err),
+    });
   });
 
   await scheduleDailyStatus();
   await scheduleViewsFlush();
 
-  attachLogger(transactionalWorker, "email:transactional");
-  attachLogger(campaignWorker, "email:campaign");
-  attachLogger(notificationWorker, "notification");
+  attachLogger(transactionalWorker, QUEUE_TRANSACTIONAL);
+  attachLogger(campaignWorker, QUEUE_CAMPAIGN);
+  attachLogger(notificationWorker, QUEUE_NOTIFICATIONS);
 
-  console.log("[Worker] Workers running:");
-  console.log("    • newsletter:transactional");
-  console.log("    • newsletter:campaign");
-  console.log("    • notifications  (comment + daily-status @ 08:00 BRT)");
-  console.log("    • views flush    (a cada 60 s)");
+  healthMonitor = startWorkerHealthMonitor({
+    queues: monitoringQueues,
+    redis,
+    failureTracker,
+  });
+  await healthMonitor.runCheck();
+
+  logWorkerEvent("info", "worker.ready", {
+    queues: Object.keys(monitoringQueues),
+  });
 }
 
-function attachLogger(worker: { on: Function }, name: string) {
+function attachLogger(worker: { on: Function }, queueName: string) {
   worker.on("completed", (job: any) => {
-    console.log(`[${name}] ✅ Job ${job.id} completed`);
+    logWorkerEvent("info", "worker.job_completed", {
+      queue: queueName,
+      jobId: job?.id ?? null,
+      jobName: job?.name ?? null,
+      attemptsMade: job?.attemptsMade ?? null,
+    });
   });
+
   worker.on("failed", (job: any, err: Error) => {
-    console.error(`[${name}] ❌ Job ${job?.id} failed: ${err.message}`);
+    recordQueueFailure(failureTracker, queueName, job?.id, err);
+    logWorkerEvent("error", "worker.job_failed", {
+      queue: queueName,
+      jobId: job?.id ?? null,
+      jobName: job?.name ?? null,
+      attemptsMade: job?.attemptsMade ?? null,
+      failedReason: err.message,
+      errorType: err.name,
+    });
   });
+
   worker.on("error", (err: Error) => {
-    console.error(`[${name}] Worker error:`, err);
+    logWorkerEvent("error", "worker.runtime_error", {
+      queue: queueName,
+      failedReason: err.message,
+      errorType: err.name,
+    });
   });
 }
 
 async function shutdown(signal: string): Promise<never> {
-  console.log(`\n[Worker] ${signal} received — shutting down gracefully…`);
+  logWorkerEvent("info", "worker.shutdown_requested", { signal });
+
+  healthMonitor?.stop();
 
   await Promise.allSettled([
     transactionalWorker.close(),
     campaignWorker.close(),
     notificationWorker.close(),
+    ...Object.values(monitoringQueues).map((queue) => queue.close()),
   ]);
 
   await prisma.$disconnect();
   redis.disconnect();
 
-  console.log("[Worker] Shutdown complete.");
+  logWorkerEvent("info", "worker.shutdown_complete");
   process.exit(0);
 }
 
@@ -64,10 +106,14 @@ process.on("SIGTERM", () => shutdown("SIGTERM"));
 process.on("SIGINT", () => shutdown("SIGINT"));
 
 setInterval(() => {
-  console.log(`[Worker] 💓 ${new Date().toISOString()}`);
+  logWorkerEvent("info", "worker.heartbeat");
 }, 30_000);
 
 main().catch((err) => {
-  console.error("[Worker] Fatal startup error:", err);
+  logWorkerEvent("error", "worker.fatal_startup_error", {
+    failedReason: err instanceof Error ? err.message : String(err),
+    errorType: err instanceof Error ? err.name : "Error",
+  });
   process.exit(1);
 });
+

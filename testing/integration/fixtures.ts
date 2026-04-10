@@ -9,6 +9,28 @@ export function uniqueToken(label: string) {
 }
 
 export async function cleanupIntegrationFixtures() {
+  await prisma.campaignRecipient.deleteMany({
+    where: {
+      OR: [
+        { subscriber: { email: { contains: TEST_PREFIX } } },
+        { campaign: { subject: { contains: TEST_PREFIX } } },
+      ],
+    },
+  });
+
+  await prisma.campaign.deleteMany({
+    where: {
+      OR: [
+        { subject: { contains: TEST_PREFIX } },
+        { recipients: { some: { subscriber: { email: { contains: TEST_PREFIX } } } } },
+      ],
+    },
+  });
+
+  await prisma.newsletterSubscriber.deleteMany({
+    where: { email: { contains: TEST_PREFIX } },
+  });
+
   await prisma.commentVote.deleteMany({
     where: {
       OR: [
@@ -119,4 +141,51 @@ export async function createComment(authorId: string, postId: string, bodyMd = "
       bodyMd,
     },
   });
+}
+
+export async function createNewsletterSubscriber(overrides?: {
+  email?: string;
+  isConfirmed?: boolean;
+  unsubscribedAt?: Date | null;
+}) {
+  const token = uniqueToken("subscriber");
+  return prisma.newsletterSubscriber.create({
+    data: {
+      email: overrides?.email ?? `${token}@example.com`,
+      isConfirmed: overrides?.isConfirmed ?? true,
+      unsubscribeToken: uniqueToken("unsubscribe"),
+      subscribedAt: new Date(),
+      unsubscribedAt: overrides?.unsubscribedAt ?? null,
+    },
+  });
+}
+
+export async function createCampaignWithRecipient(overrides?: {
+  campaignStatus?: "DRAFT" | "SCHEDULED" | "SENDING" | "SENT" | "FAILED";
+  recipientStatus?: string;
+  email?: string;
+}) {
+  const subscriber = await createNewsletterSubscriber({
+    email: overrides?.email,
+  });
+  const token = uniqueToken("campaign");
+
+  const campaign = await prisma.campaign.create({
+    data: {
+      subject: `${token} subject`,
+      content: `<p>${token} content</p>`,
+      status: overrides?.campaignStatus ?? "SENDING",
+      totalRecipients: 1,
+    },
+  });
+
+  const recipient = await prisma.campaignRecipient.create({
+    data: {
+      campaignId: campaign.id,
+      subscriberId: subscriber.id,
+      status: overrides?.recipientStatus ?? "PENDING",
+    },
+  });
+
+  return { campaign, recipient, subscriber };
 }
