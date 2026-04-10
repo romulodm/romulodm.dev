@@ -8,18 +8,14 @@
         "strict": true,
         "esModuleInterop": true,
         "skipLibCheck": true,
-        "resolveJsonModule": true,
-        "paths": {
-            "@romulo/queues": [
-                "../packages/queues/index.ts"
-            ]
-        }
+        "resolveJsonModule": true
     },
     "include": [
         "./**/*.ts"
     ],
     "exclude": [
         "node_modules",
-        "dist"
+        "dist",
+        "tests"
     ]
 }

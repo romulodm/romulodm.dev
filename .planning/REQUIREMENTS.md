@@ -33,9 +33,9 @@
 
 ### Worker Reliability and Observability
 
-- [ ] **WORK-01**: Operator can detect worker failures, queue backlogs, and repeated job failures without relying on silent background behavior
-- [ ] **WORK-02**: Critical BullMQ jobs are safe to retry without corrupting state or duplicating side effects
-- [ ] **WORK-03**: Worker logs and error signals provide enough context to diagnose failures in production
+- [x] **WORK-01**: Operator can detect worker failures, queue backlogs, and repeated job failures without relying on silent background behavior
+- [x] **WORK-02**: Critical BullMQ jobs are safe to retry without corrupting state or duplicating side effects
+- [x] **WORK-03**: Worker logs and error signals provide enough context to diagnose failures in production
 
 ### Performance and Scalability
 
@@ -90,9 +90,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | TEST-02 | Phase 3 | Complete |
 | TEST-03 | Phase 3 | Complete |
 | TEST-04 | Phase 3 | Complete |
-| WORK-01 | Phase 4 | Pending |
-| WORK-02 | Phase 4 | Pending |
-| WORK-03 | Phase 4 | Pending |
+| WORK-01 | Phase 4 | Complete |
+| WORK-02 | Phase 4 | Complete |
+| WORK-03 | Phase 4 | Complete |
 | PERF-01 | Phase 5 | Pending |
 | PERF-02 | Phase 5 | Pending |
 | PERF-03 | Phase 5 | Pending |
@@ -104,4 +104,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-04-08*
-*Last updated: 2026-04-10 after Phase 3 execution*
+*Last updated: 2026-04-10 after Phase 4 execution*

@@ -19,6 +19,7 @@ import {
 import { notificationQueue } from '@/lib/queues/notification.queue';
 import { moderate } from '@/lib/moderation';
 import { getRequestIp, rateLimit } from '@/lib/rate-limit';
+import { buildNotificationJobId, notificationJobOptions } from "@romulo/queues";
 
 const createCommentSchema = z.object({
     postId: z.string().trim().min(1, "postId é obrigatório."),
@@ -184,12 +185,16 @@ export async function POST(request: NextRequest) {
             return created;
         });
 
-        const job = await notificationQueue.add('comment', {
-            type: 'comment',
+        const notificationJob = {
+            type: 'comment' as const,
             id: comment.id,
             author: comment.author.username,
             postTitle: post.translations[0]?.title ?? post.slug,
             postSlug: post.slug,
+        };
+        const job = await notificationQueue.add('comment', notificationJob, {
+            ...notificationJobOptions,
+            jobId: buildNotificationJobId(notificationJob),
         });
         console.log(`[Queue] Job publicado: ${job.id}`);
 

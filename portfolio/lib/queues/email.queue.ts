@@ -1,8 +1,12 @@
 import {
+  buildCampaignJobId,
+  buildTransactionalJobId,
+  campaignEmailJobOptions,
   createRedisConnection,
   createQueue,
   QUEUE_TRANSACTIONAL,
   QUEUE_CAMPAIGN,
+  transactionalEmailJobOptions,
   type TransactionalEmailJob,
   type CampaignEmailJob,
 } from "@romulo/queues";
@@ -21,26 +25,38 @@ export const campaignQueue = createQueue<CampaignEmailJob>(
 
 // helpers — esses ficam só aqui porque só o Next.js enfileira
 export async function enqueueConfirmation(email: string, confirmationUrl: string) {
+  const job: TransactionalEmailJob = { type: "CONFIRMATION", email, confirmationUrl };
   await transactionalQueue.add(
     "confirmation",
-    { type: "CONFIRMATION", email, confirmationUrl },
-    { priority: 1 },
+    job,
+    {
+      ...transactionalEmailJobOptions,
+      jobId: buildTransactionalJobId(job),
+    },
   );
 }
 
 export async function enqueueWelcome(email: string, unsubscribeUrl: string) {
+  const job: TransactionalEmailJob = { type: "WELCOME", email, unsubscribeUrl };
   await transactionalQueue.add(
     "welcome",
-    { type: "WELCOME", email, unsubscribeUrl },
-    { priority: 1 },
+    job,
+    {
+      ...transactionalEmailJobOptions,
+      jobId: buildTransactionalJobId(job),
+    },
   );
 }
 
 export async function enqueueUnsubscribeConfirm(email: string, unsubscribeUrl: string) {
+  const job: TransactionalEmailJob = { type: "UNSUBSCRIBE_CONFIRM", email, unsubscribeUrl };
   await transactionalQueue.add(
     "unsubscribe-confirm",
-    { type: "UNSUBSCRIBE_CONFIRM", email, unsubscribeUrl },
-    { priority: 1 },
+    job,
+    {
+      ...transactionalEmailJobOptions,
+      jobId: buildTransactionalJobId(job),
+    },
   );
 }
 
@@ -49,8 +65,9 @@ export async function enqueueCampaignEmail(job: CampaignEmailJob, delayMs = 0) {
     `campaign-${job.campaignId}-${job.recipientId}`,
     job,
     {
+      ...campaignEmailJobOptions,
       delay: delayMs,
-      jobId: `campaign:${job.campaignId}:${job.recipientId}`,
+      jobId: buildCampaignJobId(job),
     },
   );
 }

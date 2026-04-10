@@ -1,4 +1,6 @@
-import { Queue, type QueueOptions } from "bullmq";
+import { createHash } from "node:crypto";
+
+import { Queue, type JobsOptions, type QueueOptions } from "bullmq";
 import type { Redis } from "ioredis";
 
 export const QUEUE_TRANSACTIONAL = "newsletter-transactional";
@@ -38,6 +40,71 @@ export const defaultJobOptions: QueueOptions["defaultJobOptions"] = {
     removeOnComplete: { count: 500 },
     removeOnFail: { count: 200 },
 };
+
+export const transactionalEmailJobOptions: JobsOptions = {
+    attempts: 3,
+    backoff: { type: "exponential", delay: 5_000 },
+    removeOnComplete: { count: 200 },
+    removeOnFail: { count: 100 },
+    priority: 1,
+};
+
+export const campaignEmailJobOptions: JobsOptions = {
+    attempts: 3,
+    backoff: { type: "exponential", delay: 30_000 },
+    removeOnComplete: { count: 2_000 },
+    removeOnFail: { age: 7 * 24 * 3600, count: 500 },
+};
+
+export const notificationJobOptions: JobsOptions = {
+    attempts: 3,
+    backoff: { type: "exponential", delay: 2_000 },
+    removeOnComplete: { age: 24 * 3600, count: 1_000 },
+    removeOnFail: { age: 7 * 24 * 3600 },
+};
+
+function buildStableSuffix(parts: Array<string | number | undefined | null>): string {
+    return createHash("sha256")
+        .update(parts.map((part) => String(part ?? "")).join("|"))
+        .digest("hex")
+        .slice(0, 24);
+}
+
+export function buildTransactionalJobId(job: TransactionalEmailJob): string {
+    switch (job.type) {
+        case "CONFIRMATION":
+            return `txn:confirmation:${buildStableSuffix([job.email, job.confirmationUrl])}`;
+        case "WELCOME":
+            return `txn:welcome:${buildStableSuffix([job.email, job.unsubscribeUrl])}`;
+        case "UNSUBSCRIBE_CONFIRM":
+            return `txn:unsubscribe:${buildStableSuffix([job.email, job.unsubscribeUrl])}`;
+        case "PASSWORD_RESET":
+            return `txn:password-reset:${buildStableSuffix([job.email, job.code])}`;
+        default:
+            return `txn:unknown:${buildStableSuffix([JSON.stringify(job)])}`;
+    }
+}
+
+export function buildCampaignJobId(job: CampaignEmailJob): string {
+    return `campaign:${job.campaignId}:${job.recipientId}`;
+}
+
+export function buildNotificationJobId(job: NotificationJob): string {
+    switch (job.type) {
+        case "comment":
+            return `notification:comment:${job.id}`;
+        case "daily-status":
+            return `notification:${DAILY_STATUS_JOB_NAME}`;
+        case "flush-views":
+            return `notification:${FLUSH_VIEWS_JOB_NAME}`;
+        default:
+            return `notification:${buildStableSuffix([JSON.stringify(job)])}`;
+    }
+}
+
+export function buildEmailMessageId(scope: string, identity: string): string {
+    return `<${scope}.${buildStableSuffix([identity])}@worker.romulodm.local>`;
+}
 
 export function createQueue<T>(
     name: string,

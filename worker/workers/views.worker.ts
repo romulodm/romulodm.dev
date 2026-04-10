@@ -8,10 +8,12 @@
 
 import { prisma } from "@romulo/database";
 import {
+    buildNotificationJobId,
     createRedisConnection,
     createQueue,
-    QUEUE_NOTIFICATIONS,
     FLUSH_VIEWS_JOB_NAME,
+    notificationJobOptions,
+    QUEUE_NOTIFICATIONS,
     VIEWS_BUFFER_KEY,
     type NotificationJob,
 } from "@romulo/queues";
@@ -60,6 +62,8 @@ const redis = createRedisConnection();
 // Reutiliza a queue de notifications (ou troque por uma QUEUE_VIEWS dedicada)
 const queue = createQueue<NotificationJob>(QUEUE_NOTIFICATIONS, redis, {
     defaultJobOptions: {
+        ...notificationJobOptions,
+        attempts: 1,
         removeOnComplete: { count: 10 },
         removeOnFail: { age: 24 * 3600 },
     },
@@ -78,6 +82,9 @@ export async function scheduleViewsFlush(): Promise<void> {
         FLUSH_VIEWS_JOB_NAME,
         { type: "flush-views" } as any,
         {
+            ...notificationJobOptions,
+            attempts: 1,
+            jobId: buildNotificationJobId({ type: "flush-views" }),
             repeat: {
                 every: 60_000, // flush a cada 60 segundos
                 // ou use pattern cron: "* * * * *"

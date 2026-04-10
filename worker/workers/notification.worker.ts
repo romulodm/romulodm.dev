@@ -5,11 +5,13 @@
 import { Worker } from "bullmq";
 
 import {
+  buildNotificationJobId,
   createRedisConnection,
   createQueue,
-  QUEUE_NOTIFICATIONS,
   DAILY_STATUS_JOB_NAME,
   FLUSH_VIEWS_JOB_NAME,
+  notificationJobOptions,
+  QUEUE_NOTIFICATIONS,
   type NotificationJob,
 } from "@romulo/queues";
 
@@ -47,12 +49,7 @@ export const notificationWorker = new Worker<NotificationJob>(
 );
 
 const notificationQueue = createQueue<NotificationJob>(QUEUE_NOTIFICATIONS, redis, {
-  defaultJobOptions: {
-    attempts: 3,
-    backoff: { type: "exponential", delay: 2_000 },
-    removeOnComplete: { age: 24 * 3600, count: 1_000 },
-    removeOnFail: { age: 7 * 24 * 3600 },
-  },
+  defaultJobOptions: notificationJobOptions,
 });
 
 export async function scheduleDailyStatus(): Promise<void> {
@@ -68,6 +65,8 @@ export async function scheduleDailyStatus(): Promise<void> {
     DAILY_STATUS_JOB_NAME,
     { type: "daily-status" },
     {
+      ...notificationJobOptions,
+      jobId: buildNotificationJobId({ type: "daily-status" }),
       repeat: {
         pattern: "0 8 * * *",
         tz: "America/Sao_Paulo",
