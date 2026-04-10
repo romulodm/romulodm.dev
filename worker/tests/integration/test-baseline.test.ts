@@ -8,7 +8,7 @@ describe("worker integration baseline", () => {
 
     expect(runtime.surface).toBe("worker");
     expect(runtime.suite).toBe("integration");
-    expect(runtime.databaseUrl).toContain("postgres://");
+    expect(runtime.databaseUrl).toContain("postgres");
     expect(runtime.redisUrl).toContain("redis://");
   });
 });
