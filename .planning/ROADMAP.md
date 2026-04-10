@@ -15,6 +15,8 @@ This roadmap hardens the existing monorepo into a production-ready and open-sour
 - [x] **Phase 3: Test Foundation And Critical Coverage** - Add the automated test baseline across apps, packages, and key flows (completed 2026-04-10)
 - [x] **Phase 4: Worker Reliability And Observability** - Make async processing visible, retry-safe, and production-diagnosable (completed 2026-04-10)
 - [x] **Phase 5: Performance And Scalability Tuning** - Optimize the portfolio, database, and queues using measured production needs (completed 2026-04-10)
+- [ ] **Phase 6: View Tracking And Worker Flow Closure** - Unify post-view tracking onto one reliable worker-backed path
+- [ ] **Phase 7: Public API Hardening And CI Protection Closure** - Close remaining public API security gaps and enforce the critical test baseline in PRs
 
 ## Phase Details
 
@@ -98,10 +100,30 @@ Plans:
 - [x] 05-02: Measure and improve Prisma query/index hotspots
 - [x] 05-03: Tune queue throughput behavior and load-related worker settings
 
+### Phase 6: View Tracking And Worker Flow Closure
+**Goal**: Unify the live post-view path onto one reliable worker-backed flow instead of split buffers and duplicate implementations.
+**Depends on**: Phase 5
+**Requirements**: [WORK-01, WORK-02, PERF-03, TEST-02]
+**Success Criteria** (what must be TRUE):
+1. Live portfolio traffic uses one authoritative post-view recording path instead of split Redis buffers and duplicate tracking implementations.
+2. Worker-backed view flushing is the source of truth for persisted post views under real traffic.
+3. Integration coverage verifies the end-to-end post-view flow from app interaction through Redis and worker persistence.
+**Plans**: 0 plans
+
+### Phase 7: Public API Hardening And CI Protection Closure
+**Goal**: Close the remaining live public API security gaps and make the critical automated test baseline enforceable on pull requests.
+**Depends on**: Phase 6
+**Requirements**: [SEC-01, SEC-03, SEC-04, TEST-01, TEST-02, TEST-03, TEST-04]
+**Success Criteria** (what must be TRUE):
+1. Remaining live public mutation routes use the shared validation, rate-limit, and safe-error patterns introduced in Phase 2.
+2. Donation and newsletter public API paths have automated integration coverage for success, validation, auth, and failure behavior where applicable.
+3. Critical unit, integration, and E2E suites run through PR validation so the test baseline actively protects merges.
+**Plans**: 0 plans
+
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -110,3 +132,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 | 3. Test Foundation And Critical Coverage | 4/4 | Complete | 2026-04-10 |
 | 4. Worker Reliability And Observability | 3/3 | Complete | 2026-04-10 |
 | 5. Performance And Scalability Tuning | 3/3 | Complete | 2026-04-10 |
+| 6. View Tracking And Worker Flow Closure | 0/0 | Not started | - |
+| 7. Public API Hardening And CI Protection Closure | 0/0 | Not started | - |
