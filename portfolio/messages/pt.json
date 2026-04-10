@@ -3,6 +3,10 @@
         "view": "Visualizar",
         "download": "Baixar"
     },
+    "language": {
+        "title": "Selecione seu idioma",
+        "subtitle": "Escolha o idioma que deseja usar para navegar neste site."
+    },
     "auth": {
         "title": "Entre na sua conta e comece a interagir."
     },
@@ -38,6 +42,8 @@
     },
     "contact": {
         "text": "Sinta-se livre para me contatar caso haja alguma questão ou sugestão. Estou aberto para ideias e oportunidades.",
+        "modal-title": "Vamos conversar",
+        "modal-subtitle": "Me conte sobre sua ideia, dúvida ou oportunidade.",
         "form-email": "Seu email",
         "form-name": "Seu nome",
         "form-text": "O que você está pensando?",
@@ -108,13 +114,22 @@
             "title-colored": "Contato"
         }
     },
+    "profile": {
+        "link-title": "Quer ver meu currículo?",
+        "link-content": "Resumi minhas experiências e disponibilizei o download.",
+        "link-button": "Ver currículo online"
+    },
     "navigation": {
         "home": "Início",
         "resume": "Currículo",
         "settings": "Configurações",
         "theme": "Tema",
         "language": "Idioma",
-        "user": "Usuário"
+        "user": "Usuário",
+        "modal": {
+            "profile": "Perfil",
+            "logout": "Sair"
+        }
     },
     "post": {
         "comment-title": "Deixe um comentário",
@@ -197,6 +212,9 @@
         }
     },
     "vision": {
+        "link-title": "Quer saber mais?",
+        "link-content": "Você pode ver mais sobre o que eu penso no meu blog.",
+        "link-button": "Ver postagens",
         "icons": {
             "first-title": "Inovação",
             "first-content": "Definindo as regras do amanhã.",
