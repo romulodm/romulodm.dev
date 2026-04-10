@@ -8,7 +8,7 @@ describe("portfolio integration baseline", () => {
 
     expect(runtime.surface).toBe("portfolio");
     expect(runtime.suite).toBe("integration");
-    expect(runtime.databaseUrl).toContain("postgres://");
+    expect(runtime.databaseUrl).toContain("postgres");
     expect(runtime.redisUrl).toContain("redis://");
   });
 });

@@ -10,6 +10,8 @@ export default defineConfig({
     root: workspaceRoot,
     name: "integration",
     environment: "node",
+    fileParallelism: false,
+    maxWorkers: 1,
     include: [
       "portfolio/tests/integration/**/*.test.ts",
       "worker/tests/integration/**/*.test.ts",

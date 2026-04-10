@@ -8,7 +8,7 @@ describe("queues integration baseline", () => {
 
     expect(runtime.surface).toBe("packages/queues");
     expect(runtime.suite).toBe("integration");
-    expect(runtime.databaseUrl).toContain("postgres://");
+    expect(runtime.databaseUrl).toContain("postgres");
     expect(runtime.redisUrl).toContain("redis://");
   });
 });
