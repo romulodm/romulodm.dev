@@ -108,7 +108,12 @@ Plans:
 1. Live portfolio traffic uses one authoritative post-view recording path instead of split Redis buffers and duplicate tracking implementations.
 2. Worker-backed view flushing is the source of truth for persisted post views under real traffic.
 3. Integration coverage verifies the end-to-end post-view flow from app interaction through Redis and worker persistence.
-**Plans**: 0 plans
+**Plans**: 3 plans
+
+Plans:
+- [ ] 06-01: Canonicalize post-view recording and reduce the legacy API surface to wrapper-or-removal only
+- [ ] 06-02: Make the worker-backed views buffer the sole persistence path
+- [ ] 06-03: Add integration coverage proving the unified live flow reaches worker persistence
 
 ### Phase 7: Public API Hardening And CI Protection Closure
 **Goal**: Close the remaining live public API security gaps and make the critical automated test baseline enforceable on pull requests.
@@ -132,5 +137,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | 3. Test Foundation And Critical Coverage | 4/4 | Complete | 2026-04-10 |
 | 4. Worker Reliability And Observability | 3/3 | Complete | 2026-04-10 |
 | 5. Performance And Scalability Tuning | 3/3 | Complete | 2026-04-10 |
-| 6. View Tracking And Worker Flow Closure | 0/0 | Not started | - |
+| 6. View Tracking And Worker Flow Closure | 0/3 | Planned | - |
 | 7. Public API Hardening And CI Protection Closure | 0/0 | Not started | - |

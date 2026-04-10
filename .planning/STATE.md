@@ -4,12 +4,12 @@ milestone: v1.0
 milestone_name: milestone
 status: ready
 stopped_at: Phase 6 context captured
-last_updated: "2026-04-10T22:45:00.000Z"
-last_activity: 2026-04-10 -- Phase 06 context captured for view-flow unification
+last_updated: "2026-04-10T23:15:00.000Z"
+last_activity: 2026-04-10 -- Phase 06 planned with 3 execution plans
 progress:
   total_phases: 7
   completed_phases: 5
-  total_plans: 17
+  total_plans: 20
   completed_plans: 17
   percent: 71
 ---
@@ -26,9 +26,9 @@ See: .planning/PROJECT.md (updated 2026-04-09)
 ## Current Position
 
 Phase: 06 (view-tracking-and-worker-flow-closure) - READY
-Plan: 0 of 0
-Status: Ready to plan with Phase 06 context locked
-Last activity: 2026-04-10 -- Phase 06 context captured for view-flow unification
+Plan: 3 of 3
+Status: Phase 06 planned and ready to execute
+Last activity: 2026-04-10 -- Phase 06 planned with 3 execution plans
 
 Progress: [#######---] 71%
 
@@ -49,7 +49,7 @@ Progress: [#######---] 71%
 | 3 | 4 | complete | n/a |
 | 4 | 3 | complete | n/a |
 | 5 | 3 | complete | n/a |
-| 6 | 0 | planned | n/a |
+| 6 | 3 | planned | n/a |
 | 7 | 0 | planned | n/a |
 
 **Recent Trend:**
@@ -76,7 +76,7 @@ Recent decisions affecting current work:
 
 ### Pending Todos
 
-- Plan Phase 6 using the locked view-flow context to close the split post-view pipeline and restore a single worker-backed source of truth
+- Execute Phase 6 to unify the live post-view path and close the milestone blocker around split Redis buffers
 - Plan Phase 7 to harden the remaining live public mutation routes and wire critical tests into PR validation
 
 ### Blockers/Concerns
@@ -93,6 +93,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-04-10T22:45:00.000Z
-Stopped at: Phase 6 context captured
-Resume file: .planning/phases/06-view-tracking-and-worker-flow-closure/06-CONTEXT.md
+Last session: 2026-04-10T23:15:00.000Z
+Stopped at: Phase 6 planned
+Resume file: .planning/phases/06-view-tracking-and-worker-flow-closure/06-01-PLAN.md
