@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: ready
-stopped_at: Phase 5 complete
-last_updated: "2026-04-10T21:10:00.000Z"
-last_activity: 2026-04-10 -- Phase 05 executed and verified
+stopped_at: Milestone audit gaps identified
+last_updated: "2026-04-10T22:20:00.000Z"
+last_activity: 2026-04-10 -- Gap closure phases added for milestone blockers
 progress:
-  total_phases: 5
+  total_phases: 7
   completed_phases: 5
   total_plans: 17
   completed_plans: 17
-  percent: 100
+  percent: 71
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-09)
 
 **Core value:** Safe public deployment of the existing monorepo, with the public portfolio staying up, the worker never failing silently, and admin/auth control remaining reliable.
-**Current focus:** Milestone complete
+**Current focus:** Phase 06 - view-tracking-and-worker-flow-closure
 
 ## Current Position
 
-Phase: 05 (performance-and-scalability-tuning) - COMPLETE
-Plan: 3 of 3
-Status: Phase 05 executed and verified
-Last activity: 2026-04-10 -- Phase 05 executed and verified
+Phase: 06 (view-tracking-and-worker-flow-closure) - READY
+Plan: 0 of 0
+Status: Gap closure phases added after milestone audit
+Last activity: 2026-04-10 -- Gap closure phases added for milestone blockers
 
-Progress: [##########] 100%
+Progress: [#######---] 71%
 
 ## Performance Metrics
 
@@ -49,6 +49,8 @@ Progress: [##########] 100%
 | 3 | 4 | complete | n/a |
 | 4 | 3 | complete | n/a |
 | 5 | 3 | complete | n/a |
+| 6 | 0 | planned | n/a |
+| 7 | 0 | planned | n/a |
 
 **Recent Trend:**
 
@@ -69,16 +71,18 @@ Recent decisions affecting current work:
 - Phase 2: Shared validation, auth, abuse controls, and safe error boundaries are now the API baseline
 - Phase 3: Active production surfaces use Vitest for unit/integration coverage and Playwright for narrow portfolio smoke coverage
 - Phase 5: Public portfolio caching is explicit, database hotspot tuning stayed narrow, and worker throughput settings are now conservative and env-driven
+- Milestone audit: v1.0 is blocked on view-flow unification, remaining public API hardening, and PR test enforcement
 
 ### Pending Todos
 
-- Milestone implementation is complete; next step is milestone close-out or PR preparation
+- Plan Phase 6 to close the split post-view pipeline and restore a single worker-backed source of truth
+- Plan Phase 7 to harden the remaining live public mutation routes and wire critical tests into PR validation
 
 ### Blockers/Concerns
 
-- Prisma index changes still need the normal migration/application step during deployment
-- The portfolio build still reports the pre-existing BullMQ critical-dependency warning from queue imports
-- Worker health signaling remains local and Redis-backed; broader alert delivery and historical metrics are still future observability work
+- The post-view path is still split across two Redis buffers until Phase 6 closes it
+- Several live public mutation routes still sit outside the shared Phase 2 hardening contract until Phase 7 closes them
+- Critical tests are not yet enforced in PR validation until Phase 7 closes the CI gap
 
 ### Quick Tasks Completed
 
@@ -88,6 +92,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-04-10T21:10:00.000Z
-Stopped at: Phase 5 verified
-Resume file: .planning/phases/05-performance-and-scalability-tuning/05-VERIFICATION.md
+Last session: 2026-04-10T22:20:00.000Z
+Stopped at: Gap phases created
+Resume file: .planning/v1.0-MILESTONE-AUDIT.md

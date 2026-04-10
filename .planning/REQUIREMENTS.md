@@ -19,29 +19,29 @@
 
 ### API and Access Security
 
-- [x] **SEC-01**: Public API routes validate and sanitize input server-side before executing business logic
+- [ ] **SEC-01**: Public API routes validate and sanitize input server-side before executing business logic
 - [x] **SEC-02**: Protected and admin routes enforce authentication and authorization consistently across the Next.js app
-- [x] **SEC-03**: High-risk public mutation endpoints apply rate limiting or equivalent abuse controls
-- [x] **SEC-04**: API routes return safe error responses that do not leak secrets or sensitive internals
+- [ ] **SEC-03**: High-risk public mutation endpoints apply rate limiting or equivalent abuse controls
+- [ ] **SEC-04**: API routes return safe error responses that do not leak secrets or sensitive internals
 
 ### Test Coverage
 
-- [x] **TEST-01**: Business logic and shared utilities across `portfolio/`, `worker/`, and `packages/` have automated unit test coverage
-- [x] **TEST-02**: Critical Prisma queries and BullMQ worker flows have automated integration coverage
-- [x] **TEST-03**: The Next.js portfolio app has E2E coverage for public portfolio uptime paths and authentication-critical flows
-- [x] **TEST-04**: API endpoints have automated success, auth failure, validation failure, and error-path coverage
+- [ ] **TEST-01**: Business logic and shared utilities across `portfolio/`, `worker/`, and `packages/` have automated unit test coverage
+- [ ] **TEST-02**: Critical Prisma queries and BullMQ worker flows have automated integration coverage
+- [ ] **TEST-03**: The Next.js portfolio app has E2E coverage for public portfolio uptime paths and authentication-critical flows
+- [ ] **TEST-04**: API endpoints have automated success, auth failure, validation failure, and error-path coverage
 
 ### Worker Reliability and Observability
 
-- [x] **WORK-01**: Operator can detect worker failures, queue backlogs, and repeated job failures without relying on silent background behavior
-- [x] **WORK-02**: Critical BullMQ jobs are safe to retry without corrupting state or duplicating side effects
+- [ ] **WORK-01**: Operator can detect worker failures, queue backlogs, and repeated job failures without relying on silent background behavior
+- [ ] **WORK-02**: Critical BullMQ jobs are safe to retry without corrupting state or duplicating side effects
 - [x] **WORK-03**: Worker logs and error signals provide enough context to diagnose failures in production
 
 ### Performance and Scalability
 
 - [x] **PERF-01**: The public portfolio app uses a reviewed production caching and build strategy appropriate for real traffic
 - [x] **PERF-02**: High-value Prisma query paths are reviewed for overfetching, indexing, and obvious performance bottlenecks
-- [x] **PERF-03**: Queue concurrency, retry, and rate-limit settings are reviewed and tuned for production load rather than local defaults
+- [ ] **PERF-03**: Queue concurrency, retry, and rate-limit settings are reviewed and tuned for production load rather than local defaults
 
 ## v2 Requirements
 
@@ -82,20 +82,20 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CI-01 | Phase 1 | Complete |
 | CI-02 | Phase 1 | Complete |
 | CI-03 | Phase 1 | Complete |
-| SEC-01 | Phase 2 | Complete |
+| SEC-01 | Phase 7 | Pending |
 | SEC-02 | Phase 2 | Complete |
-| SEC-03 | Phase 2 | Complete |
-| SEC-04 | Phase 2 | Complete |
-| TEST-01 | Phase 3 | Complete |
-| TEST-02 | Phase 3 | Complete |
-| TEST-03 | Phase 3 | Complete |
-| TEST-04 | Phase 3 | Complete |
-| WORK-01 | Phase 4 | Complete |
-| WORK-02 | Phase 4 | Complete |
+| SEC-03 | Phase 7 | Pending |
+| SEC-04 | Phase 7 | Pending |
+| TEST-01 | Phase 7 | Pending |
+| TEST-02 | Phase 6 | Pending |
+| TEST-03 | Phase 7 | Pending |
+| TEST-04 | Phase 7 | Pending |
+| WORK-01 | Phase 6 | Pending |
+| WORK-02 | Phase 6 | Pending |
 | WORK-03 | Phase 4 | Complete |
 | PERF-01 | Phase 5 | Complete |
 | PERF-02 | Phase 5 | Complete |
-| PERF-03 | Phase 5 | Complete |
+| PERF-03 | Phase 6 | Pending |
 
 **Coverage:**
 - v1 requirements: 20 total
@@ -104,4 +104,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-04-08*
-*Last updated: 2026-04-10 after Phase 5 execution*
+*Last updated: 2026-04-10 after milestone gap planning*
