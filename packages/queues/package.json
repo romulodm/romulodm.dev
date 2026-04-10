@@ -8,7 +8,9 @@
         ".": "./dist/index.js"
     },
     "scripts": {
-        "build": "npx tsc --project tsconfig.json"
+        "build": "npx tsc --project tsconfig.json",
+        "test:unit": "vitest run --config ../../vitest.config.ts --dir .",
+        "test:integration": "vitest run --config ../../vitest.config.integration.ts --dir ."
     },
     "dependencies": {
         "bullmq": "^5.0.0",
