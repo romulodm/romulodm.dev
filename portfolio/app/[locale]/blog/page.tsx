@@ -1,47 +1,77 @@
 // app/[locale]/blog/page.tsx
 import { prisma } from "@romulo/database"
+import { unstable_cache } from "next/cache"
 import { BlogListClient } from '@/components/blog/BlogListClient'
 import Navbar from '@/components/navigation/Navbar'
 import { Footer } from '@/components/Footer'
 import { BlogCarrousel } from "@/components/blog/BlogCarrousel"
+import { SUPPORTED_LOCALES, type LocaleCode } from '@/lib/locales'
+
+const BLOG_INDEX_REVALIDATE_SECONDS = 300
+
+const getCachedBlogIndexData = unstable_cache(
+  async (locale: string) => {
+    const [rawPosts, tagRows] = await Promise.all([
+      prisma.post.findMany({
+        where: { status: 'PUBLISHED', publishedAt: { not: null } },
+        orderBy: { publishedAt: 'desc' },
+        take: 9,
+        select: {
+          id: true,
+          slug: true,
+          readingTime: true,
+          coverImageUrl: true,
+          publishedAt: true,
+          likes: true,
+          views: true,
+          commentsCount: true,
+          postTags: { select: { tag: true } },
+          translations: {
+            where: { locale },
+            select: {
+              title: true,
+              summary: true,
+              excerpt: true,
+            },
+          },
+        },
+      }),
+      prisma.postTag.findMany({
+        where: { post: { status: 'PUBLISHED', publishedAt: { not: null } } },
+        distinct: ['tag'],
+        select: { tag: true },
+        orderBy: { tag: 'asc' },
+      }),
+    ])
+
+    const posts = rawPosts.flatMap((post) => {
+      const t = post.translations[0]
+      if (!t) return []
+      const { translations, ...rest } = post
+      return [{ ...rest, ...t }]
+    })
+
+    return {
+      posts,
+      allTags: tagRows.map((t) => t.tag),
+    }
+  },
+  ["blog-index-data"],
+  { revalidate: BLOG_INDEX_REVALIDATE_SECONDS },
+)
 
 export const metadata = {
   title: 'Blog - Posts recentes',
   description: 'Artigos sobre desenvolvimento web, JavaScript, TypeScript e muito mais.',
 }
 
-export default async function BlogPage() {
-  // SSR: carrega posts iniciais (newest) e todas as tags disponíveis em paralelo
-  const [posts, tagRows] = await Promise.all([
-    prisma.post.findMany({
-      where: { status: 'PUBLISHED', publishedAt: { not: null } },
-      orderBy: { publishedAt: 'desc' },
-      take: 9,
-      select: {
-        id: true,
-        title: true,
-        summary: true,
-        readingTime: true,
-        slug: true,
-        excerpt: true,
-        coverImageUrl: true,
-        publishedAt: true,
-        likes: true,
-        views: true,
-        commentsCount: true,
-        postTags: { select: { tag: true } },
-      },
-    }),
-    // Tags distintas de posts publicados
-    prisma.postTag.findMany({
-      where: { post: { status: 'PUBLISHED' } },
-      distinct: ['tag'],
-      select: { tag: true },
-      orderBy: { tag: 'asc' },
-    }),
-  ])
-
-  const allTags = tagRows.map((t) => t.tag)
+export default async function BlogPage({
+  params,
+}: {
+  params: { locale: LocaleCode }
+}) {
+  const locale = SUPPORTED_LOCALES.find(l => l.code === params.locale)?.code ?? 'pt-BR'
+  const { posts, allTags } = await getCachedBlogIndexData(locale)
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-background">
@@ -56,9 +86,8 @@ export default async function BlogPage() {
 
         <BlogCarrousel />
 
-        <BlogListClient initialPosts={posts} allTags={allTags} />
+        <BlogListClient initialPosts={posts} allTags={allTags} locale={locale} />
       </main>
-
 
       <Footer />
     </div>

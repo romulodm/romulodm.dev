@@ -174,18 +174,13 @@ export async function dispatchCampaign(
     ? Math.max(0, scheduledAt.getTime() - now.getTime())
     : 0;
 
-  // Bulk-upsert recipient rows (idempotent)
-  await prisma.$transaction(
-    subscribers.map((s) =>
-      prisma.campaignRecipient.upsert({
-        where: {
-          campaignId_subscriberId: { campaignId, subscriberId: s.id },
-        },
-        create: { campaignId, subscriberId: s.id },
-        update: {},
-      }),
-    ),
-  );
+  await prisma.campaignRecipient.createMany({
+    data: subscribers.map((subscriber) => ({
+      campaignId,
+      subscriberId: subscriber.id,
+    })),
+    skipDuplicates: true,
+  });
 
   // Re-fetch to get trackingIds
   const recipients = await prisma.campaignRecipient.findMany({

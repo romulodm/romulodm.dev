@@ -18,6 +18,7 @@ import {
   defaultJobOptions,
   FLUSH_VIEWS_JOB_NAME,
   notificationJobOptions,
+  queueRuntimeConfig,
   QUEUE_CAMPAIGN,
   QUEUE_NOTIFICATIONS,
   QUEUE_TRANSACTIONAL,
@@ -56,6 +57,18 @@ describe("queue contracts", () => {
     expect(notificationJobOptions).toMatchObject({
       attempts: 3,
       backoff: { type: "exponential", delay: 2_000 },
+    });
+  });
+
+  it("exposes conservative runtime defaults for worker throughput tuning", () => {
+    expect(queueRuntimeConfig).toEqual({
+      transactionalWorkerConcurrency: 8,
+      campaignWorkerConcurrency: 12,
+      campaignRateLimitMax: 20,
+      campaignRateLimitDurationMs: 1_000,
+      notificationWorkerConcurrency: 1,
+      viewsFlushBatchSize: 100,
+      viewsFlushIntervalMs: 120_000,
     });
   });
 

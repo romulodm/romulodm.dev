@@ -1,7 +1,7 @@
-// app/[locale]/blog/[slug]/page.tsx
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
-import { prisma } from "@romulo/database"
+import { prisma } from '@romulo/database'
+import { unstable_cache } from 'next/cache'
 import { markdownToHtml } from '@/lib/markdown'
 import { formatDistanceToNow } from '@/lib/utils'
 import { CommentsSection } from '@/components/comments/CommentsSection'
@@ -12,26 +12,27 @@ import { PostReactionSidebar } from '@/components/blog/PostReactionsSidebar'
 import { PostStatsMobile } from '@/components/blog/PostStatsMobile'
 import { RightSidebar } from '@/components/blog/RightSidebar'
 import { Footer } from '@/components/Footer'
-import { Clock, BookOpen } from 'lucide-react'
+import { Clock } from 'lucide-react'
 import Link from 'next/link'
+import { SUPPORTED_LOCALES } from '@/lib/locales'
+import { ViewTracker } from './ViewTracker'
 
 interface PageProps {
-  params: { slug: string }
+  params: { locale: string; slug: string }
 }
 
-/** Extrai o ID do YouTube de qualquer formato de link */
+const BLOG_POST_REVALIDATE_SECONDS = 300
+
 function extractYoutubeId(url: string): string | null {
   const match = url.match(
-    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/,
   )
   return match ? match[1] : null
 }
 
-/** Embed responsivo do YouTube */
 function YoutubeEmbed({ url }: { url: string }) {
   const videoId = extractYoutubeId(url)
   if (!videoId) return null
-
   return (
     <div className="mb-10">
       <div className="aspect-video w-full rounded-xl overflow-hidden shadow-md">
@@ -47,99 +48,140 @@ function YoutubeEmbed({ url }: { url: string }) {
   )
 }
 
-async function getPost(slug: string) {
-  return prisma.post.findUnique({
-    where: { slug, status: 'PUBLISHED' },
-    include: {
-      postTags: { select: { tag: true } },
-      author: {
-        select: {
-          id: true,
-          username: true,
-          image: true,
-          about: true,
-          githubUrl: true,
-          linkedinUrl: true,
+const getCachedPostBySlug = unstable_cache(
+  async (slug: string) => {
+    return prisma.post.findFirst({
+      where: {
+        slug,
+        status: 'PUBLISHED',
+      },
+      include: {
+        postTags: { select: { tag: true } },
+        author: {
+          select: {
+            id: true,
+            username: true,
+            image: true,
+            about: true,
+            githubUrl: true,
+            linkedinUrl: true,
+          },
+        },
+        translations: {
+          // traz todas as translations para o language switcher
+          select: { locale: true, title: true, summary: true, excerpt: true, contentMarkdown: true, canonicalUrl: true },
         },
       },
-    },
-  })
-}
+    })
+  },
+  ['blog-post-by-slug'],
+  { revalidate: BLOG_POST_REVALIDATE_SECONDS },
+)
 
-async function getRelatedPosts() {
-  return prisma.post.findMany({
-    where: { status: 'PUBLISHED', publishedAt: { not: null } },
-    orderBy: { publishedAt: 'desc' },
-    take: 4,
-    select: {
-      id: true,
-      title: true,
-      slug: true,
-      publishedAt: true,
-      coverImageUrl: true,
-    },
-  })
+const getCachedRelatedPosts = unstable_cache(
+  async (locale: string, currentPostId: string) => {
+    return prisma.post.findMany({
+      where: {
+        id: { not: currentPostId },
+        status: 'PUBLISHED',
+        publishedAt: { not: null },
+        translations: { some: { locale } },
+      },
+      orderBy: { publishedAt: 'desc' },
+      take: 4,
+      select: {
+        id: true,
+        slug: true,
+        publishedAt: true,
+        coverImageUrl: true,
+        translations: {
+          where: { locale },
+          select: { title: true },
+        },
+      },
+    })
+  },
+  ['blog-related-posts'],
+  { revalidate: BLOG_POST_REVALIDATE_SECONDS },
+)
+
+export async function generateStaticParams() {
+  try {
+    const posts = await prisma.post.findMany({
+      where: { status: 'PUBLISHED' },
+      select: {
+        slug: true,
+        translations: { select: { locale: true } },
+      },
+    })
+    return posts.flatMap((p) =>
+      p.translations.map((t) => ({ locale: t.locale, slug: p.slug }))
+    )
+  } catch {
+    return []
+  }
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const post = await getPost(params.slug)
+  const post = await getCachedPostBySlug(params.slug)
   if (!post) return { title: 'Post não encontrado' }
 
+  const translation = post.translations.find((t) => t.locale === params.locale)
+  if (!translation) return { title: 'Post não encontrado' }
+
   return {
-    title: post.title,
-    description: post.summary ?? post.excerpt ?? undefined,
+    title: translation.title,
+    description: translation.summary ?? translation.excerpt ?? undefined,
+    alternates: {
+      languages: Object.fromEntries(
+        post.translations.map((t) => [t.locale, `/${t.locale}/blog/${post.slug}`]),
+      ),
+    },
     openGraph: {
-      title: post.title,
-      description: post.summary ?? post.excerpt ?? undefined,
+      title: translation.title,
+      description: translation.summary ?? translation.excerpt ?? undefined,
       images: post.coverImageUrl ? [post.coverImageUrl] : undefined,
       type: 'article',
-      publishedTime: post.publishedAt?.toISOString(),
+      publishedTime: post.publishedAt ? new Date(post.publishedAt).toISOString() : undefined,
     },
   }
 }
 
 export default async function PostPage({ params }: PageProps) {
-  const post = await getPost(params.slug)
+  const post = await getCachedPostBySlug(params.slug)
   if (!post) notFound()
+
+  const translation = post.translations.find((t) => t.locale === params.locale)
+  if (!translation) notFound()
 
   const tags = post.postTags.map((t) => t.tag)
   const defaultSort = 'score' as const
 
-  const [htmlContent, { items: initialComments, nextCursor }, relatedPosts] =
-    await Promise.all([
-      markdownToHtml(post.contentMarkdown),
-      listPostComments({ postId: post.id, sort: defaultSort }),
-      getRelatedPosts(),
-    ])
+  const author = {
+    name: post.author.username,
+    avatarUrl: post.author.image ?? null,
+  }
 
-  // Build author object from DB, falling back gracefully
-  const dbAuthor = post.author
-  const author = dbAuthor
-    ? {
-      name: dbAuthor.username,
-      bio: dbAuthor.about ?? 'Autor do blog.',
-      avatarUrl: dbAuthor.image ?? undefined,
-      githubUrl: dbAuthor.githubUrl ?? undefined,
-      linkedinUrl: dbAuthor.linkedinUrl ?? undefined,
-      twitterUrl: undefined as string | undefined,
-      websiteUrl: undefined as string | undefined,
-    }
-    : {
-      name: 'Autor',
-      bio: '',
-      avatarUrl: undefined as string | undefined,
-      githubUrl: undefined as string | undefined,
-      linkedinUrl: undefined as string | undefined,
-      twitterUrl: undefined as string | undefined,
-      websiteUrl: undefined as string | undefined,
-    }
+  const [htmlContent, { items: initialComments, nextCursor }, relatedRaw] = await Promise.all([
+    markdownToHtml(translation.contentMarkdown),
+    listPostComments({ postId: post.id, sort: defaultSort }),
+    getCachedRelatedPosts(params.locale, post.id),
+  ])
+
+  const relatedPosts = relatedRaw.map((p) => ({
+    id: p.id,
+    title: p.translations[0]?.title ?? '',
+    slug: p.slug,
+    publishedAt: p.publishedAt,
+    coverImageUrl: p.coverImageUrl,
+  }))
 
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
+      <ViewTracker postId={post.id} />
 
       <div className="max-w-7xl mx-auto md:px-4 py-20 flex gap-2 relative">
-        {/* Sidebar esquerda: reações (apenas desktop) */}
         <aside className="hidden md:flex flex-col items-center w-16 shrink-0">
           <div className="sticky top-20">
             <PostReactionSidebar
@@ -151,14 +193,14 @@ export default async function PostPage({ params }: PageProps) {
           </div>
         </aside>
 
-        {/* Conteúdo principal */}
         <main className="flex-1 min-w-0 max-w-4xl md:px-4 pb-12">
+
           <article className="rounded-lg shadow-sm">
             {post.coverImageUrl && (
               <div className="overflow-hidden md:rounded-t-2xl">
                 <img
                   src={post.coverImageUrl}
-                  alt={post.title}
+                  alt={translation.title}
                   className="w-full h-64 md:h-96 object-cover"
                 />
               </div>
@@ -179,12 +221,11 @@ export default async function PostPage({ params }: PageProps) {
               )}
 
               <h1 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
-                {post.title}
+                {translation.title}
               </h1>
 
               <div className="flex flex-col gap-2 mb-8 pb-2 border-b border-border">
                 <div className="flex items-center gap-4 text-muted-foreground text-sm flex-wrap">
-                  {/* Author avatar + name */}
                   <div className="flex items-center gap-2">
                     {author.avatarUrl ? (
                       <Image
@@ -196,7 +237,7 @@ export default async function PostPage({ params }: PageProps) {
                       />
                     ) : (
                       <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-xs font-bold text-primary">
-                        @{author.name.charAt(0).toUpperCase()}
+                        {author.name.charAt(0).toUpperCase()}
                       </div>
                     )}
                     <Link href={`/profile/${author.name}`} className="hover:underline">
@@ -222,10 +263,9 @@ export default async function PostPage({ params }: PageProps) {
                   )}
                 </div>
 
-                {/* Summary */}
-                {post.summary && (
+                {translation.summary && (
                   <p className="text-lg text-muted-foreground my-4 leading-relaxed border-l-4 border-primary pl-4 italic">
-                    {post.summary}
+                    {translation.summary}
                   </p>
                 )}
 
@@ -253,17 +293,17 @@ export default async function PostPage({ params }: PageProps) {
                 dangerouslySetInnerHTML={{ __html: htmlContent }}
               />
 
-              {post.canonicalUrl && (
+              {translation.canonicalUrl && (
                 <div className="mt-8 pt-8 border-t border-border">
                   <p className="text-sm text-muted-foreground">
                     Publicado originalmente em:{' '}
                     <a
-                      href={post.canonicalUrl}
+                      href={translation.canonicalUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-primary hover:opacity-80"
                     >
-                      {post.canonicalUrl}
+                      {translation.canonicalUrl}
                     </a>
                   </p>
                 </div>
@@ -282,10 +322,7 @@ export default async function PostPage({ params }: PageProps) {
           </article>
         </main>
 
-        <RightSidebar
-          relatedPosts={relatedPosts}
-          currentPostId={post.id}
-        />
+        <RightSidebar relatedPosts={relatedPosts} currentPostId={post.id} />
       </div>
 
       <Footer />

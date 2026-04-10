@@ -12,6 +12,24 @@ export const DAILY_STATUS_JOB_NAME = "daily-status-cron";
 export const VIEWS_BUFFER_KEY = "views:buffer";
 export const FLUSH_VIEWS_JOB_NAME = "flush-views-cron";
 
+function readPositiveIntegerEnv(name: string, fallback: number): number {
+    const raw = process.env[name];
+    if (!raw) return fallback;
+
+    const parsed = Number.parseInt(raw, 10);
+    return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+}
+
+export const queueRuntimeConfig = {
+    transactionalWorkerConcurrency: readPositiveIntegerEnv("WORKER_TRANSACTIONAL_CONCURRENCY", 8),
+    campaignWorkerConcurrency: readPositiveIntegerEnv("WORKER_CAMPAIGN_CONCURRENCY", 12),
+    campaignRateLimitMax: readPositiveIntegerEnv("WORKER_CAMPAIGN_RATE_LIMIT_MAX", 20),
+    campaignRateLimitDurationMs: readPositiveIntegerEnv("WORKER_CAMPAIGN_RATE_LIMIT_DURATION_MS", 1_000),
+    notificationWorkerConcurrency: readPositiveIntegerEnv("WORKER_NOTIFICATION_CONCURRENCY", 1),
+    viewsFlushBatchSize: readPositiveIntegerEnv("WORKER_VIEWS_FLUSH_BATCH_SIZE", 100),
+    viewsFlushIntervalMs: readPositiveIntegerEnv("WORKER_VIEWS_FLUSH_INTERVAL_MS", 120_000),
+} as const;
+
 export type TransactionalEmailJob =
     | { type: "CONFIRMATION"; email: string; confirmationUrl: string }
     | { type: "WELCOME"; email: string; unsubscribeUrl: string }
