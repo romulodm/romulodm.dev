@@ -12,7 +12,7 @@ This roadmap hardens the existing monorepo into a production-ready and open-sour
 
 - [x] **Phase 1: OSS Safety And Governance** - Make the repository safe to publish and establish CI/security guardrails (completed 2026-04-09)
 - [x] **Phase 2: API And Auth Hardening** - Secure public and admin-facing server boundaries (completed 2026-04-09)
-- [ ] **Phase 3: Test Foundation And Critical Coverage** - Add the automated test baseline across apps, packages, and key flows
+- [x] **Phase 3: Test Foundation And Critical Coverage** - Add the automated test baseline across apps, packages, and key flows (completed 2026-04-10)
 - [ ] **Phase 4: Worker Reliability And Observability** - Make async processing visible, retry-safe, and production-diagnosable
 - [ ] **Phase 5: Performance And Scalability Tuning** - Optimize the portfolio, database, and queues using measured production needs
 
@@ -63,10 +63,10 @@ Plans:
 **Plans**: 4 plans
 
 Plans:
-- [ ] 03-01: Set up shared testing infrastructure and commands for the monorepo
-- [ ] 03-02: Add unit and component coverage for packages, worker helpers, and active portfolio/shared UI modules
-- [ ] 03-03: Add API and integration tests for auth, Prisma-backed routes, and error scenarios
-- [ ] 03-04: Add Playwright E2E coverage for the portfolio front door and auth-critical flows
+- [x] 03-01: Set up shared testing infrastructure and commands for the monorepo
+- [x] 03-02: Add unit and component coverage for packages, worker helpers, and active portfolio/shared UI modules
+- [x] 03-03: Add API and integration tests for auth, Prisma-backed routes, and error scenarios
+- [x] 03-04: Add Playwright E2E coverage for the portfolio front door and auth-critical flows
 
 ### Phase 4: Worker Reliability And Observability
 **Goal**: Ensure queue-backed async flows are visible, retry-safe, and diagnosable under production conditions.
@@ -107,6 +107,6 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 |-------|----------------|--------|-----------|
 | 1. OSS Safety And Governance | 3/3 | Complete    | 2026-04-09 |
 | 2. API And Auth Hardening | 4/4 | Complete | 2026-04-09 |
-| 3. Test Foundation And Critical Coverage | 0/4 | Not started | - |
+| 3. Test Foundation And Critical Coverage | 4/4 | Complete | 2026-04-10 |
 | 4. Worker Reliability And Observability | 0/3 | Not started | - |
 | 5. Performance And Scalability Tuning | 0/3 | Not started | - |

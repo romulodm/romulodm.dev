@@ -3,6 +3,10 @@
         "view": "View",
         "download": "Download"
     },
+    "language": {
+        "title": "Select your language",
+        "subtitle": "Choose the language you want to use to navigate this site."
+    },
     "auth": {
         "title": "Sign in to your account and start interacting."
     },
@@ -38,6 +42,8 @@
     },
     "contact": {
         "text": "Feel free to contact me if you have any questions or suggestions. I'm open to ideas and opportunities.",
+        "modal-title": "Let's talk",
+        "modal-subtitle": "Tell me about your idea, question, or opportunity.",
         "form-email": "Your email",
         "form-name": "Your name",
         "form-text": "What's on your mind?",
@@ -108,13 +114,22 @@
             "title-colored": "Touch"
         }
     },
+    "profile": {
+        "link-title": "Want to see my resume?",
+        "link-content": "I summarized my experiences and made it available for download.",
+        "link-button": "View online resume"
+    },
     "navigation": {
         "home": "Home",
         "resume": "Resume",
         "settings": "Settings",
         "theme": "Theme",
         "language": "Language",
-        "user": "User"
+        "user": "User",
+        "modal": {
+            "profile": "Profile",
+            "logout": "Logout"
+        }
     },
     "post": {
         "comment-title": "Leave a comment",
@@ -197,6 +212,9 @@
         }
     },
     "vision": {
+        "link-title": "Want to know more?",
+        "link-content": "You can read more about what I think on my blog.",
+        "link-button": "View posts",
         "icons": {
             "first-title": "Innovation",
             "first-content": "Defining tomorrow's rules.",
