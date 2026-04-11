@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: ready
-stopped_at: Phase 6 complete
-last_updated: "2026-04-11T00:10:00.000Z"
-last_activity: 2026-04-10 -- Phase 06 executed and verified
+stopped_at: Phase 7 context captured
+last_updated: "2026-04-11T00:30:00.000Z"
+last_activity: 2026-04-10 -- Phase 07 context captured for final milestone blockers
 progress:
   total_phases: 7
   completed_phases: 6
@@ -27,8 +27,8 @@ See: .planning/PROJECT.md (updated 2026-04-09)
 
 Phase: 06 (view-tracking-and-worker-flow-closure) - COMPLETE
 Plan: 3 of 3
-Status: Phase 06 executed and verified
-Last activity: 2026-04-10 -- Phase 06 executed and verified
+Status: Ready to plan with Phase 07 context locked
+Last activity: 2026-04-10 -- Phase 07 context captured for final milestone blockers
 
 Progress: [#########-] 86%
 
@@ -74,10 +74,11 @@ Recent decisions affecting current work:
 - Milestone audit: v1.0 is blocked on view-flow unification, remaining public API hardening, and PR test enforcement
 - Phase 6: Post views must converge on one canonical worker-backed path, with lightweight centralized dedupe and no request-time direct persistence
 - Phase 6: Live post views now converge on one buffered worker-backed path, and the legacy route is compatibility-only
+- Phase 7: Remaining public donation and newsletter mutation routes must move onto the shared API hardening boundary, and critical tests must protect PRs through existing root scripts
 
 ### Pending Todos
 
-- Discuss and plan Phase 7 to close the remaining public API hardening and PR-test-enforcement gaps
+- Plan Phase 7 using the locked API-hardening and CI-protection context
 - Plan Phase 7 to harden the remaining live public mutation routes and wire critical tests into PR validation
 
 ### Blockers/Concerns
@@ -93,6 +94,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-04-11T00:10:00.000Z
-Stopped at: Phase 6 verified
-Resume file: .planning/phases/06-view-tracking-and-worker-flow-closure/06-VERIFICATION.md
+Last session: 2026-04-11T00:30:00.000Z
+Stopped at: Phase 7 context captured
+Resume file: .planning/phases/07-public-api-hardening-and-ci-protection-closure/07-CONTEXT.md
