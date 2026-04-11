@@ -1,10 +1,10 @@
-# romulodm.dev Production Hardening
+# romulodm.dev
 
 ## What This Is
 
-This is a brownfield hardening project for an existing personal monorepo that powers a public portfolio, supporting services, and background jobs. The goal is to make the repository safe to open-source and the system safe to deploy to production, without rewriting the architecture.
+This repository is a public personal monorepo that now has a shipped production-hardening baseline. It powers a public Next.js portfolio, supporting services, and background workers, and the current project state reflects a security-first, test-backed deployment posture rather than an in-progress rescue effort.
 
-The monorepo already contains a primary Next.js portfolio app, a separate worker service for async flows, shared Prisma and queue packages, and a legacy Vite frontend still in-tree. This work focuses on closing the highest-risk security, testing, and scalability gaps first so the system can handle real traffic with confidence.
+The codebase still contains the same core architecture: a primary portfolio app, a separate worker service, shared Prisma and queue packages, and a legacy frontend that is being retired. What changed in `v1.0` is the operational baseline: the repo is OSS-safe, critical routes are hardened, must-not-break flows are tested, worker failures are visible, and the production runtime has intentional safety and performance defaults.
 
 ## Core Value
 
@@ -18,35 +18,40 @@ Safe public deployment of the existing monorepo, with the public portfolio stayi
 - Background worker and queue-backed async processing already exist in the current codebase
 - Authentication and admin/content management flows already exist in the current codebase
 - Payment, newsletter, upload, and moderation integrations already exist in the current codebase
+- OSS-safe public repository hygiene and env contracts shipped in `v1.0`
+- Shared API validation, auth, rate limiting, and safe error boundaries shipped in `v1.0`
+- Active-surface unit, integration, and E2E verification shipped in `v1.0`
+- Worker failure visibility, retry safety, and backlog health signaling shipped in `v1.0`
+- Production caching, queue tuning, and high-value Prisma/query hardening shipped in `v1.0`
 
 ### Active
 
-- [ ] Harden the repo so it is safe to publish publicly with no secrets, credentials, or sensitive runtime data exposed
-- [ ] Add comprehensive automated test coverage across `portfolio/`, `worker/`, `packages/`, and `frontend/`
-- [ ] Establish a production-ready CI baseline that runs critical checks and tests automatically
-- [ ] Strengthen API validation, sanitization, access control, and rate limiting across high-risk routes
-- [ ] Improve worker observability so failures are visible and silent queue degradation is reduced
-- [ ] Raise the production baseline for scalability, logging, database efficiency, and deployment safety without changing the core architecture
+- [ ] Remove the remaining BullMQ critical-dependency warning from the portfolio build path
+- [ ] Migrate the Vitest config off deprecated `environmentMatchGlobs`
+- [ ] Disable NextAuth debug logging outside explicit local debugging and test scenarios
+- [ ] Expand observability from baseline health signals into dashboards or alerting for long-term operations
+- [ ] Clarify and execute the retirement path for the legacy `frontend/`
 
 ### Out of Scope
 
 - Full architectural rewrite or migration away from the current monorepo layout - hardening is the goal, not a rebuild
-- Perfection-level platform maturity before release - the target is a production-ready baseline with the highest-risk gaps closed first
+- Perfection-level platform maturity before release - `v1.0` targeted a production-ready baseline with the highest-risk gaps closed first
 - Replacing existing product capabilities with new major features - feature expansion is secondary to reliability, security, and testability
+- Deep investment in the retiring legacy `frontend/` during the hardening milestone - retirement planning is more valuable than new test/features there
 
 ## Context
 
 - The repository is a monorepo with a primary Next.js app in `portfolio/`, a background worker in `worker/`, and shared packages in `packages/database` and `packages/queues`
-- A legacy Vite frontend still exists under `frontend/`, so the repo contains both current and older frontend surfaces that need to be understood before public release
+- A legacy Vite frontend still exists under `frontend/`, but it was intentionally kept out of new hardening investment because it is being retired
 - The system handles real traffic, but the primary operator is a single person, so silent operational failure is especially dangerous
 - The highest-risk failure modes are:
   - the public portfolio being unavailable
   - the worker breaking or backing up silently
   - authentication/admin control failing and locking the operator out
 - Payments and email are important but temporarily recoverable; portfolio uptime, worker visibility, and auth reliability take precedence
-- Current codebase mapping identified several hardening gaps, including missing first-party automated tests, process-local rate limiting, env-heavy integrations, runtime data in the repo tree, and broad use of ad hoc validation and logging
-- The repository needs to become safe for open-source publication as well as stable for production use, which means both code changes and repository hygiene changes matter
-- Phase 1 established the OSS-safe repo baseline with ignore rules, env contracts, CI entrypoints, PR workflows, secret scanning, dependency review, CodeQL, and publication/security guidance
+- `v1.0` closed the main hardening gaps that were discovered during mapping: repo safety, missing first-party tests, inconsistent API boundaries, silent worker risk, and unreviewed production caching/queue behavior
+- The active production baseline now includes shared server-side API guards, automated unit/integration/E2E coverage, worker health signals, and scoped PR enforcement for critical tests
+- The current known debt is narrower and operationally safer: a build warning around BullMQ bundling, a Vitest deprecation, noisy NextAuth debug output in E2E, and remaining legacy-frontend retirement work
 
 ## Constraints
 
@@ -61,11 +66,11 @@ Safe public deployment of the existing monorepo, with the public portfolio stayi
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| Prioritize security hardening before scalability work | Public repo safety and production trust depend first on eliminating exposure and access risks | Confirmed in Phase 1 execution and preserved as the roadmap order |
-| Keep the existing monorepo architecture | The goal is to harden what already exists without introducing rewrite risk | Confirmed in Phase 1; repo safety and CI guardrails were added without architectural rewrites |
-| Treat portfolio uptime, worker reliability, and auth control as non-negotiable | These are the most damaging failure modes for the operator and the public system | Confirmed and carried forward into later phase priorities |
-| Add comprehensive automated testing across all apps and packages | A production-ready baseline requires repeatable verification before and after changes | Confirmed; Phase 1 established the CI contract that Phase 3 will extend into full coverage |
-| Aim for a production-ready baseline instead of perfection | The project needs a realistic threshold for release and deployment readiness | Confirmed; Phase 1 focused on highest-risk OSS and governance gaps first |
+| Prioritize security hardening before scalability work | Public repo safety and production trust depend first on eliminating exposure and access risks | Confirmed in `v1.0`; the milestone order stayed security-first and the baseline shipped safely |
+| Keep the existing monorepo architecture | The goal is to harden what already exists without introducing rewrite risk | Confirmed in `v1.0`; safety and reliability improved without a rewrite |
+| Treat portfolio uptime, worker reliability, and auth control as non-negotiable | These are the most damaging failure modes for the operator and the public system | Confirmed in `v1.0`; E2E, worker observability, and auth hardening all centered on these paths |
+| Use shared server-side helpers at risky boundaries | Consistency matters more than route-local fixes in a public production system | Confirmed in Phases 2 and 7; shared validation, rate-limit, and error helpers are now the baseline |
+| Audit before archive and convert blockers into explicit phases | Milestone quality is easier to preserve when gaps are made visible and scheduled | Confirmed in `v1.0`; Phases 6 and 7 closed the audit-discovered blockers before ship |
 
 ## Evolution
 
@@ -85,4 +90,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-09 after Phase 1 completion*
+*Last updated: 2026-04-11 after v1.0 milestone*

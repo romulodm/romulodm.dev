@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: ready
-stopped_at: Phase 7 complete
-last_updated: "2026-04-11T02:30:00.000Z"
-last_activity: 2026-04-10 -- Phase 07 executed and milestone blockers closed
+status: archived
+stopped_at: Milestone v1.0 archived
+last_updated: "2026-04-11T15:30:00.000Z"
+last_activity: 2026-04-11 -- Milestone v1.0 archived and project reset for next milestone planning
 progress:
   total_phases: 7
   completed_phases: 7
@@ -18,17 +18,17 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-04-09)
+See: .planning/PROJECT.md (updated 2026-04-11)
 
 **Core value:** Safe public deployment of the existing monorepo, with the public portfolio staying up, the worker never failing silently, and admin/auth control remaining reliable.
-**Current focus:** Milestone wrap-up after Phase 07 completion
+**Current focus:** Planning the next milestone from the shipped v1.0 baseline
 
 ## Current Position
 
-Phase: 07 (public-api-hardening-and-ci-protection-closure) - COMPLETE
-Plan: 3 of 3
-Status: Ready for milestone completion
-Last activity: 2026-04-10 -- Phase 07 closed remaining public API and PR protection gaps
+Phase: none active
+Plan: milestone archived
+Status: Awaiting next milestone definition
+Last activity: 2026-04-11 -- Archived v1.0 after passing milestone audit
 
 Progress: [##########] 100%
 
@@ -71,20 +71,21 @@ Recent decisions affecting current work:
 - Phase 2: Shared validation, auth, abuse controls, and safe error boundaries are now the API baseline
 - Phase 3: Active production surfaces use Vitest for unit/integration coverage and Playwright for narrow portfolio smoke coverage
 - Phase 5: Public portfolio caching is explicit, database hotspot tuning stayed narrow, and worker throughput settings are now conservative and env-driven
-- Milestone audit: v1.0 is blocked on view-flow unification, remaining public API hardening, and PR test enforcement
 - Phase 6: Post views must converge on one canonical worker-backed path, with lightweight centralized dedupe and no request-time direct persistence
 - Phase 6: Live post views now converge on one buffered worker-backed path, and the legacy route is compatibility-only
 - Phase 7: Remaining public donation and newsletter mutation routes must move onto the shared API hardening boundary, and critical tests must protect PRs through existing root scripts
+- Milestone completion: v1.0 is shipped and archived with only non-blocking technical debt remaining
 
 ### Pending Todos
 
-- Run milestone completion or shipment now that all v1 phases are complete
-- Use the Phase 7 verification artifacts as the final milestone blocker closure evidence
+- Define the next milestone with `/gsd-new-milestone`
+- Decide whether to address the carried warnings first or fold them into a broader follow-up scope
 
 ### Blockers/Concerns
 
-- The milestone is functionally complete; remaining notes are residual warnings already captured in phase verification artifacts
+- No active execution blocker remains for `v1.0`
 - PR protection now depends on the heavier test baseline, so future CI runtime should be monitored after the first few real pull requests
+- The remaining BullMQ/Vitest/NextAuth warnings should be triaged into the next milestone rather than forgotten
 
 ### Quick Tasks Completed
 
@@ -94,6 +95,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-04-11T02:30:00.000Z
-Stopped at: Phase 7 complete
-Resume file: .planning/phases/07-public-api-hardening-and-ci-protection-closure/07-VERIFICATION.md
+Last session: 2026-04-11T15:30:00.000Z
+Stopped at: Milestone v1.0 archived
+Resume file: .planning/MILESTONES.md
