@@ -123,7 +123,12 @@ Plans:
 1. Remaining live public mutation routes use the shared validation, rate-limit, and safe-error patterns introduced in Phase 2.
 2. Donation and newsletter public API paths have automated integration coverage for success, validation, auth, and failure behavior where applicable.
 3. Critical unit, integration, and E2E suites run through PR validation so the test baseline actively protects merges.
-**Plans**: 0 plans
+**Plans**: 3 plans
+
+Plans:
+- [ ] 07-01: Migrate the remaining public donation and newsletter mutation routes onto the shared API hardening boundary
+- [ ] 07-02: Add explicit integration coverage for the remaining public mutation route contracts
+- [ ] 07-03: Enforce the critical root test baseline in scoped PR validation
 
 ## Progress
 
@@ -138,4 +143,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | 4. Worker Reliability And Observability | 3/3 | Complete | 2026-04-10 |
 | 5. Performance And Scalability Tuning | 3/3 | Complete | 2026-04-10 |
 | 6. View Tracking And Worker Flow Closure | 3/3 | Complete | 2026-04-10 |
-| 7. Public API Hardening And CI Protection Closure | 0/0 | Not started | - |
+| 7. Public API Hardening And CI Protection Closure | 0/3 | Planned | - |
