@@ -1,48 +1,110 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { createPixCharge } from '@/lib/payments/abacate'
-import { prisma } from '@romulo/database'
+import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 
-const COFFEE_CENTS = 500 // R$5,00
+import { prisma } from "@romulo/database";
+
+import {
+  internalErrorResponse,
+  rateLimitResponse,
+  validationErrorResponse,
+} from "@/lib/api-errors";
+import {
+  RequestValidationError,
+  emailSchema,
+  optionalPlainText,
+  parseJsonBody,
+} from "@/lib/api-validation";
+import { createPixCharge } from "@/lib/payments/abacate";
+import { getRequestIp, rateLimit } from "@/lib/rate-limit";
+
+const COFFEE_CENTS = 500;
+const DONATION_RATE_LIMIT_MAX = 10;
+const DONATION_RATE_LIMIT_WINDOW_SECONDS = 600;
+
+const pixDonationSchema = z.object({
+  coffees: z.coerce.number().int().min(1).max(1000),
+  name: z.unknown().optional().transform((value) => optionalPlainText(value, 100)),
+  message: z
+    .unknown()
+    .optional()
+    .transform((value) => optionalPlainText(value, 500)),
+  isPrivate: z.coerce.boolean().optional().default(false),
+  isMonthly: z.coerce.boolean().optional().default(false),
+  email: emailSchema.optional(),
+  cellphone: z
+    .unknown()
+    .optional()
+    .transform((value) => optionalPlainText(value, 32)),
+  taxId: z
+    .unknown()
+    .optional()
+    .transform((value) => optionalPlainText(value, 32)),
+});
 
 export async function POST(req: NextRequest) {
-    const { coffees, name, message, isPrivate, isMonthly, email, cellphone, taxId } = await req.json()
-    const amount = Math.max(1, coffees) * COFFEE_CENTS
+  try {
+    const limited = await rateLimit(
+      `donations:pix:create:${getRequestIp(req)}`,
+      DONATION_RATE_LIMIT_MAX,
+      DONATION_RATE_LIMIT_WINDOW_SECONDS,
+    );
+    if (limited) {
+      return rateLimitResponse();
+    }
 
-    // Cria o registro pendente antes de chamar a API externa
+    const { coffees, name, message, isPrivate, isMonthly, email, cellphone, taxId } =
+      await parseJsonBody(req, pixDonationSchema);
+    const amount = coffees * COFFEE_CENTS;
+
     const donation = await prisma.donation.create({
-        data: {
-            coffees,
-            amount,
-            currency: 'BRL',
-            provider: 'PIX',
-            name: isPrivate ? null : name || null,
-            message: message || null,
-            isPrivate: Boolean(isPrivate),
-            isMonthly: Boolean(isMonthly),
-            status: 'PENDING',
-        },
-    })
+      data: {
+        coffees,
+        amount,
+        currency: "BRL",
+        provider: "PIX",
+        name: isPrivate ? null : name,
+        message,
+        isPrivate,
+        isMonthly,
+        status: "PENDING",
+      },
+    });
 
-    const charge = await createPixCharge({
+    try {
+      const charge = await createPixCharge({
         amount,
         correlationId: donation.id,
-        description: `${coffees}x café para o blog`,
-        name: name || undefined,
-        email: email || undefined,
-        cellphone: cellphone || undefined,
-        taxId: taxId || undefined,
-    })
+        description: `${coffees}x cafe para o blog`,
+        name: name ?? undefined,
+        email,
+        cellphone: cellphone ?? undefined,
+        taxId: taxId ?? undefined,
+      });
 
-    // Salva o ID do QR code para checar status via webhook ou polling
-    await prisma.donation.update({
+      await prisma.donation.update({
         where: { id: donation.id },
         data: { abacatePayChargeId: charge.id },
-    })
+      });
 
-    return NextResponse.json({
+      return NextResponse.json({
         pixId: charge.id,
         brCode: charge.brCode,
-        brCodeBase64: charge.brCodeBase64, // imagem pronta para <img src={brCodeBase64} />
+        brCodeBase64: charge.brCodeBase64,
         donationId: donation.id,
-    })
+      });
+    } catch (error) {
+      await prisma.donation.update({
+        where: { id: donation.id },
+        data: { status: "FAILED" },
+      });
+
+      return internalErrorResponse("donations-pix-create", error);
+    }
+  } catch (error) {
+    if (error instanceof z.ZodError || error instanceof RequestValidationError) {
+      return validationErrorResponse(error);
+    }
+
+    return internalErrorResponse("donations-pix-create", error);
+  }
 }

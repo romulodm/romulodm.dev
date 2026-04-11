@@ -7,8 +7,9 @@ test("portfolio front door redirects into the localized landing page", async ({
   expect(testInfo.project.use.baseURL).toBeTruthy();
   expect(String(testInfo.project.use.baseURL)).toContain("127.0.0.1");
 
-  await page.goto("/", { waitUntil: "domcontentloaded" });
+  await page.goto("/", { waitUntil: "networkidle" });
 
+  await page.waitForURL(/\/(pt|en)$/, { timeout: 20000 });
   await expect(page).toHaveURL(/\/(pt|en)$/);
   await expect(page.getByRole("link", { name: "~/romulodm" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Login" })).toBeVisible();

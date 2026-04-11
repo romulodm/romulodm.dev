@@ -16,7 +16,7 @@ This roadmap hardens the existing monorepo into a production-ready and open-sour
 - [x] **Phase 4: Worker Reliability And Observability** - Make async processing visible, retry-safe, and production-diagnosable (completed 2026-04-10)
 - [x] **Phase 5: Performance And Scalability Tuning** - Optimize the portfolio, database, and queues using measured production needs (completed 2026-04-10)
 - [x] **Phase 6: View Tracking And Worker Flow Closure** - Unify post-view tracking onto one reliable worker-backed path (completed 2026-04-10)
-- [ ] **Phase 7: Public API Hardening And CI Protection Closure** - Close remaining public API security gaps and enforce the critical test baseline in PRs
+- [x] **Phase 7: Public API Hardening And CI Protection Closure** - Close remaining public API security gaps and enforce the critical test baseline in PRs (completed 2026-04-10)
 
 ## Phase Details
 
@@ -126,9 +126,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 07-01: Migrate the remaining public donation and newsletter mutation routes onto the shared API hardening boundary
-- [ ] 07-02: Add explicit integration coverage for the remaining public mutation route contracts
-- [ ] 07-03: Enforce the critical root test baseline in scoped PR validation
+- [x] 07-01: Migrate the remaining public donation and newsletter mutation routes onto the shared API hardening boundary
+- [x] 07-02: Add explicit integration coverage for the remaining public mutation route contracts
+- [x] 07-03: Enforce the critical root test baseline in scoped PR validation
 
 ## Progress
 
@@ -143,4 +143,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | 4. Worker Reliability And Observability | 3/3 | Complete | 2026-04-10 |
 | 5. Performance And Scalability Tuning | 3/3 | Complete | 2026-04-10 |
 | 6. View Tracking And Worker Flow Closure | 3/3 | Complete | 2026-04-10 |
-| 7. Public API Hardening And CI Protection Closure | 0/3 | Planned | - |
+| 7. Public API Hardening And CI Protection Closure | 3/3 | Complete | 2026-04-10 |

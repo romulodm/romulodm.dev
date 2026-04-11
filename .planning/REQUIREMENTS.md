@@ -19,17 +19,17 @@
 
 ### API and Access Security
 
-- [ ] **SEC-01**: Public API routes validate and sanitize input server-side before executing business logic
+- [x] **SEC-01**: Public API routes validate and sanitize input server-side before executing business logic
 - [x] **SEC-02**: Protected and admin routes enforce authentication and authorization consistently across the Next.js app
-- [ ] **SEC-03**: High-risk public mutation endpoints apply rate limiting or equivalent abuse controls
-- [ ] **SEC-04**: API routes return safe error responses that do not leak secrets or sensitive internals
+- [x] **SEC-03**: High-risk public mutation endpoints apply rate limiting or equivalent abuse controls
+- [x] **SEC-04**: API routes return safe error responses that do not leak secrets or sensitive internals
 
 ### Test Coverage
 
-- [ ] **TEST-01**: Business logic and shared utilities across `portfolio/`, `worker/`, and `packages/` have automated unit test coverage
+- [x] **TEST-01**: Business logic and shared utilities across `portfolio/`, `worker/`, and `packages/` have automated unit test coverage
 - [x] **TEST-02**: Critical Prisma queries and BullMQ worker flows have automated integration coverage
-- [ ] **TEST-03**: The Next.js portfolio app has E2E coverage for public portfolio uptime paths and authentication-critical flows
-- [ ] **TEST-04**: API endpoints have automated success, auth failure, validation failure, and error-path coverage
+- [x] **TEST-03**: The Next.js portfolio app has E2E coverage for public portfolio uptime paths and authentication-critical flows
+- [x] **TEST-04**: API endpoints have automated success, auth failure, validation failure, and error-path coverage
 
 ### Worker Reliability and Observability
 
@@ -82,14 +82,14 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CI-01 | Phase 1 | Complete |
 | CI-02 | Phase 1 | Complete |
 | CI-03 | Phase 1 | Complete |
-| SEC-01 | Phase 7 | Pending |
+| SEC-01 | Phase 7 | Complete |
 | SEC-02 | Phase 2 | Complete |
-| SEC-03 | Phase 7 | Pending |
-| SEC-04 | Phase 7 | Pending |
-| TEST-01 | Phase 7 | Pending |
+| SEC-03 | Phase 7 | Complete |
+| SEC-04 | Phase 7 | Complete |
+| TEST-01 | Phase 7 | Complete |
 | TEST-02 | Phase 6 | Complete |
-| TEST-03 | Phase 7 | Pending |
-| TEST-04 | Phase 7 | Pending |
+| TEST-03 | Phase 7 | Complete |
+| TEST-04 | Phase 7 | Complete |
 | WORK-01 | Phase 6 | Complete |
 | WORK-02 | Phase 6 | Complete |
 | WORK-03 | Phase 4 | Complete |
@@ -104,4 +104,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-04-08*
-*Last updated: 2026-04-10 after Phase 6 execution*
+*Last updated: 2026-04-10 after Phase 7 execution*

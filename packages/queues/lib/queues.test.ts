@@ -24,7 +24,7 @@ import {
   QUEUE_TRANSACTIONAL,
   transactionalEmailJobOptions,
   VIEWS_BUFFER_KEY,
-} from "./queues";
+} from "./queues.ts";
 
 describe("queue contracts", () => {
   it("exposes the expected queue names and view-flush constants", () => {
