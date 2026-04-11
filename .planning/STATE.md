@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: ready
-stopped_at: Phase 6 context captured
-last_updated: "2026-04-10T23:15:00.000Z"
-last_activity: 2026-04-10 -- Phase 06 planned with 3 execution plans
+stopped_at: Phase 6 complete
+last_updated: "2026-04-11T00:10:00.000Z"
+last_activity: 2026-04-10 -- Phase 06 executed and verified
 progress:
   total_phases: 7
-  completed_phases: 5
+  completed_phases: 6
   total_plans: 20
-  completed_plans: 17
-  percent: 71
+  completed_plans: 20
+  percent: 86
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-09)
 
 **Core value:** Safe public deployment of the existing monorepo, with the public portfolio staying up, the worker never failing silently, and admin/auth control remaining reliable.
-**Current focus:** Phase 06 - view-tracking-and-worker-flow-closure
+**Current focus:** Phase 07 - public-api-hardening-and-ci-protection-closure
 
 ## Current Position
 
-Phase: 06 (view-tracking-and-worker-flow-closure) - READY
+Phase: 06 (view-tracking-and-worker-flow-closure) - COMPLETE
 Plan: 3 of 3
-Status: Phase 06 planned and ready to execute
-Last activity: 2026-04-10 -- Phase 06 planned with 3 execution plans
+Status: Phase 06 executed and verified
+Last activity: 2026-04-10 -- Phase 06 executed and verified
 
-Progress: [#######---] 71%
+Progress: [#########-] 86%
 
 ## Performance Metrics
 
@@ -49,7 +49,7 @@ Progress: [#######---] 71%
 | 3 | 4 | complete | n/a |
 | 4 | 3 | complete | n/a |
 | 5 | 3 | complete | n/a |
-| 6 | 3 | planned | n/a |
+| 6 | 3 | complete | n/a |
 | 7 | 0 | planned | n/a |
 
 **Recent Trend:**
@@ -73,15 +73,15 @@ Recent decisions affecting current work:
 - Phase 5: Public portfolio caching is explicit, database hotspot tuning stayed narrow, and worker throughput settings are now conservative and env-driven
 - Milestone audit: v1.0 is blocked on view-flow unification, remaining public API hardening, and PR test enforcement
 - Phase 6: Post views must converge on one canonical worker-backed path, with lightweight centralized dedupe and no request-time direct persistence
+- Phase 6: Live post views now converge on one buffered worker-backed path, and the legacy route is compatibility-only
 
 ### Pending Todos
 
-- Execute Phase 6 to unify the live post-view path and close the milestone blocker around split Redis buffers
+- Discuss and plan Phase 7 to close the remaining public API hardening and PR-test-enforcement gaps
 - Plan Phase 7 to harden the remaining live public mutation routes and wire critical tests into PR validation
 
 ### Blockers/Concerns
 
-- The post-view path is still split across two Redis buffers until Phase 6 closes it
 - Several live public mutation routes still sit outside the shared Phase 2 hardening contract until Phase 7 closes them
 - Critical tests are not yet enforced in PR validation until Phase 7 closes the CI gap
 
@@ -93,6 +93,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-04-10T23:15:00.000Z
-Stopped at: Phase 6 planned
-Resume file: .planning/phases/06-view-tracking-and-worker-flow-closure/06-01-PLAN.md
+Last session: 2026-04-11T00:10:00.000Z
+Stopped at: Phase 6 verified
+Resume file: .planning/phases/06-view-tracking-and-worker-flow-closure/06-VERIFICATION.md
