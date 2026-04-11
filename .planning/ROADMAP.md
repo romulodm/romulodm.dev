@@ -15,7 +15,7 @@ This roadmap hardens the existing monorepo into a production-ready and open-sour
 - [x] **Phase 3: Test Foundation And Critical Coverage** - Add the automated test baseline across apps, packages, and key flows (completed 2026-04-10)
 - [x] **Phase 4: Worker Reliability And Observability** - Make async processing visible, retry-safe, and production-diagnosable (completed 2026-04-10)
 - [x] **Phase 5: Performance And Scalability Tuning** - Optimize the portfolio, database, and queues using measured production needs (completed 2026-04-10)
-- [ ] **Phase 6: View Tracking And Worker Flow Closure** - Unify post-view tracking onto one reliable worker-backed path
+- [x] **Phase 6: View Tracking And Worker Flow Closure** - Unify post-view tracking onto one reliable worker-backed path (completed 2026-04-10)
 - [ ] **Phase 7: Public API Hardening And CI Protection Closure** - Close remaining public API security gaps and enforce the critical test baseline in PRs
 
 ## Phase Details
@@ -111,9 +111,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 06-01: Canonicalize post-view recording and reduce the legacy API surface to wrapper-or-removal only
-- [ ] 06-02: Make the worker-backed views buffer the sole persistence path
-- [ ] 06-03: Add integration coverage proving the unified live flow reaches worker persistence
+- [x] 06-01: Canonicalize post-view recording and reduce the legacy API surface to wrapper-or-removal only
+- [x] 06-02: Make the worker-backed views buffer the sole persistence path
+- [x] 06-03: Add integration coverage proving the unified live flow reaches worker persistence
 
 ### Phase 7: Public API Hardening And CI Protection Closure
 **Goal**: Close the remaining live public API security gaps and make the critical automated test baseline enforceable on pull requests.
@@ -137,5 +137,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | 3. Test Foundation And Critical Coverage | 4/4 | Complete | 2026-04-10 |
 | 4. Worker Reliability And Observability | 3/3 | Complete | 2026-04-10 |
 | 5. Performance And Scalability Tuning | 3/3 | Complete | 2026-04-10 |
-| 6. View Tracking And Worker Flow Closure | 0/3 | Planned | - |
+| 6. View Tracking And Worker Flow Closure | 3/3 | Complete | 2026-04-10 |
 | 7. Public API Hardening And CI Protection Closure | 0/0 | Not started | - |
