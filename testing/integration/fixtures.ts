@@ -9,6 +9,17 @@ export function uniqueToken(label: string) {
 }
 
 export async function cleanupIntegrationFixtures() {
+  await prisma.donation.deleteMany({
+    where: {
+      OR: [
+        { name: { contains: TEST_PREFIX } },
+        { message: { contains: TEST_PREFIX } },
+        { stripePaymentIntentId: { contains: TEST_PREFIX } },
+        { abacatePayChargeId: { contains: TEST_PREFIX } },
+      ],
+    },
+  });
+
   await prisma.campaignRecipient.deleteMany({
     where: {
       OR: [

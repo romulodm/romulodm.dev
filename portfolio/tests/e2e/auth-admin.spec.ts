@@ -37,8 +37,9 @@ async function signInAsAdmin(page: Page) {
 test("unauthenticated admin access redirects back to the front door", async ({
   page,
 }) => {
-  await page.goto("/pt/admin", { waitUntil: "domcontentloaded" });
+  await page.goto("/pt/admin", { waitUntil: "networkidle" });
 
+  await page.waitForURL(/\/pt$/, { timeout: 20000 });
   await expect(page).toHaveURL(/\/pt$/);
   await expect(page.getByRole("button", { name: "Login" })).toBeVisible();
 });
