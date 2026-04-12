@@ -39,7 +39,8 @@
   /* 1FB56A */
   --primary-foreground: 0 0% 100%;
 
-  --secondary: 0 0% 94%;
+  --secondary: 224 70% 62%;
+  /* #5A7CE2 */
   --secondary-foreground: 0 0% 20%;
 
   --muted: 0 0% 94%;
@@ -53,7 +54,7 @@
 
   --border: 0 0% 88%;
   --input: 0 0% 90%;
-  --ring: 142 72% 40%;
+  --ring: 225 70% 60%;
 
   --radius: 0.5rem;
 
@@ -90,22 +91,26 @@
   --resume-color: #2563eb;
   --resume-color-rgb: 37, 99, 235;
   /* #2563eb */
-  --resume-background: #e0f2fe;
+  --resume: 221 83% 54%;
+  --resume-background: 199 94% 94%;
 
   --projects-color: #6d28d9;
   --projects-color-rgb: 109, 40, 217;
   /* #6d28d9 */
-  --projects-background: #ede9fe;
+  --projects: 263 70% 50%;
+  --projects-background: 252 100% 96%;
 
   --vision-color: #00C74D;
   --vision-color-rgb: 0, 199, 77;
   /* #00C74D */
-  --vision-background: #dcfce7;
+  --vision: 142 100% 39%;
+  --vision-background: 137 84% 93%;
 
   --contact-color: #f9305b;
   --contact-color-rgb: 249, 48, 91;
   /* #f9305b */
-  --contact-background: #fee2e2;
+  --contact: 346 93% 58%;
+  --contact-background: 0 93% 94%;
 }
 
 .dark {
@@ -123,7 +128,7 @@
   --primary: 18 90% 61%;
   --primary-foreground: 0 0% 2%;
 
-  --secondary: 0 0% 12%;
+  --secondary: 224 70% 62%;
   --secondary-foreground: 0 0% 93%;
 
   --muted: 0 0% 12%;
@@ -164,25 +169,26 @@
   --resume-color: #2563eb;
   --resume-color-rgb: 37, 99, 235;
   /* #2563eb */
-  --resume-background: #2a3b54;
-  /* Alterado para um tom mais escuro */
+  --resume: 221 83% 54%;
+  --resume-background: 213 33% 25%;
 
   --projects-color: #7c3aed;
-  /* Alterado para um tom de roxo mais vibrante */
   --projects-color-rgb: 124, 58, 237;
   /* #7c3aed */
-  --projects-background: #312450;
+  --projects: 263 83% 58%;
+  --projects-background: 256 36% 23%;
 
   --vision-color: #00C74D;
   --vision-color-rgb: 0, 199, 77;
   /* #00C74D */
-  --vision-background: #2a5939;
-  /* mantido */
+  --vision: 142 100% 39%;
+  --vision-background: 143 36% 25%;
 
   --contact-color: #f9305b;
   --contact-color-rgb: 249, 48, 91;
   /* #f9305b */
-  --contact-background: #742a3b;
+  --contact: 346 93% 58%;
+  --contact-background: 344 47% 31%;
 }
 
 
