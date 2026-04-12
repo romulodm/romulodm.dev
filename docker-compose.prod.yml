@@ -12,43 +12,10 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
-    ports:
-      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - romulodm-network
-
-  umami-db:
-    image: postgres:16-alpine
-    container_name: romulodm-umami-db
-    env_file:
-      - .env
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: ${UMAMI_POSTGRES_USER}
-      POSTGRES_PASSWORD: ${UMAMI_POSTGRES_PASSWORD}
-      POSTGRES_DB: ${UMAMI_DB}
-    ports:
-      - "5433:5432"
-    volumes:
-      - umami_postgres_data:/var/lib/postgresql/data
-    networks:
-      - romulodm-network
-
-  mailcatcher:
-    image: sj26/mailcatcher
-    container_name: mailcatcher
-    env_file:
-      - .env
-    expose:
-      - '${SMTP_PORT}'
-      - '${HTTP_PORT}'
-    ports:
-      - '${SMTP_PORT}:1025'
-      - '${HTTP_PORT}:1080'
-    networks:
-    - romulodm-network
 
   minio:
     image: minio/minio:latest
@@ -60,9 +27,6 @@ services:
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
-    ports:
-      - "9000:9000"
-      - "9001:9001"
     volumes:
       - minio_data:/data
     networks:
@@ -93,16 +57,29 @@ services:
       - romulodm-network
     restart: "no"
 
-  umami:
-    image: ghcr.io/umami-software/umami:postgresql-latest
+  umami-db:
+    image: postgres:16-alpine
+    container_name: romulodm-umami-db
     env_file:
       - .env
-    ports:
-      - '${UMAMI_PORT}:3000'
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${UMAMI_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${UMAMI_POSTGRES_PASSWORD}
+      POSTGRES_DB: ${UMAMI_DB}
+    volumes:
+      - umami_postgres_data:/var/lib/postgresql/data
+    networks:
+      - romulodm-network
+
+  umami:
+    image: ghcr.io/umami-software/umami:postgresql-latest
+    container_name: romulodm-umami
+    env_file:
+      - .env
     environment:
       DATABASE_URL: postgresql://${UMAMI_POSTGRES_USER}:${UMAMI_POSTGRES_PASSWORD}@umami-db:5432/${UMAMI_DB}
       APP_SECRET: ${APP_SECRET}
-      DEBUG: umami:*
       REDIS_URL: redis://redis:6379
     depends_on:
       - umami-db
@@ -111,23 +88,10 @@ services:
     networks:
       - romulodm-network
 
-  waha:
-    image: devlikeapro/waha
-    ports:
-      - "3002:3000"
-    volumes:
-      - ./waha-data:/app/.sessions
-    environment:
-      - WHATSAPP_DEFAULT_ENGINE=WEBJS
-    networks:
-      - romulodm-network
-
   redis:
     image: redis:7-alpine
     container_name: romulodm-redis
     restart: always
-    ports:
-      - "6379:6379"
     volumes:
       - redis_data:/data
     networks:
@@ -135,7 +99,7 @@ services:
 
   worker:
     build:
-      context: .            
+      context: .
       dockerfile: worker/Dockerfile
     container_name: romulodm-worker
     env_file:
@@ -155,12 +119,75 @@ services:
     env_file:
       - .env
     restart: unless-stopped
-    ports:
-      - '${NEXT_PORT}:${NEXT_PORT}'
     depends_on:
       - postgres
       - minio
       - redis
+    networks:
+      - romulodm-network
+
+  nginx:
+    image: nginx:alpine
+    container_name: romulodm-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./nginx/logs:/var/log/nginx
+      - certbot_www:/var/www/certbot:ro
+      - certbot_certs:/etc/letsencrypt:ro
+    depends_on:
+      - app
+      - minio
+    networks:
+      - romulodm-network
+
+  certbot:
+    image: certbot/certbot
+    container_name: romulodm-certbot
+    volumes:
+      - certbot_www:/var/www/certbot
+      - certbot_certs:/etc/letsencrypt
+    entrypoint: >
+      /bin/sh -c "trap exit TERM;
+        while :; do
+          certbot renew --webroot -w /var/www/certbot --quiet;
+          sleep 12h & wait $${!};
+        done"
+    networks:
+      - romulodm-network
+
+  backup:
+    build:
+      context: ./backup
+      dockerfile: Dockerfile
+    container_name: romulodm-backup
+    env_file:
+      - .env
+    environment:
+      BACKUP_RETENTION_DAYS: 7   # quantos dias manter no bucket
+      TZ: America/Sao_Paulo
+    depends_on:
+      - postgres
+      - umami-db
+    networks:
+      - romulodm-network
+    restart: "no"   # não reinicia — é executado pelo cron abaixo
+ 
+  # ── Cron que dispara o backup ─────────────────────────────
+  # Usa a imagem "mcuadros/ofelia" — scheduler leve para Docker
+  cron:
+    image: mcuadros/ofelia:latest
+    container_name: romulodm-cron
+    restart: unless-stopped
+    depends_on:
+      - backup
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./cron/config.ini:/etc/ofelia/config.ini:ro
     networks:
       - romulodm-network
 
@@ -169,6 +196,8 @@ volumes:
   umami_postgres_data:
   minio_data:
   redis_data:
+  certbot_www:
+  certbot_certs:
 
 networks:
   romulodm-network:
