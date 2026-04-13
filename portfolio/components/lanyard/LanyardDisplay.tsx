@@ -28,7 +28,6 @@ export default function LanyardDisplay({
     const [isReady, setIsReady] = useState(false);
     const cardTemplateRef = useRef<CardTemplateRef>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
-
     const today = getTodayFormatted();
 
     const handleTextureReady = useCallback((dataUrl: string) => {
@@ -57,14 +56,8 @@ export default function LanyardDisplay({
                 city="Rio Grande, Brazil"
                 date={today}
             />
-
-            {/* 
-              Sempre renderiza o container com as mesmas dimensões.
-              Isso evita layout shift e não bloqueia o resto da hero.
-            */}
             <div className={containerClassName}>
                 {!isReady ? (
-                    // Spinner centralizado apenas nesta área
                     <div className="flex h-full items-center justify-center">
                         <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
                     </div>
