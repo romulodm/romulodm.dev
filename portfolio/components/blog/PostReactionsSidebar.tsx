@@ -1,10 +1,11 @@
 // components/blog/PostReactionSidebar.tsx
 'use client';
 
-import { Eye, Heart, MessageSquare, Share2 } from 'lucide-react';
+import { Coffee, Eye, Heart, MessageSquare, Share2 } from 'lucide-react';
 import { formatCount } from '@/lib/format-number';
 import { usePostInteractions } from '@/hooks/use-post-interactions';
 import { cn } from '@/lib/utils';
+import Link from 'next/link';
 
 interface Props {
     postId: string;
@@ -70,6 +71,15 @@ export function PostReactionSidebar({ postId, initialLikes, initialViews, initia
                 <span className="text-xs">{formatCount(comments)}</span>
             </button>
 
+            <Link
+                href={"/support"}
+                target="_blank"
+                className="flex flex-col items-center justify-center gap-1 rounded-xl hover:text-primary transition-colors text-muted-foreground"
+            >
+                <Coffee size={20} />
+                <span className="text-xs">Apoie</span>
+            </Link>
+
             {/* Share */}
             <button
                 onClick={handleShare}
@@ -77,7 +87,9 @@ export function PostReactionSidebar({ postId, initialLikes, initialViews, initia
                 aria-label="Compartilhar"
             >
                 <Share2 size={20} />
+                <span className="text-xs">Share</span>
             </button>
+
         </div>
     );
 }
