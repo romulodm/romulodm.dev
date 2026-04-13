@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { CommentCard, CommentData } from "@/components/comments/CommentCard";
 import { CommentComposer } from "@/components/comments/CommentComposer";
 import { listPostComments, SortOrder } from "@/lib/comments";
@@ -29,10 +29,9 @@ export function CommentsSection({
 }: CommentsSectionProps) {
     const [comments, setComments] = useState<CommentData[]>(initialComments);
     const [nextCursor, setNextCursor] = useState<string | null>(initialNextCursor);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(initialComments.length === 0);
     const [sort, setSort] = useState<SortOrder>(initialSort);
 
-    // Fetch with a given sort, resetting pagination
     const fetchSorted = useCallback(async (newSort: SortOrder) => {
         setLoading(true);
         try {
@@ -44,13 +43,18 @@ export function CommentsSection({
         }
     }, [postId]);
 
+    // Carrega comentários no cliente quando não há initialComments (página estática)
+    useEffect(() => {
+        if (initialComments.length > 0) return;
+        fetchSorted(initialSort);
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
     const handleSortChange = (newSort: SortOrder) => {
         if (newSort === sort) return;
         setSort(newSort);
         fetchSorted(newSort);
     };
 
-    // Load more keeps current sort
     const loadMore = async () => {
         if (!nextCursor) return;
         setLoading(true);
@@ -63,7 +67,6 @@ export function CommentsSection({
         }
     };
 
-    // Refresh after posting — respects current sort
     const refresh = useCallback(async () => {
         setLoading(true);
         try {
@@ -77,7 +80,6 @@ export function CommentsSection({
 
     return (
         <section className="mt-12 pt-8 border-t border-border">
-            {/* Header: count + sort selector */}
             <div className="flex items-center justify-between mb-6 gap-4 flex-wrap">
                 <h2 className="text-lg font-semibold">
                     {totalCount > 0
@@ -85,7 +87,6 @@ export function CommentsSection({
                         : "Comentários"}
                 </h2>
 
-                {/* Sort tab-pills */}
                 <div className="flex items-center gap-1 rounded-lg border border-border p-0.5 bg-gray-300/30 dark:bg-neutral-800/50">
                     {SORT_OPTIONS.map(({ value, label, icon: Icon }) => (
                         <button
@@ -104,14 +105,11 @@ export function CommentsSection({
                 </div>
             </div>
 
-            {/* Composer */}
             <div className="mb-8">
                 <CommentComposer postId={postId} onSuccess={refresh} />
             </div>
 
-            {/* List */}
             <div className="space-y-2 relative">
-                {/* Soft loading overlay when re-sorting (keeps existing comments visible) */}
                 {loading && comments.length > 0 && (
                     <div className="absolute inset-0 bg-background/60 rounded-lg z-10 flex items-start justify-center pt-16 pointer-events-none">
                         <span className="w-5 h-5 border-2 border-foreground/20 border-t-foreground rounded-full animate-spin" />
@@ -141,7 +139,6 @@ export function CommentsSection({
                 ))}
             </div>
 
-            {/* Load more */}
             {nextCursor && !loading && (
                 <div className="flex justify-center mt-6">
                     <button
