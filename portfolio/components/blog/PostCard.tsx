@@ -1,7 +1,8 @@
 // components/ui/PostCard.tsx
 import Link from 'next/link';
+import { Heart, Eye, MessageSquare } from 'lucide-react';
 import { formatDistanceToNow } from '@/lib/utils';
-import { PostMetaBadges } from '@/components/blog/BlogHeader';
+import { formatCount } from '@/lib/format-number';
 
 interface Post {
   id: string;
@@ -18,15 +19,49 @@ interface Post {
   postTags: { tag: string }[];
 }
 
+export function PostMetaBadges({ likes, views, comments }: { likes: number; views: number; comments: number }) {
+  return (
+    <div className="flex items-center gap-3 text-xs text-muted-foreground">
+      {/* Views */}
+      <span className="flex items-center gap-1">
+        <Eye size={15} className="mt-[1px]" />
+        {formatCount(views)}
+      </span>
+
+      {/* Likes */}
+      <span className="flex items-center gap-1">
+        <Heart size={15} className="mt-[1px]" />
+        {formatCount(likes)}
+      </span>
+
+      <span className="flex items-center gap-1">
+        <MessageSquare size={15} className="mt-[1px]" />
+        {formatCount(comments)}
+      </span>
+    </div>
+  );
+}
+
 export function PostCard({ post }: { post: Post }) {
   const tags = post.postTags.map((t) => t.tag);
 
   return (
     <Link href={`/blog/${post.slug}`} className="group block h-full">
-      <article className="flex flex-col h-full rounded-2xl border border-border bg-card overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 hover:border-gray-300 dark:hover:border-gray-600">
+      <article className="flex flex-col h-full border border-border bg-card overflow-hidden transition-all duration-300 hover:-translate-y-0.5 hover:border-gray-400/70 dark:hover:border-neutral-700">
+        <div className="flex px-4 py-4 justify-between items-center text-gray-500">
+          <span className="bg-blue-100 dark:bg-sky-950/60 text-blue-900 dark:text-white/60 text-sm flex items-center gap-1 px-1.5 py-0.5 rounded">
+            Portuguese
+          </span>
+          <div className="flex items-center text-sm gap-1 dark:text-neutral-500">
+            {post.publishedAt && (
+              <>{formatDistanceToNow(new Date(post.publishedAt))}</>
+            )}
+          </div>
+        </div>
+
         {/* Cover */}
         {post.coverImageUrl ? (
-          <div className="overflow-hidden aspect-video">
+          <div className="overflow-hidden px-4 aspect-video">
             <img
               src={post.coverImageUrl}
               alt={post.title}
@@ -40,7 +75,7 @@ export function PostCard({ post }: { post: Post }) {
         )}
 
         {/* Conteúdo */}
-        <div className="flex flex-col flex-1 p-5 gap-3">
+        <div className="flex flex-col flex-1 p-5 gap-2">
           {/* Tags */}
           {tags.length > 0 && (
             <div className="flex flex-wrap gap-1.5">
@@ -69,15 +104,9 @@ export function PostCard({ post }: { post: Post }) {
 
           {/* Footer: data + badges */}
           <div className="flex flex-row items-center justify-between gap-2 pt-4 border-t border-border mt-auto">
-            <PostMetaBadges likes={post.likes} views={post.views} />
+            <PostMetaBadges likes={post.likes} views={post.views} comments={post.commentsCount} />
 
             <div className="flex items-center gap-2">
-              {post.publishedAt && (
-                <span className="text-xs text-muted-foreground">
-                  {formatDistanceToNow(new Date(post.publishedAt))}
-                </span>
-              )}
-              <span className="mt-1 h-1 w-1 bg-gray-300 dark:bg-neutral-700 rounded-full" />
               {post.publishedAt && (
                 <span className="text-xs text-muted-foreground">
                   {post.readingTime} min de leitura
