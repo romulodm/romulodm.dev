@@ -1,8 +1,0 @@
-{
-    "crons": [
-        {
-            "path": "/api/posts/flush-views",
-            "schedule": "*/5 * * * *"
-        }
-    ]
-}
