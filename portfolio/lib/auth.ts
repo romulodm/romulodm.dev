@@ -1,36 +1,12 @@
 // lib/auth.ts
 import type { NextAuthOptions, Session } from "next-auth";
-import { getServerSession } from "next-auth/next";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { prisma } from "@romulo/database";
-
-function normalizeUsername(input: string) {
-  return input
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, "")
-    .slice(0, 24);
-}
-
-async function generateUniqueUsername(email: string, name?: string | null) {
-  const base =
-    normalizeUsername(name?.length ? name : email.split("@")[0]) || "user";
-
-  // tenta base, base1, base2...
-  for (let i = 0; i < 50; i++) {
-    const candidate = i === 0 ? base : `${base}${i}`;
-    const exists = await prisma.user.findUnique({
-      where: { username: candidate },
-      select: { id: true },
-    });
-    if (!exists) return candidate;
-  }
-
-  // fallback garantido
-  return `${base}${Date.now().toString().slice(-6)}`;
-}
+import { headers } from "next/headers";
+import { rateLimit } from "./rate-limit";
+import { generateUniqueUsername } from "./username";
 
 export const authOptions: NextAuthOptions = {
   debug: true,
@@ -50,29 +26,28 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials) {
         const email = credentials?.email?.trim().toLowerCase();
         const password = credentials?.password;
-
         if (!email || !password) return null;
 
+        // ── Rate limit via IP ──────────────────────────────────────
+        const headersList = await headers();
+        const ip =
+          headersList.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+          headersList.get("x-real-ip") ??
+          "unknown";
+
+        const limited = await rateLimit(`nextauth:credentials:${ip}:${email}`, 10, 60);
+        if (limited) throw new Error("CredentialsSignin"); // NextAuth trata como login inválido
+
+        // ── Busca usuário ─────────────────────────────────────────
         const user = await prisma.user.findUnique({
           where: { email },
           select: {
-            id: true,
-            email: true,
-            username: true,
-            image: true,
-            admin: true,
-            provider: true,
-            password: true,
+            id: true, email: true, username: true,
+            image: true, admin: true, provider: true, password: true,
           },
         });
 
-        if (!user) return null;
-
-        // se a conta é GOOGLE, não deixa usar senha
-        if (user.provider !== "EMAIL_PASSWORD") return null;
-
-        // sem hash = inválido
-        if (!user.password) return null;
+        if (!user || user.provider !== "EMAIL_PASSWORD" || !user.password) return null;
 
         const ok = await bcrypt.compare(password, user.password);
         if (!ok) return null;
@@ -200,71 +175,3 @@ export const authOptions: NextAuthOptions = {
 
   secret: process.env.NEXTAUTH_SECRET,
 };
-
-/**
- * Helpers para rotas server-side (Route Handlers / Server Actions)
- */
-
-export async function isAuthenticated() {
-  const session = await getServerSession(authOptions);
-  return Boolean(session?.user && (session.user as any).id);
-}
-
-export type RouteAuthResult =
-  | {
-      ok: true;
-      session: Session;
-      user: Session["user"] & { id: string; admin: boolean };
-    }
-  | {
-      ok: false;
-      status: 401 | 403;
-      reason: "unauthorized" | "forbidden";
-    };
-
-function getRouteUser(session: Session | null) {
-  if (!session?.user || !(session.user as any).id) {
-    return null;
-  }
-
-  return session.user as Session["user"] & { id: string; admin: boolean };
-}
-
-export async function requireAuth(): Promise<RouteAuthResult> {
-  const session = await getServerSession(authOptions);
-  const user = getRouteUser(session);
-
-  if (!user) {
-    return { ok: false, status: 401, reason: "unauthorized" };
-  }
-
-  return { ok: true, session: session!, user };
-}
-
-export async function requireAdmin() {
-  const auth = await requireAuth();
-  if (!auth.ok) {
-    return auth;
-  }
-
-  if (!auth.user.admin) {
-    return { ok: false as const, status: 403 as const, reason: "forbidden" };
-  }
-
-  return auth;
-}
-
-export async function requireOwnerOrAdmin(
-  ownerId: string,
-): Promise<RouteAuthResult> {
-  const auth = await requireAuth();
-  if (!auth.ok) {
-    return auth;
-  }
-
-  if (auth.user.admin || auth.user.id === ownerId) {
-    return auth;
-  }
-
-  return { ok: false, status: 403, reason: "forbidden" };
-}
