@@ -31,7 +31,8 @@ import {
   type NotificationJob,
 } from "@romulo/queues";
 
-import { notifyComment, sendDailyStatus } from "../lib/whatsapp";
+//import { notifyComment, sendDailyStatus } from "../lib/whatsapp";
+import { notifyComment, sendDailyStatus } from "../lib/telegram";
 import { flushViewsBuffer } from "./views.worker";
 
 // ── Worker factory ────────────────────────────────────────────────────────────
