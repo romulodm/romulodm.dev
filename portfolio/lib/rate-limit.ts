@@ -1,4 +1,4 @@
-import { redis } from "@/lib/redis";
+import { getRedis } from "@/lib/redis"
 
 export async function rateLimit(
   key: string,
@@ -6,9 +6,9 @@ export async function rateLimit(
   windowSec: number,
 ): Promise<boolean> {
   try {
-    const current = await redis.incr(key);
+    const current = await getRedis().incr(key)
     if (current === 1) {
-      await redis.expire(key, windowSec);
+      await getRedis().expire(key, windowSec)
     }
 
     return current > max;

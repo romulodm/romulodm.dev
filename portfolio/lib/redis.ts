@@ -1,4 +1,4 @@
-// lib/redis.ts
+import 'server-only'
 import Redis from 'ioredis'
 
 declare global {
@@ -22,10 +22,12 @@ function createClient(bullmq = false) {
     return client
 }
 
-// Conexão geral (cache, sessões, etc)
-export const redis = global._redis ?? createClient()
-if (process.env.NODE_ENV !== 'production') global._redis = redis
+export function getRedis(): Redis {
+    if (!global._redis) global._redis = createClient()
+    return global._redis
+}
 
-// Conexão dedicada ao BullMQ (maxRetriesPerRequest: null obrigatório)
-export const redisBullMQ = global._redisBullMQ ?? createClient(true)
-if (process.env.NODE_ENV !== 'production') global._redisBullMQ = redisBullMQ
+export function getRedisBullMQ(): Redis {
+    if (!global._redisBullMQ) global._redisBullMQ = createClient(true)
+    return global._redisBullMQ
+}
