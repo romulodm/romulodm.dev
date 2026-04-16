@@ -3,6 +3,7 @@
 import { prisma } from "@romulo/database";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { getLocale } from "next-intl/server";
 
 export type SortOrder = "score" | "newest" | "oldest";
 
@@ -78,7 +79,10 @@ export async function listPostComments({
 }
 
 export async function getCommentById(id: string) {
-    const session = await getServerSession(authOptions);
+    const [session, locale] = await Promise.all([
+        getServerSession(authOptions),
+        getLocale(),
+    ]);
     const userId = session?.user?.id ?? null;
 
     const comment = await prisma.comment.findUnique({
@@ -86,7 +90,17 @@ export async function getCommentById(id: string) {
         include: {
             author: { select: { id: true, username: true, image: true } },
             votes: { select: { userId: true, value: true } },
-            post: { select: { id: true, slug: true, title: true } },
+            post: {
+                select: {
+                    id: true,
+                    slug: true,
+                    translations: {
+                        where: { locale },
+                        select: { title: true },
+                        take: 1,
+                    },
+                },
+            },
             parent: {
                 include: {
                     author: { select: { id: true, username: true, image: true } },
@@ -126,5 +140,13 @@ export async function getCommentById(id: string) {
 
     const result = attachVote(comment);
     if (result.parent) result.parent = attachVote(result.parent);
-    return result;
+
+    return {
+        ...result,
+        post: {
+            id: result.post.id,
+            slug: result.post.slug,
+            title: result.post.translations[0]?.title ?? "",
+        },
+    };
 }
