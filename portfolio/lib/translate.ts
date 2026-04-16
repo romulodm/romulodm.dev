@@ -2,7 +2,15 @@ import 'server-only'
 import OpenAI from 'openai'
 import { getLocale } from './locales'
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+let _openai: OpenAI | null = null
+
+function getOpenAI(): OpenAI {
+  if (!_openai) {
+    if (!process.env.OPENAI_API_KEY) throw new Error('OPENAI_API_KEY não definida')
+    _openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+  }
+  return _openai
+}
 
 interface TranslationInput {
   title: string
@@ -26,7 +34,7 @@ export async function translatePost(
   const sourceName = getLocale(sourceLocale)?.label ?? sourceLocale
   const targetName = getLocale(targetLocale)?.label ?? targetLocale
 
-  const completion = await openai.chat.completions.create({
+  const completion = await getOpenAI().chat.completions.create({
     model: 'gpt-4o-mini',
     response_format: { type: 'json_object' },
     messages: [
