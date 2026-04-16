@@ -34,7 +34,14 @@
     "test:integration:queues": "npm --prefix packages/queues run test:integration"
   },
   "devDependencies": {
+    "eslint-plugin-unused-imports": "^4.4.1",
     "jsdom": "^26.1.0",
     "vitest": "^3.2.4"
+  },
+  "overrides": {
+    "picomatch": "^4.0.2",
+    "yaml": "^2.8.3",
+    "nodemailer": "^8.0.5",
+    "basic-ftp": "^5.2.2"
   }
 }
