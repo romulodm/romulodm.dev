@@ -5,11 +5,12 @@ import (
 	"net/http"
 	"strconv"
 	"sync"
+	"time"
 
 	"search/engine"
 )
 
-// IndexRequest é o payload para indexar um documento.
+// IndexRequest is the payload accepted by POST /index and POST /reindex.
 type IndexRequest struct {
 	ID            string   `json:"id"`
 	Slug          string   `json:"slug"`
@@ -22,17 +23,31 @@ type IndexRequest struct {
 	CoverImageURL string   `json:"coverImageUrl"`
 }
 
-// Handler expõe o SearchEngine via HTTP.
+// Handler exposes the SearchEngine over HTTP and owns the authoritative
+// document list used for snapshot persistence.
 type Handler struct {
-	engine  *engine.SearchEngine
-	writeMu sync.Mutex // serializa operações de escrita pesadas (reindex)
+	engine    *engine.SearchEngine
+	snap      *SnapshotManager
+	writeMu   sync.Mutex // serialises all write operations
+	lastDocs  []IndexRequest
+	startedAt time.Time // used to compute uptime in /stats
 }
 
-func NewHandler(e *engine.SearchEngine) *Handler {
-	return &Handler{engine: e}
+// NewHandler wires together the engine and snapshot manager.
+func NewHandler(e *engine.SearchEngine, snap *SnapshotManager, initialDocs []IndexRequest) *Handler {
+	h := &Handler{
+		engine:    e,
+		snap:      snap,
+		lastDocs:  initialDocs,
+		startedAt: time.Now(),
+	}
+	for _, req := range initialDocs {
+		h.indexOne(req)
+	}
+	return h
 }
 
-// Routes registra todas as rotas e retorna o mux configurado.
+// Routes registers all endpoints and returns the configured mux.
 func (h *Handler) Routes() *http.ServeMux {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /health", h.health)
@@ -45,18 +60,46 @@ func (h *Handler) Routes() *http.ServeMux {
 	return mux
 }
 
-func (h *Handler) debug(w http.ResponseWriter, r *http.Request) {
-	respond(w, http.StatusOK, h.engine.Debug())
-}
-
-// GET /health — liveness probe
+// GET /health
 func (h *Handler) health(w http.ResponseWriter, r *http.Request) {
 	respond(w, http.StatusOK, map[string]string{"status": "ok"})
 }
 
-// GET /stats — métricas do índice
+// GET /debug
+func (h *Handler) debug(w http.ResponseWriter, r *http.Request) {
+	respond(w, http.StatusOK, h.engine.Debug())
+}
+
+// GET /stats — index metrics consumed by the admin dashboard.
 func (h *Handler) stats(w http.ResponseWriter, r *http.Request) {
-	respond(w, http.StatusOK, h.engine.Stats())
+	h.writeMu.Lock()
+	docs := make([]IndexRequest, len(h.lastDocs))
+	copy(docs, h.lastDocs)
+	snapPath := h.snap.path
+	h.writeMu.Unlock()
+
+	// Language breakdown — count documents per locale.
+	languages := map[string]int{}
+	for _, d := range docs {
+		if d.Locale != "" {
+			languages[d.Locale]++
+		}
+	}
+
+	// Uptime in whole seconds since the process started.
+	uptimeSeconds := int(time.Since(h.startedAt).Seconds())
+
+	// Snapshot file metadata (size, last-saved timestamp).
+	// Returns nil if the snapshot file does not exist yet.
+	snapInfo := h.snap.FileInfo()
+
+	respond(w, http.StatusOK, map[string]any{
+		"handler_docs":   len(docs),
+		"uptime_seconds": uptimeSeconds,
+		"languages":      languages,
+		"snapshot_path":  snapPath,
+		"snapshot":       snapInfo, // nil → omitted by json.Marshal when using omitempty
+	})
 }
 
 // GET /search?q=...&locale=...&limit=...
@@ -70,29 +113,43 @@ func (h *Handler) search(w http.ResponseWriter, r *http.Request) {
 	respond(w, http.StatusOK, h.engine.Search(q, locale, limit))
 }
 
-// POST /index — indexa um único documento
+// POST /index — adds or updates a single document.
 func (h *Handler) index(w http.ResponseWriter, r *http.Request) {
 	var req IndexRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, `{"error":"invalid body"}`, http.StatusBadRequest)
 		return
 	}
+
+	h.writeMu.Lock()
 	h.indexOne(req)
+	h.lastDocs = upsert(h.lastDocs, req)
+	docs := h.lastDocs
+	h.writeMu.Unlock()
+
+	h.snap.SaveAsync(docs)
 	w.WriteHeader(http.StatusNoContent)
 }
 
-// DELETE /index/{docID} — remove um documento
+// DELETE /index/{docID} — removes a document from the index.
 func (h *Handler) remove(w http.ResponseWriter, r *http.Request) {
 	docID := r.PathValue("docID")
 	if docID == "" {
 		http.Error(w, `{"error":"missing docID"}`, http.StatusBadRequest)
 		return
 	}
+
+	h.writeMu.Lock()
 	h.engine.RemoveDocument(docID)
+	h.lastDocs = removeByID(h.lastDocs, docID)
+	docs := h.lastDocs
+	h.writeMu.Unlock()
+
+	h.snap.SaveAsync(docs)
 	w.WriteHeader(http.StatusNoContent)
 }
 
-// POST /reindex — substitui o índice completo de forma atômica
+// POST /reindex — atomically replaces the entire index.
 func (h *Handler) reindex(w http.ResponseWriter, r *http.Request) {
 	var docs []IndexRequest
 	if err := json.NewDecoder(r.Body).Decode(&docs); err != nil {
@@ -101,17 +158,19 @@ func (h *Handler) reindex(w http.ResponseWriter, r *http.Request) {
 	}
 
 	h.writeMu.Lock()
-	defer h.writeMu.Unlock()
-
 	h.engine.Clear()
 	for _, req := range docs {
 		h.indexOne(req)
 	}
+	h.lastDocs = docs
+	h.writeMu.Unlock()
 
+	h.snap.SaveAsync(docs)
 	respond(w, http.StatusOK, map[string]int{"indexed": len(docs)})
 }
 
-// indexOne converte um IndexRequest em DocMeta e indexa no engine.
+// indexOne converts an IndexRequest into a DocMeta and indexes it.
+// Must be called with writeMu held.
 func (h *Handler) indexOne(req IndexRequest) {
 	doc := &engine.DocMeta{
 		ID:            req.ID,
@@ -127,9 +186,28 @@ func (h *Handler) indexOne(req IndexRequest) {
 	h.engine.IndexDocument(doc, fullText)
 }
 
-// respond serializa body como JSON e escreve na resposta.
 func respond(w http.ResponseWriter, status int, body any) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 	json.NewEncoder(w).Encode(body)
+}
+
+func upsert(docs []IndexRequest, req IndexRequest) []IndexRequest {
+	for i, d := range docs {
+		if d.ID == req.ID {
+			docs[i] = req
+			return docs
+		}
+	}
+	return append(docs, req)
+}
+
+func removeByID(docs []IndexRequest, id string) []IndexRequest {
+	out := docs[:0]
+	for _, d := range docs {
+		if d.ID != id {
+			out = append(out, d)
+		}
+	}
+	return out
 }
