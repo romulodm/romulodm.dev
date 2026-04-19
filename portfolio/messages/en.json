@@ -1,306 +1,1315 @@
 {
-    "ResumePDFButton": {
-        "view": "View",
-        "download": "Download"
+  "404": {
+    "error": "error",
+    "title": "Something went wrong.",
+    "button": "Try again"
+  },
+  "ResumePDFButton": {
+    "view": "View",
+    "download": "Download"
+  },
+  "language": {
+    "title": "Select your language",
+    "subtitle": "Choose the language you want to use to navigate this site."
+  },
+  "auth": {
+    "title": "Sign in to your account and start interacting.",
+    "common": {
+      "or": "OR"
     },
-    "language": {
-        "title": "Select your language",
-        "subtitle": "Choose the language you want to use to navigate this site."
+    "modal": {
+      "loginDescription": "Sign in to start interacting with blog posts.",
+      "registerDescription": "Create your account and start interacting with blog posts.",
+      "forgotDescription": "Enter your email and follow the instructions."
     },
-    "auth": {
-        "title": "Sign in to your account and start interacting."
+    "google": {
+      "continue": "Continue with Google"
     },
-    "blog": {
-        "page-title": "Blog - Romulo de Moraes",
-        "title": "The opinions expressed here are personal reflections regarding my views on technology and other subjects; feel free to interact, share your ideas and send suggestions.",
-        "card-button": "Read more",
-        "filter": {
-            "search": "Search post",
-            "random": "Random post",
-            "filter": "Filter posts",
-            "filter-all": "All"
-        },
-        "newsletter": {
-            "title": "Want to receive new posts?",
-            "content": "Subscribe to our newsletter.",
-            "btn": "Subscribe",
-            "privacy": "Privacy policy"
-        },
-        "about-portfolio": {
-            "title": "Want to know how this site was built?",
-            "content": "Check out the post I wrote about the code and architecture behind it.",
-            "btn": "View post"
-        },
-        "suggestions": {
-            "title": "Want to suggest a topic?",
-            "content": "Send a suggestion about something in the field.",
-            "btn": "Send suggestion",
-            "privacy": "Privacy policy"
-        },
-        "not-found-title": "Well, this shouldn't have happened...",
-        "not-found-content": "I couldn't find any post matching your search criteria. Try searching by titles or topics..."
+    "login": {
+      "emailPlaceholder": "Email",
+      "passwordPlaceholder": "Password",
+      "submit": "Sign in",
+      "invalidCredentials": "Incorrect email or password.",
+      "forgotPassword": "Forgot your password?",
+      "noAccount": "Don?t have an account?",
+      "createNow": "Create now"
     },
-    "contact": {
-        "text": "Feel free to contact me if you have any questions or suggestions. I'm open to ideas and opportunities.",
-        "modal-title": "Let's talk",
-        "modal-subtitle": "Tell me about your idea, question, or opportunity.",
-        "form-email": "Your email",
-        "form-name": "Your name",
-        "form-text": "What's on your mind?",
-        "form-button": "Send",
-        "sended-title": "Thank you for reaching out!",
-        "sended-content": "Your message has been sent successfully."
+    "register": {
+      "usernamePlaceholder": "Username",
+      "emailPlaceholder": "Email",
+      "passwordPlaceholder": "Password",
+      "confirmPasswordPlaceholder": "Confirm password",
+      "submit": "Create account",
+      "genericError": "Could not create your account.",
+      "hasAccount": "Already have an account?",
+      "login": "Sign in"
     },
-    "hero": {
-        "greeting-1": "Good morning",
-        "greeting-2": "Good afternoon",
-        "greeting-3": "Good evening",
-        "greeting-4": "Good night",
-        "visitor-1": "visitor!",
-        "visitor-2": "dear!",
-        "visitor-3": "dev :)",
-        "visitor-4": "person.",
-        "visitor-5": "visitor :)",
-        "visitor-6": "friend.",
-        "content": "My name is Romulo de Moraes, I decided to create this site to show a little of who I am, what I've done, what I've learned and what I plan to achieve as a full-stack developer and student.",
-        "star-title": "Give a star",
-        "star-content": "Access this site's repository.",
-        "resume-title": "View my resume",
-        "resume-content": "Dynamic, interactive and up to date."
+    "forgot": {
+      "emailPlaceholder": "Email",
+      "submit": "Send recovery link",
+      "genericError": "Could not send the email.",
+      "successTitle": "Check your inbox",
+      "successDescription": "If this email is registered, you will receive a password reset link. The link expires in 1 hour.",
+      "rememberedPassword": "Remembered your password?",
+      "didntForgetPassword": "Didn?t forget your password?",
+      "login": "Sign in"
     },
-    "about": {
-        "eyebrow": "About us",
-        "headline": "On a mission to empower remote teams",
-        "subheadline": "Aliquet nec orci mattis amet quisque ullamcorper neque, nibh sem. At arcu, sit dui mi, nibh dui, diam eget aliquam. Quisque id at vitae feugiat egestas.",
-        "missionTitle": "Our mission",
-        "missionParagraph1": "Faucibus commodo massa rhoncus, volutpat. Dignissim sed eget risus enim. Mattis mauris semper sed amet vitae sed turpis id. Id dolor praesent donec est. Odio penatibus risus viverra tellus varius sit neque erat velit. Faucibus commodo massa rhoncus, volutpat. Dignissim sed eget risus enim. Mattis mauris semper sed amet vitae sed turpis id.",
-        "missionParagraph2": "Et vitae blandit facilisi magna lacus commodo. Vitae sapien duis odio id et. Id blandit molestie auctor fermentum dignissim. Lacus diam tincidunt ac cursus in vel. Mauris varius vulputate et ultrices hac adipiscing egestas. Iaculis convallis ac tempor et ut. Ac lorem vel integer orci.",
-        "theNumbers": "The numbers",
-        "stats": {
-            "raised": "Raised",
-            "companies": "Companies",
-            "deals": "Deals Closed",
-            "leads": "Leads Generated"
-        }
+    "reset": {
+      "description": "Choose your new password.",
+      "passwordPlaceholder": "New password",
+      "confirmPasswordPlaceholder": "Confirm new password",
+      "submit": "Save new password",
+      "genericError": "Could not reset your password.",
+      "successTitle": "Password reset!",
+      "successDescription": "Your password has been updated successfully.",
+      "goToLogin": "Go to sign in"
     },
-    "home": {
-        "page-title": "Romulo de Moraes",
-        "profile": {
-            "title": "Overview of",
-            "title-colored": "Profile",
-            "link-title": "Want to see my resume?",
-            "link-content": "I summarized my experiences and made it available for download.",
-            "link-button": "View online resume"
-        },
-        "projects": {
-            "title": "Some",
-            "title-colored": "Projects",
-            "code": "Code",
-            "preview": "Visit",
-            "public": "public repositories",
-            "link-title": "Interested?",
-            "link-content": "You can see more of my projects and experiments.",
-            "link-button": "See more projects"
-        },
-        "vision": {
-            "title": "Vision on",
-            "title-colored": "Software",
-            "link-title": "Want to know more?",
-            "link-content": "You can read more about what I think on my blog.",
-            "link-button": "View posts"
-        },
-        "contact": {
-            "title": "Get in",
-            "title-colored": "Touch"
-        }
+    "validation": {
+      "emailInvalid": "Invalid email.",
+      "passwordRequired": "Password is required.",
+      "usernameTooShort": "Username is too short.",
+      "passwordMin": "Minimum 8 characters.",
+      "passwordsDoNotMatch": "Passwords do not match."
+    }
+  },
+  "blog": {
+    "page-title": "Blog - Romulo de Moraes",
+    "title": "The opinions expressed here are personal reflections regarding my views on technology and other subjects; feel free to interact, share your ideas and send suggestions.",
+    "card-button": "Read more",
+    "filter": {
+      "search": "Search post",
+      "random": "Random post",
+      "filter": "Filter posts",
+      "filter-all": "All"
     },
+    "newsletter": {
+      "title": "Want to receive new posts?",
+      "content": "Subscribe to our newsletter.",
+      "btn": "Subscribe",
+      "privacy": "Privacy policy"
+    },
+    "about-portfolio": {
+      "title": "Want to know how this site was built?",
+      "content": "Check out the post I wrote about the code and architecture behind it.",
+      "btn": "View post"
+    },
+    "suggestions": {
+      "title": "Want to suggest a topic?",
+      "content": "Send a suggestion about something in the field.",
+      "btn": "Send suggestion",
+      "privacy": "Privacy policy"
+    },
+    "not-found-title": "Well, this shouldn't have happened...",
+    "not-found-content": "I couldn't find any post matching your search criteria. Try searching by titles or topics...",
+    "metadata-description": "Articles about web development, JavaScript, TypeScript, and much more."
+  },
+  "contact": {
+    "text": "Feel free to contact me if you have any questions or suggestions. I'm open to ideas and opportunities.",
+    "modal-title": "Let's talk",
+    "modal-subtitle": "Tell me about your idea, question, or opportunity.",
+    "form-email": "Your email",
+    "form-name": "Your name",
+    "form-text": "What's on your mind?",
+    "form-button": "Send",
+    "sended-title": "Thank you for reaching out!",
+    "sended-content": "Your message has been sent successfully."
+  },
+  "hero": {
+    "greeting-1": "Good morning",
+    "greeting-2": "Good afternoon",
+    "greeting-3": "Good evening",
+    "greeting-4": "Good night",
+    "visitor-1": "visitor!",
+    "visitor-2": "dear!",
+    "visitor-3": "dev :)",
+    "visitor-4": "person.",
+    "visitor-5": "visitor :)",
+    "visitor-6": "friend.",
+    "content": "My name is Romulo de Moraes, I decided to create this site to show a little of who I am, what I've done, what I've learned and what I plan to achieve as a full-stack developer and student.",
+    "star-title": "Give a star",
+    "star-content": "Access this site's repository.",
+    "resume-title": "View my resume",
+    "resume-content": "Dynamic, interactive and up to date.",
+    "view-more": "View more"
+  },
+  "about": {
+    "eyebrow": "About us",
+    "headline": "On a mission to empower remote teams",
+    "subheadline": "Aliquet nec orci mattis amet quisque ullamcorper neque, nibh sem. At arcu, sit dui mi, nibh dui, diam eget aliquam. Quisque id at vitae feugiat egestas.",
+    "missionTitle": "Our mission",
+    "missionParagraph1": "Faucibus commodo massa rhoncus, volutpat. Dignissim sed eget risus enim. Mattis mauris semper sed amet vitae sed turpis id. Id dolor praesent donec est. Odio penatibus risus viverra tellus varius sit neque erat velit. Faucibus commodo massa rhoncus, volutpat. Dignissim sed eget risus enim. Mattis mauris semper sed amet vitae sed turpis id.",
+    "missionParagraph2": "Et vitae blandit facilisi magna lacus commodo. Vitae sapien duis odio id et. Id blandit molestie auctor fermentum dignissim. Lacus diam tincidunt ac cursus in vel. Mauris varius vulputate et ultrices hac adipiscing egestas. Iaculis convallis ac tempor et ut. Ac lorem vel integer orci.",
+    "theNumbers": "The numbers",
+    "stats": {
+      "raised": "Raised",
+      "companies": "Companies",
+      "deals": "Deals Closed",
+      "leads": "Leads Generated",
+      "yearsCoding": "Years coding",
+      "usersImpacted": "Users impacted",
+      "projectsShipped": "Projects shipped",
+      "articlesPublished": "Articles published"
+    },
+    "command": "romulo.exe --about",
+    "location": "Rio Grande, RS - Brazil",
+    "availability": "Open to opportunities",
+    "buttons": {
+      "projects": "View projects",
+      "contact": "Contact"
+    },
+    "images": {
+      "whiteboardAlt": "Team whiteboard session",
+      "collaborationAlt": "Team collaboration",
+      "memberAlt": "Team member",
+      "workspaceAlt": "Coworking space",
+      "extraAlt": "Additional team photo"
+    }
+  },
+  "home": {
+    "page-title": "Romulo de Moraes",
     "profile": {
-        "link-title": "Want to see my resume?",
-        "link-content": "I summarized my experiences and made it available for download.",
-        "link-button": "View online resume"
+      "title": "Overview of",
+      "title-colored": "Profile",
+      "link-title": "Want to see my resume?",
+      "link-content": "I summarized my experiences and made it available for download.",
+      "link-button": "View online resume"
     },
-    "navigation": {
-        "home": "Home",
-        "resume": "Resume",
-        "settings": "Settings",
-        "theme": "Theme",
-        "language": "Language",
-        "user": "User",
-        "modal": {
-            "profile": "Profile",
-            "logout": "Logout"
-        }
-    },
-    "post": {
-        "comment-title": "Leave a comment",
-        "comment-placeholder": "Write your comment here...",
-        "comment-button": "Post comment",
-        "comments-empty": "No comments yet."
-    },
-    "resume": {
-        "page-title": "Online Resume - Romulo de Moraes",
-        "linkedin": "LinkedIn Profile",
-        "github": "GitHub Profile",
-        "titles": {
-            "xp": "Experience",
-            "education": "Education",
-            "lang": "Languages"
-        }
-    },
-    "terminal": {
-        "xp": "experience",
-        "loading-xp-title": "Looking for experience...",
-        "loading-xp": "Loading system experience took ",
-        "education": "education",
-        "loading-education-title": "Looking for education...",
-        "loading-education": "Loading education took ",
-        "visitor": "visitor",
-        "tooltip": "You can use this terminal",
-        "loading": "Loading the follow-up message took ",
-        "not-found-fisrt": "Command not found, type ",
-        "not-found-second": " for a list of commands.",
-        "loadings": {
-            "help": "Loading the help message took ",
-            "initial": "Loading the initial message took ",
-            "follow": "Loading social networks took ",
-            "who": "Loading this useless info took ",
-            "who-years": " years",
-            "whoami": "Loading this pill took ",
-            "cats": "Loading these amazing cats took ",
-            "inter": "Loading SC Internacional's logo took ",
-            "spotify": "Loading this awesome playlist took ",
-            "secret": "Loading this riddle took "
-        },
-        "commands": {
-            "help": "List of commands",
-            "clear": "Clear the terminal",
-            "initial": "Display the header",
-            "follow": "My social networks",
-            "who": "Who is Romulo?",
-            "whoami": "Who are you?",
-            "cats": "Wonderful cat art",
-            "inter": "The greatest football club in the world",
-            "spotify": "One of my playlists",
-            "secret": "Simple riddle, what's the password?"
-        },
-        "initial": {
-            "content": "For a list of available commands, type "
-        },
-        "who": {
-            "so": "So...",
-            "about": "I'm 20 years old, just a student and tech enthusiast who likes to play games, read books and do other nerdy stuff. 🤓"
-        },
-        "whoami": {
-            "title": "Life is not a mystery to be solved, but an experience to be lived.",
-            "paragraph1": "I saw this quote in the movie Dune and thought a lot about it. I believe that many times we turn our insignificance into a form of martyrdom and doubt, when in reality things should be simpler than they actually are.",
-            "paragraph2": "You and I are not mere candidates for a place in heaven. If you always live thinking about a future reward, you end up forgetting to live in the present and forgetting who you are.",
-            "paragraph3": "According to Jean-Paul Sartre, existence precedes essence. This means that human beings have no predetermined nature. You create your own nature through your actions and choices. Therefore, this question has no correct answer. The responsibilities you take on and the choices you make throughout your life determine who you are.",
-            "paragraph4": "Today you might be a programmer, a student, a professional... However, tomorrow you might be a completely different person — it all depends on you."
-        },
-        "spotify": {
-            "alert": "Watch out for the volume and enjoy in moderation!"
-        },
-        "secret": {
-            "how-first": "To see the mysterious message you need to type ",
-            "how-try": "your attempt",
-            "how-second": ", your attempt being a four-digit number.",
-            "how-hint": "To see a hint, type ",
-            "hint-time": "Come on, man, these messages don't take long to show up...",
-            "hint": "The hint is: it's a year 🤯 wow, amazing hint! One more — this year appears in a message here in the terminal...",
-            "wrong": "This check took no time at all.",
-            "reward": "Correct! Your reward here: "
-        }
+    "projects": {
+      "title": "Some",
+      "title-colored": "Projects",
+      "code": "Code",
+      "preview": "Visit",
+      "public": "public repositories",
+      "link-title": "Interested?",
+      "link-content": "You can see more of my projects and experiments.",
+      "link-button": "See more projects"
     },
     "vision": {
-        "link-title": "Want to know more?",
-        "link-content": "You can read more about what I think on my blog.",
-        "link-button": "View posts",
-        "icons": {
-            "first-title": "Innovation",
-            "first-content": "Defining tomorrow's rules.",
-            "second-title": "Community",
-            "second-content": "Making people's lives easier."
-        },
-        "frame": {
-            "one": "Design.",
-            "two": "Prototype.",
-            "three": "Develop.",
-            "four": "Improve."
-        },
-        "productivity": {
-            "title": "Productivity at its best.",
-            "word-1": "With ",
-            "bold-1": "quality ",
-            "word-2": "and ",
-            "bold-2": "sustainability ",
-            "word-3": "at heart."
-        },
-        "development": {
-            "left": "Security",
-            "center": "Collaborative development",
-            "right": "Flexibility"
-        },
-        "comment": {
-            "time": "2 hours ago",
-            "content": "Don't forget the meeting, friend!"
-        }
+      "title": "Vision on",
+      "title-colored": "Software",
+      "link-title": "Want to know more?",
+      "link-content": "You can read more about what I think on my blog.",
+      "link-button": "View posts"
     },
-    "404": {
-        "error": "error",
-        "title": "Something went wrong.",
-        "button": "Try again"
+    "contact": {
+      "title": "Get in",
+      "title-colored": "Touch"
     },
-    "announcement": {
-        "content": "Hey, this portfolio is still under development, ok? 🤠"
-    },
-    "footer": {
-        "cta": {
-            "title": "Have a project in mind?",
-            "button": "Get in touch",
-            "disclaimer": "Let's build something together."
-        },
-        "newsletter": {
-            "title": "Stay Updated",
-            "subtitle": "Get notified about new posts, projects, and ideas straight to your inbox.",
-            "placeholder": "Enter your email",
-            "subscribe": "Subscribe"
-        },
-        "nav": {
-            "resources": {
-                "title": "Resources",
-                "links": {
-                    "home": "Home",
-                    "resume": "Resume",
-                    "blog": "Blog",
-                    "profile": "Profile"
-                }
-            },
-            "newsletter": {
-                "title": "Newsletter",
-                "links": {
-                    "about": "About",
-                    "login": "Sign in",
-                    "logout": "Sign out",
-                    "privacy": "Privacy policy"
-                }
-            },
-            "legal": {
-                "title": "Legal",
-                "links": {
-                    "privacy": "Privacy policy",
-                    "terms": "Terms of service",
-                    "notices": "Legal notices"
-                }
-            },
-            "about": {
-                "title": "About this site",
-                "description": "I believe that building in public is the best way to grow. I created this portfolio and blog to share ideas, projects, and lessons learned along the journey.",
-                "community": "If you're here, you're already part of this community."
-            }
-        },
-        "legal": {
-            "madeWith": "Made with ",
-            "copyright": "© {year} — All rights reserved."
-        }
+    "showcase": {
+      "eyebrow": "Technologies",
+      "title": "Works with everything.",
+      "description": "Frontend, backend, databases, DevOps, blockchain, embedded systems, payment gateways, APIs, and more.",
+      "highlight": "Yes."
     }
+  },
+  "profile": {
+    "link-title": "Want to see my resume?",
+    "link-content": "I summarized my experiences and made it available for download.",
+    "link-button": "View online resume"
+  },
+  "navigation": {
+    "home": "Home",
+    "resume": "Resume",
+    "settings": "Settings",
+    "theme": "Theme",
+    "language": "Language",
+    "user": "User",
+    "modal": {
+      "profile": "Profile",
+      "logout": "Logout"
+    }
+  },
+  "post": {
+    "comment-title": "Leave a comment",
+    "comment-placeholder": "Write your comment here...",
+    "comment-button": "Post comment",
+    "comments-empty": "No comments yet."
+  },
+  "resume": {
+    "page-title": "Online Resume - Romulo de Moraes",
+    "linkedin": "LinkedIn Profile",
+    "github": "GitHub Profile",
+    "titles": {
+      "xp": "Experience",
+      "education": "Education",
+      "lang": "Languages"
+    }
+  },
+  "terminal": {
+    "xp": "experience",
+    "loading-xp-title": "Looking for experience...",
+    "loading-xp": "Loading system experience took ",
+    "education": "education",
+    "loading-education-title": "Looking for education...",
+    "loading-education": "Loading education took ",
+    "visitor": "visitor",
+    "tooltip": "You can use this terminal",
+    "loading": "Loading the follow-up message took ",
+    "not-found-fisrt": "Command not found, type ",
+    "not-found-second": " for a list of commands.",
+    "loadings": {
+      "help": "Loading the help message took ",
+      "initial": "Loading the initial message took ",
+      "follow": "Loading social networks took ",
+      "who": "Loading this useless info took ",
+      "who-years": " years",
+      "whoami": "Loading this pill took ",
+      "cats": "Loading these amazing cats took ",
+      "inter": "Loading SC Internacional's logo took ",
+      "spotify": "Loading this awesome playlist took ",
+      "secret": "Loading this riddle took "
+    },
+    "commands": {
+      "help": "List of commands",
+      "clear": "Clear the terminal",
+      "initial": "Display the header",
+      "follow": "My social networks",
+      "who": "Who is Romulo?",
+      "whoami": "Who are you?",
+      "cats": "Wonderful cat art",
+      "inter": "The greatest football club in the world",
+      "spotify": "One of my playlists",
+      "secret": "Simple riddle, what's the password?"
+    },
+    "initial": {
+      "content": "For a list of available commands, type "
+    },
+    "who": {
+      "so": "So...",
+      "about": "I'm 20 years old, just a student and tech enthusiast who likes to play games, read books and do other nerdy stuff. 🤓"
+    },
+    "whoami": {
+      "title": "Life is not a mystery to be solved, but an experience to be lived.",
+      "paragraph1": "I saw this quote in the movie Dune and thought a lot about it. I believe that many times we turn our insignificance into a form of martyrdom and doubt, when in reality things should be simpler than they actually are.",
+      "paragraph2": "You and I are not mere candidates for a place in heaven. If you always live thinking about a future reward, you end up forgetting to live in the present and forgetting who you are.",
+      "paragraph3": "According to Jean-Paul Sartre, existence precedes essence. This means that human beings have no predetermined nature. You create your own nature through your actions and choices. Therefore, this question has no correct answer. The responsibilities you take on and the choices you make throughout your life determine who you are.",
+      "paragraph4": "Today you might be a programmer, a student, a professional... However, tomorrow you might be a completely different person — it all depends on you."
+    },
+    "spotify": {
+      "alert": "Watch out for the volume and enjoy in moderation!"
+    },
+    "secret": {
+      "how-first": "To see the mysterious message you need to type ",
+      "how-try": "your attempt",
+      "how-second": ", your attempt being a four-digit number.",
+      "how-hint": "To see a hint, type ",
+      "hint-time": "Come on, man, these messages don't take long to show up...",
+      "hint": "The hint is: it's a year 🤯 wow, amazing hint! One more — this year appears in a message here in the terminal...",
+      "wrong": "This check took no time at all.",
+      "reward": "Correct! Your reward here: "
+    }
+  },
+  "vision": {
+    "link-title": "Want to know more?",
+    "link-content": "You can read more about what I think on my blog.",
+    "link-button": "View posts",
+    "icons": {
+      "first-title": "Innovation",
+      "first-content": "Defining tomorrow's rules.",
+      "second-title": "Community",
+      "second-content": "Making people's lives easier."
+    },
+    "frame": {
+      "one": "Design.",
+      "two": "Prototype.",
+      "three": "Develop.",
+      "four": "Improve."
+    },
+    "productivity": {
+      "title": "Productivity at its best.",
+      "word-1": "With ",
+      "bold-1": "quality ",
+      "word-2": "and ",
+      "bold-2": "sustainability ",
+      "word-3": "at heart."
+    },
+    "development": {
+      "left": "Security",
+      "center": "Collaborative development",
+      "right": "Flexibility"
+    },
+    "comment": {
+      "time": "2 hours ago",
+      "content": "Don't forget the meeting, friend!"
+    }
+  },
+  "announcement": {
+    "content": "Hey, this portfolio is still under development, ok? 🤠"
+  },
+  "footer": {
+    "cta": {
+      "title": "Have a project in mind?",
+      "button": "Get in touch",
+      "disclaimer": "Let's build something together."
+    },
+    "newsletter": {
+      "title": "Stay Updated",
+      "subtitle": "Get notified about new posts, projects, and ideas straight to your inbox.",
+      "placeholder": "Enter your email",
+      "subscribe": "Subscribe"
+    },
+    "nav": {
+      "resources": {
+        "title": "Resources",
+        "links": {
+          "home": "Home",
+          "resume": "Resume",
+          "blog": "Blog",
+          "profile": "Profile"
+        }
+      },
+      "newsletter": {
+        "title": "Newsletter",
+        "links": {
+          "about": "About",
+          "login": "Sign in",
+          "logout": "Sign out",
+          "privacy": "Privacy policy"
+        }
+      },
+      "legal": {
+        "title": "Legal",
+        "links": {
+          "privacy": "Privacy policy",
+          "terms": "Terms of service",
+          "notices": "Legal notices"
+        }
+      },
+      "about": {
+        "title": "About this site",
+        "description": "I believe that building in public is the best way to grow. I created this portfolio and blog to share ideas, projects, and lessons learned along the journey.",
+        "community": "If you're here, you're already part of this community."
+      }
+    },
+    "legal": {
+      "madeWith": "Made with ",
+      "copyright": "© {year} — All rights reserved."
+    }
+  },
+  "blogPost": {
+    "notFoundTitle": "Post not found",
+    "videoTitle": "Post video",
+    "published": "Published {time}",
+    "readingTime": "{minutes} min read",
+    "originallyPublishedAt": "Originally published at:"
+  },
+  "commentsPage": {
+    "metadataNotFound": "Comment not found",
+    "metadataTitle": "Comment by @{username} on \"{postTitle}\"",
+    "comment": "Comment",
+    "replyingTo": "Replying to @{username}",
+    "backToPost": "Go to \"{title}\""
+  },
+  "newsletterFlow": {
+    "confirm": {
+      "loadingTitle": "Confirming...",
+      "successTitle": "All set!",
+      "errorTitle": "Oops! Something went wrong",
+      "successDefaultMessage": "Subscription confirmed!",
+      "errorDefaultMessage": "Could not confirm subscription.",
+      "networkError": "Connection error. Please try again later.",
+      "successListTitle": "From now on you?ll receive:",
+      "successItems": {
+        "posts": "New posts as soon as they are published",
+        "exclusive": "Tips and exclusive content",
+        "updates": "News and projects"
+      },
+      "errorListTitle": "Possible causes:",
+      "errorItems": {
+        "expired": "The link expired (valid for 24h)",
+        "alreadyConfirmed": "This email was already confirmed",
+        "incorrect": "The link is incorrect"
+      },
+      "backHome": "Go home",
+      "persistentProblem": "Still having trouble?",
+      "subscribeAgain": "Subscribe again"
+    },
+    "unsubscribe": {
+      "confirmTitle": "Unsubscribe?",
+      "loadingTitle": "Processing...",
+      "successTitle": "Subscription canceled",
+      "errorTitle": "Oops! Something went wrong",
+      "successDefaultMessage": "Subscription canceled successfully.",
+      "errorDefaultMessage": "Could not cancel subscription.",
+      "networkError": "Connection error. Please try again.",
+      "description": "You will no longer receive new posts and updates by email. You can subscribe again at any time.",
+      "confirmButton": "Yes, unsubscribe",
+      "stayButton": "No, keep me subscribed",
+      "farewellTitle": "We?ll miss you!",
+      "farewellDescription": "You can subscribe again at any time.",
+      "backHome": "Go home"
+    }
+  },
+  "newsletterForm": {
+    "title": "Receive new posts in your email",
+    "subtitle": "Subscribe to the newsletter and get notified when new articles are published",
+    "placeholder": "you@email.com",
+    "subscribe": "Subscribe",
+    "subscribing": "Subscribing...",
+    "successDefault": "Thanks for subscribing!",
+    "errorDefault": "Something went wrong. Please try again.",
+    "networkError": "Could not subscribe. Please try again."
+  },
+  "support": {
+    "metadata": {
+      "title": "Support the blog",
+      "description": "Buy me a coffee and help keep the blog online!"
+    },
+    "page": {
+      "title": "Buy me a coffee",
+      "description": "Each coffee helps me keep writing and maintaining the blog. Thanks for the support!",
+      "supporters": "{count} supporters"
+    },
+    "widget": {
+      "namePlaceholder": "Name or @social",
+      "messagePlaceholder": "Leave a message...",
+      "payWith": "Pay with",
+      "privateMessage": "Private message",
+      "loading": "Please wait...",
+      "supportWith": "Support with R$ {amount},00",
+      "genericError": "Something went wrong. Please try again.",
+      "methods": {
+        "pix": "PIX",
+        "card": "Card",
+        "eth": "ETH"
+      }
+    },
+    "pix": {
+      "title": "Pay with PIX",
+      "description": "Scan the QR code or copy the code. Payment is confirmed automatically.",
+      "qrAlt": "PIX QR code",
+      "copy": "Copy PIX code",
+      "copied": "Copied!",
+      "simulate": "Simulate payment (dev)",
+      "simulating": "Simulating...",
+      "alreadyPaid": "I already paid"
+    },
+    "crypto": {
+      "back": "Back",
+      "wallet": "Wallet:",
+      "waiting": "Waiting for MetaMask...",
+      "send": "Send with MetaMask",
+      "genericError": "Error processing ETH.",
+      "verifyError": "Could not verify transaction.",
+      "missingWallet": "MetaMask not found. Install it at metamask.io",
+      "coffees": "{count} coffee(s)"
+    },
+    "stripe": {
+      "back": "Back",
+      "cardError": "Card error.",
+      "unexpectedError": "An unexpected error occurred.",
+      "processing": "Processing...",
+      "pay": "Pay"
+    },
+    "success": {
+      "title": "Thanks for the coffee!",
+      "description": "Your support means a lot. Keep following the blog!",
+      "supportAgain": "Support again"
+    },
+    "sidebar": {
+      "privateMessage": "Private message.",
+      "noMessage": "No message.",
+      "viewMessage": "View message",
+      "topSupporters": "Top supporters",
+      "recentSupport": "Recent support",
+      "beFirst": "Be the first to support!",
+      "anonymous": "Anonymous",
+      "someone": "Someone",
+      "coffees": "{count} coffee(s)"
+    },
+    "messageModal": {
+      "defaultName": "Anonymous",
+      "label": "left the following message:"
+    },
+    "apoiase": {
+      "title": "Support this project",
+      "description": "Your contribution makes all the difference!",
+      "button": "Support"
+    }
+  },
+  "api": {
+    "common": {
+      "invalidRequest": "Invalid request data.",
+      "invalidBody": "Invalid request body.",
+      "unauthorized": "Authentication required.",
+      "forbidden": "Access denied.",
+      "notFound": "Resource not found.",
+      "conflict": "Could not complete the request.",
+      "rateLimited": "Too many attempts. Please try again later.",
+      "internalError": "Internal error.",
+      "internalRetry": "Internal error. Please try again.",
+      "emailRequired": "Email is required.",
+      "emailInvalid": "Invalid email address."
+    },
+    "auth": {
+      "forgot": {
+        "rateLimited": "Too many attempts. Please try again in 10 minutes.",
+        "success": "If this email is registered, you will receive a link shortly.",
+        "internal": "Internal error."
+      },
+      "register": {
+        "rateLimited": "Too many sign-up attempts. Please try again later.",
+        "conflict": "Could not complete sign-up with the provided data.",
+        "conflictRetry": "Could not complete sign-up. Please try again.",
+        "passwordRequired": "Password is required.",
+        "passwordMin": "Password must be at least 8 characters.",
+        "passwordMax": "Password must be at most 128 characters."
+      }
+    },
+    "comments": {
+      "postIdRequired": "postId is required.",
+      "empty": "Comment cannot be empty.",
+      "tooLong": "Comment is too long (max. 2000 characters).",
+      "rateLimited": "Too many comments in a short time. Please wait a moment.",
+      "cannotComment": "You cannot comment.",
+      "postNotFound": "Post not found.",
+      "parentNotFound": "Parent comment not found.",
+      "commentNotFound": "Comment not found.",
+      "invalidVote": "Invalid vote value."
+    },
+    "newsletter": {
+      "subscribe": {
+        "rateLimited": "Too many attempts. Please try again in a few minutes.",
+        "success": "Check your email to confirm your subscription.",
+        "internal": "Internal error. Please try again."
+      },
+      "confirm": {
+        "missingToken": "Missing token.",
+        "invalidToken": "Invalid or expired token. Please request a new subscription.",
+        "success": "Subscription confirmed successfully! Welcome.",
+        "internal": "Internal error."
+      },
+      "unsubscribe": {
+        "missingToken": "Missing token.",
+        "invalidToken": "Invalid token.",
+        "success": "You have been removed from the newsletter successfully.",
+        "internal": "Internal error."
+      },
+      "requestUnsubscribe": {
+        "rateLimited": "Too many attempts. Please try again in a few minutes.",
+        "success": "Check your email to confirm the unsubscribe request.",
+        "internal": "Internal error. Please try again."
+      }
+    },
+    "donations": {
+      "eth": {
+        "invalidTransaction": "Invalid transaction."
+      },
+      "pix": {
+        "notAvailableInProduction": "Not available in production.",
+        "missingDonationId": "Missing donationId.",
+        "chargeDescription": "{count}x coffee for the blog",
+        "internal": "Could not create the PIX charge. Please try again."
+      },
+      "stripe": {
+        "missingSignature": "Missing signature.",
+        "invalidSignature": "Invalid signature.",
+        "internal": "Could not create the Stripe payment intent. Please try again."
+      },
+      "invalidCoffeeCount": "Invalid coffee amount."
+    },
+    "posts": {
+      "noPosts": "No posts.",
+      "notFound": "Post not found.",
+      "internalError": "Internal server error.",
+      "missingRequiredFields": "Missing required fields.",
+      "invalidBody": "Invalid body.",
+      "identifierRequired": "Identifier is required.",
+      "queueOnly": "View flushing now runs exclusively through the worker-backed queue path."
+    },
+    "uploads": {
+      "missingFields": "Missing required fields: filename, contentType, kind.",
+      "invalidKind": "Invalid kind. It must be \"cover\" or \"inline\".",
+      "invalidContentType": "Unsupported file type.",
+      "fileTooLarge": "File is too large.",
+      "internal": "Could not prepare the upload. Please try again."
+    },
+    "admin": {
+      "newsletterCampaigns": {
+        "subjectRequired": "Subject is required.",
+        "postIdRequired": "postId is required for post-based campaigns.",
+        "postNotFound": "Post not found.",
+        "postMustBePublished": "You can only create campaigns for published posts.",
+        "missingPortugueseTranslation": "The post needs a Portuguese translation first.",
+        "customContentRequired": "Content is required for custom campaigns.",
+        "readArticle": "Read article ->",
+        "notFound": "Campaign not found.",
+        "draftOnlyEdit": "Only draft campaigns can be edited.",
+        "invalidPost": "Invalid or unpublished post.",
+        "cannotDeleteSending": "You cannot delete a campaign that is being sent.",
+        "deleted": "Campaign deleted.",
+        "draftOnlySend": "Only draft campaigns can be sent.",
+        "invalidScheduledAt": "Invalid scheduledAt value.",
+        "futureScheduledAt": "scheduledAt must be a future date.",
+        "scheduled": "Campaign scheduled successfully.",
+        "queued": "Campaign queued for sending.",
+        "dispatchFailed": "Failed to dispatch campaign."
+      },
+      "suspiciousComments": {
+        "notFound": "Suspicious comment not found."
+      }
+    }
+  },
+  "admin": {
+    "sidebar": {
+      "toggleTheme": "Toggle theme",
+      "toggleLanguage": "Toggle language",
+      "fallbackUser": "Admin",
+      "nav": {
+        "dashboard": "Dashboard",
+        "posts": "Posts",
+        "allPosts": "All posts",
+        "newPost": "New post",
+        "newsletter": "Newsletter",
+        "newsletterOverview": "Overview",
+        "campaigns": "Campaigns",
+        "newCampaign": "New campaign",
+        "suspiciousComments": "Suspicious comments",
+        "bannedUsers": "Banned users",
+        "donations": "Donations",
+        "observability": "Observability",
+        "system": "System",
+        "search": "Search engine",
+        "backups": "Backups",
+        "blog": "Blog"
+      }
+    },
+    "dashboard": {
+      "title": "Dashboard",
+      "description": "A quick overview of your blog and donations.",
+      "recentTransactions": "Recent transactions",
+      "topSupporters": "Top supporters",
+      "noDonationsYet": "No donations yet.",
+      "anonymous": "Anonymous",
+      "someone": "Someone",
+      "coffees": "{count, plural, one {# coffee} other {# coffees}}",
+      "stats": {
+        "raised": {
+          "label": "Total raised",
+          "sub": "{count, plural, one {# supporter} other {# supporters}}"
+        },
+        "views": {
+          "label": "Views",
+          "sub": "{count, plural, one {# published post} other {# published posts}}"
+        },
+        "likes": {
+          "label": "Likes",
+          "sub": "Across all posts"
+        },
+        "comments": {
+          "label": "Comments",
+          "sub": "Across all posts"
+        }
+      }
+    },
+    "donationsPage": {
+      "title": "Donations",
+      "description": "Manage supporters and their messages.",
+      "stats": {
+        "raised": "Total raised",
+        "supporters": "Supporters",
+        "donations": "Total donations",
+        "averageTicket": "Average ticket"
+      },
+      "preview": {
+        "topSupporters": {
+          "title": "Top 10 supporters",
+          "subtitle": "Shown in the support page ranking"
+        },
+        "recent": {
+          "title": "10 most recent",
+          "subtitle": "Shown in the recent support section"
+        }
+      }
+    },
+    "postsPage": {
+      "title": "Posts",
+      "total": "{count, plural, one {# post total} other {# posts total}}",
+      "newPost": "New post",
+      "empty": "No posts yet.",
+      "createFirst": "Create the first post",
+      "untitled": "(untitled)",
+      "missingTranslation": "Missing translation: {locale}",
+      "columns": {
+        "title": "Title",
+        "status": "Status",
+        "locales": "Locales",
+        "tags": "Tags",
+        "updated": "Updated",
+        "actions": "Actions"
+      },
+      "status": {
+        "published": "Published",
+        "draft": "Draft"
+      },
+      "actions": {
+        "edit": "Edit",
+        "view": "View"
+      }
+    },
+    "bannedUsers": {
+      "title": "Banned users",
+      "description": "Manage users who cannot comment.",
+      "loading": "Loading...",
+      "empty": "No banned users.",
+      "bannedAt": "Banned on {date}",
+      "unban": "Unban"
+    },
+    "newsletterPage": {
+      "title": "Newsletter",
+      "subtitle": "{count, plural, one {# subscriber total} other {# subscribers total}}",
+      "newCampaign": "New campaign",
+      "recentCampaigns": "Recent campaigns",
+      "seeAll": "See all",
+      "scheduledFor": "Scheduled: {date}",
+      "stats": {
+        "active": "Active subscribers",
+        "pending": "Awaiting confirmation",
+        "unsubscribed": "Unsubscribes",
+        "openRate": "Overall open rate"
+      },
+      "empty": {
+        "title": "No campaigns yet",
+        "description": "Create your first campaign to get started."
+      },
+      "status": {
+        "draft": "Draft",
+        "scheduled": "Scheduled",
+        "sending": "Sending",
+        "sent": "Sent",
+        "failed": "Failed"
+      },
+      "metrics": {
+        "sent": "sent",
+        "openRate": "open rate"
+      }
+    },
+    "donationsTable": {
+      "title": "All donations",
+      "empty": "No donations found.",
+      "anonymous": "Anonymous",
+      "private": "private",
+      "coffees": "{count, plural, one {# coffee} other {# coffees}}",
+      "messagePlaceholder": "Message (leave empty to remove)",
+      "cancel": "Cancel",
+      "save": "Save",
+      "saving": "Saving...",
+      "viewFullMessage": "View full message",
+      "noMessage": "no message",
+      "editMessage": "Edit message",
+      "deleteDonation": "Delete donation",
+      "confirmDelete": "Delete this donation? This action cannot be undone.",
+      "page": "Page {page} of {totalPages}",
+      "filters": {
+        "all": "All",
+        "completed": "Completed",
+        "pending": "Pending"
+      },
+      "status": {
+        "completed": "Completed",
+        "pending": "Pending",
+        "failed": "Failed",
+        "expired": "Expired"
+      }
+    },
+    "donationsPreview": {
+      "empty": "No donations.",
+      "anonymous": "Anonymous",
+      "messagePlaceholder": "Message (leave empty to remove)",
+      "cancel": "Cancel",
+      "save": "Save",
+      "saving": "Saving...",
+      "viewFullMessage": "View full message",
+      "noMessage": "no message",
+      "editMessage": "Edit message"
+    },
+    "campaignDelete": {
+      "title": "Delete campaign",
+      "confirm": "Are you sure?",
+      "cancel": "Cancel",
+      "deleting": "Deleting...",
+      "delete": "Delete"
+    },
+    "suspiciousCommentsPage": {
+      "title": "Suspicious comments",
+      "pending": "{count} comment(s) pending review",
+      "loading": "Loading...",
+      "empty": "No suspicious comments right now.",
+      "flagged": "flagged",
+      "approve": "Approve",
+      "reject": "Reject",
+      "previous": "Previous",
+      "page": "Page {page} of {totalPages}",
+      "next": "Next"
+    },
+    "newCampaignPage": {
+      "title": "New campaign",
+      "description": "Save it as a draft first, then send or schedule it."
+    },
+    "campaignsList": {
+      "title": "Campaigns",
+      "total": "{count} total",
+      "newCampaign": "New campaign",
+      "unavailableTitle": "Title unavailable",
+      "empty": "No campaigns created yet.",
+      "previous": "Previous",
+      "page": "Page {page} of {totalPages}",
+      "next": "Next",
+      "columns": {
+        "subject": "Subject",
+        "type": "Type",
+        "status": "Status",
+        "sent": "Sent",
+        "openRate": "Open rate",
+        "date": "Date"
+      },
+      "status": {
+        "draft": "Draft",
+        "scheduled": "Scheduled",
+        "sending": "Sending",
+        "sent": "Sent",
+        "failed": "Failed"
+      },
+      "type": {
+        "post": "Post",
+        "html": "HTML"
+      }
+    },
+    "campaignDetail": {
+      "unavailableTitle": "Title unavailable",
+      "createdAt": "Created on {date}",
+      "linkedPost": "Linked post:",
+      "editTitle": "Edit campaign",
+      "sentContent": "Sent content",
+      "status": {
+        "draft": "Draft",
+        "scheduled": "Scheduled",
+        "sending": "Sending",
+        "sent": "Sent",
+        "failed": "Failed"
+      },
+      "type": {
+        "post": "Post",
+        "html": "HTML"
+      },
+      "stats": {
+        "total": "Total",
+        "sent": "Sent",
+        "opens": "Opens",
+        "openRate": "Open rate"
+      },
+      "delivery": {
+        "title": "Delivery status",
+        "delivered": "Delivered",
+        "failed": "Failed",
+        "pending": "Pending"
+      }
+    },
+    "campaignForm": {
+      "autoSubject": "New post: {title}",
+      "common": {
+        "optional": "optional"
+      },
+      "errors": {
+        "save": "Could not save the campaign.",
+        "send": "Could not send the campaign."
+      },
+      "type": {
+        "label": "Campaign type",
+        "post": {
+          "title": "Post-based",
+          "description": "Fixed template with title, summary, and article link"
+        },
+        "custom": {
+          "title": "Custom HTML",
+          "description": "Write your own HTML for the email"
+        }
+      },
+      "post": {
+        "label": "Post",
+        "empty": "No published posts found. Publish a post before creating this type of campaign.",
+        "placeholder": "Select a post..."
+      },
+      "template": {
+        "previewLabel": "Template preview",
+        "hideHtml": "Hide",
+        "showHtml": "View HTML",
+        "readArticle": "Read article ->"
+      },
+      "subject": {
+        "label": "Email subject",
+        "placeholderPost": "Filled automatically when a post is selected",
+        "placeholderCustom": "Ex: New article: How to scale a Node.js application",
+        "counter": "{count}/150 characters"
+      },
+      "previewText": {
+        "label": "Preview text",
+        "placeholder": "Text shown before opening the message in the email client"
+      },
+      "content": {
+        "label": "Content (HTML)",
+        "help": "Inline-styled HTML. The base template (header, footer, unsubscribe) is applied automatically.",
+        "placeholder": "<h2>Campaign title</h2>\n<p>Email body...</p>\n<a href=\"...\">Read more -></a>"
+      },
+      "schedule": {
+        "label": "Schedule send",
+        "hint": "leave empty to send immediately"
+      },
+      "save": {
+        "saved": "Saved! ?",
+        "action": "Save draft"
+      },
+      "send": {
+        "confirm": "Confirm send now",
+        "schedule": "Schedule send",
+        "action": "Send campaign",
+        "confirmHelp": "Click again to confirm. This action will send emails to all active subscribers."
+      },
+      "sendSuccess": {
+        "scheduled": "Campaign scheduled successfully!",
+        "queued": "Campaign queued successfully!"
+      }
+    },
+    "postEditor": {
+      "locale": {
+        "postLanguage": "Post language:",
+        "translateWithAi": "Translate with AI",
+        "translation": "Translation:",
+        "editing": "editing"
+      },
+      "common": {
+        "optional": "optional"
+      },
+      "errors": {
+        "invalidYoutube": "Invalid link. Use a YouTube URL (ex: https://youtu.be/xxxxx).",
+        "upload": "Failed to upload the image. Please try again.",
+        "titleRequired": "Please enter a title.",
+        "contentRequired": "Please enter the post content.",
+        "invalidYoutubeShort": "The YouTube link is invalid.",
+        "save": "Failed to save the post. Please try again."
+      },
+      "saving": {
+        "translating": "Generating translations with AI...",
+        "publishing": "Publishing...",
+        "saving": "Saving..."
+      },
+      "title": {
+        "edit": "Edit post",
+        "new": "New post",
+        "placeholder": "Post title..."
+      },
+      "mode": {
+        "edit": "Edit",
+        "preview": "Preview"
+      },
+      "cover": {
+        "title": "Cover image",
+        "uploading": "Uploading...",
+        "upload": "Upload cover image",
+        "alt": "Cover image",
+        "remove": "Remove"
+      },
+      "youtube": {
+        "title": "YouTube video",
+        "placeholder": "https://www.youtube.com/watch?v=xxxxx",
+        "preview": "Preview:",
+        "previewTitle": "YouTube preview",
+        "remove": "Remove video"
+      },
+      "summary": {
+        "title": "Summary",
+        "placeholder": "A short description of what the reader will find in this post...",
+        "remaining": "{count} remaining"
+      },
+      "readingTime": {
+        "title": "Reading time",
+        "unit": "minutes"
+      },
+      "content": {
+        "imageAlt": "Image description",
+        "placeholderEditor": "Write the post content here..."
+      },
+      "actions": {
+        "publish": "Publish",
+        "saveDraft": "Save draft",
+        "cancel": "Cancel"
+      }
+    }
+  },
+  "blogUi": {
+    "header": {
+      "gridView": "Grid view",
+      "listView": "List view",
+      "sort": {
+        "placeholder": "Sort by",
+        "newest": "Newest",
+        "mostLiked": "Most liked",
+        "mostViewed": "Most viewed",
+        "oldest": "Oldest"
+      },
+      "random": {
+        "action": "Random post",
+        "loading": "Loading..."
+      },
+      "tag": {
+        "placeholder": "Filter by tag",
+        "all": "All tags"
+      }
+    },
+    "list": {
+      "empty": "No posts found.",
+      "loadMore": "Load more",
+      "loadingMore": "Loading..."
+    },
+    "carousel": {
+      "previousSlide": "Previous slide",
+      "nextSlide": "Next slide"
+    },
+    "reactions": {
+      "like": "Like post",
+      "unlike": "Unlike post",
+      "viewComments": "View comments",
+      "support": "Support",
+      "share": "Share",
+      "shareAria": "Share this post"
+    },
+    "sidebar": {
+      "otherPosts": "Other posts"
+    },
+    "toc": {
+      "title": "On this page",
+      "scrollToTop": "Scroll to top"
+    }
+  },
+  "commentsUi": {
+    "composer": {
+      "tooManyComments": "Too many comments in a row. Please wait a moment.",
+      "publishError": "Could not publish.",
+      "published": "Comment published!",
+      "publishCommentError": "Could not publish the comment.",
+      "loginAction": "Sign in",
+      "loginPrompt": "to comment.",
+      "reply": "Reply",
+      "comment": "Comment"
+    },
+    "editor": {
+      "tabs": {
+        "write": "Write",
+        "preview": "Preview"
+      },
+      "tools": {
+        "bold": "Bold (Ctrl+B)",
+        "italic": "Italic (Ctrl+I)",
+        "link": "Link",
+        "list": "List",
+        "orderedList": "Ordered list",
+        "quote": "Quote",
+        "inlineCode": "Inline code",
+        "codeBlock": "Code block"
+      },
+      "placeholder": "Write your comment...",
+      "nothingToPreview": "Nothing to preview.",
+      "remaining": "{count} remaining",
+      "cancel": "Cancel",
+      "saving": "Saving...",
+      "submit": "Comment"
+    },
+    "deleteModal": {
+      "title": "Delete comment",
+      "subtitle": "This action cannot be undone.",
+      "close": "Close",
+      "previewLabel": "Your comment",
+      "cancel": "Cancel",
+      "deleting": "Deleting...",
+      "confirm": "Delete",
+      "warning": {
+        "prefix": "Deleting this comment will also remove all of its replies",
+        "highlight": "permanently"
+      },
+      "errors": {
+        "delete": "Could not delete the comment."
+      }
+    },
+    "card": {
+      "updated": "Comment updated.",
+      "deleted": "Comment deleted.",
+      "saveEdit": "Save edit",
+      "editing": "Editing comment",
+      "shareTitle": "Comment by @{username}",
+      "linkCopied": "Link copied!",
+      "collapsedCount": "{count} hidden",
+      "vote": {
+        "up": "Upvote",
+        "down": "Downvote"
+      },
+      "hideComment": "Hide comment",
+      "contextLabel": "Commenting on",
+      "edited": "edited",
+      "edit": "Edit",
+      "delete": "Delete",
+      "reply": "Reply",
+      "share": "Share",
+      "time": {
+        "now": "now",
+        "minutes": "{count} min ago",
+        "hours": "{count} h ago",
+        "days": "{count} days ago"
+      },
+      "errors": {
+        "edit": "Could not edit the comment.",
+        "delete": "Could not delete the comment."
+      }
+    }
+  },
+  "footerNewsletter": {
+    "title": "Stay in the loop",
+    "description": "Get updates about posts, projects, and ideas straight to your inbox.",
+    "placeholder": "Enter your email",
+    "submit": "Subscribe",
+    "submitting": "Sending...",
+    "success": {
+      "title": "Check your email!",
+      "description": "We sent you a confirmation link."
+    },
+    "errors": {
+      "generic": "Something went wrong.",
+      "connection": "Connection error. Please try again."
+    }
+  },
+  "common": {
+    "dialog": {
+      "close": "Close"
+    }
+  },
+  "newsletterCard": {
+    "title": "The best posts in your inbox",
+    "medalAlt": "Top newsletter",
+    "description": "Stay up to date with new posts and news.",
+    "subscribers": {
+      "prefix": "Loved by",
+      "suffix": "{count, plural, one {subscriber} other {subscribers}}."
+    },
+    "emailLabel": "Email",
+    "emailPlaceholder": "your@email.com",
+    "submit": "Subscribe",
+    "privacy": {
+      "prefix": "No spam, ever.",
+      "suffix": "You can check the privacy policy here."
+    },
+    "success": {
+      "title": "Check your email!",
+      "description": "We sent you a confirmation link to activate your subscription.",
+      "useAnotherEmail": "Use another email"
+    },
+    "errors": {
+      "generic": "Something went wrong. Please try again.",
+      "connection": "Connection error. Please try again."
+    }
+  },
+  "unsubscribeModal": {
+    "trigger": "Unsubscribe",
+    "title": "Unsubscribe from the newsletter",
+    "description": "Enter your email to receive a confirmation link.",
+    "emailLabel": "Email",
+    "emailPlaceholder": "your@email.com",
+    "cancel": "Cancel",
+    "submit": "Send confirmation",
+    "close": "Close",
+    "success": {
+      "message": "Confirmation email sent successfully! Check your inbox and click the link to finish unsubscribing."
+    },
+    "errors": {
+      "generic": "Could not process your request.",
+      "connection": "Connection error. Please try again later."
+    }
+  },
+  "cookieBanner": {
+    "ariaLabel": "Cookie consent banner",
+    "title": "Allow cookies?",
+    "safeExperience": "Provide a safer browsing experience using information received from cookies.",
+    "descriptionPrefix": "Learn more about cookies and how we use them in the",
+    "policyLink": "Cookie Policy",
+    "accept": "Allow",
+    "decline": "Decline"
+  },
+  "legal": {
+    "cookiePolicy": {
+      "title": "Cookie Policy",
+      "updatedAt": "Last updated: February 2026",
+      "close": "Close",
+      "sections": {
+        "whatAreCookies": {
+          "title": "What are cookies?",
+          "body": "Cookies are small text files stored on your device when you visit a website. They are widely used to make websites work more efficiently and to provide information to site owners."
+        },
+        "essential": {
+          "title": "1. Essential cookies",
+          "body": "These cookies are necessary for the basic operation of the website. They include cookies that allow you to sign in to secure areas or use core functionality. Without them, requested services cannot be provided."
+        },
+        "performance": {
+          "title": "2. Performance cookies",
+          "body": "These cookies collect information about how visitors use the website, such as the pages visited most often or whether they encounter error messages. They do not collect information that identifies a visitor personally."
+        },
+        "functionality": {
+          "title": "3. Functionality cookies",
+          "body": "These cookies allow the website to remember your choices, such as language or region, and provide enhanced, more personalized features. The information they collect can be anonymized and cannot track browsing activity across other websites."
+        },
+        "targeting": {
+          "title": "4. Targeting cookies",
+          "body": "These cookies are used to present more relevant content and can also help limit how many times you see an advertisement and measure the effectiveness of campaigns."
+        },
+        "manage": {
+          "title": "5. How to manage cookies",
+          "body": "Most browsers allow you to control cookies through preference settings. Limiting cookies may worsen your browsing experience and prevent the website from remembering personalized settings."
+        }
+      }
+    },
+    "terms": {
+      "title": "Terms and Conditions",
+      "updatedAt": "Last updated: February 2026",
+      "close": "Close",
+      "sections": {
+        "network": {
+          "title": "Important - Check the network",
+          "body": "Before buying a ticket, make sure the lottery is running on the same network as your wallet. Purchases made on the wrong network are not refundable and are not the platform's responsibility."
+        },
+        "service": {
+          "title": "1. Nature of the service",
+          "body": "This platform is a decentralized lottery operating on the blockchain, designed to provide transparency and fairness in every drawing. The service is currently in a testing period on the Sepolia network."
+        },
+        "testing": {
+          "title": "2. Testing period",
+          "body": "During validation, all transactions use test tokens (Sepolia ETH) that have no real economic value. No real monetary value is involved during this phase."
+        },
+        "fairness": {
+          "title": "3. Fairness and transparency",
+          "body": "All drawings are performed transparently on the blockchain. Results can be verified by anyone through the smart contract. The platform uses verifiable randomness sources to keep drawings fair."
+        },
+        "userResponsibility": {
+          "title": "4. User responsibility",
+          "body": "Users are responsible for ensuring they are connected to the correct network before making any transaction. The platform is not responsible for losses caused by user mistakes, including sending funds to incorrect addresses."
+        },
+        "changes": {
+          "title": "5. Changes to the terms",
+          "body": "The platform reserves the right to modify these terms at any time. Changes will be communicated through the platform. Continued use of the service after changes means acceptance of the updated terms."
+        }
+      }
+    }
+  },
+  "profilePage": {
+    "memberSince": "Member since {date}",
+    "signOut": "Sign out",
+    "tabs": {
+      "profile": "Profile",
+      "comments": "Comments"
+    },
+    "stats": {
+      "title": "Statistics",
+      "comments": "Comments"
+    },
+    "emptyComments": "No comments yet.",
+    "loadMore": "Load more",
+    "commentingOn": "Commenting on",
+    "viewComment": "View comment ->"
+  }
 }
