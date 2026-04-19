@@ -95,6 +95,33 @@ export async function parseJsonBody<TSchema extends z.ZodTypeAny>(
   return parsed.data;
 }
 
+export async function parseJsonBodyWithMessages<TSchema extends z.ZodTypeAny>(
+  request: Request,
+  schema: TSchema,
+  options: {
+    invalidBodyMessage: string;
+    fallbackMessage: string;
+  },
+): Promise<z.infer<TSchema>> {
+  let rawBody: unknown;
+
+  try {
+    rawBody = await request.json();
+  } catch {
+    throw new RequestValidationError(options.invalidBodyMessage);
+  }
+
+  const parsed = await schema.safeParseAsync(rawBody);
+  if (!parsed.success) {
+    throw new RequestValidationError(
+      getValidationErrorMessage(parsed.error, options.fallbackMessage),
+      parsed.error.flatten().fieldErrors,
+    );
+  }
+
+  return parsed.data;
+}
+
 export const emailSchema = z
   .string({ required_error: "E-mail é obrigatório." })
   .trim()
