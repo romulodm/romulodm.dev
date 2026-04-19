@@ -1,0 +1,25 @@
+{
+    "name": "@romulo/search",
+    "version": "1.0.0",
+    "private": true,
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": "./dist/index.js"
+    },
+    "scripts": {
+        "build": "npx tsc --project tsconfig.json",
+        "dev": "npx tsc --project tsconfig.json --watch"
+    },
+    "dependencies": {
+        "ioredis": "^5.0.0",
+        "@romulo/database": "*"
+    },
+    "devDependencies": {
+        "@types/node": "^20.0.0",
+        "typescript": "^5.0.0"
+    },
+    "peerDependencies": {
+        "ioredis": "^5.0.0"
+    }
+}
