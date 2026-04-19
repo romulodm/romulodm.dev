@@ -1,306 +1,1315 @@
 {
-    "ResumePDFButton": {
-        "view": "Visualizar",
-        "download": "Baixar"
+  "404": {
+    "error": "erro",
+    "title": "Algo deu errado.",
+    "button": "Tentar novamente"
+  },
+  "ResumePDFButton": {
+    "view": "Visualizar",
+    "download": "Baixar"
+  },
+  "language": {
+    "title": "Selecione seu idioma",
+    "subtitle": "Escolha o idioma que deseja usar para navegar neste site."
+  },
+  "auth": {
+    "title": "Entre na sua conta e comece a interagir.",
+    "common": {
+      "or": "OU"
     },
-    "language": {
-        "title": "Selecione seu idioma",
-        "subtitle": "Escolha o idioma que deseja usar para navegar neste site."
+    "modal": {
+      "loginDescription": "Fa?a login para come?ar a interagir nas postagens do blog.",
+      "registerDescription": "Crie sua conta e comece a interagir nas postagens do blog.",
+      "forgotDescription": "Digite seu e-mail e siga as instru??es."
     },
-    "auth": {
-        "title": "Entre na sua conta e comece a interagir."
+    "google": {
+      "continue": "Continuar com Google"
     },
-    "blog": {
-        "page-title": "Blog - Romulo de Moraes",
-        "title": "As opiniões expressas aqui são reflexões pessoais que dizem respeito à minha visão sobre tecnologia e outros assuntos; sinta-se à vontade para interagir, compartilhar suas ideias e enviar sugestões.",
-        "card-button": "Leia mais",
-        "filter": {
-            "search": "Buscar postagem",
-            "random": "Postagem aleatória",
-            "filter": "Filtrar postagens",
-            "filter-all": "Todas"
-        },
-        "newsletter": {
-            "title": "Quer receber as novas postagens?",
-            "content": "Se inscreva em nossa newsletter.",
-            "btn": "Inscreva-se",
-            "privacy": "Política de privacidade"
-        },
-        "about-portfolio": {
-            "title": "Quer saber como esse site foi construído?",
-            "content": "Veja a publicação que fiz sobre o código e a arquitetura construída.",
-            "btn": "Ver postagem"
-        },
-        "suggestions": {
-            "title": "Quer sugerir algum tema?",
-            "content": "Mande uma sugestão sobre algum assunto da área.",
-            "btn": "Enviar sugestão",
-            "privacy": "Política de privacidade"
-        },
-        "not-found-title": "Bem, isso não deveria acontecer...",
-        "not-found-content": "Não encontrei nenhuma postagem que corresponda aos seus critérios de pesquisa. Tente pesquisar por títulos ou temas..."
+    "login": {
+      "emailPlaceholder": "E-mail",
+      "passwordPlaceholder": "Senha",
+      "submit": "Entrar",
+      "invalidCredentials": "E-mail ou senha incorretos.",
+      "forgotPassword": "Esqueceu sua senha?",
+      "noAccount": "N?o tem conta?",
+      "createNow": "Criar agora"
     },
-    "contact": {
-        "text": "Sinta-se livre para me contatar caso haja alguma questão ou sugestão. Estou aberto para ideias e oportunidades.",
-        "modal-title": "Vamos conversar",
-        "modal-subtitle": "Me conte sobre sua ideia, dúvida ou oportunidade.",
-        "form-email": "Seu email",
-        "form-name": "Seu nome",
-        "form-text": "O que você está pensando?",
-        "form-button": "Enviar",
-        "sended-title": "Agradeço seu contato!",
-        "sended-content": "Sua mensagem foi enviada com sucesso."
+    "register": {
+      "usernamePlaceholder": "Username",
+      "emailPlaceholder": "E-mail",
+      "passwordPlaceholder": "Senha",
+      "confirmPasswordPlaceholder": "Confirmar senha",
+      "submit": "Criar conta",
+      "genericError": "N?o foi poss?vel criar sua conta.",
+      "hasAccount": "J? tem conta?",
+      "login": "Entrar"
     },
-    "hero": {
-        "greeting-1": "Bom dia",
-        "greeting-2": "Boa tarde",
-        "greeting-3": "Boa noite",
-        "greeting-4": "Boa noite",
-        "visitor-1": "visitante!",
-        "visitor-2": "querido(a)!",
-        "visitor-3": "dev :)",
-        "visitor-4": "pessoa.",
-        "visitor-5": "visitante :)",
-        "visitor-6": "amigo(a).",
-        "content": "Me chamo Romulo de Moraes, decidi criar este site para mostrar um pouco de quem eu sou, o que eu fiz, o que aprendi e o que planejo alcançar sendo um desenvolvedor full-stack e estudante.",
-        "star-title": "Dê uma estrela",
-        "star-content": "Acesse o repositório desse site.",
-        "resume-title": "Acesse o currículo",
-        "resume-content": "Dinâmico, interativo e atualizado."
+    "forgot": {
+      "emailPlaceholder": "E-mail",
+      "submit": "Enviar link de recupera??o",
+      "genericError": "N?o foi poss?vel enviar o e-mail.",
+      "successTitle": "Verifique sua caixa de entrada",
+      "successDescription": "Se esse e-mail estiver cadastrado, voc? receber? um link para redefinir sua senha. O link expira em 1 hora.",
+      "rememberedPassword": "Lembrou a senha?",
+      "didntForgetPassword": "N?o esqueceu sua senha?",
+      "login": "Entrar"
     },
-    "about": {
-        "eyebrow": "Sobre nós",
-        "headline": "Com a missão de empoderar times remotos",
-        "subheadline": "Aliquet nec orci mattis amet quisque ullamcorper neque, nibh sem. At arcu, sit dui mi, nibh dui, diam eget aliquam. Quisque id at vitae feugiat egestas.",
-        "missionTitle": "Nossa missão",
-        "missionParagraph1": "Faucibus commodo massa rhoncus, volutpat. Dignissim sed eget risus enim. Mattis mauris semper sed amet vitae sed turpis id. Id dolor praesent donec est. Odio penatibus risus viverra tellus varius sit neque erat velit. Faucibus commodo massa rhoncus, volutpat. Dignissim sed eget risus enim. Mattis mauris semper sed amet vitae sed turpis id.",
-        "missionParagraph2": "Et vitae blandit facilisi magna lacus commodo. Vitae sapien duis odio id et. Id blandit molestie auctor fermentum dignissim. Lacus diam tincidunt ac cursus in vel. Mauris varius vulputate et ultrices hac adipiscing egestas. Iaculis convallis ac tempor et ut. Ac lorem vel integer orci.",
-        "theNumbers": "Os números",
-        "stats": {
-            "raised": "Captado",
-            "companies": "Empresas",
-            "deals": "Negócios fechados",
-            "leads": "Leads gerados"
-        }
+    "reset": {
+      "description": "Escolha sua nova senha.",
+      "passwordPlaceholder": "Nova senha",
+      "confirmPasswordPlaceholder": "Confirmar nova senha",
+      "submit": "Salvar nova senha",
+      "genericError": "N?o foi poss?vel redefinir sua senha.",
+      "successTitle": "Senha redefinida!",
+      "successDescription": "Sua senha foi atualizada com sucesso.",
+      "goToLogin": "Ir para o login"
     },
-    "home": {
-        "page-title": "Romulo de Moraes",
-        "profile": {
-            "title": "Visão geral de",
-            "title-colored": "Perfil",
-            "link-title": "Quer ver meu currículo?",
-            "link-content": "Resumi minhas experiências e disponibilizei o download.",
-            "link-button": "Ver currículo online"
-        },
-        "projects": {
-            "title": "Alguns",
-            "title-colored": "Projetos",
-            "code": "Código",
-            "preview": "Acessar",
-            "public": "repositórios públicos",
-            "link-title": "Ficou interessado?",
-            "link-content": "Você pode ver mais dos meus projetos e tentativas.",
-            "link-button": "Ver mais projetos"
-        },
-        "vision": {
-            "title": "Visão sobre",
-            "title-colored": "Software",
-            "link-title": "Quer saber mais?",
-            "link-content": "Você pode ver mais sobre o que eu penso no meu blog.",
-            "link-button": "Ver postagens"
-        },
-        "contact": {
-            "title": "Entre em",
-            "title-colored": "Contato"
-        }
+    "validation": {
+      "emailInvalid": "E-mail inv?lido.",
+      "passwordRequired": "Senha obrigat?ria.",
+      "usernameTooShort": "Username muito curto.",
+      "passwordMin": "M?nimo 8 caracteres.",
+      "passwordsDoNotMatch": "As senhas n?o coincidem."
+    }
+  },
+  "blog": {
+    "page-title": "Blog - Romulo de Moraes",
+    "title": "As opiniões expressas aqui são reflexões pessoais que dizem respeito à minha visão sobre tecnologia e outros assuntos; sinta-se à vontade para interagir, compartilhar suas ideias e enviar sugestões.",
+    "card-button": "Leia mais",
+    "filter": {
+      "search": "Buscar postagem",
+      "random": "Postagem aleatória",
+      "filter": "Filtrar postagens",
+      "filter-all": "Todas"
     },
+    "newsletter": {
+      "title": "Quer receber as novas postagens?",
+      "content": "Se inscreva em nossa newsletter.",
+      "btn": "Inscreva-se",
+      "privacy": "Política de privacidade"
+    },
+    "about-portfolio": {
+      "title": "Quer saber como esse site foi construído?",
+      "content": "Veja a publicação que fiz sobre o código e a arquitetura construída.",
+      "btn": "Ver postagem"
+    },
+    "suggestions": {
+      "title": "Quer sugerir algum tema?",
+      "content": "Mande uma sugestão sobre algum assunto da área.",
+      "btn": "Enviar sugestão",
+      "privacy": "Política de privacidade"
+    },
+    "not-found-title": "Bem, isso não deveria acontecer...",
+    "not-found-content": "Não encontrei nenhuma postagem que corresponda aos seus critérios de pesquisa. Tente pesquisar por títulos ou temas...",
+    "metadata-description": "Artigos sobre desenvolvimento web, JavaScript, TypeScript e muito mais."
+  },
+  "contact": {
+    "text": "Sinta-se livre para me contatar caso haja alguma questão ou sugestão. Estou aberto para ideias e oportunidades.",
+    "modal-title": "Vamos conversar",
+    "modal-subtitle": "Me conte sobre sua ideia, dúvida ou oportunidade.",
+    "form-email": "Seu email",
+    "form-name": "Seu nome",
+    "form-text": "O que você está pensando?",
+    "form-button": "Enviar",
+    "sended-title": "Agradeço seu contato!",
+    "sended-content": "Sua mensagem foi enviada com sucesso."
+  },
+  "hero": {
+    "greeting-1": "Bom dia",
+    "greeting-2": "Boa tarde",
+    "greeting-3": "Boa noite",
+    "greeting-4": "Boa noite",
+    "visitor-1": "visitante!",
+    "visitor-2": "querido(a)!",
+    "visitor-3": "dev :)",
+    "visitor-4": "pessoa.",
+    "visitor-5": "visitante :)",
+    "visitor-6": "amigo(a).",
+    "content": "Me chamo Romulo de Moraes, decidi criar este site para mostrar um pouco de quem eu sou, o que eu fiz, o que aprendi e o que planejo alcançar sendo um desenvolvedor full-stack e estudante.",
+    "star-title": "Dê uma estrela",
+    "star-content": "Acesse o repositório desse site.",
+    "resume-title": "Acesse o currículo",
+    "resume-content": "Dinâmico, interativo e atualizado.",
+    "view-more": "Ver mais"
+  },
+  "about": {
+    "eyebrow": "Sobre nós",
+    "headline": "Com a missão de empoderar times remotos",
+    "subheadline": "Aliquet nec orci mattis amet quisque ullamcorper neque, nibh sem. At arcu, sit dui mi, nibh dui, diam eget aliquam. Quisque id at vitae feugiat egestas.",
+    "missionTitle": "Nossa missão",
+    "missionParagraph1": "Faucibus commodo massa rhoncus, volutpat. Dignissim sed eget risus enim. Mattis mauris semper sed amet vitae sed turpis id. Id dolor praesent donec est. Odio penatibus risus viverra tellus varius sit neque erat velit. Faucibus commodo massa rhoncus, volutpat. Dignissim sed eget risus enim. Mattis mauris semper sed amet vitae sed turpis id.",
+    "missionParagraph2": "Et vitae blandit facilisi magna lacus commodo. Vitae sapien duis odio id et. Id blandit molestie auctor fermentum dignissim. Lacus diam tincidunt ac cursus in vel. Mauris varius vulputate et ultrices hac adipiscing egestas. Iaculis convallis ac tempor et ut. Ac lorem vel integer orci.",
+    "theNumbers": "Os números",
+    "stats": {
+      "raised": "Captado",
+      "companies": "Empresas",
+      "deals": "Negócios fechados",
+      "leads": "Leads gerados",
+      "yearsCoding": "Anos programando",
+      "usersImpacted": "Usu?rios impactados",
+      "projectsShipped": "Projetos entregues",
+      "articlesPublished": "Artigos publicados"
+    },
+    "command": "romulo.exe --about",
+    "location": "Rio Grande, RS - Brasil",
+    "availability": "Aberto a oportunidades",
+    "buttons": {
+      "projects": "Ver projetos",
+      "contact": "Contato"
+    },
+    "images": {
+      "whiteboardAlt": "Sess?o de whiteboard em equipe",
+      "collaborationAlt": "Colabora??o em equipe",
+      "memberAlt": "Membro da equipe",
+      "workspaceAlt": "Espa?o de coworking",
+      "extraAlt": "Foto adicional da equipe"
+    }
+  },
+  "home": {
+    "page-title": "Romulo de Moraes",
     "profile": {
-        "link-title": "Quer ver meu currículo?",
-        "link-content": "Resumi minhas experiências e disponibilizei o download.",
-        "link-button": "Ver currículo online"
+      "title": "Visão geral de",
+      "title-colored": "Perfil",
+      "link-title": "Quer ver meu currículo?",
+      "link-content": "Resumi minhas experiências e disponibilizei o download.",
+      "link-button": "Ver currículo online"
     },
-    "navigation": {
-        "home": "Início",
-        "resume": "Currículo",
-        "settings": "Configurações",
-        "theme": "Tema",
-        "language": "Idioma",
-        "user": "Usuário",
-        "modal": {
-            "profile": "Perfil",
-            "logout": "Sair"
-        }
-    },
-    "post": {
-        "comment-title": "Deixe um comentário",
-        "comment-placeholder": "Escreva seu comentário aqui...",
-        "comment-button": "Postar comentário",
-        "comments-empty": "Ainda não há comentários."
-    },
-    "resume": {
-        "page-title": "Currículo online - Romulo de Moraes",
-        "linkedin": "Perfil do LinkedIn",
-        "github": "Perfil do GitHub",
-        "titles": {
-            "xp": "Experiências",
-            "education": "Educação",
-            "lang": "Idiomas"
-        }
-    },
-    "terminal": {
-        "xp": "experiência",
-        "loading-xp-title": "Procurando por experiências...",
-        "loading-xp": "Carregar as experiências do sistema levou ",
-        "education": "formação",
-        "loading-education-title": "Procurando por formação...",
-        "loading-education": "Carregar a formação levou ",
-        "visitor": "visitante",
-        "tooltip": "Você pode usar este terminal",
-        "loading": "Carregando a mensagem de acompanhamento levou ",
-        "not-found-fisrt": "Comando não encontrado, digite ",
-        "not-found-second": " para uma lista de comandos.",
-        "loadings": {
-            "help": "Carregar a mensagem de ajuda levou ",
-            "initial": "Carregar a mensagem inicial levou ",
-            "follow": "Carregar as redes sociais levou ",
-            "who": "Carregar estas informações inúteis levou ",
-            "who-years": " anos",
-            "whoami": "Carregar esta pílula levou ",
-            "cats": "Carregar estes gatos incríveis levou ",
-            "inter": "Carregar o logo do SC Internacional levou ",
-            "spotify": "Carregar esta playlist incrível levou ",
-            "secret": "Carregar este enigma levou "
-        },
-        "commands": {
-            "help": "Lista de comandos",
-            "clear": "Limpar o terminal",
-            "initial": "Exibir o cabeçalho",
-            "follow": "Minhas redes sociais",
-            "who": "Quem é Romulo?",
-            "whoami": "Quem é você?",
-            "cats": "Arte de gatos maravilhosos",
-            "inter": "O maior clube de futebol do mundo",
-            "spotify": "Uma das minhas playlists",
-            "secret": "Enigma simples, qual é a senha?"
-        },
-        "initial": {
-            "content": "Para uma lista de comandos disponíveis, digite "
-        },
-        "who": {
-            "so": "Então...",
-            "about": "Tenho 20 anos, sou apenas um estudante e entusiasta de tecnologia que gosta de jogar, ler livros e fazer outras coisas nerds. 🤓"
-        },
-        "whoami": {
-            "title": "A vida não é um mistério a ser resolvido, mas uma experiência a ser vivida.",
-            "paragraph1": "Vi essa frase no filme Duna e pensei muito sobre ela. Acredito que muitas vezes tornamos nossa insignificância uma forma de martírio e dúvida, quando na verdade as coisas deveriam ser mais simples do que realmente são.",
-            "paragraph2": "Você e eu não somos meros candidatos a um lugar no céu. Se você sempre vive pensando em uma recompensa futura, acaba esquecendo de viver o presente e se esquece de quem você é.",
-            "paragraph3": "Segundo Jean-Paul Sartre, a existência precede a essência. Isso significa que os seres humanos não têm uma natureza pré-determinada. Você cria sua própria natureza por meio de suas ações e escolhas. Portanto, essa pergunta não tem uma resposta correta. As responsabilidades que você assume e as escolhas que faz ao longo da sua vida determinam quem você é.",
-            "paragraph4": "Hoje você pode ser um programador, um estudante, um profissional... No entanto, amanhã você pode ser uma pessoa totalmente diferente, tudo depende de você."
-        },
-        "spotify": {
-            "alert": "Cuidado com o volume muito alto e aproveite com moderação!"
-        },
-        "secret": {
-            "how-first": "Para ver a mensagem misteriosa você precisa digitar ",
-            "how-try": "sua tentativa",
-            "how-second": ", sendo sua tentativa um número de quatro dígitos.",
-            "how-hint": "Para ver uma dica, digite ",
-            "hint-time": "Vamos lá, cara, essas mensagens não demoram para ser exibidas...",
-            "hint": "A dica é: é um ano 🤯 uau, dica incrível! Mais uma, esse ano aparece em uma mensagem aqui no terminal...",
-            "wrong": "Esta verificação não levou nenhum tempo.",
-            "reward": "Correto! Sua recompensa aqui: "
-        }
+    "projects": {
+      "title": "Alguns",
+      "title-colored": "Projetos",
+      "code": "Código",
+      "preview": "Acessar",
+      "public": "repositórios públicos",
+      "link-title": "Ficou interessado?",
+      "link-content": "Você pode ver mais dos meus projetos e tentativas.",
+      "link-button": "Ver mais projetos"
     },
     "vision": {
-        "link-title": "Quer saber mais?",
-        "link-content": "Você pode ver mais sobre o que eu penso no meu blog.",
-        "link-button": "Ver postagens",
-        "icons": {
-            "first-title": "Inovação",
-            "first-content": "Definindo as regras do amanhã.",
-            "second-title": "Comunidade",
-            "second-content": "Facilitando a vida das pessoas."
-        },
-        "frame": {
-            "one": "Design.",
-            "two": "Prototipar.",
-            "three": "Desenvolver.",
-            "four": "Aprimorar."
-        },
-        "productivity": {
-            "title": "Produtividade em sua melhor forma.",
-            "word-1": "Com ",
-            "bold-1": "qualidade ",
-            "word-2": "e ",
-            "bold-2": "sustentabilidade ",
-            "word-3": "no coração."
-        },
-        "development": {
-            "left": "Segurança",
-            "center": "Desenvolvimento colaborativo",
-            "right": "Flexibilidade"
-        },
-        "comment": {
-            "time": "2 horas atrás",
-            "content": "Não se esqueça da reunião, amigo!"
-        }
+      "title": "Visão sobre",
+      "title-colored": "Software",
+      "link-title": "Quer saber mais?",
+      "link-content": "Você pode ver mais sobre o que eu penso no meu blog.",
+      "link-button": "Ver postagens"
     },
-    "404": {
-        "error": "erro",
-        "title": "Algo deu errado.",
-        "button": "Tentar novamente"
+    "contact": {
+      "title": "Entre em",
+      "title-colored": "Contato"
     },
-    "announcement": {
-        "content": "Olá, esse portfólio ainda está em desenvolvimento, ok? 🤠"
-    },
-    "footer": {
-        "cta": {
-            "title": "Tem um projeto em mente?",
-            "button": "Entrar em contato",
-            "disclaimer": "Vamos construir algo juntos."
-        },
-        "newsletter": {
-            "title": "Fique por dentro",
-            "subtitle": "Receba novidades sobre posts, projetos e ideias diretamente no seu e-mail.",
-            "placeholder": "Insira seu e-mail",
-            "subscribe": "Inscrever-se"
-        },
-        "nav": {
-            "resources": {
-                "title": "Recursos",
-                "links": {
-                    "home": "Início",
-                    "resume": "Currículo",
-                    "blog": "Blog",
-                    "profile": "Perfil"
-                }
-            },
-            "newsletter": {
-                "title": "Newsletter",
-                "links": {
-                    "about": "Sobre",
-                    "login": "Entrar",
-                    "logout": "Sair",
-                    "privacy": "Política de privacidade"
-                }
-            },
-            "legal": {
-                "title": "Legal",
-                "links": {
-                    "privacy": "Política de privacidade",
-                    "terms": "Termos de serviço",
-                    "notices": "Avisos legais"
-                }
-            },
-            "about": {
-                "title": "Sobre este site",
-                "description": "Acredito que construir em público é a melhor forma de crescer. Criei este portfólio e blog para compartilhar ideias, projetos e aprendizados acumulados ao longo da jornada.",
-                "community": "Se você está por aqui, já faz parte dessa comunidade."
-            }
-        },
-        "legal": {
-            "madeWith": "Feito com ",
-            "copyright": "© {year}. Todos os direitos reservados."
-        }
+    "showcase": {
+      "eyebrow": "Tecnologias",
+      "title": "Trabalha com tudo.",
+      "description": "Frontend, backend, bancos de dados, DevOps, blockchain, sistemas embarcados, gateways de pagamento, APIs e mais.",
+      "highlight": "Sim."
     }
+  },
+  "profile": {
+    "link-title": "Quer ver meu currículo?",
+    "link-content": "Resumi minhas experiências e disponibilizei o download.",
+    "link-button": "Ver currículo online"
+  },
+  "navigation": {
+    "home": "Início",
+    "resume": "Currículo",
+    "settings": "Configurações",
+    "theme": "Tema",
+    "language": "Idioma",
+    "user": "Usuário",
+    "modal": {
+      "profile": "Perfil",
+      "logout": "Sair"
+    }
+  },
+  "post": {
+    "comment-title": "Deixe um comentário",
+    "comment-placeholder": "Escreva seu comentário aqui...",
+    "comment-button": "Postar comentário",
+    "comments-empty": "Ainda não há comentários."
+  },
+  "resume": {
+    "page-title": "Currículo online - Romulo de Moraes",
+    "linkedin": "Perfil do LinkedIn",
+    "github": "Perfil do GitHub",
+    "titles": {
+      "xp": "Experiências",
+      "education": "Educação",
+      "lang": "Idiomas"
+    }
+  },
+  "terminal": {
+    "xp": "experiência",
+    "loading-xp-title": "Procurando por experiências...",
+    "loading-xp": "Carregar as experiências do sistema levou ",
+    "education": "formação",
+    "loading-education-title": "Procurando por formação...",
+    "loading-education": "Carregar a formação levou ",
+    "visitor": "visitante",
+    "tooltip": "Você pode usar este terminal",
+    "loading": "Carregando a mensagem de acompanhamento levou ",
+    "not-found-fisrt": "Comando não encontrado, digite ",
+    "not-found-second": " para uma lista de comandos.",
+    "loadings": {
+      "help": "Carregar a mensagem de ajuda levou ",
+      "initial": "Carregar a mensagem inicial levou ",
+      "follow": "Carregar as redes sociais levou ",
+      "who": "Carregar estas informações inúteis levou ",
+      "who-years": " anos",
+      "whoami": "Carregar esta pílula levou ",
+      "cats": "Carregar estes gatos incríveis levou ",
+      "inter": "Carregar o logo do SC Internacional levou ",
+      "spotify": "Carregar esta playlist incrível levou ",
+      "secret": "Carregar este enigma levou "
+    },
+    "commands": {
+      "help": "Lista de comandos",
+      "clear": "Limpar o terminal",
+      "initial": "Exibir o cabeçalho",
+      "follow": "Minhas redes sociais",
+      "who": "Quem é Romulo?",
+      "whoami": "Quem é você?",
+      "cats": "Arte de gatos maravilhosos",
+      "inter": "O maior clube de futebol do mundo",
+      "spotify": "Uma das minhas playlists",
+      "secret": "Enigma simples, qual é a senha?"
+    },
+    "initial": {
+      "content": "Para uma lista de comandos disponíveis, digite "
+    },
+    "who": {
+      "so": "Então...",
+      "about": "Tenho 20 anos, sou apenas um estudante e entusiasta de tecnologia que gosta de jogar, ler livros e fazer outras coisas nerds. 🤓"
+    },
+    "whoami": {
+      "title": "A vida não é um mistério a ser resolvido, mas uma experiência a ser vivida.",
+      "paragraph1": "Vi essa frase no filme Duna e pensei muito sobre ela. Acredito que muitas vezes tornamos nossa insignificância uma forma de martírio e dúvida, quando na verdade as coisas deveriam ser mais simples do que realmente são.",
+      "paragraph2": "Você e eu não somos meros candidatos a um lugar no céu. Se você sempre vive pensando em uma recompensa futura, acaba esquecendo de viver o presente e se esquece de quem você é.",
+      "paragraph3": "Segundo Jean-Paul Sartre, a existência precede a essência. Isso significa que os seres humanos não têm uma natureza pré-determinada. Você cria sua própria natureza por meio de suas ações e escolhas. Portanto, essa pergunta não tem uma resposta correta. As responsabilidades que você assume e as escolhas que faz ao longo da sua vida determinam quem você é.",
+      "paragraph4": "Hoje você pode ser um programador, um estudante, um profissional... No entanto, amanhã você pode ser uma pessoa totalmente diferente, tudo depende de você."
+    },
+    "spotify": {
+      "alert": "Cuidado com o volume muito alto e aproveite com moderação!"
+    },
+    "secret": {
+      "how-first": "Para ver a mensagem misteriosa você precisa digitar ",
+      "how-try": "sua tentativa",
+      "how-second": ", sendo sua tentativa um número de quatro dígitos.",
+      "how-hint": "Para ver uma dica, digite ",
+      "hint-time": "Vamos lá, cara, essas mensagens não demoram para ser exibidas...",
+      "hint": "A dica é: é um ano 🤯 uau, dica incrível! Mais uma, esse ano aparece em uma mensagem aqui no terminal...",
+      "wrong": "Esta verificação não levou nenhum tempo.",
+      "reward": "Correto! Sua recompensa aqui: "
+    }
+  },
+  "vision": {
+    "link-title": "Quer saber mais?",
+    "link-content": "Você pode ver mais sobre o que eu penso no meu blog.",
+    "link-button": "Ver postagens",
+    "icons": {
+      "first-title": "Inovação",
+      "first-content": "Definindo as regras do amanhã.",
+      "second-title": "Comunidade",
+      "second-content": "Facilitando a vida das pessoas."
+    },
+    "frame": {
+      "one": "Design.",
+      "two": "Prototipar.",
+      "three": "Desenvolver.",
+      "four": "Aprimorar."
+    },
+    "productivity": {
+      "title": "Produtividade em sua melhor forma.",
+      "word-1": "Com ",
+      "bold-1": "qualidade ",
+      "word-2": "e ",
+      "bold-2": "sustentabilidade ",
+      "word-3": "no coração."
+    },
+    "development": {
+      "left": "Segurança",
+      "center": "Desenvolvimento colaborativo",
+      "right": "Flexibilidade"
+    },
+    "comment": {
+      "time": "2 horas atrás",
+      "content": "Não se esqueça da reunião, amigo!"
+    }
+  },
+  "announcement": {
+    "content": "Olá, esse portfólio ainda está em desenvolvimento, ok? 🤠"
+  },
+  "footer": {
+    "cta": {
+      "title": "Tem um projeto em mente?",
+      "button": "Entrar em contato",
+      "disclaimer": "Vamos construir algo juntos."
+    },
+    "newsletter": {
+      "title": "Fique por dentro",
+      "subtitle": "Receba novidades sobre posts, projetos e ideias diretamente no seu e-mail.",
+      "placeholder": "Insira seu e-mail",
+      "subscribe": "Inscrever-se"
+    },
+    "nav": {
+      "resources": {
+        "title": "Recursos",
+        "links": {
+          "home": "Início",
+          "resume": "Currículo",
+          "blog": "Blog",
+          "profile": "Perfil"
+        }
+      },
+      "newsletter": {
+        "title": "Newsletter",
+        "links": {
+          "about": "Sobre",
+          "login": "Entrar",
+          "logout": "Sair",
+          "privacy": "Política de privacidade"
+        }
+      },
+      "legal": {
+        "title": "Legal",
+        "links": {
+          "privacy": "Política de privacidade",
+          "terms": "Termos de serviço",
+          "notices": "Avisos legais"
+        }
+      },
+      "about": {
+        "title": "Sobre este site",
+        "description": "Acredito que construir em público é a melhor forma de crescer. Criei este portfólio e blog para compartilhar ideias, projetos e aprendizados acumulados ao longo da jornada.",
+        "community": "Se você está por aqui, já faz parte dessa comunidade."
+      }
+    },
+    "legal": {
+      "madeWith": "Feito com ",
+      "copyright": "© {year}. Todos os direitos reservados."
+    }
+  },
+  "blogPost": {
+    "notFoundTitle": "Post n?o encontrado",
+    "videoTitle": "V?deo do post",
+    "published": "Publicado {time}",
+    "readingTime": "{minutes} min de leitura",
+    "originallyPublishedAt": "Publicado originalmente em:"
+  },
+  "commentsPage": {
+    "metadataNotFound": "Coment?rio n?o encontrado",
+    "metadataTitle": "Coment?rio de @{username} em \"{postTitle}\"",
+    "comment": "Coment?rio",
+    "replyingTo": "Respondendo a @{username}",
+    "backToPost": "Ir para \"{title}\""
+  },
+  "newsletterFlow": {
+    "confirm": {
+      "loadingTitle": "Confirmando...",
+      "successTitle": "Tudo certo!",
+      "errorTitle": "Ops! Algo deu errado",
+      "successDefaultMessage": "Inscri??o confirmada!",
+      "errorDefaultMessage": "Erro ao confirmar inscri??o.",
+      "networkError": "Erro de conex?o. Tente novamente mais tarde.",
+      "successListTitle": "A partir de agora voc? vai receber:",
+      "successItems": {
+        "posts": "Novos posts assim que publicados",
+        "exclusive": "Dicas e conte?dos exclusivos",
+        "updates": "Novidades e projetos"
+      },
+      "errorListTitle": "Poss?veis causas:",
+      "errorItems": {
+        "expired": "O link expirou (v?lido por 24h)",
+        "alreadyConfirmed": "Este e-mail j? foi confirmado",
+        "incorrect": "O link est? incorreto"
+      },
+      "backHome": "Ir para o in?cio",
+      "persistentProblem": "Problema persistindo?",
+      "subscribeAgain": "Inscreva-se novamente"
+    },
+    "unsubscribe": {
+      "confirmTitle": "Cancelar inscri??o?",
+      "loadingTitle": "Processando...",
+      "successTitle": "Inscri??o cancelada",
+      "errorTitle": "Ops! Algo deu errado",
+      "successDefaultMessage": "Inscri??o cancelada com sucesso.",
+      "errorDefaultMessage": "Erro ao cancelar inscri??o.",
+      "networkError": "Erro de conex?o. Tente novamente.",
+      "description": "Voc? n?o receber? mais novos posts e atualiza??es por e-mail. Pode se inscrever novamente a qualquer momento.",
+      "confirmButton": "Sim, cancelar inscri??o",
+      "stayButton": "N?o, quero continuar",
+      "farewellTitle": "Sentiremos sua falta!",
+      "farewellDescription": "Voc? pode se inscrever novamente a qualquer momento.",
+      "backHome": "Ir para o in?cio"
+    }
+  },
+  "newsletterForm": {
+    "title": "Receba novos posts no seu email",
+    "subtitle": "Inscreva-se na newsletter e seja notificado quando novos artigos forem publicados",
+    "placeholder": "seu@email.com",
+    "subscribe": "Inscrever",
+    "subscribing": "Inscrevendo...",
+    "successDefault": "Obrigado por se inscrever!",
+    "errorDefault": "Algo deu errado. Tente novamente.",
+    "networkError": "Erro ao se inscrever. Tente novamente."
+  },
+  "support": {
+    "metadata": {
+      "title": "Apoie o blog",
+      "description": "Me pague um caf? e ajude a manter o blog no ar!"
+    },
+    "page": {
+      "title": "Compre um caf?",
+      "description": "Cada caf? me ajuda a continuar escrevendo e mantendo o blog. Obrigado pelo apoio!",
+      "supporters": "{count} apoiadores"
+    },
+    "widget": {
+      "namePlaceholder": "Nome ou @social",
+      "messagePlaceholder": "Deixe uma mensagem...",
+      "payWith": "Pagar com",
+      "privateMessage": "Mensagem privada",
+      "loading": "Aguarde...",
+      "supportWith": "Apoiar com R$ {amount},00",
+      "genericError": "Algo deu errado. Tente novamente.",
+      "methods": {
+        "pix": "PIX",
+        "card": "Cart?o",
+        "eth": "ETH"
+      }
+    },
+    "pix": {
+      "title": "Pague via PIX",
+      "description": "Escaneie o QR code ou copie o c?digo. O pagamento ? confirmado automaticamente.",
+      "qrAlt": "QR Code PIX",
+      "copy": "Copiar c?digo PIX",
+      "copied": "Copiado!",
+      "simulate": "Simular pagamento (dev)",
+      "simulating": "Simulando...",
+      "alreadyPaid": "J? paguei"
+    },
+    "crypto": {
+      "back": "Voltar",
+      "wallet": "Carteira:",
+      "waiting": "Aguardando MetaMask...",
+      "send": "Enviar via MetaMask",
+      "genericError": "Erro ao processar ETH.",
+      "verifyError": "Erro ao verificar transa??o.",
+      "missingWallet": "MetaMask n?o encontrada. Instale em metamask.io",
+      "coffees": "{count} caf?(s)"
+    },
+    "stripe": {
+      "back": "Voltar",
+      "cardError": "Erro no cart?o.",
+      "unexpectedError": "Ocorreu um erro inesperado.",
+      "processing": "Processando...",
+      "pay": "Pagar"
+    },
+    "success": {
+      "title": "Obrigado pelo caf?!",
+      "description": "Seu apoio significa muito. Continue acompanhando o blog!",
+      "supportAgain": "Apoiar novamente"
+    },
+    "sidebar": {
+      "privateMessage": "Mensagem privada.",
+      "noMessage": "Sem mensagem.",
+      "viewMessage": "Ver mensagem",
+      "topSupporters": "Top apoiadores",
+      "recentSupport": "Apoios recentes",
+      "beFirst": "Seja o primeiro a apoiar!",
+      "anonymous": "An?nimo",
+      "someone": "Algu?m",
+      "coffees": "{count} caf?(s)"
+    },
+    "messageModal": {
+      "defaultName": "An?nimo",
+      "label": "deixou a seguinte mensagem:"
+    },
+    "apoiase": {
+      "title": "Apoie este projeto",
+      "description": "Sua contribui??o faz toda a diferen?a!",
+      "button": "Apoiar"
+    }
+  },
+  "api": {
+    "common": {
+      "invalidRequest": "Dados da requisi??o inv?lidos.",
+      "invalidBody": "Corpo da requisi??o inv?lido.",
+      "unauthorized": "Autentica??o necess?ria.",
+      "forbidden": "Acesso negado.",
+      "notFound": "Recurso n?o encontrado.",
+      "conflict": "N?o foi poss?vel concluir a solicita??o.",
+      "rateLimited": "Muitas tentativas. Tente novamente em alguns instantes.",
+      "internalError": "Erro interno.",
+      "internalRetry": "Erro interno. Tente novamente.",
+      "emailRequired": "E-mail e obrigatorio.",
+      "emailInvalid": "E-mail invalido."
+    },
+    "auth": {
+      "forgot": {
+        "rateLimited": "Muitas tentativas. Tente novamente em 10 minutos.",
+        "success": "Se esse e-mail estiver cadastrado, voc? receber? um link em breve.",
+        "internal": "Erro interno."
+      },
+      "register": {
+        "rateLimited": "Muitas tentativas de cadastro. Tente novamente mais tarde.",
+        "conflict": "N?o foi poss?vel concluir o cadastro com os dados informados.",
+        "conflictRetry": "N?o foi poss?vel concluir o cadastro. Tente novamente.",
+        "passwordRequired": "Senha e obrigatoria.",
+        "passwordMin": "A senha deve ter pelo menos 8 caracteres.",
+        "passwordMax": "A senha deve ter no maximo 128 caracteres."
+      }
+    },
+    "comments": {
+      "postIdRequired": "postId ? obrigat?rio.",
+      "empty": "Coment?rio n?o pode estar vazio.",
+      "tooLong": "Coment?rio muito longo (m?x. 2000 caracteres).",
+      "rateLimited": "Muitos coment?rios em pouco tempo. Aguarde um momento.",
+      "cannotComment": "Voc? n?o pode comentar.",
+      "postNotFound": "Post n?o encontrado.",
+      "parentNotFound": "Coment?rio pai n?o encontrado.",
+      "commentNotFound": "Coment?rio n?o encontrado.",
+      "invalidVote": "Valor de voto invalido."
+    },
+    "newsletter": {
+      "subscribe": {
+        "rateLimited": "Muitas tentativas. Tente novamente em alguns minutos.",
+        "success": "Verifique seu e-mail para confirmar a inscri??o.",
+        "internal": "Erro interno. Tente novamente."
+      },
+      "confirm": {
+        "missingToken": "Token ausente.",
+        "invalidToken": "Token inv?lido ou expirado. Solicite uma nova inscri??o.",
+        "success": "Inscri??o confirmada com sucesso! Bem-vindo(a).",
+        "internal": "Erro interno."
+      },
+      "unsubscribe": {
+        "missingToken": "Token ausente.",
+        "invalidToken": "Token inv?lido.",
+        "success": "Voc? foi removido da newsletter com sucesso.",
+        "internal": "Erro interno."
+      },
+      "requestUnsubscribe": {
+        "rateLimited": "Muitas tentativas. Tente novamente em alguns minutos.",
+        "success": "Verifique seu e-mail para confirmar o pedido de cancelamento.",
+        "internal": "Erro interno. Tente novamente."
+      }
+    },
+    "donations": {
+      "eth": {
+        "invalidTransaction": "Transa??o inv?lida."
+      },
+      "pix": {
+        "notAvailableInProduction": "N?o dispon?vel em produ??o.",
+        "missingDonationId": "donationId ausente.",
+        "chargeDescription": "{count}x cafe para o blog",
+        "internal": "Nao foi possivel criar a cobranca PIX. Tente novamente."
+      },
+      "stripe": {
+        "missingSignature": "Assinatura ausente.",
+        "invalidSignature": "Assinatura inv?lida.",
+        "internal": "Nao foi possivel criar a intencao de pagamento Stripe. Tente novamente."
+      },
+      "invalidCoffeeCount": "Quantidade de cafes invalida."
+    },
+    "posts": {
+      "noPosts": "Nenhum post encontrado.",
+      "notFound": "Post n?o encontrado.",
+      "internalError": "Erro interno do servidor.",
+      "missingRequiredFields": "Campos obrigat?rios ausentes.",
+      "invalidBody": "Corpo inv?lido.",
+      "identifierRequired": "Identificador obrigat?rio.",
+      "queueOnly": "O flush de views agora roda exclusivamente pelo caminho de fila com worker."
+    },
+    "uploads": {
+      "missingFields": "Campos obrigat?rios ausentes: filename, contentType, kind.",
+      "invalidKind": "Tipo inv?lido. Deve ser \"cover\" ou \"inline\".",
+      "invalidContentType": "Tipo de arquivo nao suportado.",
+      "fileTooLarge": "O arquivo e grande demais.",
+      "internal": "Nao foi possivel preparar o upload. Tente novamente."
+    },
+    "admin": {
+      "newsletterCampaigns": {
+        "subjectRequired": "Assunto e obrigatorio.",
+        "postIdRequired": "postId e obrigatorio para campanhas baseadas em post.",
+        "postNotFound": "Post nao encontrado.",
+        "postMustBePublished": "So e possivel criar campanhas para posts publicados.",
+        "missingPortugueseTranslation": "O post precisa ter traducao em portugues primeiro.",
+        "customContentRequired": "Conteudo e obrigatorio para campanhas personalizadas.",
+        "readArticle": "Ler artigo ->",
+        "notFound": "Campanha nao encontrada.",
+        "draftOnlyEdit": "Apenas campanhas em rascunho podem ser editadas.",
+        "invalidPost": "Post invalido ou nao publicado.",
+        "cannotDeleteSending": "Nao e possivel excluir uma campanha em envio.",
+        "deleted": "Campanha excluida.",
+        "draftOnlySend": "Apenas campanhas em rascunho podem ser enviadas.",
+        "invalidScheduledAt": "scheduledAt invalido.",
+        "futureScheduledAt": "scheduledAt deve ser uma data futura.",
+        "scheduled": "Campanha agendada com sucesso.",
+        "queued": "Campanha enfileirada para envio.",
+        "dispatchFailed": "Falha ao despachar campanha."
+      },
+      "suspiciousComments": {
+        "notFound": "Comentario suspeito nao encontrado."
+      }
+    }
+  },
+  "admin": {
+    "sidebar": {
+      "toggleTheme": "Alternar tema",
+      "toggleLanguage": "Alternar idioma",
+      "fallbackUser": "Admin",
+      "nav": {
+        "dashboard": "Dashboard",
+        "posts": "Posts",
+        "allPosts": "Todos os posts",
+        "newPost": "Novo post",
+        "newsletter": "Newsletter",
+        "newsletterOverview": "Visao geral",
+        "campaigns": "Campanhas",
+        "newCampaign": "Nova campanha",
+        "suspiciousComments": "Comentarios suspeitos",
+        "bannedUsers": "Usuarios banidos",
+        "donations": "Doacoes",
+        "observability": "Observabilidade",
+        "system": "Sistema",
+        "search": "Motor de busca",
+        "backups": "Backups",
+        "blog": "Blog"
+      }
+    },
+    "dashboard": {
+      "title": "Dashboard",
+      "description": "Visao geral do seu blog e das doacoes.",
+      "recentTransactions": "Transacoes recentes",
+      "topSupporters": "Maiores apoiadores",
+      "noDonationsYet": "Nenhuma doacao ainda.",
+      "anonymous": "Anonimo",
+      "someone": "Alguem",
+      "coffees": "{count, plural, one {# cafe} other {# cafes}}",
+      "stats": {
+        "raised": {
+          "label": "Total arrecadado",
+          "sub": "{count, plural, one {# apoiador} other {# apoiadores}}"
+        },
+        "views": {
+          "label": "Visualizacoes",
+          "sub": "{count, plural, one {# post publicado} other {# posts publicados}}"
+        },
+        "likes": {
+          "label": "Curtidas",
+          "sub": "Em todos os posts"
+        },
+        "comments": {
+          "label": "Comentarios",
+          "sub": "Em todos os posts"
+        }
+      }
+    },
+    "donationsPage": {
+      "title": "Doacoes",
+      "description": "Gerencie apoiadores e mensagens.",
+      "stats": {
+        "raised": "Total arrecadado",
+        "supporters": "Apoiadores",
+        "donations": "Total de doacoes",
+        "averageTicket": "Ticket medio"
+      },
+      "preview": {
+        "topSupporters": {
+          "title": "10 maiores apoiadores",
+          "subtitle": "Aparece no ranking da pagina de apoio"
+        },
+        "recent": {
+          "title": "10 mais recentes",
+          "subtitle": "Aparece nos apoios recentes da pagina de apoio"
+        }
+      }
+    },
+    "postsPage": {
+      "title": "Posts",
+      "total": "{count, plural, one {# post no total} other {# posts no total}}",
+      "newPost": "Novo post",
+      "empty": "Nenhum post ainda.",
+      "createFirst": "Criar primeiro post",
+      "untitled": "(sem titulo)",
+      "missingTranslation": "Sem traducao: {locale}",
+      "columns": {
+        "title": "Titulo",
+        "status": "Status",
+        "locales": "Idiomas",
+        "tags": "Tags",
+        "updated": "Atualizado",
+        "actions": "Acoes"
+      },
+      "status": {
+        "published": "Publicado",
+        "draft": "Rascunho"
+      },
+      "actions": {
+        "edit": "Editar",
+        "view": "Ver"
+      }
+    },
+    "bannedUsers": {
+      "title": "Usuarios banidos",
+      "description": "Gerencie usuarios que nao podem comentar.",
+      "loading": "Carregando...",
+      "empty": "Nenhum usuario banido.",
+      "bannedAt": "Banido em {date}",
+      "unban": "Desbanir"
+    },
+    "newsletterPage": {
+      "title": "Newsletter",
+      "subtitle": "{count, plural, one {# inscrito no total} other {# inscritos no total}}",
+      "newCampaign": "Nova campanha",
+      "recentCampaigns": "Campanhas recentes",
+      "seeAll": "Ver todas",
+      "scheduledFor": "Agendado: {date}",
+      "stats": {
+        "active": "Inscritos ativos",
+        "pending": "Aguardando confirmacao",
+        "unsubscribed": "Descadastros",
+        "openRate": "Taxa de abertura geral"
+      },
+      "empty": {
+        "title": "Nenhuma campanha ainda",
+        "description": "Crie sua primeira campanha para comecar."
+      },
+      "status": {
+        "draft": "Rascunho",
+        "scheduled": "Agendado",
+        "sending": "Enviando",
+        "sent": "Enviado",
+        "failed": "Falhou"
+      },
+      "metrics": {
+        "sent": "enviados",
+        "openRate": "abertura"
+      }
+    },
+    "donationsTable": {
+      "title": "Todas as doacoes",
+      "empty": "Nenhuma doacao encontrada.",
+      "anonymous": "Anonimo",
+      "private": "privado",
+      "coffees": "{count, plural, one {# cafe} other {# cafes}}",
+      "messagePlaceholder": "Mensagem (deixe vazio para remover)",
+      "cancel": "Cancelar",
+      "save": "Salvar",
+      "saving": "Salvando...",
+      "viewFullMessage": "Ver mensagem completa",
+      "noMessage": "sem mensagem",
+      "editMessage": "Editar mensagem",
+      "deleteDonation": "Excluir doacao",
+      "confirmDelete": "Excluir esta doacao? Esta acao nao pode ser desfeita.",
+      "page": "Pagina {page} de {totalPages}",
+      "filters": {
+        "all": "Todos",
+        "completed": "Concluidas",
+        "pending": "Pendentes"
+      },
+      "status": {
+        "completed": "Concluida",
+        "pending": "Pendente",
+        "failed": "Falhou",
+        "expired": "Expirada"
+      }
+    },
+    "donationsPreview": {
+      "empty": "Nenhuma doacao.",
+      "anonymous": "Anonimo",
+      "messagePlaceholder": "Mensagem (deixe vazio para remover)",
+      "cancel": "Cancelar",
+      "save": "Salvar",
+      "saving": "Salvando...",
+      "viewFullMessage": "Ver mensagem completa",
+      "noMessage": "sem mensagem",
+      "editMessage": "Editar mensagem"
+    },
+    "campaignDelete": {
+      "title": "Excluir campanha",
+      "confirm": "Tem certeza?",
+      "cancel": "Cancelar",
+      "deleting": "Excluindo...",
+      "delete": "Excluir"
+    },
+    "suspiciousCommentsPage": {
+      "title": "Comentarios suspeitos",
+      "pending": "{count} comentario(s) aguardando revisao",
+      "loading": "Carregando...",
+      "empty": "Nenhum comentario suspeito no momento.",
+      "flagged": "sinalizado",
+      "approve": "Aprovar",
+      "reject": "Rejeitar",
+      "previous": "Anterior",
+      "page": "Pagina {page} de {totalPages}",
+      "next": "Proxima"
+    },
+    "newCampaignPage": {
+      "title": "Nova campanha",
+      "description": "Salve como rascunho primeiro, depois envie ou agende."
+    },
+    "campaignsList": {
+      "title": "Campanhas",
+      "total": "{count} no total",
+      "newCampaign": "Nova campanha",
+      "unavailableTitle": "Titulo indisponivel",
+      "empty": "Nenhuma campanha criada ainda.",
+      "previous": "Anterior",
+      "page": "Pagina {page} de {totalPages}",
+      "next": "Proxima",
+      "columns": {
+        "subject": "Assunto",
+        "type": "Tipo",
+        "status": "Status",
+        "sent": "Enviados",
+        "openRate": "Abertura",
+        "date": "Data"
+      },
+      "status": {
+        "draft": "Rascunho",
+        "scheduled": "Agendado",
+        "sending": "Enviando",
+        "sent": "Enviado",
+        "failed": "Falhou"
+      },
+      "type": {
+        "post": "Post",
+        "html": "HTML"
+      }
+    },
+    "campaignDetail": {
+      "unavailableTitle": "Titulo indisponivel",
+      "createdAt": "Criado em {date}",
+      "linkedPost": "Post vinculado:",
+      "editTitle": "Editar campanha",
+      "sentContent": "Conteudo enviado",
+      "status": {
+        "draft": "Rascunho",
+        "scheduled": "Agendado",
+        "sending": "Enviando",
+        "sent": "Enviado",
+        "failed": "Falhou"
+      },
+      "type": {
+        "post": "Post",
+        "html": "HTML"
+      },
+      "stats": {
+        "total": "Total",
+        "sent": "Enviados",
+        "opens": "Aberturas",
+        "openRate": "Taxa de abertura"
+      },
+      "delivery": {
+        "title": "Status de entrega",
+        "delivered": "Entregues",
+        "failed": "Falhas",
+        "pending": "Pendentes"
+      }
+    },
+    "campaignForm": {
+      "autoSubject": "Novo artigo: {title}",
+      "common": {
+        "optional": "opcional"
+      },
+      "errors": {
+        "save": "Nao foi possivel salvar a campanha.",
+        "send": "Nao foi possivel enviar a campanha."
+      },
+      "type": {
+        "label": "Tipo de campanha",
+        "post": {
+          "title": "Baseada em post",
+          "description": "Template fixo com titulo, resumo e link do artigo"
+        },
+        "custom": {
+          "title": "HTML personalizado",
+          "description": "Escreva seu proprio HTML para o e-mail"
+        }
+      },
+      "post": {
+        "label": "Post",
+        "empty": "Nenhum post publicado encontrado. Publique um post antes de criar este tipo de campanha.",
+        "placeholder": "Selecione um post..."
+      },
+      "template": {
+        "previewLabel": "Preview do template",
+        "hideHtml": "Ocultar",
+        "showHtml": "Ver HTML",
+        "readArticle": "Ler artigo ->"
+      },
+      "subject": {
+        "label": "Assunto do e-mail",
+        "placeholderPost": "Preenchido automaticamente ao selecionar o post",
+        "placeholderCustom": "Ex: Novo artigo: Como escalar uma aplicacao Node.js",
+        "counter": "{count}/150 caracteres"
+      },
+      "previewText": {
+        "label": "Preview text",
+        "placeholder": "Texto exibido antes de abrir o e-mail no cliente de e-mail"
+      },
+      "content": {
+        "label": "Conteudo (HTML)",
+        "help": "HTML com estilos inline. O template base (header, footer, unsubscribe) e aplicado automaticamente.",
+        "placeholder": "<h2>Titulo da campanha</h2>\n<p>Corpo do e-mail...</p>\n<a href=\"...\">Leia mais -></a>"
+      },
+      "schedule": {
+        "label": "Agendar envio",
+        "hint": "deixe vazio para enviar imediatamente"
+      },
+      "save": {
+        "saved": "Salvo! ?",
+        "action": "Salvar rascunho"
+      },
+      "send": {
+        "confirm": "Confirmar envio agora",
+        "schedule": "Agendar envio",
+        "action": "Enviar campanha",
+        "confirmHelp": "Clique novamente para confirmar. Esta acao enviara e-mails para todos os inscritos ativos."
+      },
+      "sendSuccess": {
+        "scheduled": "Campanha agendada com sucesso!",
+        "queued": "Campanha enfileirada com sucesso!"
+      }
+    },
+    "postEditor": {
+      "locale": {
+        "postLanguage": "Idioma do post:",
+        "translateWithAi": "Traduzir com IA",
+        "translation": "Traducao:",
+        "editing": "editando"
+      },
+      "common": {
+        "optional": "opcional"
+      },
+      "errors": {
+        "invalidYoutube": "Link invalido. Use um link do YouTube (ex: https://youtu.be/xxxxx).",
+        "upload": "Falha ao fazer upload da imagem. Tente novamente.",
+        "titleRequired": "Por favor, insira um titulo.",
+        "contentRequired": "Por favor, insira o conteudo do post.",
+        "invalidYoutubeShort": "O link do YouTube e invalido.",
+        "save": "Falha ao salvar o post. Tente novamente."
+      },
+      "saving": {
+        "translating": "Gerando traducoes com IA...",
+        "publishing": "Publicando...",
+        "saving": "Salvando..."
+      },
+      "title": {
+        "edit": "Editar post",
+        "new": "Novo post",
+        "placeholder": "Titulo do post..."
+      },
+      "mode": {
+        "edit": "Editar",
+        "preview": "Preview"
+      },
+      "cover": {
+        "title": "Imagem de capa",
+        "uploading": "Enviando...",
+        "upload": "Upload imagem de capa",
+        "alt": "Imagem de capa",
+        "remove": "Remover"
+      },
+      "youtube": {
+        "title": "Video do YouTube",
+        "placeholder": "https://www.youtube.com/watch?v=xxxxx",
+        "preview": "Preview:",
+        "previewTitle": "Preview do YouTube",
+        "remove": "Remover video"
+      },
+      "summary": {
+        "title": "Resumo",
+        "placeholder": "Uma breve descricao do que o leitor vai encontrar neste post...",
+        "remaining": "{count} restantes"
+      },
+      "readingTime": {
+        "title": "Tempo de leitura",
+        "unit": "minutos"
+      },
+      "content": {
+        "imageAlt": "Descricao da imagem",
+        "placeholderEditor": "Escreva o conteudo do post aqui..."
+      },
+      "actions": {
+        "publish": "Publicar",
+        "saveDraft": "Salvar rascunho",
+        "cancel": "Cancelar"
+      }
+    }
+  },
+  "blogUi": {
+    "header": {
+      "gridView": "Visualizacao em grade",
+      "listView": "Visualizacao em lista",
+      "sort": {
+        "placeholder": "Ordenar por",
+        "newest": "Mais recentes",
+        "mostLiked": "Mais curtidos",
+        "mostViewed": "Mais vistos",
+        "oldest": "Mais antigos"
+      },
+      "random": {
+        "action": "Post aleatorio",
+        "loading": "Carregando..."
+      },
+      "tag": {
+        "placeholder": "Filtrar por tag",
+        "all": "Todas as tags"
+      }
+    },
+    "list": {
+      "empty": "Nenhum post encontrado.",
+      "loadMore": "Carregar mais",
+      "loadingMore": "Carregando..."
+    },
+    "carousel": {
+      "previousSlide": "Slide anterior",
+      "nextSlide": "Proximo slide"
+    },
+    "reactions": {
+      "like": "Curtir post",
+      "unlike": "Descurtir post",
+      "viewComments": "Ver comentarios",
+      "support": "Apoie",
+      "share": "Compartilhar",
+      "shareAria": "Compartilhar este post"
+    },
+    "sidebar": {
+      "otherPosts": "Outras publicacoes"
+    },
+    "toc": {
+      "title": "Nesta pagina",
+      "scrollToTop": "Voltar ao topo"
+    }
+  },
+  "commentsUi": {
+    "composer": {
+      "tooManyComments": "Muitos comentarios seguidos. Aguarde um momento.",
+      "publishError": "Erro ao publicar.",
+      "published": "Comentario publicado!",
+      "publishCommentError": "Erro ao publicar comentario.",
+      "loginAction": "Faca login",
+      "loginPrompt": "para comentar.",
+      "reply": "Responder",
+      "comment": "Comentar"
+    },
+    "editor": {
+      "tabs": {
+        "write": "Escrever",
+        "preview": "Pre-visualizar"
+      },
+      "tools": {
+        "bold": "Negrito (Ctrl+B)",
+        "italic": "Italico (Ctrl+I)",
+        "link": "Link",
+        "list": "Lista",
+        "orderedList": "Lista numerada",
+        "quote": "Citacao",
+        "inlineCode": "Codigo inline",
+        "codeBlock": "Bloco de codigo"
+      },
+      "placeholder": "Escreva seu comentario...",
+      "nothingToPreview": "Nada para pre-visualizar.",
+      "remaining": "{count} restantes",
+      "cancel": "Cancelar",
+      "saving": "Salvando...",
+      "submit": "Comentar"
+    },
+    "deleteModal": {
+      "title": "Apagar comentario",
+      "subtitle": "Esta acao nao pode ser desfeita.",
+      "close": "Fechar",
+      "previewLabel": "Seu comentario",
+      "cancel": "Cancelar",
+      "deleting": "Apagando...",
+      "confirm": "Apagar",
+      "warning": {
+        "prefix": "Ao apagar este comentario, todas as respostas tambem serao removidas",
+        "highlight": "permanentemente"
+      },
+      "errors": {
+        "delete": "Nao foi possivel apagar o comentario."
+      }
+    },
+    "card": {
+      "updated": "Comentario atualizado.",
+      "deleted": "Comentario apagado.",
+      "saveEdit": "Salvar edicao",
+      "editing": "Editando comentario",
+      "shareTitle": "Comentario de @{username}",
+      "linkCopied": "Link copiado!",
+      "collapsedCount": "{count} ocultos",
+      "vote": {
+        "up": "Voto positivo",
+        "down": "Voto negativo"
+      },
+      "hideComment": "Ocultar comentario",
+      "contextLabel": "Comentando em",
+      "edited": "editado",
+      "edit": "Editar",
+      "delete": "Apagar",
+      "reply": "Responder",
+      "share": "Compartilhar",
+      "time": {
+        "now": "agora",
+        "minutes": "{count} min atras",
+        "hours": "{count} h atras",
+        "days": "{count} dias atras"
+      },
+      "errors": {
+        "edit": "Nao foi possivel editar o comentario.",
+        "delete": "Nao foi possivel apagar o comentario."
+      }
+    }
+  },
+  "footerNewsletter": {
+    "title": "Fique por dentro",
+    "description": "Receba novidades sobre posts, projetos e ideias diretamente no seu e-mail.",
+    "placeholder": "Insira seu e-mail",
+    "submit": "Inscrever-se",
+    "submitting": "Enviando...",
+    "success": {
+      "title": "Verifique seu e-mail!",
+      "description": "Enviamos um link de confirmacao para voce."
+    },
+    "errors": {
+      "generic": "Algo deu errado.",
+      "connection": "Erro de conexao. Tente novamente."
+    }
+  },
+  "common": {
+    "dialog": {
+      "close": "Fechar"
+    }
+  },
+  "newsletterCard": {
+    "title": "Os melhores posts na sua caixa de entrada",
+    "medalAlt": "Newsletter em destaque",
+    "description": "Fique por dentro de novos posts e novidades.",
+    "subscribers": {
+      "prefix": "Aprovado por",
+      "suffix": "{count, plural, one {inscrito} other {inscritos}}."
+    },
+    "emailLabel": "E-mail",
+    "emailPlaceholder": "seu@email.com",
+    "submit": "Inscrever-se",
+    "privacy": {
+      "prefix": "Sem spam, nunca.",
+      "suffix": "Voce pode conferir a politica de privacidade aqui."
+    },
+    "success": {
+      "title": "Verifique seu e-mail!",
+      "description": "Enviamos um link de confirmacao para ativar sua inscricao.",
+      "useAnotherEmail": "Usar outro e-mail"
+    },
+    "errors": {
+      "generic": "Algo deu errado. Tente novamente.",
+      "connection": "Erro de conexao. Tente novamente."
+    }
+  },
+  "unsubscribeModal": {
+    "trigger": "Cancelar inscricao",
+    "title": "Cancelar inscricao na newsletter",
+    "description": "Digite seu e-mail para receber um link de confirmacao.",
+    "emailLabel": "E-mail",
+    "emailPlaceholder": "seu@email.com",
+    "cancel": "Cancelar",
+    "submit": "Enviar confirmacao",
+    "close": "Fechar",
+    "success": {
+      "message": "E-mail de confirmacao enviado com sucesso! Verifique sua caixa de entrada e clique no link para concluir o cancelamento."
+    },
+    "errors": {
+      "generic": "Nao foi possivel processar sua solicitacao.",
+      "connection": "Erro de conexao. Tente novamente mais tarde."
+    }
+  },
+  "cookieBanner": {
+    "ariaLabel": "Aviso de consentimento de cookies",
+    "title": "Permitir o uso de cookies?",
+    "safeExperience": "Ofereca uma experiencia mais segura utilizando informacoes recebidas dos cookies.",
+    "descriptionPrefix": "Saiba mais sobre cookies e como os utilizamos na",
+    "policyLink": "Politica de Cookies",
+    "accept": "Permitir",
+    "decline": "Recusar"
+  },
+  "legal": {
+    "cookiePolicy": {
+      "title": "Politica de Cookies",
+      "updatedAt": "Ultima atualizacao: Fevereiro 2026",
+      "close": "Fechar",
+      "sections": {
+        "whatAreCookies": {
+          "title": "O que sao cookies?",
+          "body": "Cookies sao pequenos ficheiros de texto armazenados no seu dispositivo quando voce visita um site. Eles sao amplamente usados para fazer sites funcionarem de forma mais eficiente e para fornecer informacoes aos proprietarios do site."
+        },
+        "essential": {
+          "title": "1. Cookies essenciais",
+          "body": "Esses cookies sao necessarios para o funcionamento basico do website. Eles incluem cookies que permitem iniciar sessao em areas seguras ou utilizar funcionalidades essenciais. Sem eles, os servicos solicitados nao podem ser fornecidos."
+        },
+        "performance": {
+          "title": "2. Cookies de desempenho",
+          "body": "Esses cookies recolhem informacoes sobre como os visitantes utilizam o website, como paginas mais visitadas e se ha mensagens de erro. Eles nao recolhem informacoes que identifiquem o visitante pessoalmente."
+        },
+        "functionality": {
+          "title": "3. Cookies de funcionalidade",
+          "body": "Esses cookies permitem que o website se lembre das escolhas feitas por voce, como idioma ou regiao, e forneca funcionalidades melhoradas e mais personalizadas. As informacoes recolhidas podem ser anonimizadas e nao acompanham sua navegacao em outros sites."
+        },
+        "targeting": {
+          "title": "4. Cookies de segmentacao",
+          "body": "Esses cookies sao usados para apresentar conteudos mais relevantes e tambem podem ajudar a limitar o numero de vezes que voce ve um anuncio e medir a eficacia de campanhas."
+        },
+        "manage": {
+          "title": "5. Como gerir cookies",
+          "body": "A maioria dos navegadores permite controlar cookies pelas preferencias. Limitar cookies pode piorar sua experiencia de navegacao e impedir que o site lembre configuracoes personalizadas."
+        }
+      }
+    },
+    "terms": {
+      "title": "Termos e Condicoes",
+      "updatedAt": "Ultima atualizacao: Fevereiro 2026",
+      "close": "Fechar",
+      "sections": {
+        "network": {
+          "title": "Importante - Verifique a rede",
+          "body": "Antes de comprar um bilhete, verifique se a loteria esta executando na mesma rede da sua carteira. Compras feitas na rede errada nao sao reembolsaveis e nao sao de responsabilidade da plataforma."
+        },
+        "service": {
+          "title": "1. Natureza do servico",
+          "body": "Esta plataforma e uma loteria descentralizada operando na blockchain, pensada para oferecer transparencia e justica em todos os sorteios. Atualmente, o servico encontra-se em periodo de teste na rede Sepolia."
+        },
+        "testing": {
+          "title": "2. Periodo de teste",
+          "body": "Durante o periodo de validacao, todas as transacoes utilizam tokens de teste (Sepolia ETH) que nao possuem valor economico real. Nenhum valor monetario verdadeiro esta envolvido nesta fase."
+        },
+        "fairness": {
+          "title": "3. Justica e transparencia",
+          "body": "Todos os sorteios sao realizados de forma transparente na blockchain. Os resultados podem ser verificados por qualquer pessoa atraves do contrato inteligente. A plataforma utiliza fontes de aleatoriedade verificaveis para garantir a justica dos sorteios."
+        },
+        "userResponsibility": {
+          "title": "4. Responsabilidade do utilizador",
+          "body": "O utilizador e responsavel por garantir que esta conectado a rede correta antes de realizar qualquer transacao. A plataforma nao se responsabiliza por perdas decorrentes de erros do utilizador, incluindo envio de fundos para enderecos incorretos."
+        },
+        "changes": {
+          "title": "5. Modificacoes dos termos",
+          "body": "A plataforma reserva-se o direito de modificar estes termos a qualquer momento. As alteracoes serao comunicadas pela plataforma. O uso continuado do servico apos as alteracoes constitui aceitacao dos novos termos."
+        }
+      }
+    }
+  },
+  "profilePage": {
+    "memberSince": "Membro desde {date}",
+    "signOut": "Sair",
+    "tabs": {
+      "profile": "Perfil",
+      "comments": "Comentarios"
+    },
+    "stats": {
+      "title": "Estatisticas",
+      "comments": "Comentarios"
+    },
+    "emptyComments": "Nenhum comentario ainda.",
+    "loadMore": "Carregar mais",
+    "commentingOn": "Comentando em",
+    "viewComment": "Ver comentario ->"
+  }
 }
