@@ -1,19 +1,22 @@
 import { type ClassValue, clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
+import { getIntlLocaleCode } from './locales'
 
-export function formatDistanceToNow(date: Date): string {
+export function formatDistanceToNow(date: Date, locale: string = 'en'): string {
   const now = new Date()
   const diffMs = now.getTime() - new Date(date).getTime()
   const diffMins = Math.floor(diffMs / 60000)
   const diffHours = Math.floor(diffMs / 3600000)
   const diffDays = Math.floor(diffMs / 86400000)
+  const localeCode = getIntlLocaleCode(locale)
+  const formatter = new Intl.RelativeTimeFormat(localeCode, { numeric: 'auto' })
 
-  if (diffMins < 1) return 'just now'
-  if (diffMins < 60) return `${diffMins}m ago`
-  if (diffHours < 24) return `${diffHours}h ago`
-  if (diffDays < 30) return `${diffDays}d ago`
+  if (diffMins < 1) return locale === 'pt' ? 'agora mesmo' : 'just now'
+  if (diffMins < 60) return formatter.format(-diffMins, 'minute')
+  if (diffHours < 24) return formatter.format(-diffHours, 'hour')
+  if (diffDays < 30) return formatter.format(-diffDays, 'day')
 
-  return new Date(date).toLocaleDateString()
+  return new Date(date).toLocaleDateString(localeCode)
 }
 
 /**
