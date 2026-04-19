@@ -5,6 +5,12 @@ export const SUPPORTED_LOCALES = [
   { code: 'es', label: 'Español', flag: '🇪🇸', shortLabel: 'ES' },
 ] as const
 
+export const LOCALE_FORMAT_MAP = {
+  pt: 'pt-BR',
+  en: 'en-US',
+  es: 'es-ES',
+} as const
+
 export type LocaleCode = (typeof SUPPORTED_LOCALES)[number]['code']
 
 export function getLocale(code: string) {
@@ -13,4 +19,8 @@ export function getLocale(code: string) {
 
 export function getOtherLocales(code: string) {
   return SUPPORTED_LOCALES.filter((l) => l.code !== code)
+}
+
+export function getIntlLocaleCode(code: string) {
+  return LOCALE_FORMAT_MAP[code as keyof typeof LOCALE_FORMAT_MAP] ?? 'en-US'
 }
