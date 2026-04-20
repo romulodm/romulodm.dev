@@ -1,4 +1,4 @@
-﻿import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
 import {
@@ -11,10 +11,10 @@ import {
   parseJsonBodyWithMessages,
   RequestValidationError,
 } from "@/lib/api-validation";
-import { subscribe } from "@/lib/newsletter/newsletter.service";
+import { requestUnsubscribe } from "@/lib/newsletter/newsletter.service";
 import { getRequestIp, rateLimit } from "@/lib/rate-limit";
 
-function createNewsletterSubscribeSchema(
+function createRequestUnsubscribeSchema(
   t: Awaited<ReturnType<typeof getApiTranslator>>,
 ) {
   return z.object({
@@ -31,26 +31,27 @@ export async function POST(req: NextRequest) {
 
   try {
     const limited = await rateLimit(
-      `newsletter:subscribe:${getRequestIp(req)}`,
+      `newsletter:request-unsubscribe:${getRequestIp(req)}`,
       5,
       600,
     );
     if (limited) {
-      return rateLimitResponse(t("newsletter.subscribe.rateLimited"));
+      return rateLimitResponse(t("newsletter.requestUnsubscribe.rateLimited"));
     }
 
     const { email } = await parseJsonBodyWithMessages(
       req,
-      createNewsletterSubscribeSchema(t),
+      createRequestUnsubscribeSchema(t),
       {
         invalidBodyMessage: t("common.invalidBody"),
         fallbackMessage: t("common.invalidRequest"),
       },
     );
-    await subscribe(email);
+
+    await requestUnsubscribe(email);
 
     return NextResponse.json({
-      message: t("newsletter.subscribe.success"),
+      message: t("newsletter.requestUnsubscribe.success"),
     });
   } catch (error) {
     if (error instanceof z.ZodError || error instanceof RequestValidationError) {
@@ -58,9 +59,9 @@ export async function POST(req: NextRequest) {
     }
 
     return internalErrorResponse(
-      "newsletter-subscribe",
+      "newsletter-request-unsubscribe",
       error,
-      t("newsletter.subscribe.internal"),
+      t("newsletter.requestUnsubscribe.internal"),
     );
   }
 }

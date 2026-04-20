@@ -1,22 +1,15 @@
-// src/app/api/newsletter/unsubscribe/[token]/route.ts
-//
-// POST /api/newsletter/unsubscribe/:token  → confirms unsubscription (1-click)
-// GET  /api/newsletter/unsubscribe/:token  → redirects to the unsubscribe page
-//      (for email clients that pre-fetch links)
-//
-
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import { confirmUnsubscribe } from "@/lib/newsletter/newsletter.service";
+import { getApiTranslator } from '@/lib/api-intl'
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL ?? "";
 
-export async function POST(
-  _req: NextRequest,
-  { params }: { params: { token: string } },
-) {
+export async function POST(req: NextRequest, props: { params: Promise<{ token: string }> }) {
+  const t = await getApiTranslator(req)
+  const params = await props.params;
   const { token } = params;
   if (!token) {
-    return NextResponse.json({ error: "Token ausente." }, { status: 400 });
+    return NextResponse.json({ error: t('newsletter.unsubscribe.missingToken') }, { status: 400 });
   }
 
   try {
@@ -25,26 +18,23 @@ export async function POST(
     switch (result.status) {
       case "invalid_token":
         return NextResponse.json(
-          { error: "Token inválido." },
+          { error: t('newsletter.unsubscribe.invalidToken') },
           { status: 400 },
         );
       case "already_unsubscribed":
       case "unsubscribed":
         return NextResponse.json({
-          message: "Você foi removido da newsletter com sucesso.",
+          message: t('newsletter.unsubscribe.success'),
         });
     }
-  } catch (err) {
-    console.error("[unsubscribe]", err);
-    return NextResponse.json({ error: "Erro interno." }, { status: 500 });
+  } catch (error) {
+    console.error("[unsubscribe]", error);
+    return NextResponse.json({ error: t('newsletter.unsubscribe.internal') }, { status: 500 });
   }
 }
 
-/** Handles prefetch bots — redirect to page, don't unsubscribe on GET. */
-export async function GET(
-  _req: NextRequest,
-  { params }: { params: { token: string } },
-) {
+export async function GET(_req: NextRequest, props: { params: Promise<{ token: string }> }) {
+  const params = await props.params;
   return NextResponse.redirect(
     `${BASE_URL}/newsletter/unsubscribe/${params.token}`,
   );
