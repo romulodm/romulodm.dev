@@ -10,15 +10,20 @@
     "test:integration": "vitest run --config ../vitest.config.integration.ts --dir ."
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1032.0",
     "@aws-sdk/client-ses": "^3.1021.0",
+    "@aws-sdk/lib-storage": "^3.1032.0",
     "@romulo/database": "*",
     "@romulo/queues": "*",
     "bullmq": "^5.71.0",
+    "dockerode": "^4.0.10",
     "dotenv": "^16.0.0",
     "ioredis": "^5.0.0",
-    "nodemailer": "^8.0.5"
+    "nodemailer": "^8.0.5",
+    "systeminformation": "^5.31.5"
   },
   "devDependencies": {
+    "@types/dockerode": "^3.3.38",
     "@types/node": "^20.0.0",
     "@types/nodemailer": "^6.4.0",
     "prisma": "^5.0.0",

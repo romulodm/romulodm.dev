@@ -1,25 +1,6 @@
-/**
- * index.ts — Worker process entry point.
- *
- * Responsible for:
- *   1. Verifying external service connectivity (email SMTP).
- *   2. Instantiating all BullMQ workers by calling their factory functions.
- *   3. Registering repeatable cron/interval jobs (daily-status, views-flush).
- *   4. Attaching structured-log listeners to every worker.
- *   5. Starting the health monitor loop.
- *   6. Handling graceful shutdown on SIGTERM / SIGINT.
- *
- * Why factories instead of top-level exports?
- * Workers and queues must be created AFTER all modules have finished loading.
- * Instantiating them at module level causes circular-dependency crashes where
- * `queueRuntimeConfig` (from @romulo/queues) is still `undefined` at import time.
- * All worker files export factory functions; this file calls them once, here,
- * inside `main()`.
- */
-
 import "./env";
 
-import { createQueue, QUEUE_CAMPAIGN, QUEUE_NOTIFICATIONS, QUEUE_TRANSACTIONAL } from "@romulo/queues";
+import { createQueue, QUEUE_BACKUPS, QUEUE_CAMPAIGN, QUEUE_NOTIFICATIONS, QUEUE_TRANSACTIONAL } from "@romulo/queues";
 import { prisma } from "@romulo/database";
 import type { Worker } from "bullmq";
 
@@ -29,6 +10,7 @@ import {
   createFailureTracker,
   logWorkerEvent,
   recordQueueFailure,
+  setLogRedis,
   startWorkerHealthMonitor,
 } from "./lib/worker-observability";
 
@@ -36,6 +18,9 @@ import {
 import { startEmailWorkers } from "./workers/email.worker";
 import { startNotificationWorker, scheduleDailyStatus } from "./workers/notification.worker";
 import { scheduleViewsFlush } from "./workers/views.worker";
+import { startSearchConsumer, reindexAll } from "./workers/search.worker";
+import { startMetricsWorker } from "./workers/metrics.worker";
+import { startBackupWorker } from "./workers/backup.worker";
 
 // ── Monitoring queues ─────────────────────────────────────────────────────────
 // These queue instances are used only for health monitoring (job counts, lag).
@@ -44,6 +29,7 @@ const monitoringQueues = {
   [QUEUE_TRANSACTIONAL]: createQueue(QUEUE_TRANSACTIONAL, redis),
   [QUEUE_CAMPAIGN]: createQueue(QUEUE_CAMPAIGN, redis),
   [QUEUE_NOTIFICATIONS]: createQueue(QUEUE_NOTIFICATIONS, redis),
+  [QUEUE_BACKUPS]: createQueue(QUEUE_BACKUPS, redis),  // ← novo
 };
 
 const failureTracker = createFailureTracker();
@@ -52,6 +38,10 @@ let healthMonitor: ReturnType<typeof startWorkerHealthMonitor> | null = null;
 // ── Main ──────────────────────────────────────────────────────────────────────
 
 async function main() {
+  // Enable log persistence to Redis as early as possible so startup events
+  // (email verify, reindex, etc.) are captured in the ring buffer.
+  setLogRedis(redis);
+
   logWorkerEvent("info", "worker.starting");
 
   // Verify SMTP connectivity at startup — log a warning but don't abort if it fails,
@@ -62,9 +52,32 @@ async function main() {
     });
   });
 
+  // ── Search: reindexação completa no startup ───────────────────────────────
+  // Envia todos os posts publicados para o serviço Go de busca.
+  // O serviço Go mantém o índice em memória — ao reiniciar perde o estado,
+  // portanto reconstruímos via POST /reindex a cada startup do worker.
+  // Não aborta o worker se falhar (o Go pode estar subindo em paralelo).
+  await reindexAll().catch((err: unknown) => {
+    logWorkerEvent("warn", "worker.search_reindex_failed", {
+      error: err instanceof Error ? err.message : String(err),
+    });
+  });
+
+
+  // ── System metrics: Docker colect + host stats → Redis ───────────────────
+  if (process.env.ENABLE_METRICS !== 'false') {
+    startMetricsWorker().catch((err: unknown) => {
+      logWorkerEvent("warn", "worker.metrics_start_failed", {
+        error: err instanceof Error ? err.message : String(err),
+      });
+    });
+  }
+
   // Instantiate workers — must happen after all imports have resolved
   const { transactionalWorker, campaignWorker } = startEmailWorkers(redis);
   const notificationWorker = startNotificationWorker(redis);
+  const searchConsumer = startSearchConsumer();
+  const backupWorker = startBackupWorker(redis);
 
   // Register repeatable jobs (idempotent — safe to call on every restart)
   await scheduleDailyStatus(redis);
@@ -74,6 +87,7 @@ async function main() {
   attachLogger(transactionalWorker, QUEUE_TRANSACTIONAL);
   attachLogger(campaignWorker, QUEUE_CAMPAIGN);
   attachLogger(notificationWorker, QUEUE_NOTIFICATIONS);
+  attachLogger(backupWorker, QUEUE_BACKUPS);
 
   // Start the periodic health monitor (queue lag, failure rates, redis ping)
   healthMonitor = startWorkerHealthMonitor({
@@ -94,11 +108,13 @@ async function main() {
     logWorkerEvent("info", "worker.shutdown_requested", { signal });
 
     healthMonitor?.stop();
+    searchConsumer.stop();
 
     await Promise.allSettled([
       transactionalWorker.close(),
       campaignWorker.close(),
       notificationWorker.close(),
+      backupWorker.close(),
       ...Object.values(monitoringQueues).map((queue) => queue.close()),
     ]);
 
