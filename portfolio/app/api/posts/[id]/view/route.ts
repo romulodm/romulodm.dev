@@ -1,16 +1,15 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 
+import { badRequestResponse } from "@/lib/api-errors";
+import { getApiTranslator } from "@/lib/api-intl";
 import { recordPostViewByIdentifier } from "@/lib/views";
 
-/**
- * Thin compatibility wrapper for older clients that still POST to this route.
- * The canonical flow now lives in `portfolio/lib/views.ts` and buffers into
- * the worker-backed queue path used by the views worker.
- */
 export async function POST(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  props: { params: Promise<{ id: string }> },
 ) {
+  const t = await getApiTranslator(req);
+  const params = await props.params;
   const postId = params.id;
 
   let identifier: string | undefined;
@@ -19,22 +18,23 @@ export async function POST(
     const body = await req.json();
     identifier = body.userId || body.sessionId;
   } catch {
-    return NextResponse.json({ error: "Invalid body" }, { status: 400 });
+    return badRequestResponse(t("posts.invalidBody"));
   }
 
   if (!identifier) {
-    return NextResponse.json({ error: "identifier required" }, { status: 400 });
+    return badRequestResponse(t("posts.identifierRequired"));
   }
 
   const result = await recordPostViewByIdentifier(postId, identifier);
   return NextResponse.json(result);
 }
 
-export async function GET(_req: NextRequest) {
+export async function GET(req: NextRequest) {
+  const t = await getApiTranslator(req);
+
   return NextResponse.json(
     {
-      error:
-        "View flushing now runs exclusively through the worker-backed queue path.",
+      error: t("posts.queueOnly"),
     },
     { status: 410 },
   );
