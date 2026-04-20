@@ -1,21 +1,34 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { simulatePixPayment } from '@/lib/payments/abacate'
-import { prisma } from '@romulo/database'
+﻿import { NextRequest, NextResponse } from "next/server";
 
-// Rota só disponível fora de produção
+import { prisma } from "@romulo/database";
+
+import { forbiddenResponse, internalErrorResponse } from "@/lib/api-errors";
+import { getApiTranslator } from "@/lib/api-intl";
+import { simulatePixPayment } from "@/lib/payments/abacate";
+
 export async function POST(req: NextRequest) {
-    if (process.env.NODE_ENV === 'production') {
-        return NextResponse.json({ error: 'Não disponível em produção' }, { status: 403 })
-    }
+  const t = await getApiTranslator(req);
 
-    const { pixId, donationId } = await req.json()
+  if (process.env.NODE_ENV === "production") {
+    return forbiddenResponse(t("donations.pix.notAvailableInProduction"));
+  }
 
-    await simulatePixPayment(pixId)
+  try {
+    const { pixId, donationId } = await req.json();
+
+    await simulatePixPayment(pixId);
 
     await prisma.donation.updateMany({
-        where: { id: donationId, status: 'PENDING' },
-        data: { status: 'COMPLETED' },
-    })
+      where: { id: donationId, status: "PENDING" },
+      data: { status: "COMPLETED" },
+    });
 
-    return NextResponse.json({ ok: true })
+    return NextResponse.json({ ok: true });
+  } catch (error) {
+    return internalErrorResponse(
+      "donations-pix-simulate",
+      error,
+      t("common.internalError"),
+    );
+  }
 }

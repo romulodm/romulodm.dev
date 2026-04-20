@@ -1,34 +1,48 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@romulo/database'
+﻿import { NextRequest, NextResponse } from "next/server";
+
+import { prisma } from "@romulo/database";
+
+import {
+  badRequestResponse,
+  internalErrorResponse,
+  unauthorizedResponse,
+} from "@/lib/api-errors";
+import { getApiTranslator } from "@/lib/api-intl";
 
 export async function POST(req: NextRequest) {
-    // 1. Valida o webhook secret
-    //const webhookSecret = req.headers.get('x-webhook-secret')
+  const t = await getApiTranslator(req);
+  const webhookSecret = req.nextUrl.searchParams.get("webhookSecret");
 
-    const webhookSecret = req.nextUrl.searchParams.get('webhookSecret')
+  if (webhookSecret !== process.env.ABACATE_PAY_WEBHOOK_SECRET) {
+    return unauthorizedResponse(t("common.unauthorized"));
+  }
 
-    if (webhookSecret !== process.env.ABACATE_PAY_WEBHOOK_SECRET) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  try {
+    const body = await req.json();
+
+    if (body.event === "billing.paid") {
+      const donationId = body.data?.pixQrCode?.metadata?.donationId;
+      const chargeId = body.data?.pixQrCode?.id;
+
+      if (!donationId) {
+        return badRequestResponse(t("donations.pix.missingDonationId"));
+      }
+
+      await prisma.donation.updateMany({
+        where: { id: donationId },
+        data: {
+          status: "COMPLETED",
+          abacatePayChargeId: chargeId ?? undefined,
+        },
+      });
     }
 
-    const body = await req.json()
-
-    if (body.event === 'billing.paid') {
-        const donationId = body.data?.pixQrCode?.metadata?.donationId
-        const chargeId = body.data?.pixQrCode?.id
-
-        if (!donationId) {
-            return NextResponse.json({ error: 'Missing donationId' }, { status: 400 })
-        }
-
-        await prisma.donation.updateMany({
-            where: { id: donationId },
-            data: {
-                status: 'COMPLETED',
-                abacatePayChargeId: chargeId ?? undefined,
-            },
-        })
-    }
-
-    return NextResponse.json({ ok: true })
+    return NextResponse.json({ ok: true });
+  } catch (error) {
+    return internalErrorResponse(
+      "donations-pix-webhook",
+      error,
+      t("common.internalError"),
+    );
+  }
 }

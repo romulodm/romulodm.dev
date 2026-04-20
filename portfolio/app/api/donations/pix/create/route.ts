@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
 import { prisma } from "@romulo/database";
@@ -10,10 +10,10 @@ import {
 } from "@/lib/api-errors";
 import {
   RequestValidationError,
-  emailSchema,
   optionalPlainText,
-  parseJsonBody,
+  parseJsonBodyWithMessages,
 } from "@/lib/api-validation";
+import { getApiTranslator } from "@/lib/api-intl";
 import { createPixCharge } from "@/lib/payments/abacate";
 import { getRequestIp, rateLimit } from "@/lib/rate-limit";
 
@@ -21,27 +21,43 @@ const COFFEE_CENTS = 500;
 const DONATION_RATE_LIMIT_MAX = 10;
 const DONATION_RATE_LIMIT_WINDOW_SECONDS = 600;
 
-const pixDonationSchema = z.object({
-  coffees: z.coerce.number().int().min(1).max(1000),
-  name: z.unknown().optional().transform((value) => optionalPlainText(value, 100)),
-  message: z
-    .unknown()
-    .optional()
-    .transform((value) => optionalPlainText(value, 500)),
-  isPrivate: z.coerce.boolean().optional().default(false),
-  isMonthly: z.coerce.boolean().optional().default(false),
-  email: emailSchema.optional(),
-  cellphone: z
-    .unknown()
-    .optional()
-    .transform((value) => optionalPlainText(value, 32)),
-  taxId: z
-    .unknown()
-    .optional()
-    .transform((value) => optionalPlainText(value, 32)),
-});
+function createPixDonationSchema(t: Awaited<ReturnType<typeof getApiTranslator>>) {
+  return z.object({
+    coffees: z.coerce
+      .number()
+      .int(t("donations.invalidCoffeeCount"))
+      .min(1, t("donations.invalidCoffeeCount"))
+      .max(1000, t("donations.invalidCoffeeCount")),
+    name: z
+      .unknown()
+      .optional()
+      .transform((value) => optionalPlainText(value, 100)),
+    message: z
+      .unknown()
+      .optional()
+      .transform((value) => optionalPlainText(value, 500)),
+    isPrivate: z.coerce.boolean().optional().default(false),
+    isMonthly: z.coerce.boolean().optional().default(false),
+    email: z
+      .string()
+      .trim()
+      .min(1, t("common.emailRequired"))
+      .email(t("common.emailInvalid"))
+      .optional(),
+    cellphone: z
+      .unknown()
+      .optional()
+      .transform((value) => optionalPlainText(value, 32)),
+    taxId: z
+      .unknown()
+      .optional()
+      .transform((value) => optionalPlainText(value, 32)),
+  });
+}
 
 export async function POST(req: NextRequest) {
+  const t = await getApiTranslator(req);
+
   try {
     const limited = await rateLimit(
       `donations:pix:create:${getRequestIp(req)}`,
@@ -49,11 +65,14 @@ export async function POST(req: NextRequest) {
       DONATION_RATE_LIMIT_WINDOW_SECONDS,
     );
     if (limited) {
-      return rateLimitResponse();
+      return rateLimitResponse(t("common.rateLimited"));
     }
 
     const { coffees, name, message, isPrivate, isMonthly, email, cellphone, taxId } =
-      await parseJsonBody(req, pixDonationSchema);
+      await parseJsonBodyWithMessages(req, createPixDonationSchema(t), {
+        invalidBodyMessage: t("common.invalidBody"),
+        fallbackMessage: t("common.invalidRequest"),
+      });
     const amount = coffees * COFFEE_CENTS;
 
     const donation = await prisma.donation.create({
@@ -74,7 +93,7 @@ export async function POST(req: NextRequest) {
       const charge = await createPixCharge({
         amount,
         correlationId: donation.id,
-        description: `${coffees}x cafe para o blog`,
+        description: t("donations.pix.chargeDescription", { count: coffees }),
         name: name ?? undefined,
         email,
         cellphone: cellphone ?? undefined,
@@ -98,13 +117,21 @@ export async function POST(req: NextRequest) {
         data: { status: "FAILED" },
       });
 
-      return internalErrorResponse("donations-pix-create", error);
+      return internalErrorResponse(
+        "donations-pix-create",
+        error,
+        t("donations.pix.internal"),
+      );
     }
   } catch (error) {
     if (error instanceof z.ZodError || error instanceof RequestValidationError) {
-      return validationErrorResponse(error);
+      return validationErrorResponse(error, t("common.invalidRequest"));
     }
 
-    return internalErrorResponse("donations-pix-create", error);
+    return internalErrorResponse(
+      "donations-pix-create",
+      error,
+      t("donations.pix.internal"),
+    );
   }
 }
