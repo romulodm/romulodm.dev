@@ -9,7 +9,11 @@ import {
 } from "@/lib/api-errors";
 import { listBackups } from "@/lib/backups/s3-client";
 import { Queue } from "bullmq";
-import { QUEUE_NOTIFICATIONS, notificationJobOptions } from "@romulo/queues";
+import {
+  QUEUE_BACKUPS,
+  backupJobOptions,
+  buildBackupJobId,
+} from "@romulo/queues";
 import { getRedisBullMQ } from "@/lib/redis";
 
 // ── GET /api/admin/backups — lista backups ───────────────────────────────────
@@ -43,7 +47,7 @@ export async function POST() {
 
   try {
     // Enfileira job para o worker executar pg_dump
-    const queue = new Queue(QUEUE_NOTIFICATIONS, {
+    const queue = new Queue(QUEUE_BACKUPS, {
       connection: getRedisBullMQ(),
     });
 
@@ -51,8 +55,11 @@ export async function POST() {
       "create-backup",
       { type: "create-backup", requestedBy: auth.user.id },
       {
-        ...notificationJobOptions,
-        jobId: `backup:manual:${Date.now()}:${auth.user.id}`,
+        ...backupJobOptions,
+        jobId: buildBackupJobId({
+          type: "create-backup",
+          requestedBy: auth.user.id,
+        }),
       },
     );
 
