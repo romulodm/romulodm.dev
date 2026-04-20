@@ -1,8 +1,7 @@
-// app/api/comments/route.ts
-import { NextRequest, NextResponse } from 'next/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
 import { z } from "zod";
 import { prisma } from "@romulo/database";
-import { requireAuth } from "@/lib/auth";
+import { requireAuth } from "@/lib/auth-helpers";
 import {
     forbiddenResponse,
     internalErrorResponse,
@@ -13,38 +12,40 @@ import {
 } from "@/lib/api-errors";
 import {
     RequestValidationError,
-    parseJsonBody,
+    parseJsonBodyWithMessages,
     sanitizeMultilineText,
 } from "@/lib/api-validation";
 import { notificationQueue } from '@/lib/queues/notification.queue';
 import { moderate } from '@/lib/moderation';
 import { getRequestIp, rateLimit } from '@/lib/rate-limit';
 import { buildNotificationJobId, notificationJobOptions } from "@romulo/queues";
+import { getApiTranslator } from '@/lib/api-intl'
 
-const createCommentSchema = z.object({
-    postId: z.string().trim().min(1, "postId é obrigatório."),
-    parentId: z.union([z.string().trim().min(1), z.null()]).optional().transform((value) => value ?? null),
-    bodyMd: z
-        .string({ required_error: "Comentário não pode estar vazio." })
-        .transform((value) => sanitizeMultilineText(value, 2000))
-        .refine((value) => value.length > 0, "Comentário não pode estar vazio.")
-        .refine((value) => value.length <= 2000, "Comentário muito longo (máx. 2000 caracteres)."),
-});
+function createCommentSchema(t: Awaited<ReturnType<typeof getApiTranslator>>) {
+    return z.object({
+        postId: z.string().trim().min(1, t('comments.postIdRequired')),
+        parentId: z.union([z.string().trim().min(1), z.null()]).optional().transform((value) => value ?? null),
+        bodyMd: z
+            .string({ required_error: t('comments.empty') })
+            .transform((value) => sanitizeMultilineText(value, 2000))
+            .refine((value) => value.length > 0, t('comments.empty'))
+            .refine((value) => value.length <= 2000, t('comments.tooLong')),
+    });
+}
 
-// GET: Pegar comentários por relevância ou data
 export async function GET(req: NextRequest) {
+    const t = await getApiTranslator(req)
     const { searchParams } = new URL(req.url);
     const postId = searchParams.get('postId');
-    const sortBy = searchParams.get('sortBy') || 'score'; // 'score' ou 'createdAt'
+    const sortBy = searchParams.get('sortBy') || 'score';
     const page = parseInt(searchParams.get('page') || '1');
     const limit = 50;
     const skip = (page - 1) * limit;
 
     if (!postId) {
-        return NextResponse.json({ error: 'postId required' }, { status: 400 });
+        return NextResponse.json({ error: t('comments.postIdRequired') }, { status: 400 });
     }
 
-    // Buscar apenas comentários raiz (sem parentId)
     const orderBy = sortBy === 'score'
         ? [{ score: 'desc' as const }, { createdAt: 'desc' as const }]
         : [{ createdAt: 'desc' as const }];
@@ -52,7 +53,7 @@ export async function GET(req: NextRequest) {
     const comments = await prisma.comment.findMany({
         where: {
             postId,
-            parentId: null, // Apenas raiz
+            parentId: null,
         },
         orderBy,
         skip,
@@ -74,7 +75,7 @@ export async function GET(req: NextRequest) {
                                 select: { id: true, username: true, email: true },
                             },
                             votes: true,
-                            replies: true, // Mais níveis se necessário
+                            replies: true,
                         },
                     },
                 },
@@ -97,18 +98,18 @@ export async function GET(req: NextRequest) {
     });
 }
 
-// POST: Criar comentário
 export async function POST(request: NextRequest) {
+    const t = await getApiTranslator(request)
     const auth = await requireAuth();
     if (!auth.ok) {
-        return unauthorizedResponse();
+        return unauthorizedResponse(t('common.unauthorized'));
     }
 
     try {
         const ip = getRequestIp(request);
         const limited = await rateLimit(`comments:create:${auth.user.id}:${ip}`, 5, 60);
         if (limited) {
-            return rateLimitResponse("Muitos comentários em pouco tempo. Aguarde um momento.");
+            return rateLimitResponse(t('comments.rateLimited'));
         }
 
         const user = await prisma.user.findUnique({
@@ -116,10 +117,17 @@ export async function POST(request: NextRequest) {
             select: { banned: true },
         });
         if (user?.banned) {
-            return forbiddenResponse("Você não pode comentar.");
+            return forbiddenResponse(t('comments.cannotComment'));
         }
 
-        const { postId, parentId, bodyMd } = await parseJsonBody(request, createCommentSchema);
+        const { postId, parentId, bodyMd } = await parseJsonBodyWithMessages(
+            request,
+            createCommentSchema(t),
+            {
+                invalidBodyMessage: t('common.invalidBody'),
+                fallbackMessage: t('common.invalidRequest'),
+            },
+        );
 
         const post = await prisma.post.findUnique({
             where: { id: postId, status: "PUBLISHED" },
@@ -132,7 +140,7 @@ export async function POST(request: NextRequest) {
             },
         });
         if (!post) {
-            return notFoundResponse("Post não encontrado.");
+            return notFoundResponse(t('comments.postNotFound'));
         }
 
         if (parentId) {
@@ -141,7 +149,7 @@ export async function POST(request: NextRequest) {
                 select: { id: true },
             });
             if (!parent) {
-                return notFoundResponse("Comentário pai não encontrado.");
+                return notFoundResponse(t('comments.parentNotFound'));
             }
         }
 
@@ -201,9 +209,9 @@ export async function POST(request: NextRequest) {
         return NextResponse.json(comment, { status: 201 });
     } catch (error) {
         if (error instanceof z.ZodError || error instanceof RequestValidationError) {
-            return validationErrorResponse(error);
+            return validationErrorResponse(error, t('common.invalidRequest'));
         }
 
-        return internalErrorResponse("comments-create", error);
+        return internalErrorResponse("comments-create", error, t('common.internalError'));
     }
 }

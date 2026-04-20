@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
 import { z } from "zod";
 import { prisma } from "@romulo/database";
-import { requireOwnerOrAdmin } from '@/lib/auth';
+import { requireOwnerOrAdmin } from '@/lib/auth-helpers';
 import {
     forbiddenResponse,
     internalErrorResponse,
@@ -11,25 +11,26 @@ import {
 } from "@/lib/api-errors";
 import {
     RequestValidationError,
-    parseJsonBody,
+    parseJsonBodyWithMessages,
     sanitizeMultilineText,
 } from "@/lib/api-validation";
 import { moderate } from '@/lib/moderation';
+import { getApiTranslator } from '@/lib/api-intl'
 
-const updateCommentSchema = z.object({
-    bodyMd: z
-        .string({ required_error: "Comentário não pode estar vazio." })
-        .transform((value) => sanitizeMultilineText(value, 2000))
-        .refine((value) => value.length > 0, "Comentário não pode estar vazio.")
-        .refine((value) => value.length <= 2000, "Comentário muito longo (máx. 2000 caracteres)."),
-});
+function createUpdateCommentSchema(t: Awaited<ReturnType<typeof getApiTranslator>>) {
+    return z.object({
+        bodyMd: z
+            .string({ required_error: t('comments.empty') })
+            .transform((value) => sanitizeMultilineText(value, 2000))
+            .refine((value) => value.length > 0, t('comments.empty'))
+            .refine((value) => value.length <= 2000, t('comments.tooLong')),
+    });
+}
 
-// GET: Montar tree individual de um comentário específico
-export async function GET(
-    _req: NextRequest,
-    { params }: { params: { commentId: string } }
-) {
-    const commentId = params.commentId;
+export async function GET(req: NextRequest, props: { params: Promise<{ id: string }> }) {
+    const t = await getApiTranslator(req)
+    const params = await props.params;
+    const commentId = params.id;
 
     const comment = await prisma.comment.findUnique({
         where: { id: commentId },
@@ -66,17 +67,15 @@ export async function GET(
     });
 
     if (!comment) {
-        return notFoundResponse('Comentário não encontrado.');
+        return notFoundResponse(t('comments.commentNotFound'));
     }
 
     return NextResponse.json(comment);
 }
 
-// PATCH /api/comments/:id
-export async function PATCH(
-    req: NextRequest,
-    { params }: { params: { id: string } }
-) {
+export async function PATCH(req: NextRequest, props: { params: Promise<{ id: string }> }) {
+    const t = await getApiTranslator(req)
+    const params = await props.params;
     try {
         const comment = await prisma.comment.findUnique({
             where: { id: params.id },
@@ -84,17 +83,20 @@ export async function PATCH(
         });
 
         if (!comment) {
-            return notFoundResponse('Comentário não encontrado.');
+            return notFoundResponse(t('comments.commentNotFound'));
         }
 
         const auth = await requireOwnerOrAdmin(comment.authorId);
         if (!auth.ok) {
             return auth.status === 401
-                ? unauthorizedResponse('Autenticação necessária.')
-                : forbiddenResponse('Acesso negado.');
+                ? unauthorizedResponse(t('common.unauthorized'))
+                : forbiddenResponse(t('common.forbidden'));
         }
 
-        const { bodyMd } = await parseJsonBody(req, updateCommentSchema);
+        const { bodyMd } = await parseJsonBodyWithMessages(req, createUpdateCommentSchema(t), {
+            invalidBodyMessage: t('common.invalidBody'),
+            fallbackMessage: t('common.invalidRequest'),
+        });
         const { allowed } = await moderate(bodyMd);
 
         if (!allowed) {
@@ -115,18 +117,16 @@ export async function PATCH(
         return NextResponse.json(updated);
     } catch (error) {
         if (error instanceof z.ZodError || error instanceof RequestValidationError) {
-            return validationErrorResponse(error);
+            return validationErrorResponse(error, t('common.invalidRequest'));
         }
 
-        return internalErrorResponse("comments-update", error);
+        return internalErrorResponse("comments-update", error, t('common.internalError'));
     }
 }
 
-// DELETE /api/comments/:id
-export async function DELETE(
-    _req: NextRequest,
-    { params }: { params: { id: string } }
-) {
+export async function DELETE(req: NextRequest, props: { params: Promise<{ id: string }> }) {
+    const t = await getApiTranslator(req)
+    const params = await props.params;
     try {
         const comment = await prisma.comment.findUnique({
             where: { id: params.id },
@@ -134,14 +134,14 @@ export async function DELETE(
         });
 
         if (!comment) {
-            return notFoundResponse('Comentário não encontrado.');
+            return notFoundResponse(t('comments.commentNotFound'));
         }
 
         const auth = await requireOwnerOrAdmin(comment.authorId);
         if (!auth.ok) {
             return auth.status === 401
-                ? unauthorizedResponse('Autenticação necessária.')
-                : forbiddenResponse('Acesso negado.');
+                ? unauthorizedResponse(t('common.unauthorized'))
+                : forbiddenResponse(t('common.forbidden'));
         }
 
         const descendantCount = await countDescendants(params.id);
@@ -157,7 +157,7 @@ export async function DELETE(
 
         return NextResponse.json({ ok: true });
     } catch (error) {
-        return internalErrorResponse("comments-delete", error);
+        return internalErrorResponse("comments-delete", error, t('common.internalError'));
     }
 }
 
@@ -170,8 +170,8 @@ async function countDescendants(commentId: string): Promise<number> {
     if (replies.length === 0) return 0;
 
     const counts = await Promise.all(
-        replies.map((r) => countDescendants(r.id))
+        replies.map((reply) => countDescendants(reply.id))
     );
 
-    return replies.length + counts.reduce((a, b) => a + b, 0);
+    return replies.length + counts.reduce((accumulator, current) => accumulator + current, 0);
 }
