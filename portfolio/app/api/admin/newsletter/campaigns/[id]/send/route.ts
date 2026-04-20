@@ -1,8 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+
 import { prisma } from "@romulo/database";
 
-import { requireAdmin } from "@/lib/auth";
+import { requireAdmin } from "@/lib/auth-helpers";
 import {
   forbiddenResponse,
   internalErrorResponse,
@@ -10,6 +11,7 @@ import {
   unauthorizedResponse,
   validationErrorResponse,
 } from "@/lib/api-errors";
+import { getApiTranslator } from "@/lib/api-intl";
 import { RequestValidationError } from "@/lib/api-validation";
 import { dispatchCampaign } from "@/lib/newsletter/newsletter.service";
 
@@ -19,11 +21,15 @@ const sendCampaignSchema = z.object({
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  props: { params: Promise<{ id: string }> },
 ) {
+  const t = await getApiTranslator(req);
+  const params = await props.params;
   const auth = await requireAdmin();
   if (!auth.ok) {
-    return auth.status === 401 ? unauthorizedResponse() : forbiddenResponse();
+    return auth.status === 401
+      ? unauthorizedResponse(t("common.unauthorized"))
+      : forbiddenResponse(t("common.forbidden"));
   }
 
   try {
@@ -32,11 +38,11 @@ export async function POST(
     });
 
     if (!campaign) {
-      return notFoundResponse("Campanha nao encontrada.");
+      return notFoundResponse(t("admin.newsletterCampaigns.notFound"));
     }
 
     if (campaign.status !== "DRAFT") {
-      throw new RequestValidationError("Apenas rascunhos podem ser enviados.");
+      throw new RequestValidationError(t("admin.newsletterCampaigns.draftOnlySend"));
     }
 
     let scheduledAt: Date | undefined;
@@ -47,41 +53,39 @@ export async function POST(
       try {
         parsedBody = JSON.parse(rawBody);
       } catch {
-        throw new RequestValidationError("Corpo da requisicao invalido.");
+        throw new RequestValidationError(t("common.invalidBody"));
       }
       body = sendCampaignSchema.parse(parsedBody);
     }
     if (body.scheduledAt) {
       const parsed = new Date(body.scheduledAt);
       if (Number.isNaN(parsed.getTime())) {
-        throw new RequestValidationError("scheduledAt invalido.");
+        throw new RequestValidationError(t("admin.newsletterCampaigns.invalidScheduledAt"));
       }
       if (parsed <= new Date()) {
-        throw new RequestValidationError("scheduledAt deve ser uma data futura.");
+        throw new RequestValidationError(t("admin.newsletterCampaigns.futureScheduledAt"));
       }
       scheduledAt = parsed;
     }
 
-    console.log(`[send] Starting dispatch for campaign ${params.id} (${campaign.subject})`);
     const result = await dispatchCampaign(campaign.id, scheduledAt);
-    console.log(`[send] Dispatched ${result.dispatched} jobs for campaign ${params.id}`);
 
     return NextResponse.json({
       message: scheduledAt
-        ? "Campanha agendada com sucesso."
-        : "Campanha enfileirada para envio.",
+        ? t("admin.newsletterCampaigns.scheduled")
+        : t("admin.newsletterCampaigns.queued"),
       dispatched: result.dispatched,
       scheduledAt: scheduledAt?.toISOString() ?? null,
     });
   } catch (error) {
     if (error instanceof z.ZodError || error instanceof RequestValidationError) {
-      return validationErrorResponse(error);
+      return validationErrorResponse(error, t("common.invalidRequest"));
     }
 
     return internalErrorResponse(
       "admin-newsletter-campaigns-send",
       error,
-      "Falha ao despachar campanha.",
+      t("admin.newsletterCampaigns.dispatchFailed"),
       { campaignId: params.id },
     );
   }
