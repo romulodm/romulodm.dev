@@ -14,10 +14,8 @@ const PIXEL = Buffer.from(
   "base64",
 );
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: { trackingId: string } },
-) {
+export async function GET(req: NextRequest, props: { params: Promise<{ trackingId: string }> }) {
+  const params = await props.params;
   const { trackingId } = params;
 
   // Fire and forget — don't block the pixel response

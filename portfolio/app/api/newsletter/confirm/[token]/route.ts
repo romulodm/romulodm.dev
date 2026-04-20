@@ -1,14 +1,14 @@
-// src/app/api/newsletter/confirm/[token]/route.ts
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import { confirmSubscription } from "@/lib/newsletter/newsletter.service";
+import { getApiTranslator } from '@/lib/api-intl'
 
-export async function GET(
-  _req: NextRequest,
-  { params }: { params: { token: string } },
-) {
+export async function GET(req: NextRequest, props: { params: Promise<{ token: string }> }) {
+  const t = await getApiTranslator(req)
+  const params = await props.params;
   const { token } = params;
+
   if (!token) {
-    return NextResponse.json({ error: "Token ausente." }, { status: 400 });
+    return NextResponse.json({ error: t('newsletter.confirm.missingToken') }, { status: 400 });
   }
 
   try {
@@ -16,16 +16,16 @@ export async function GET(
 
     if (result.status === "invalid_token") {
       return NextResponse.json(
-        { error: "Token inválido ou expirado. Solicite uma nova inscrição." },
+        { error: t('newsletter.confirm.invalidToken') },
         { status: 400 },
       );
     }
 
     return NextResponse.json({
-      message: "Inscrição confirmada com sucesso! Bem-vindo(a).",
+      message: t('newsletter.confirm.success'),
     });
-  } catch (err) {
-    console.error("[confirm]", err);
-    return NextResponse.json({ error: "Erro interno." }, { status: 500 });
+  } catch (error) {
+    console.error("[confirm]", error);
+    return NextResponse.json({ error: t('newsletter.confirm.internal') }, { status: 500 });
   }
 }
