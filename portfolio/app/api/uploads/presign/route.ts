@@ -1,54 +1,55 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { isAuthenticated } from '@/lib/auth'
-import { generatePresignedUpload, validateFileUpload } from '@/lib/s3'
+﻿import { NextRequest, NextResponse } from "next/server";
+
+import { requireAdmin } from "@/lib/auth-helpers";
+import {
+  badRequestResponse,
+  forbiddenResponse,
+  internalErrorResponse,
+  unauthorizedResponse,
+} from "@/lib/api-errors";
+import { getApiTranslator } from "@/lib/api-intl";
+import { generatePresignedUpload, validateFileUpload } from "@/lib/s3";
 
 export async function POST(request: NextRequest) {
+  const t = await getApiTranslator(request);
+
   try {
-    // Check authentication
-    const authenticated = await isAuthenticated()
-    if (!authenticated) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      )
+    const auth = await requireAdmin();
+    if (!auth.ok) {
+      return auth.status === 401
+        ? unauthorizedResponse(t("common.unauthorized"))
+        : forbiddenResponse(t("common.forbidden"));
     }
 
-    const { filename, contentType, kind } = await request.json()
+    const { filename, contentType, kind } = await request.json();
 
-    // Validate input
     if (!filename || !contentType || !kind) {
-      return NextResponse.json(
-        { error: 'Missing required fields: filename, contentType, kind' },
-        { status: 400 }
-      )
+      return badRequestResponse(t("uploads.missingFields"));
     }
 
-    if (!['cover', 'inline'].includes(kind)) {
-      return NextResponse.json(
-        { error: 'Invalid kind. Must be "cover" or "inline"' },
-        { status: 400 }
-      )
+    if (!["cover", "inline"].includes(kind)) {
+      return badRequestResponse(t("uploads.invalidKind"));
     }
 
-    // Validate file type
     try {
-      validateFileUpload(contentType)
+      validateFileUpload(contentType);
     } catch (error) {
-      return NextResponse.json(
-        { error: (error as Error).message },
-        { status: 400 }
-      )
+      const message = (error as Error).message;
+
+      if (message.startsWith("Invalid content type")) {
+        return badRequestResponse(t("uploads.invalidContentType"));
+      }
+
+      if (message.startsWith("File too large")) {
+        return badRequestResponse(t("uploads.fileTooLarge"));
+      }
+
+      return badRequestResponse(t("common.invalidRequest"));
     }
 
-    // Generate presigned URL
-    const result = await generatePresignedUpload(filename, contentType, kind)
-
-    return NextResponse.json(result)
+    const result = await generatePresignedUpload(filename, contentType, kind);
+    return NextResponse.json(result);
   } catch (error) {
-    console.error('Presign error:', error)
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    )
+    return internalErrorResponse("presign", error, t("uploads.internal"));
   }
 }
