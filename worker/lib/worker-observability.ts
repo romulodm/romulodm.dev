@@ -11,6 +11,17 @@ import {
 
 export const WORKER_HEALTH_KEY = "worker:health:latest";
 
+// ── Log persistence ───────────────────────────────────────────────────────────
+const LOG_KEY = "worker:logs:recent";
+const MAX_LOGS = 200;
+
+let _redis: Redis | null = null;
+
+/** Call once in main() to enable log persistence to Redis. */
+export function setLogRedis(r: Redis) {
+  _redis = r;
+}
+
 type LogLevel = "info" | "warn" | "error";
 
 interface FailureRecord {
@@ -114,15 +125,23 @@ export function logWorkerEvent(level: LogLevel, event: string, context: Record<s
 
   if (level === "error") {
     console.error(line);
-    return payload;
-  }
-
-  if (level === "warn") {
+  } else if (level === "warn") {
     console.warn(line);
-    return payload;
+  } else {
+    console.log(line);
   }
 
-  console.log(line);
+  // Fire-and-forget — nunca bloqueia o caller
+  if (_redis) {
+    _redis
+      .multi()
+      .lpush(LOG_KEY, line)
+      .ltrim(LOG_KEY, 0, MAX_LOGS - 1)
+      .expire(LOG_KEY, 60 * 60 * 24) // TTL 24h
+      .exec()
+      .catch(() => { }); // silencia erros de redis
+  }
+
   return payload;
 }
 
