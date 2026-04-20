@@ -6,6 +6,7 @@ import type { Redis } from "ioredis";
 export const QUEUE_TRANSACTIONAL = "newsletter-transactional";
 export const QUEUE_CAMPAIGN = "newsletter-campaign";
 export const QUEUE_NOTIFICATIONS = "notifications";
+export const QUEUE_BACKUPS = "backups";
 export const DAILY_STATUS_JOB_NAME = "daily-status-cron";
 
 // ── Views ────────────────────────────────────────────────────────────────────
@@ -50,7 +51,10 @@ export interface CampaignEmailJob {
 export type NotificationJob =
     | { type: "comment"; id: string; author: string; postTitle: string; postSlug: string }
     | { type: "daily-status" }
-    | { type: "flush-views" };  // ← novo
+    | { type: "flush-views" };
+
+export type BackupJob =
+    | { type: "create-backup"; requestedBy: string };
 
 export const defaultJobOptions: QueueOptions["defaultJobOptions"] = {
     attempts: 5,
@@ -78,6 +82,13 @@ export const notificationJobOptions: JobsOptions = {
     attempts: 3,
     backoff: { type: "exponential", delay: 2_000 },
     removeOnComplete: { age: 24 * 3600, count: 1_000 },
+    removeOnFail: { age: 7 * 24 * 3600 },
+};
+
+export const backupJobOptions: JobsOptions = {
+    attempts: 2,
+    backoff: { type: "fixed", delay: 10_000 },
+    removeOnComplete: { count: 50 },
     removeOnFail: { age: 7 * 24 * 3600 },
 };
 
@@ -118,6 +129,10 @@ export function buildNotificationJobId(job: NotificationJob): string {
         default:
             return `notification:${buildStableSuffix([JSON.stringify(job)])}`;
     }
+}
+
+export function buildBackupJobId(job: BackupJob): string {
+    return `backup-${job.type}-${Date.now()}-${buildStableSuffix([job.requestedBy])}`;
 }
 
 export function buildEmailMessageId(scope: string, identity: string): string {
