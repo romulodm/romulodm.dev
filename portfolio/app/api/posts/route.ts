@@ -1,95 +1,157 @@
-// app/api/posts/route.ts
-import { NextRequest, NextResponse } from "next/server";
-import { isAdminAuthenticated } from "@/lib/auth-helpers";
-import { prisma } from "@romulo/database";
-import { generateSlug, generateExcerpt } from "@/lib/markdown";
-import { requireAdmin } from "@/lib/auth";
+﻿import { NextRequest, NextResponse } from "next/server";
 
-// GET /api/posts - List posts (admin only)
+import { prisma } from "@romulo/database";
+
+import { isAdminAuthenticated, getSession } from "@/lib/auth-helpers";
+import {
+  badRequestResponse,
+  internalErrorResponse,
+  unauthorizedResponse,
+} from "@/lib/api-errors";
+import { getApiTranslator } from "@/lib/api-intl";
+import { getOtherLocales } from "@/lib/locales";
+import { slugify, uniqueSlug } from "@/lib/markdown";
+import { translatePost } from "@/lib/translate";
+
 export async function GET(request: NextRequest) {
+  const t = await getApiTranslator(request);
+
   try {
     if (!(await isAdminAuthenticated())) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return unauthorizedResponse(t("common.unauthorized"));
     }
 
     const posts = await prisma.post.findMany({
       orderBy: { updatedAt: "desc" },
       select: {
         id: true,
-        title: true,
         slug: true,
         status: true,
         publishedAt: true,
         createdAt: true,
         updatedAt: true,
         postTags: { select: { tag: true } },
+        translations: {
+          select: { locale: true, title: true },
+        },
       },
     });
 
     return NextResponse.json(posts);
   } catch (error) {
-    console.error("List posts error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return internalErrorResponse("admin-posts-list", error, t("common.internalError"));
   }
 }
 
-// POST /api/posts - Create new post (admin only)
-export async function POST(request: NextRequest) {
+export async function POST(req: NextRequest) {
+  const t = await getApiTranslator(req);
+  const session = await getSession();
+
+  if (!session?.user?.admin) {
+    return unauthorizedResponse(t("common.unauthorized"));
+  }
+
+  const authorId = (session.user as { id: string }).id;
+
+  let body: Record<string, unknown>;
   try {
-    const auth = await requireAdmin();
-    if (!auth.ok) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: auth.status });
-    }
+    body = await req.json();
+  } catch {
+    return badRequestResponse(t("common.invalidBody"));
+  }
 
-    const userId = (auth.session.user as any).id as string;
+  const {
+    locale,
+    translateWithAI,
+    title,
+    contentMarkdown,
+    coverImageUrl,
+    tags,
+    status,
+    youtubeUrl,
+    summary,
+    readingTime,
+  } = body;
 
-    const data = await request.json();
-    const { title, summary, readingTime, contentMarkdown, coverImageUrl, youtubeUrl, tags, status, canonicalUrl, excerpt } = data;
+  if (!locale || !title || !contentMarkdown) {
+    return badRequestResponse(t("posts.missingRequiredFields"));
+  }
 
-    if (!title || !contentMarkdown) {
-      return NextResponse.json(
-        { error: "Title and content are required" },
-        { status: 400 }
+  try {
+    const normalizedStatus = status === "PUBLISHED" ? "PUBLISHED" : "DRAFT";
+    const slug = await uniqueSlug(slugify(String(title)));
+
+    const translations: Array<{
+      locale: string;
+      title: string;
+      contentMarkdown: string;
+      summary: string;
+      excerpt: string;
+    }> = [
+      {
+        locale: String(locale),
+        title: String(title),
+        contentMarkdown: String(contentMarkdown),
+        summary: typeof summary === "string" ? summary : "",
+        excerpt: typeof summary === "string" ? summary : "",
+      },
+    ];
+
+    if (translateWithAI) {
+      const otherLocales = getOtherLocales(String(locale));
+      await Promise.all(
+        otherLocales.map(async (target) => {
+          try {
+            const result = await translatePost(
+              {
+                title: String(title),
+                contentMarkdown: String(contentMarkdown),
+                summary: typeof summary === "string" ? summary : undefined,
+                excerpt: typeof summary === "string" ? summary : undefined,
+              },
+              String(locale),
+              target.code,
+            );
+            translations.push({
+              locale: target.code,
+              title: result.title,
+              contentMarkdown: result.contentMarkdown,
+              summary: result.summary,
+              excerpt: result.excerpt,
+            });
+          } catch (error) {
+            console.error(`Translation to ${target.code} failed:`, error);
+          }
+        }),
       );
     }
 
-    // Generate unique slug
-    let slug = generateSlug(title);
-    let counter = 1;
-    let finalSlug = slug;
-    while (await prisma.post.findUnique({ where: { slug: finalSlug } })) {
-      finalSlug = `${slug}-${counter}`;
-      counter++;
-    }
-
-    const resolvedExcerpt = excerpt || generateExcerpt(contentMarkdown);
-    const isPublished = status === "PUBLISHED";
-
     const post = await prisma.post.create({
       data: {
-        title,
-        slug: finalSlug,
-        excerpt: resolvedExcerpt,
-        contentMarkdown,
-        coverImageUrl: coverImageUrl || null,
-        summary: summary || null,
-        readingTime: readingTime || 0,
-        youtubeUrl: youtubeUrl || null,
-        status: isPublished ? "PUBLISHED" : "DRAFT",
-        publishedAt: isPublished ? new Date() : null,
-        canonicalUrl: canonicalUrl || null,
-        authorId: userId,
-        // Create PostTag rows in the same transaction
-        postTags: tags?.length
-          ? { create: (tags as string[]).map((tag) => ({ tag: tag.trim().toLowerCase() })) }
-          : undefined,
+        slug,
+        readingTime: typeof readingTime === "number" ? readingTime : 0,
+        coverImageUrl: typeof coverImageUrl === "string" ? coverImageUrl : null,
+        youtubeUrl: typeof youtubeUrl === "string" ? youtubeUrl : null,
+        status: normalizedStatus,
+        publishedAt: normalizedStatus === "PUBLISHED" ? new Date() : null,
+        authorId,
+        postTags: {
+          create: Array.isArray(tags)
+            ? (tags as string[]).map((tag) => ({ tag }))
+            : [],
+        },
+        translations: {
+          create: translations,
+        },
       },
-      include: { postTags: { select: { tag: true } } },
+      include: {
+        translations: true,
+        postTags: true,
+      },
     });
 
-    return NextResponse.json(post);
+    return NextResponse.json(post, { status: 201 });
   } catch (error) {
-    console.error("Create post error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return internalErrorResponse("admin-posts-create", error, t("common.internalError"));
   }
 }

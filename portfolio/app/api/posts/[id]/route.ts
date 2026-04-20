@@ -1,47 +1,77 @@
-// app/api/posts/[id]/route.ts
-import { NextRequest, NextResponse } from "next/server";
-import { isAdminAuthenticated } from "@/lib/auth-helpers";
-import { prisma } from "@romulo/database";
-import { generateSlug, generateExcerpt } from "@/lib/markdown";
+﻿import { NextRequest, NextResponse } from "next/server";
 
-// GET /api/posts/[id]
+import { prisma } from "@romulo/database";
+
+import { isAdminAuthenticated } from "@/lib/auth-helpers";
+import {
+  badRequestResponse,
+  internalErrorResponse,
+  notFoundResponse,
+  unauthorizedResponse,
+} from "@/lib/api-errors";
+import { getApiTranslator } from "@/lib/api-intl";
+import { slugify, uniqueSlug, generateExcerpt } from "@/lib/markdown";
+
 export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
+  req: NextRequest,
+  props: { params: Promise<{ id: string }> },
 ) {
+  const t = await getApiTranslator(req);
+  const params = await props.params;
+
   try {
     if (!(await isAdminAuthenticated())) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return unauthorizedResponse(t("common.unauthorized"));
     }
 
     const post = await prisma.post.findUnique({
       where: { id: params.id },
-      include: { postTags: { select: { tag: true } } },
+      include: {
+        postTags: { select: { tag: true } },
+        translations: {
+          select: {
+            locale: true,
+            title: true,
+            contentMarkdown: true,
+            summary: true,
+            excerpt: true,
+            canonicalUrl: true,
+          },
+        },
+      },
     });
 
     if (!post) {
-      return NextResponse.json({ error: "Post not found" }, { status: 404 });
+      return notFoundResponse(t("posts.notFound"));
     }
 
     return NextResponse.json(post);
   } catch (error) {
-    console.error("Get post error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return internalErrorResponse("admin-posts-get", error, t("common.internalError"));
   }
 }
 
-// PATCH /api/posts/[id]
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  props: { params: Promise<{ id: string }> },
 ) {
+  const t = await getApiTranslator(request);
+  const params = await props.params;
+
   try {
     if (!(await isAdminAuthenticated())) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return unauthorizedResponse(t("common.unauthorized"));
     }
 
-    const data = await request.json();
+    let body: Record<string, unknown>;
+    try {
+      body = await request.json();
+    } catch {
+      return badRequestResponse(t("common.invalidBody"));
+    }
+
     const {
+      locale,
       title,
       contentMarkdown,
       coverImageUrl,
@@ -49,103 +79,122 @@ export async function PATCH(
       tags,
       status,
       canonicalUrl,
-      excerpt,
       summary,
       readingTime,
-    } = data;
+    } = body;
 
     const existingPost = await prisma.post.findUnique({
       where: { id: params.id },
+      include: { translations: { where: { locale: String(locale) } } },
     });
 
     if (!existingPost) {
-      return NextResponse.json({ error: "Post not found" }, { status: 404 });
+      return notFoundResponse(t("posts.notFound"));
     }
 
-    const updateData: any = {};
-
-    if (title !== undefined) {
-      updateData.title = title;
-      if (title !== existingPost.title) {
-        let slug = generateSlug(title);
-        let counter = 1;
-        let finalSlug = slug;
-        while (
-          await prisma.post.findFirst({
-            where: { slug: finalSlug, NOT: { id: params.id } },
-          })
-        ) {
-          finalSlug = `${slug}-${counter}`;
-          counter++;
-        }
-        updateData.slug = finalSlug;
-      }
-    }
-
-    if (contentMarkdown !== undefined) {
-      updateData.contentMarkdown = contentMarkdown;
-      if (!excerpt) updateData.excerpt = generateExcerpt(contentMarkdown);
-    }
-
-    if (excerpt !== undefined) updateData.excerpt = excerpt;
-    if (summary !== undefined) updateData.summary = summary || null;
-    if (readingTime !== undefined) updateData.readingTime = readingTime ?? 0;
-    if (coverImageUrl !== undefined) updateData.coverImageUrl = coverImageUrl || null;
-    if (youtubeUrl !== undefined) updateData.youtubeUrl = youtubeUrl || null;
-    if (canonicalUrl !== undefined) updateData.canonicalUrl = canonicalUrl || null;
-
+    const postUpdate: Record<string, unknown> = {};
+    if (readingTime !== undefined) postUpdate.readingTime = readingTime ?? 0;
+    if (coverImageUrl !== undefined) postUpdate.coverImageUrl = coverImageUrl || null;
+    if (youtubeUrl !== undefined) postUpdate.youtubeUrl = youtubeUrl || null;
     if (status !== undefined) {
-      updateData.status = status;
+      postUpdate.status = status;
       if (status === "PUBLISHED" && existingPost.status === "DRAFT") {
-        updateData.publishedAt = new Date();
+        postUpdate.publishedAt = new Date();
       }
     }
 
-    const [post] = await prisma.$transaction([
-      prisma.post.update({
-        where: { id: params.id },
-        data: updateData,
-        include: { postTags: { select: { tag: true } } },
-      }),
-      ...(tags !== undefined
-        ? [
-          prisma.postTag.deleteMany({ where: { postId: params.id } }),
-          ...(tags as string[]).map((tag) =>
-            prisma.postTag.create({
-              data: { postId: params.id, tag: tag.trim().toLowerCase() },
-            })
-          ),
-        ]
-        : []),
-    ]);
+    const existingTranslation = existingPost.translations[0];
+    if (title !== undefined && title !== existingTranslation?.title) {
+      postUpdate.slug = await uniqueSlug(slugify(String(title)), params.id);
+    }
+
+    const translationUpdate: Record<string, unknown> = {};
+    if (title !== undefined) translationUpdate.title = title;
+    if (contentMarkdown !== undefined) {
+      translationUpdate.contentMarkdown = contentMarkdown;
+      translationUpdate.excerpt = generateExcerpt(String(contentMarkdown));
+    }
+    if (summary !== undefined) translationUpdate.summary = summary || null;
+    if (canonicalUrl !== undefined) translationUpdate.canonicalUrl = canonicalUrl || null;
+
+    await prisma.$transaction(async (tx) => {
+      if (Object.keys(postUpdate).length > 0) {
+        await tx.post.update({ where: { id: params.id }, data: postUpdate });
+      }
+
+      if (Object.keys(translationUpdate).length > 0) {
+        if (existingTranslation) {
+          await tx.postTranslation.update({
+            where: { postId_locale: { postId: params.id, locale: String(locale) } },
+            data: translationUpdate,
+          });
+        } else {
+          await tx.postTranslation.create({
+            data: {
+              postId: params.id,
+              locale: String(locale),
+              title: title ? String(title) : "",
+              contentMarkdown: contentMarkdown ? String(contentMarkdown) : "",
+              summary: summary ? String(summary) : null,
+              excerpt: contentMarkdown ? generateExcerpt(String(contentMarkdown)) : null,
+              canonicalUrl: canonicalUrl ? String(canonicalUrl) : null,
+            },
+          });
+        }
+      }
+
+      if (tags !== undefined) {
+        await tx.postTag.deleteMany({ where: { postId: params.id } });
+        if (Array.isArray(tags) && tags.length > 0) {
+          await tx.postTag.createMany({
+            data: tags.map((tag) => ({
+              postId: params.id,
+              tag: String(tag).trim().toLowerCase(),
+            })),
+          });
+        }
+      }
+    });
 
     const updated = await prisma.post.findUnique({
       where: { id: params.id },
-      include: { postTags: { select: { tag: true } } },
+      include: {
+        postTags: { select: { tag: true } },
+        translations: {
+          select: {
+            locale: true,
+            title: true,
+            contentMarkdown: true,
+            summary: true,
+            excerpt: true,
+            canonicalUrl: true,
+          },
+        },
+      },
     });
 
     return NextResponse.json(updated);
   } catch (error) {
-    console.error("Update post error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return internalErrorResponse("admin-posts-update", error, t("common.internalError"));
   }
 }
 
-// DELETE /api/posts/[id]
 export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } }
+  req: NextRequest,
+  props: { params: Promise<{ id: string }> },
 ) {
+  const t = await getApiTranslator(req);
+  const params = await props.params;
+
   try {
     if (!(await isAdminAuthenticated())) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return unauthorizedResponse(t("common.unauthorized"));
     }
 
     await prisma.post.delete({ where: { id: params.id } });
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Delete post error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return internalErrorResponse("admin-posts-delete", error, t("common.internalError"));
   }
 }
