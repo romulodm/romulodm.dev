@@ -1,23 +1,25 @@
-"use client"
+﻿"use client";
 
-import { useCallback } from "react"
-import Modal from "@mui/material/Modal"
-import Box from "@mui/material/Box"
-import Typography from "@mui/material/Typography"
-import Button from "@mui/material/Button"
-import IconButton from "@mui/material/IconButton"
-import CloseIcon from "@mui/icons-material/Close"
-import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined"
+import { useCallback } from "react";
+import Button from "@mui/material/Button";
+import Box from "@mui/material/Box";
+import IconButton from "@mui/material/IconButton";
+import Modal from "@mui/material/Modal";
+import Typography from "@mui/material/Typography";
+import CloseIcon from "@mui/icons-material/Close";
+import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
+import { useTranslations } from "next-intl";
 
 interface TermsModalProps {
-  open: boolean
-  onClose: () => void
+  open: boolean;
+  onClose: () => void;
 }
 
 export function TermsModal({ open, onClose }: TermsModalProps) {
+  const t = useTranslations("legal.terms");
   const handleClose = useCallback(() => {
-    onClose()
-  }, [onClose])
+    onClose();
+  }, [onClose]);
 
   return (
     <Modal
@@ -55,7 +57,6 @@ export function TermsModal({ open, onClose }: TermsModalProps) {
           },
         }}
       >
-        {/* Header */}
         <Box
           sx={{
             display: "flex",
@@ -75,14 +76,14 @@ export function TermsModal({ open, onClose }: TermsModalProps) {
               variant="h6"
               sx={{ fontWeight: 700, color: "#1a1a2e", fontSize: "1.1rem", lineHeight: 1.3 }}
             >
-              Termos e Condições
+              {t("title")}
             </Typography>
             <Typography variant="caption" sx={{ color: "#8888a0" }}>
-              Última atualização: Fevereiro 2026
+              {t("updatedAt")}
             </Typography>
           </Box>
           <IconButton
-            aria-label="Fechar"
+            aria-label={t("close")}
             onClick={handleClose}
             size="small"
             sx={{
@@ -94,7 +95,6 @@ export function TermsModal({ open, onClose }: TermsModalProps) {
           </IconButton>
         </Box>
 
-        {/* Scrollable Content */}
         <Box
           sx={{
             flex: 1,
@@ -103,83 +103,49 @@ export function TermsModal({ open, onClose }: TermsModalProps) {
             py: 2.5,
           }}
         >
-          <Typography
-            variant="subtitle2"
-            sx={{ fontWeight: 700, color: "#1a1a2e", mb: 1 }}
-          >
-            Importante — Verifique a Rede
+          <Typography variant="subtitle2" sx={{ fontWeight: 700, color: "#1a1a2e", mb: 1 }}>
+            {t("sections.network.title")}
           </Typography>
           <Typography variant="body2" sx={{ color: "#4a4a68", lineHeight: 1.7, mb: 2.5 }}>
-            Antes de comprar um bilhete, verifique se a loteria está executando na mesma
-            rede que a sua carteira. Compras feitas na rede errada não são reembolsáveis e
-            não são de responsabilidade da plataforma.
+            {t("sections.network.body")}
           </Typography>
 
-          <Typography
-            variant="subtitle2"
-            sx={{ fontWeight: 700, color: "#1a1a2e", mb: 1 }}
-          >
-            1. Natureza do Serviço
+          <Typography variant="subtitle2" sx={{ fontWeight: 700, color: "#1a1a2e", mb: 1 }}>
+            {t("sections.service.title")}
           </Typography>
           <Typography variant="body2" sx={{ color: "#4a4a68", lineHeight: 1.7, mb: 2.5 }}>
-            Esta plataforma é uma loteria descentralizada operando na blockchain,
-            garantindo total transparência e justiça em todos os sorteios. Atualmente, o
-            serviço encontra-se em período de teste na rede Sepolia.
+            {t("sections.service.body")}
           </Typography>
 
-          <Typography
-            variant="subtitle2"
-            sx={{ fontWeight: 700, color: "#1a1a2e", mb: 1 }}
-          >
-            2. Período de Teste
+          <Typography variant="subtitle2" sx={{ fontWeight: 700, color: "#1a1a2e", mb: 1 }}>
+            {t("sections.testing.title")}
           </Typography>
           <Typography variant="body2" sx={{ color: "#4a4a68", lineHeight: 1.7, mb: 2.5 }}>
-            Durante o período de validação, todas as transações são realizadas utilizando
-            tokens de teste (Sepolia ETH) que não possuem valor econômico real. Nenhum
-            valor monetário verdadeiro está envolvido durante esta fase.
+            {t("sections.testing.body")}
           </Typography>
 
-          <Typography
-            variant="subtitle2"
-            sx={{ fontWeight: 700, color: "#1a1a2e", mb: 1 }}
-          >
-            3. Fairness e Transparência
+          <Typography variant="subtitle2" sx={{ fontWeight: 700, color: "#1a1a2e", mb: 1 }}>
+            {t("sections.fairness.title")}
           </Typography>
           <Typography variant="body2" sx={{ color: "#4a4a68", lineHeight: 1.7, mb: 2.5 }}>
-            Todos os sorteios são realizados de forma transparente na blockchain. Os
-            resultados podem ser verificados por qualquer pessoa através do contrato
-            inteligente. A plataforma utiliza fontes de aleatoriedade verificáveis para
-            garantir a justiça dos sorteios.
+            {t("sections.fairness.body")}
           </Typography>
 
-          <Typography
-            variant="subtitle2"
-            sx={{ fontWeight: 700, color: "#1a1a2e", mb: 1 }}
-          >
-            4. Responsabilidade do Utilizador
+          <Typography variant="subtitle2" sx={{ fontWeight: 700, color: "#1a1a2e", mb: 1 }}>
+            {t("sections.userResponsibility.title")}
           </Typography>
           <Typography variant="body2" sx={{ color: "#4a4a68", lineHeight: 1.7, mb: 2.5 }}>
-            O utilizador é responsável por garantir que está conectado à rede correta
-            antes de realizar qualquer transação. A plataforma não se responsabiliza por
-            perdas decorrentes de erros do utilizador, incluindo mas não limitado a envio
-            de fundos para endereços incorretos.
+            {t("sections.userResponsibility.body")}
           </Typography>
 
-          <Typography
-            variant="subtitle2"
-            sx={{ fontWeight: 700, color: "#1a1a2e", mb: 1 }}
-          >
-            5. Modificações dos Termos
+          <Typography variant="subtitle2" sx={{ fontWeight: 700, color: "#1a1a2e", mb: 1 }}>
+            {t("sections.changes.title")}
           </Typography>
           <Typography variant="body2" sx={{ color: "#4a4a68", lineHeight: 1.7, mb: 0 }}>
-            A plataforma reserva-se o direito de modificar estes termos a qualquer
-            momento. As alterações serão comunicadas aos utilizadores através da
-            plataforma. O uso continuado do serviço após as alterações constitui aceitação
-            dos novos termos.
+            {t("sections.changes.body")}
           </Typography>
         </Box>
 
-        {/* Footer */}
         <Box sx={{ px: 3, pb: 3, pt: 2 }}>
           <Button
             variant="contained"
@@ -200,10 +166,10 @@ export function TermsModal({ open, onClose }: TermsModalProps) {
               },
             }}
           >
-            Fechar
+            {t("close")}
           </Button>
         </Box>
       </Box>
     </Modal>
-  )
+  );
 }

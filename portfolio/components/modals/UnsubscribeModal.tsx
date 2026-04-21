@@ -1,158 +1,156 @@
+﻿"use client";
+
 import { useState } from "react";
 import { Loader2, Mail } from "lucide-react";
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog";
+import { useTranslations } from "next-intl";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-
 
 interface UnsubscribeModalProps {
-    trigger?: React.ReactNode;
-    open?: boolean;
-    onOpenChange?: (open: boolean) => void;
+  trigger?: React.ReactNode;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
-const UnsubscribeModal = ({ trigger, open: controlledOpen, onOpenChange }: UnsubscribeModalProps) => {
-    const [internalOpen, setInternalOpen] = useState(false);
+const UnsubscribeModal = ({
+  trigger,
+  open: controlledOpen,
+  onOpenChange,
+}: UnsubscribeModalProps) => {
+  const t = useTranslations("unsubscribeModal");
+  const [internalOpen, setInternalOpen] = useState(false);
+  const open = controlledOpen ?? internalOpen;
+  const setOpen = onOpenChange ?? setInternalOpen;
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState("");
 
-    const open = controlledOpen ?? internalOpen;
-    const setOpen = onOpenChange ?? setInternalOpen;
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setError("");
+    setSuccess(false);
+    setLoading(true);
 
-    const [email, setEmail] = useState("");
-    const [loading, setLoading] = useState(false);
-    const [success, setSuccess] = useState(false);
-    const [error, setError] = useState("");
+    try {
+      const response = await fetch("/api/newsletter/request-unsubscribe", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setError("");
-        setSuccess(false);
-        setLoading(true);
+      const data = await response.json();
 
-        try {
-            const response = await fetch(
-                `api/newsletter/request-unsubscribe`,
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ email }),
-                }
-            );
+      if (response.ok) {
+        setSuccess(true);
+        setEmail("");
+      } else {
+        setError(data.error || t("errors.generic"));
+      }
+    } catch {
+      setError(t("errors.connection"));
+    } finally {
+      setLoading(false);
+    }
+  };
 
-            const data = await response.json();
+  const handleClose = () => {
+    setOpen(false);
 
-            if (response.ok) {
-                setSuccess(true);
-                setEmail("");
-            } else {
-                setError(data.error || "Erro ao processar solicitação");
-            }
-        } catch (err) {
-            setError("Erro de conexão. Tente novamente mais tarde.");
-        } finally {
-            setLoading(false);
-        }
-    };
+    setTimeout(() => {
+      setEmail("");
+      setSuccess(false);
+      setError("");
+    }, 300);
+  };
 
-    const handleClose = () => {
-        setOpen(false);
-        // Reset após fechar
-        setTimeout(() => {
-            setEmail("");
-            setSuccess(false);
-            setError("");
-        }, 300);
-    };
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        {trigger || (
+          <Button variant="outline" size="sm">
+            {t("trigger")}
+          </Button>
+        )}
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>{t("title")}</DialogTitle>
+          <DialogDescription>{t("description")}</DialogDescription>
+        </DialogHeader>
 
-    return (
-        <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
-                {trigger || (
-                    <Button variant="outline" size="sm">
-                        Cancelar inscrição
-                    </Button>
-                )}
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-md">
-                <DialogHeader>
-                    <DialogTitle>Cancelar inscrição na newsletter</DialogTitle>
-                    <DialogDescription>
-                        Digite seu email para receber um link de confirmação de cancelamento.
-                    </DialogDescription>
-                </DialogHeader>
+        {!success ? (
+          <form onSubmit={handleSubmit}>
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label htmlFor="email">{t("emailLabel")}</Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder={t("emailPlaceholder")}
+                    value={email}
+                    onChange={(event) => setEmail(event.target.value)}
+                    className="pl-9"
+                    required
+                    disabled={loading}
+                  />
+                </div>
+              </div>
 
-                {!success ? (
-                    <form onSubmit={handleSubmit}>
-                        <div className="space-y-4 py-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="email">Email</Label>
-                                <div className="relative">
-                                    <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                                    <Input
-                                        id="email"
-                                        type="email"
-                                        placeholder="seu@email.com"
-                                        value={email}
-                                        onChange={(e) => setEmail(e.target.value)}
-                                        className="pl-9"
-                                        required
-                                        disabled={loading}
-                                    />
-                                </div>
-                            </div>
+              {error && (
+                <Alert variant="destructive">
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
+            </div>
 
-                            {error && (
-                                <Alert variant="destructive">
-                                    <AlertDescription>{error}</AlertDescription>
-                                </Alert>
-                            )}
-                        </div>
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleClose}
+                disabled={loading}
+              >
+                {t("cancel")}
+              </Button>
+              <Button type="submit" disabled={loading}>
+                {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {t("submit")}
+              </Button>
+            </DialogFooter>
+          </form>
+        ) : (
+          <div className="space-y-4 py-4">
+            <Alert>
+              <AlertDescription>{t("success.message")}</AlertDescription>
+            </Alert>
 
-                        <DialogFooter>
-                            <Button
-                                type="button"
-                                variant="outline"
-                                onClick={handleClose}
-                                disabled={loading}
-                            >
-                                Cancelar
-                            </Button>
-                            <Button type="submit" disabled={loading}>
-                                {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                                Enviar confirmação
-                            </Button>
-                        </DialogFooter>
-                    </form>
-                ) : (
-                    <div className="space-y-4 py-4">
-                        <Alert>
-                            <AlertDescription>
-                                ✅ Email de confirmação enviado com sucesso! Verifique sua caixa
-                                de entrada e clique no link para confirmar o cancelamento.
-                            </AlertDescription>
-                        </Alert>
-
-                        <DialogFooter>
-                            <Button onClick={handleClose} className="w-full">
-                                Fechar
-                            </Button>
-                        </DialogFooter>
-                    </div>
-                )}
-            </DialogContent>
-        </Dialog>
-    );
+            <DialogFooter>
+              <Button onClick={handleClose} className="w-full">
+                {t("close")}
+              </Button>
+            </DialogFooter>
+          </div>
+        )}
+      </DialogContent>
+    </Dialog>
+  );
 };
 
 export default UnsubscribeModal;
+
