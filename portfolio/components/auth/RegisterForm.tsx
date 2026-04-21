@@ -1,4 +1,4 @@
-// components/auth/RegisterForm.tsx
+﻿// components/auth/RegisterForm.tsx
 "use client"
 
 import { useEffect, useState } from "react"
@@ -8,10 +8,10 @@ import { signIn } from "next-auth/react"
 import CircularProgress from "@mui/material/CircularProgress"
 import { MdOutlineAlternateEmail, MdVisibility, MdVisibilityOff } from "react-icons/md"
 import { RiLockPasswordLine } from "react-icons/ri"
+import { useTranslations } from "next-intl"
 
-import { registerSchema, type RegisterValues } from "./schemas"
+import { createRegisterSchema, type RegisterValues } from "./schemas"
 import { GoogleButton } from "./GoogleButton"
-import { Logo } from "@/components/Logo"
 
 interface Props {
   onSuccess: () => void
@@ -36,16 +36,19 @@ function strengthColor(score: number, index: number): string {
 }
 
 export function RegisterForm({ onSuccess, onLogin }: Props) {
+  const t = useTranslations("auth")
   const [serverError, setServerError] = useState<string | null>(null)
   const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [passwordScore, setPasswordScore] = useState(0)
+  const schema = createRegisterSchema(t)
 
   const {
     register,
     handleSubmit,
     watch,
     formState: { errors, isSubmitting },
-  } = useForm<RegisterValues>({ resolver: zodResolver(registerSchema) })
+  } = useForm<RegisterValues>({ resolver: zodResolver(schema) })
 
   const passwordValue = watch("password", "")
 
@@ -64,7 +67,7 @@ export function RegisterForm({ onSuccess, onLogin }: Props) {
 
     if (!res.ok) {
       const data = await res.json().catch(() => ({}))
-      setServerError(data.message ?? "Erro ao criar conta.")
+      setServerError(data.message ?? t("register.genericError"))
       return
     }
 
@@ -83,25 +86,20 @@ export function RegisterForm({ onSuccess, onLogin }: Props) {
       noValidate
       className="flex flex-col items-center w-full"
     >
-      {/* Logo + Brand */}
-      <div className="flex flex-col items-center mb-5">
-        <div className="text-primary w-8 h-8">
-          <Logo />
-        </div>
-        <p className="text-primary text-xl font-bold mt-1">Acumulou</p>
-      </div>
-
-      <p className="dark:text-white text-gray-800 mb-5 text-sm font-medium text-center">
-        Crie sua conta e comece a sonhar.
-      </p>
-
       {serverError && (
         <p className="w-full mb-3 text-sm text-red-500 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg px-3 py-2">
           {serverError}
         </p>
       )}
 
-      {/* Name */}
+      <GoogleButton disabled={isSubmitting} />
+
+      <div className="flex w-full items-center gap-2 my-4 text-xs text-gray-300 dark:text-neutral-600">
+        <hr className="flex-1 border-gray-200 dark:border-neutral-700" />
+        {t("common.or")}
+        <hr className="flex-1 border-gray-200 dark:border-neutral-700" />
+      </div>
+
       <div
         className={`h-12 w-full bg-neutral-200/90 dark:bg-neutral-800 rounded-lg flex items-center mb-4 border ${errors.username ? "border-red-400" : "border-transparent"
           }`}
@@ -109,7 +107,7 @@ export function RegisterForm({ onSuccess, onLogin }: Props) {
         <span className="ml-3 text-gray-400 dark:text-neutral-400 text-sm font-medium shrink-0">Aa</span>
         <input
           {...register("username")}
-          placeholder="Username"
+          placeholder={t("register.usernamePlaceholder")}
           type="text"
           autoComplete="name"
           className="flex-1 bg-transparent dark:text-neutral-100 text-gray-800 px-2 outline-none text-sm"
@@ -119,7 +117,6 @@ export function RegisterForm({ onSuccess, onLogin }: Props) {
         <p className="w-full -mt-3 mb-3 text-xs text-red-500">{errors.username.message}</p>
       )}
 
-      {/* Email */}
       <div
         className={`h-12 w-full bg-neutral-200/90 dark:bg-neutral-800 rounded-lg flex items-center mb-4 border ${errors.email ? "border-red-400" : "border-transparent"
           }`}
@@ -129,7 +126,7 @@ export function RegisterForm({ onSuccess, onLogin }: Props) {
         />
         <input
           {...register("email")}
-          placeholder="E-mail"
+          placeholder={t("register.emailPlaceholder")}
           type="email"
           autoComplete="email"
           className="flex-1 bg-transparent dark:text-neutral-100 text-gray-800 px-2 outline-none text-sm"
@@ -139,7 +136,6 @@ export function RegisterForm({ onSuccess, onLogin }: Props) {
         <p className="w-full -mt-3 mb-3 text-xs text-red-500">{errors.email.message}</p>
       )}
 
-      {/* Password */}
       <div
         className={`h-12 w-full bg-neutral-200/90 dark:bg-neutral-800 rounded-lg flex items-center border ${errors.password ? "border-red-400" : "border-transparent"
           }`}
@@ -149,21 +145,20 @@ export function RegisterForm({ onSuccess, onLogin }: Props) {
         />
         <input
           {...register("password")}
-          placeholder="Senha"
+          placeholder={t("register.passwordPlaceholder")}
           type={showPassword ? "text" : "password"}
           autoComplete="new-password"
           className="flex-1 bg-transparent dark:text-neutral-100 text-gray-800 px-2 outline-none text-sm"
         />
         <button
           type="button"
-          onClick={() => setShowPassword((p) => !p)}
+          onClick={() => setShowPassword((prev) => !prev)}
           className="mr-3 text-gray-400 hover:text-gray-500 dark:text-neutral-500 dark:hover:text-neutral-400"
         >
           {showPassword ? <MdVisibilityOff className="text-lg" /> : <MdVisibility className="text-lg" />}
         </button>
       </div>
 
-      {/* Password strength */}
       <div className="flex w-full gap-1.5 py-2">
         {[...Array(5)].map((_, i) => (
           <div key={i} className="flex-1">
@@ -176,7 +171,32 @@ export function RegisterForm({ onSuccess, onLogin }: Props) {
         <p className="w-full mb-2 text-xs text-red-500">{errors.password.message}</p>
       )}
 
-      {/* Submit */}
+      <div
+        className={`h-12 w-full bg-neutral-200/90 dark:bg-neutral-800 rounded-lg flex items-center mb-4 border ${errors.confirmPassword ? "border-red-400" : "border-transparent"
+          }`}
+      >
+        <RiLockPasswordLine
+          className={`ml-3 text-lg shrink-0 ${errors.confirmPassword ? "text-red-400" : "text-gray-400 dark:text-neutral-400"}`}
+        />
+        <input
+          {...register("confirmPassword")}
+          placeholder={t("register.confirmPasswordPlaceholder")}
+          type={showConfirmPassword ? "text" : "password"}
+          autoComplete="new-password"
+          className="flex-1 bg-transparent dark:text-neutral-100 text-gray-800 px-2 outline-none text-sm"
+        />
+        <button
+          type="button"
+          onClick={() => setShowConfirmPassword((prev) => !prev)}
+          className="mr-3 text-gray-400 hover:text-gray-500 dark:text-neutral-500 dark:hover:text-neutral-400"
+        >
+          {showConfirmPassword ? <MdVisibilityOff className="text-lg" /> : <MdVisibility className="text-lg" />}
+        </button>
+      </div>
+      {errors.confirmPassword && (
+        <p className="w-full -mt-3 mb-3 text-xs text-red-500">{errors.confirmPassword.message}</p>
+      )}
+
       <button
         type="submit"
         disabled={isSubmitting}
@@ -185,28 +205,18 @@ export function RegisterForm({ onSuccess, onLogin }: Props) {
         {isSubmitting ? (
           <CircularProgress size={20} sx={{ color: "white" }} />
         ) : (
-          "Criar agora"
+          t("register.submit")
         )}
       </button>
 
-      {/* OR divider */}
-      <div className="flex w-full items-center gap-2 my-4 text-xs text-gray-300 dark:text-neutral-600">
-        <hr className="flex-1 border-gray-200 dark:border-neutral-700" />
-        OR
-        <hr className="flex-1 border-gray-200 dark:border-neutral-700" />
-      </div>
-
-      <GoogleButton disabled={isSubmitting} />
-
-      {/* Switch to login */}
       <div className="flex mt-4 text-sm items-center gap-1.5 text-gray-400 dark:text-neutral-400">
-        <span>Já tem conta?</span>
+        <span>{t("register.hasAccount")}</span>
         <button
           type="button"
           onClick={onLogin}
           className="text-primary font-bold hover:text-primary/80"
         >
-          Entrar
+          {t("register.login")}
         </button>
       </div>
     </form>
