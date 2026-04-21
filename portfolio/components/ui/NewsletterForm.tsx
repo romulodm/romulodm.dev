@@ -1,14 +1,16 @@
-'use client'
+﻿'use client'
 
 import { useState, FormEvent } from 'react'
+import { useTranslations } from 'next-intl'
 
 export function NewsletterForm() {
+  const t = useTranslations('newsletterForm')
   const [email, setEmail] = useState('')
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
   const [message, setMessage] = useState('')
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault()
+  const handleSubmit = async (event: FormEvent) => {
+    event.preventDefault()
     setStatus('loading')
     setMessage('')
 
@@ -23,15 +25,15 @@ export function NewsletterForm() {
 
       if (res.ok) {
         setStatus('success')
-        setMessage(data.message || 'Obrigado por se inscrever!')
+        setMessage(data.message || t('successDefault'))
         setEmail('')
       } else {
         setStatus('error')
-        setMessage(data.error || 'Algo deu errado. Tente novamente.')
+        setMessage(data.error || t('errorDefault'))
       }
-    } catch (error) {
+    } catch {
       setStatus('error')
-      setMessage('Erro ao se inscrever. Tente novamente.')
+      setMessage(t('networkError'))
     }
   }
 
@@ -39,10 +41,10 @@ export function NewsletterForm() {
     <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl p-8 text-white">
       <div className="max-w-2xl mx-auto text-center">
         <h2 className="text-3xl font-bold mb-3">
-          Receba novos posts no seu email
+          {t('title')}
         </h2>
         <p className="text-blue-100 mb-6">
-          Inscreva-se na newsletter e seja notificado quando novos artigos forem publicados
+          {t('subtitle')}
         </p>
 
         <form onSubmit={handleSubmit} className="flex gap-3 max-w-md mx-auto">
@@ -50,7 +52,7 @@ export function NewsletterForm() {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="seu@email.com"
+            placeholder={t('placeholder')}
             required
             disabled={status === 'loading' || status === 'success'}
             className="flex-1 px-4 py-3 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white disabled:opacity-50"
@@ -60,7 +62,7 @@ export function NewsletterForm() {
             disabled={status === 'loading' || status === 'success'}
             className="px-6 py-3 bg-white text-blue-600 rounded-lg font-medium hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {status === 'loading' ? 'Inscrevendo...' : 'Inscrever'}
+            {status === 'loading' ? t('subscribing') : t('subscribe')}
           </button>
         </form>
 
