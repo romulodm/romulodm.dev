@@ -1,7 +1,7 @@
-// src/components/support/SupportSidebar.tsx
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
+import { useLocale, useTranslations } from 'next-intl'
 import { formatDistanceToNow } from '@/lib/utils'
 import { Trophy, Clock } from 'lucide-react'
 import { MessageModal } from './MessageModal'
@@ -22,10 +22,6 @@ interface Props {
     recentDonors: Donor[]
 }
 
-function coffeeEmoji(n: number) {
-    return '☕'.repeat(Math.min(n, 5))
-}
-
 type ModalState = { name: string | null; message: string } | null
 
 function MessageLine({
@@ -37,17 +33,19 @@ function MessageLine({
     message: string | null
     onOpen: () => void
 }) {
+    const t = useTranslations('support')
+
     if (isPrivate) {
         return (
             <p className="text-xs text-muted-foreground/60 mt-0.5 italic">
-                Mensagem privada.
+                {t('sidebar.privateMessage')}
             </p>
         )
     }
     if (!message) {
         return (
             <p className="text-xs text-muted-foreground/60 mt-0.5 italic">
-                Sem mensagem.
+                {t('sidebar.noMessage')}
             </p>
         )
     }
@@ -56,56 +54,55 @@ function MessageLine({
             onClick={onOpen}
             className="text-xs text-primary/70 hover:text-primary mt-0.5 underline underline-offset-2 transition-colors text-left"
         >
-            Ver mensagem
+            {t('sidebar.viewMessage')}
         </button>
     )
 }
 
 export function SupportersSidebar({ topDonors, recentDonors }: Props) {
+    const t = useTranslations('support')
+    const locale = useLocale()
     const [modal, setModal] = useState<ModalState>(null)
 
     function openModal(name: string | null, message: string) {
         setModal({ name, message })
     }
 
-    console.log(recentDonors)
-
     return (
         <>
             <div className="space-y-8">
-                {/* Ranking */}
                 {topDonors.length > 0 && (
                     <div className="rounded-xl border border-border bg-card p-6">
                         <h2 className="font-bold text-foreground flex items-center gap-2 mb-4">
                             <Trophy className="w-4 h-4 text-primary" />
-                            Top apoiadores
+                            {t('sidebar.topSupporters')}
                         </h2>
                         <ol className="space-y-3">
-                            {topDonors.map((d, i) => (
-                                <li key={d.id} className="flex items-start gap-1">
-                                    <span className={`text-sm font-bold min-w-[24px] ${i === 0 ? 'text-amber-500'
-                                        : i === 1 ? 'text-slate-600 dark:text-slate-200'
-                                            : i === 2 ? 'text-orange-600'
+                            {topDonors.map((donor, index) => (
+                                <li key={donor.id} className="flex items-start gap-1">
+                                    <span className={`text-sm font-bold min-w-[24px] ${index === 0 ? 'text-amber-500'
+                                        : index === 1 ? 'text-slate-600 dark:text-slate-200'
+                                            : index === 2 ? 'text-orange-600'
                                                 : 'text-muted-foreground'
                                         }`}>
-                                        #{i + 1}
+                                        #{index + 1}
                                     </span>
                                     <div className="flex-1 min-w-0">
                                         <div className="flex items-center justify-between gap-2">
                                             <span className="font-medium text-sm text-foreground truncate">
-                                                {d.name || 'Anônimo'}
+                                                {donor.name || t('sidebar.anonymous')}
                                                 <span className="text-muted-foreground font-normal ml-1">
-                                                    · {d.coffees} café{d.coffees > 1 ? 's' : ''}
+                                                    · {t('sidebar.coffees', { count: donor.coffees })}
                                                 </span>
                                             </span>
                                             <span className="text-sm font-semibold text-foreground shrink-0">
-                                                R$ {(d.amount / 100).toFixed(2)}
+                                                R$ {(donor.amount / 100).toFixed(2)}
                                             </span>
                                         </div>
                                         <MessageLine
-                                            isPrivate={d.isPrivate}
-                                            message={d.message}
-                                            onOpen={() => openModal(d.name, d.message!)}
+                                            isPrivate={donor.isPrivate}
+                                            message={donor.message}
+                                            onOpen={() => openModal(donor.name, donor.message!)}
                                         />
                                     </div>
                                 </li>
@@ -114,38 +111,37 @@ export function SupportersSidebar({ topDonors, recentDonors }: Props) {
                     </div>
                 )}
 
-                {/* Recentes */}
                 {recentDonors.length > 0 && (
                     <div className="rounded-xl border border-border bg-card p-6">
                         <h2 className="font-bold text-foreground flex items-center gap-2 mb-4">
                             <Clock className="w-4 h-4 text-primary" />
-                            Apoios recentes
+                            {t('sidebar.recentSupport')}
                         </h2>
                         <div className="space-y-4">
-                            {recentDonors.map((d) => (
-                                <div key={d.id} className="flex items-start gap-3 pb-1">
+                            {recentDonors.map((donor) => (
+                                <div key={donor.id} className="flex items-start gap-3 pb-1">
                                     <div className="w-8 h-8 rounded-full bg-primary/30 dark:bg-primary/10 flex items-center justify-center text-sm shrink-0">
                                         ☕
                                     </div>
                                     <div className="flex-1 flex flex-col min-w-0">
                                         <div className="flex items-center justify-between gap-2">
                                             <span className="font-medium text-sm text-foreground truncate">
-                                                {d.name || 'Alguém'}
+                                                {donor.name || t('sidebar.someone')}
                                             </span>
                                             <span className="text-xs text-muted-foreground shrink-0">
-                                                {formatDistanceToNow(d.createdAt)}
+                                                {formatDistanceToNow(donor.createdAt, locale)}
                                             </span>
                                         </div>
                                         <MessageLine
-                                            isPrivate={d.isPrivate}
-                                            message={d.message}
-                                            onOpen={() => openModal(d.name, d.message!)}
+                                            isPrivate={donor.isPrivate}
+                                            message={donor.message}
+                                            onOpen={() => openModal(donor.name, donor.message!)}
                                         />
                                         <span className="text-xs text-muted-foreground mt-1">
-                                            {d.currency === 'ETH'
-                                                ? `${(d.amount / 1e18).toFixed(4)} ETH`
-                                                : `R$ ${(d.amount / 100).toFixed(2)}`
-                                            } · {d.coffees} café{d.coffees > 1 ? 's' : ''}
+                                            {donor.currency === 'ETH'
+                                                ? `${(donor.amount / 1e18).toFixed(4)} ETH`
+                                                : `R$ ${(donor.amount / 100).toFixed(2)}`
+                                            } · {t('sidebar.coffees', { count: donor.coffees })}
                                         </span>
                                     </div>
                                 </div>
@@ -157,7 +153,7 @@ export function SupportersSidebar({ topDonors, recentDonors }: Props) {
                 {topDonors.length === 0 && recentDonors.length === 0 && (
                     <div className="rounded-xl border border-border bg-card p-10 text-center">
                         <p className="text-4xl mb-3">☕</p>
-                        <p className="text-muted-foreground text-sm">Seja o primeiro a apoiar!</p>
+                        <p className="text-muted-foreground text-sm">{t('sidebar.beFirst')}</p>
                     </div>
                 )}
             </div>
