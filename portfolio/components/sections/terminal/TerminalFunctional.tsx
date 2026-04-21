@@ -1,5 +1,5 @@
 import { useTranslations } from "next-intl";
-import { useState, useRef } from "react";
+import { useState, useRef, type JSX } from "react";
 
 type CommandComponent = () => JSX.Element;
 

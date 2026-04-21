@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, type JSX } from "react";
 import { useTranslations, } from "next-intl";
 
 const SECRET_REWARD_URL = process.env.NEXT_PUBLIC_TERMINAL_SECRET_REWARD ?? "";
