@@ -16,12 +16,15 @@ import { MeshLineGeometry, MeshLineMaterial } from 'meshline';
 import * as THREE from 'three';
 import clsx from 'clsx';
 
-// replace with your own imports, see the usage snippet for details
-import lanyard from './lanyard.png';
+// Lanyard strap texture - using public folder path
+const lanyardTexture = '/lanyard.png';
 
 const cardGLB = '/card.glb';
 
 extend({ MeshLineGeometry, MeshLineMaterial });
+
+// Pre-load the GLB model to reduce initial loading time
+useGLTF.preload(cardGLB);
 
 interface LanyardProps {
     position?: [number, number, number];
@@ -129,7 +132,7 @@ function Band({ maxSpeed = 50, minSpeed = 0, isMobile = false, cardTextureUrl }:
     };
 
     const { nodes, materials } = useGLTF(cardGLB) as any;
-    const texture = useTexture(typeof lanyard === 'string' ? lanyard : lanyard.src) as THREE.Texture;
+    const texture = useTexture(lanyardTexture) as THREE.Texture;
 
     // Load custom card texture if provided - use state to handle async loading
     const [customCardTexture, setCustomCardTexture] = useState<THREE.Texture | null>(null);
