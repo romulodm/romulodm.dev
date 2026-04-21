@@ -17,7 +17,7 @@ import {
 } from 'lucide-react'
 
 interface EditorToolbarProps {
-  textareaRef: RefObject<HTMLTextAreaElement>
+  textareaRef: RefObject<HTMLTextAreaElement | null>
   contentMarkdown: string
   setContentMarkdown: (content: string) => void
   onImageUpload: (file: File) => Promise<void>
