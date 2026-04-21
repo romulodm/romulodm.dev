@@ -4,7 +4,7 @@ import { useState, useCallback, useEffect } from "react";
 import { CommentCard, CommentData } from "@/components/comments/CommentCard";
 import { CommentComposer } from "@/components/comments/CommentComposer";
 import { listPostComments, SortOrder } from "@/lib/comments";
-import { ArrowUpDown, Clock, TrendingUp } from "lucide-react";
+import { ArrowUpDown, Clock, type LucideIcon, TrendingUp } from "lucide-react";
 
 interface CommentsSectionProps {
     postId: string;
@@ -14,7 +14,7 @@ interface CommentsSectionProps {
     initialSort?: SortOrder;
 }
 
-const SORT_OPTIONS: { value: SortOrder; label: string; icon: React.ElementType }[] = [
+const SORT_OPTIONS: { value: SortOrder; label: string; icon: LucideIcon }[] = [
     { value: "score", label: "Relevância", icon: TrendingUp },
     { value: "newest", label: "Mais recentes", icon: Clock },
     { value: "oldest", label: "Mais antigos", icon: ArrowUpDown },
