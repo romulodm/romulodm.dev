@@ -25,7 +25,6 @@ COPY packages/queues   ./packages/queues
 COPY portfolio         ./portfolio
 COPY package.json      ./
 
-# node_modules por último — sobrescreve o que veio do COPY portfolio
 COPY --from=deps /app/node_modules           ./node_modules
 COPY --from=deps /app/portfolio/node_modules ./portfolio/node_modules
 
@@ -46,18 +45,19 @@ RUN addgroup --system --gid 1001 nodejs \
 
 RUN npm install sharp --ignore-scripts=false
 
-COPY --from=builder --chown=nextjs:nodejs /app/portfolio/public           ./public
+# standalone espelha a estrutura do monorepo — tudo fica sob /app/portfolio/
 COPY --from=builder --chown=nextjs:nodejs /app/portfolio/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/portfolio/.next/static     ./.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/portfolio/public           ./portfolio/public
+COPY --from=builder --chown=nextjs:nodejs /app/portfolio/.next/static     ./portfolio/.next/static
 
 # Prisma engines
 COPY --from=builder --chown=nextjs:nodejs /app/node_modules/.prisma       ./node_modules/.prisma
 COPY --from=builder --chown=nextjs:nodejs /app/node_modules/@prisma       ./node_modules/@prisma
 
 # React e dependências não rastreadas pelo standalone
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules/react             ./node_modules/react
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules/react-dom         ./node_modules/react-dom
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules/scheduler         ./node_modules/scheduler
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules/react         ./node_modules/react
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules/react-dom     ./node_modules/react-dom
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules/scheduler     ./node_modules/scheduler
 
 RUN chown -R nextjs:nodejs .
 
@@ -66,4 +66,4 @@ EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-CMD ["node", "server.js"]
+CMD ["node", "portfolio/server.js"]
