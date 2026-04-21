@@ -4,10 +4,13 @@ require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
 /** @type {import('next').NextConfig} */
 
 const createNextIntlPlugin = require("next-intl/plugin");
-const withNextIntl = createNextIntlPlugin();
+const withNextIntl = createNextIntlPlugin('./i18n/request.ts');
 
 const nextConfig = {
   output: 'standalone',
+  turbopack: {
+    root: path.resolve(__dirname, '..'),
+  },
   images: {
     remotePatterns: [
       {
