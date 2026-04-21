@@ -1,23 +1,25 @@
-"use client"
+﻿"use client";
 
-import { useCallback } from "react"
-import Modal from "@mui/material/Modal"
-import Box from "@mui/material/Box"
-import Typography from "@mui/material/Typography"
-import Button from "@mui/material/Button"
-import IconButton from "@mui/material/IconButton"
-import CloseIcon from "@mui/icons-material/Close"
-import CookieOutlinedIcon from "@mui/icons-material/CookieOutlined"
+import { useCallback } from "react";
+import Button from "@mui/material/Button";
+import Box from "@mui/material/Box";
+import IconButton from "@mui/material/IconButton";
+import Modal from "@mui/material/Modal";
+import Typography from "@mui/material/Typography";
+import CloseIcon from "@mui/icons-material/Close";
+import CookieOutlinedIcon from "@mui/icons-material/CookieOutlined";
+import { useTranslations } from "next-intl";
 
 interface CookiePolicyModalProps {
-  open: boolean
-  onClose: () => void
+  open: boolean;
+  onClose: () => void;
 }
 
 export function CookiePolicyModal({ open, onClose }: CookiePolicyModalProps) {
+  const t = useTranslations("legal.cookiePolicy");
   const handleClose = useCallback(() => {
-    onClose()
-  }, [onClose])
+    onClose();
+  }, [onClose]);
 
   return (
     <Modal
@@ -55,7 +57,6 @@ export function CookiePolicyModal({ open, onClose }: CookiePolicyModalProps) {
           },
         }}
       >
-        {/* Header */}
         <Box
           sx={{
             display: "flex",
@@ -75,14 +76,14 @@ export function CookiePolicyModal({ open, onClose }: CookiePolicyModalProps) {
               variant="h6"
               sx={{ fontWeight: 700, color: "#1a1a2e", fontSize: "1.1rem", lineHeight: 1.3 }}
             >
-              Política de Cookies
+              {t("title")}
             </Typography>
             <Typography variant="caption" sx={{ color: "#8888a0" }}>
-              Última atualização: Fevereiro 2026
+              {t("updatedAt")}
             </Typography>
           </Box>
           <IconButton
-            aria-label="Fechar"
+            aria-label={t("close")}
             onClick={handleClose}
             size="small"
             sx={{
@@ -94,7 +95,6 @@ export function CookiePolicyModal({ open, onClose }: CookiePolicyModalProps) {
           </IconButton>
         </Box>
 
-        {/* Scrollable Content */}
         <Box
           sx={{
             flex: 1,
@@ -103,88 +103,49 @@ export function CookiePolicyModal({ open, onClose }: CookiePolicyModalProps) {
             py: 2.5,
           }}
         >
-          <Typography
-            variant="subtitle2"
-            sx={{ fontWeight: 700, color: "#1a1a2e", mb: 1 }}
-          >
-            O que são cookies?
+          <Typography variant="subtitle2" sx={{ fontWeight: 700, color: "#1a1a2e", mb: 1 }}>
+            {t("sections.whatAreCookies.title")}
           </Typography>
           <Typography variant="body2" sx={{ color: "#4a4a68", lineHeight: 1.7, mb: 2.5 }}>
-            Cookies são pequenos ficheiros de texto que são armazenados no seu dispositivo
-            (computador, tablet ou telemóvel) quando visita um website. São amplamente
-            utilizados para fazer os websites funcionarem de forma mais eficiente, assim
-            como para fornecer informações aos proprietários do site.
+            {t("sections.whatAreCookies.body")}
           </Typography>
 
-          <Typography
-            variant="subtitle2"
-            sx={{ fontWeight: 700, color: "#1a1a2e", mb: 1 }}
-          >
-            1. Cookies Essenciais
+          <Typography variant="subtitle2" sx={{ fontWeight: 700, color: "#1a1a2e", mb: 1 }}>
+            {t("sections.essential.title")}
           </Typography>
           <Typography variant="body2" sx={{ color: "#4a4a68", lineHeight: 1.7, mb: 2.5 }}>
-            Estes cookies são necessários para o funcionamento básico do website. Incluem
-            cookies que permitem iniciar sessão em áreas seguras do nosso website ou
-            utilizar funcionalidades essenciais. Sem estes cookies, os serviços que
-            solicitou não podem ser fornecidos.
+            {t("sections.essential.body")}
           </Typography>
 
-          <Typography
-            variant="subtitle2"
-            sx={{ fontWeight: 700, color: "#1a1a2e", mb: 1 }}
-          >
-            2. Cookies de Desempenho
+          <Typography variant="subtitle2" sx={{ fontWeight: 700, color: "#1a1a2e", mb: 1 }}>
+            {t("sections.performance.title")}
           </Typography>
           <Typography variant="body2" sx={{ color: "#4a4a68", lineHeight: 1.7, mb: 2.5 }}>
-            Estes cookies recolhem informações sobre como os visitantes utilizam o website,
-            por exemplo, quais as páginas mais visitadas e se recebem mensagens de erro.
-            Estes cookies não recolhem informações que identifiquem o visitante. Todas as
-            informações recolhidas por estes cookies são agregadas e, portanto, anónimas.
+            {t("sections.performance.body")}
           </Typography>
 
-          <Typography
-            variant="subtitle2"
-            sx={{ fontWeight: 700, color: "#1a1a2e", mb: 1 }}
-          >
-            3. Cookies de Funcionalidade
+          <Typography variant="subtitle2" sx={{ fontWeight: 700, color: "#1a1a2e", mb: 1 }}>
+            {t("sections.functionality.title")}
           </Typography>
           <Typography variant="body2" sx={{ color: "#4a4a68", lineHeight: 1.7, mb: 2.5 }}>
-            Estes cookies permitem que o website se lembre das escolhas que faz (como o seu
-            nome de utilizador, idioma ou a região em que se encontra) e forneça
-            funcionalidades melhoradas e mais personalizadas. A informação que estes
-            cookies recolhem pode ser anonimizada e não podem rastrear a sua atividade de
-            navegação noutros websites.
+            {t("sections.functionality.body")}
           </Typography>
 
-          <Typography
-            variant="subtitle2"
-            sx={{ fontWeight: 700, color: "#1a1a2e", mb: 1 }}
-          >
-            4. Cookies de Segmentação
+          <Typography variant="subtitle2" sx={{ fontWeight: 700, color: "#1a1a2e", mb: 1 }}>
+            {t("sections.targeting.title")}
           </Typography>
           <Typography variant="body2" sx={{ color: "#4a4a68", lineHeight: 1.7, mb: 2.5 }}>
-            Estes cookies são utilizados para apresentar conteúdo mais relevante para si e
-            para os seus interesses. Também podem ser utilizados para limitar o número de
-            vezes que vê um anúncio e ajudar a medir a eficácia de campanhas
-            publicitárias.
+            {t("sections.targeting.body")}
           </Typography>
 
-          <Typography
-            variant="subtitle2"
-            sx={{ fontWeight: 700, color: "#1a1a2e", mb: 1 }}
-          >
-            5. Como gerir cookies
+          <Typography variant="subtitle2" sx={{ fontWeight: 700, color: "#1a1a2e", mb: 1 }}>
+            {t("sections.manage.title")}
           </Typography>
           <Typography variant="body2" sx={{ color: "#4a4a68", lineHeight: 1.7, mb: 0 }}>
-            A maioria dos browsers permite controlar cookies através das suas
-            configurações de preferências. No entanto, se limitar a capacidade dos websites
-            de definir cookies, poderá piorar a sua experiência geral de utilização, uma
-            vez que deixará de ser personalizada. Também poderá impedi-lo de guardar
-            configurações personalizadas, como informações de início de sessão.
+            {t("sections.manage.body")}
           </Typography>
         </Box>
 
-        {/* Footer */}
         <Box sx={{ px: 3, pb: 3, pt: 2 }}>
           <Button
             variant="contained"
@@ -205,10 +166,10 @@ export function CookiePolicyModal({ open, onClose }: CookiePolicyModalProps) {
               },
             }}
           >
-            Fechar
+            {t("close")}
           </Button>
         </Box>
       </Box>
     </Modal>
-  )
+  );
 }
