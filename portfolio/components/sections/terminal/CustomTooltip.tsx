@@ -1,5 +1,7 @@
 import { CgClose } from "react-icons/cg";
 
+import type { JSX } from "react";
+
 type TooltipPosition = "top" | "bottom" | "left" | "right";
 
 interface CustomTooltipProps {

@@ -1,10 +1,11 @@
-"use client";
-
+"use client";;
 import { useTranslations } from "next-intl";
 
 import type { ResumeData } from '@/data/resume';
 import { ExperienceList } from "@/components/resume/ExperienceList";
 import { EducationList } from "@/components/resume/EducationList";
+
+import { useEffect, useState, type JSX } from "react";
 
 interface TerminalExperienceProps {
     loadingTime: number;
@@ -15,12 +16,16 @@ export default function TerminalExperience({
     loadingTime = 10,
     data
 }: TerminalExperienceProps): JSX.Element {
-    const t = useTranslations("terminal");
+    const t = useTranslations("terminal")
 
-    const parsedLoadingTime = Number(loadingTime);
+    const parsedLoadingTime = Number(loadingTime)
     const anotherTime = Number.isFinite(parsedLoadingTime)
         ? parsedLoadingTime / 2 + 3
-        : 0;
+        : 0
+
+    // Evita hydration mismatch — renderiza os tempos só no cliente
+    const [mounted, setMounted] = useState(false)
+    useEffect(() => { setMounted(true) }, [])
 
     return (
         <div className="flex flex-col gap-4">
@@ -39,7 +44,8 @@ export default function TerminalExperience({
                 <div className="text-gray-500 dark:text-neutral-400/90">
                     {t("loading-xp-title")}
                     <br />
-                    {t("loading-xp")} {anotherTime} ms.
+                    {/* ↓ só renderiza o tempo após hidratação */}
+                    {t("loading-xp")} {mounted ? anotherTime : null} ms.
                 </div>
             </div>
 
@@ -59,7 +65,7 @@ export default function TerminalExperience({
                 <div className="text-gray-500 dark:text-neutral-400/90">
                     {t("loading-education-title")}
                     <br />
-                    {t("loading-education")} {loadingTime} ms.
+                    {t("loading-education")} {mounted ? loadingTime : null} ms.
                 </div>
             </div>
 
@@ -67,5 +73,5 @@ export default function TerminalExperience({
                 <EducationList education={data.education} />
             </div>
         </div>
-    );
+    )
 }
