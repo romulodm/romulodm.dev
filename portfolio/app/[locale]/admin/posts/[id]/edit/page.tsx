@@ -1,27 +1,42 @@
 'use client'
 
-import { useRouter, useParams } from 'next/navigation'
-import { PostEditor } from '@/components/editor/PostEditor'
-import { useEffect, useState } from 'react'
+import { useRouter, useParams, useSearchParams } from 'next/navigation'
+import { PostEditor, type PostEditorData } from '@/components/editor/PostEditor'
+import { useEffect, useState, useCallback } from 'react'
+import type { LocaleCode } from '@/lib/locales'
 
-interface Post {
-  id: string
+interface PostTranslation {
+  locale: string
   title: string
   contentMarkdown: string
+  summary: string | null
+  excerpt: string | null
+  canonicalUrl: string | null
+}
+
+interface PostWithTranslations {
+  id: string
   coverImageUrl: string | null
   youtubeUrl: string | null
-  summary: string | null
   readingTime: number
   status: 'DRAFT' | 'PUBLISHED'
   postTags: { tag: string }[]
+  translations: PostTranslation[]
 }
 
-export default function EditPostPage() {
+export default function EditPostClient() {
   const router = useRouter()
   const params = useParams()
-  const [post, setPost] = useState<Post | null>(null)
+  const searchParams = useSearchParams()
+
+  const [post, setPost] = useState<PostWithTranslations | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
+
+  // locale comes from ?locale=pt-BR or defaults to first translation
+  const [selectedLocale, setSelectedLocale] = useState<LocaleCode | null>(
+    (searchParams.get('locale') as LocaleCode) ?? null,
+  )
 
   useEffect(() => {
     const loadPost = async () => {
@@ -31,30 +46,49 @@ export default function EditPostPage() {
           if (res.status === 401) { router.push('/'); return }
           throw new Error('Failed to load post')
         }
-        setPost(await res.json())
-      } catch {
-        setError('Failed to load post')
+        const data: PostWithTranslations = await res.json()
+        setPost(data)
+        // Default to first translation locale if not set via URL
+        if (!selectedLocale && data.translations.length > 0) {
+          setSelectedLocale(data.translations[0].locale as LocaleCode)
+        }
+      } catch (error) {
+        setError('Falha ao carregar o post')
+        console.error('Error loading post:', error)
       } finally {
         setIsLoading(false)
       }
     }
     loadPost()
-  }, [params.id, router])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [params.id])
 
-  const handleSave = async (data: {
-    title: string
-    contentMarkdown: string
-    coverImageUrl: string
-    tags: string[]
-    status: 'DRAFT' | 'PUBLISHED'
-    youtubeUrl: string
-    summary: string
-    readingTime: number
-  }) => {
+  const handleLocaleChange = useCallback(
+    (locale: LocaleCode) => {
+      setSelectedLocale(locale)
+      // Optionally update URL so refresh preserves locale
+      const url = new URL(window.location.href)
+      url.searchParams.set('locale', locale)
+      window.history.replaceState(null, '', url.toString())
+    },
+    [],
+  )
+
+  const handleSave = async (data: PostEditorData) => {
     const res = await fetch(`/api/posts/${params.id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
+      body: JSON.stringify({
+        locale: selectedLocale,
+        title: data.title,
+        contentMarkdown: data.contentMarkdown,
+        summary: data.summary,
+        youtubeUrl: data.youtubeUrl,
+        coverImageUrl: data.coverImageUrl,
+        tags: data.tags,
+        status: data.status,
+        readingTime: data.readingTime,
+      }),
     })
     if (!res.ok) throw new Error('Failed to update post')
     router.push('/admin/posts')
@@ -68,23 +102,30 @@ export default function EditPostPage() {
     )
   }
 
-  if (error || !post) {
+  if (error || !post || !selectedLocale) {
     return (
       <div className="flex-1 flex items-center justify-center min-h-screen">
-        <p className="text-destructive">{error || 'Post not found'}</p>
+        <p className="text-destructive">{error || 'Post não encontrado'}</p>
       </div>
     )
   }
 
+  const activeTranslation = post.translations.find((t) => t.locale === selectedLocale)
+
   return (
     <PostEditor
+      key={selectedLocale}
+      mode="edit"
+      existingTranslations={post.translations.map((t) => ({ locale: t.locale, title: t.title }))}
+      selectedLocale={selectedLocale}
+      onLocaleChange={handleLocaleChange}
       initialData={{
-        title: post.title,
-        contentMarkdown: post.contentMarkdown,
+        title: activeTranslation?.title ?? '',
+        contentMarkdown: activeTranslation?.contentMarkdown ?? '',
         coverImageUrl: post.coverImageUrl ?? '',
         tags: post.postTags.map((pt) => pt.tag),
         youtubeUrl: post.youtubeUrl ?? '',
-        summary: post.summary ?? '',
+        summary: activeTranslation?.summary ?? '',
         readingTime: post.readingTime,
       }}
       onSave={handleSave}
