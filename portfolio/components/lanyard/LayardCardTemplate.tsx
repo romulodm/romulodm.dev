@@ -69,14 +69,14 @@ function drawCard(
     if (city) {
         ctx.fillStyle = textColor;
         ctx.font = monoFont(48);
-        ctx.fillText(city.toUpperCase(), textX, size - 1226);
+        ctx.fillText(city.toUpperCase(), textX, size - 1206);
     }
 
     // Date
     if (date) {
         ctx.fillStyle = "#878787";
         ctx.font = monoFont(48);
-        ctx.fillText(date.toUpperCase(), textX, size - 1170);
+        ctx.fillText(date.toUpperCase(), textX, size - 1150);
     }
 
     if (iconImg) {

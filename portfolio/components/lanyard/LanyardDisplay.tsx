@@ -57,20 +57,32 @@ export default function LanyardDisplay({
                 date={today}
             />
             <div className={containerClassName}>
-                {!isReady ? (
-                    <div className="flex h-full items-center justify-center">
-                        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+                {/* Skeleton placeholder while loading */}
+
+                {/* 
+                <div
+                    className={`absolute inset-0 z-20 w-full h-full flex items-center justify-center transition-opacity duration-500 ${isReady ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+                >
+                    <div className="relative w-[200px] h-[280px] animate-pulse">
+                        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[160px] h-[210px] rounded-xl bg-black/20 dark:bg-white/10" />
+                        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1 h-[100px] bg-black/10 dark:bg-white/5" />
                     </div>
-                ) : (
-                    <Lanyard
-                        key={textureKey}
-                        position={position}
-                        fov={fov}
-                        containerClassName="absolute inset-0 w-full h-full"
-                        cardTextureUrl={cardTextureUrl}
-                        canvasRef={canvasRef}
-                    />
-                )}
+                </div> 
+                */}
+
+                {/* Actual 3D content with fade-in */}
+                <div className={`transition-opacity duration-500 ${isReady ? 'opacity-100' : 'opacity-0'}`}>
+                    {isReady && (
+                        <Lanyard
+                            key={textureKey}
+                            position={position}
+                            fov={fov}
+                            containerClassName="absolute inset-0 w-full h-full"
+                            cardTextureUrl={cardTextureUrl}
+                            canvasRef={canvasRef}
+                        />
+                    )}
+                </div>
             </div>
         </>
     );

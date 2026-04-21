@@ -7,6 +7,9 @@ import * as THREE from 'three';
 
 import CardTemplate, { type CardTemplateRef } from '@/components/lanyard/LayardCardTemplate';
 
+// Pre-load the GLB model to reduce initial loading time
+useGLTF.preload('/card.glb');
+
 function getTodayFormatted(): string {
     const today = new Date();
     const day = String(today.getDate()).padStart(2, '0');
@@ -156,17 +159,19 @@ export default function StaticCardDisplay() {
                 city="Rio Grande, Brazil"
                 date={today}
             />
-            <div className="flex justify-center py-4">
-                {!isReady ? (
-                    <div
-                        style={{ width: 260, height: 340 }}
-                        className="flex items-center justify-center"
-                    >
-                        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-                    </div>
-                ) : (
-                    <StaticCardScene cardTextureUrl={cardTextureUrl} />
-                )}
+            <div className="flex justify-center py-4 relative">
+                {/* Skeleton placeholder while loading */}
+                <div
+                    style={{ width: 260, height: 340 }}
+                    className={`absolute left-1/2 -translate-x-1/2 flex items-center justify-center transition-opacity duration-500 ${isReady ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+                >
+                    <div className="w-[180px] h-[240px] rounded-xl bg-black/20 dark:bg-white/10 animate-pulse" />
+                </div>
+
+                {/* Actual 3D content with fade-in */}
+                <div className={`transition-opacity duration-500 ${isReady ? 'opacity-100' : 'opacity-0'}`}>
+                    {isReady && <StaticCardScene cardTextureUrl={cardTextureUrl} />}
+                </div>
             </div>
         </>
     );
