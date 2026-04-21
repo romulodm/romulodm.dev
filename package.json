@@ -43,5 +43,8 @@
     "yaml": "^2.8.3",
     "nodemailer": "^8.0.5",
     "basic-ftp": "^5.2.2"
+  },
+  "dependencies": {
+    "@aws-sdk/s3-request-presigner": "^3.1032.0"
   }
 }
