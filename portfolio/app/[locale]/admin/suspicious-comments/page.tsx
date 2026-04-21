@@ -1,7 +1,8 @@
-"use client";
+﻿"use client";
 
-import { useCallback, useEffect, useState } from "react";
-import Navbar from "@/components/navigation/Navbar";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
+import { getIntlLocaleCode } from "@/lib/locales";
 
 interface SuspiciousComment {
   id: string;
@@ -19,21 +20,31 @@ interface Pagination {
 }
 
 export default function SuspiciousCommentsPage() {
+  const locale = useLocale();
+  const t = useTranslations("admin.suspiciousCommentsPage");
+  const localeCode = useMemo(() => getIntlLocaleCode(locale), [locale]);
+  const formatNumber = useMemo(() => new Intl.NumberFormat(localeCode), [localeCode]);
   const [items, setItems] = useState<SuspiciousComment[]>([]);
   const [pagination, setPagination] = useState<Pagination | null>(null);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
 
-  const fetchItems = useCallback(async (p: number) => {
+  const fetchItems = useCallback(async (nextPage: number) => {
     setLoading(true);
-    const res = await fetch(`/api/admin/suspicious-comments?page=${p}`);
-    const data = await res.json();
-    setItems(data.items);
-    setPagination(data.pagination);
-    setLoading(false);
+
+    try {
+      const res = await fetch(`/api/admin/suspicious-comments?page=${nextPage}`);
+      const data = await res.json();
+      setItems(data.items ?? []);
+      setPagination(data.pagination ?? null);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  useEffect(() => { fetchItems(page); }, [page, fetchItems]);
+  useEffect(() => {
+    fetchItems(page);
+  }, [fetchItems, page]);
 
   async function approve(id: string) {
     await fetch(`/api/admin/suspicious-comments/${id}`, { method: "POST" });
@@ -42,101 +53,101 @@ export default function SuspiciousCommentsPage() {
 
   async function reject(id: string) {
     await fetch(`/api/admin/suspicious-comments/${id}`, { method: "DELETE" });
-    fetchItems(page);
+    await fetchItems(page);
   }
 
   return (
-    <div className="min-h-screen">
-      <Navbar />
-      <main className="max-w-5xl mx-auto px-4 py-10 mt-12">
-        <h1 className="text-2xl font-bold mb-2 text-black dark:text-white">
-          Comentários Suspeitos
-        </h1>
+    <main className="p-8">
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-foreground">{t("title")}</h1>
         {pagination && (
-          <p className="text-sm text-gray-500 mb-6">
-            {pagination.total} comentário(s) aguardando revisão
+          <p className="text-sm text-muted-foreground mt-1">
+            {t("pending", {
+              count: formatNumber.format(pagination.total),
+            })}
           </p>
         )}
+      </div>
 
-        {loading && <p className="text-gray-400">Carregando...</p>}
+      {loading && <p className="text-muted-foreground">{t("loading")}</p>}
 
-        {!loading && items.length === 0 && (
-          <p className="text-gray-500 mt-10 text-center">
-            Nenhum comentário suspeito no momento 🎉
-          </p>
-        )}
-
-        <div className="space-y-4">
-          {items.map((item) => (
-            <div
-              key={item.id}
-              className="border border-yellow-300 dark:border-yellow-700 rounded-lg p-4 bg-yellow-50 dark:bg-yellow-950"
-            >
-              <div className="flex items-center justify-between mb-2">
-                <div className="text-sm text-gray-600 dark:text-gray-300">
-                  <span className="font-semibold">{item.author.username}</span>
-                  {" · "}
-                  <span className="text-xs">{item.author.email}</span>
-                  {" · "}
-                  <a
-                    href={`/blog/${item.post.slug}`}
-                    target="_blank"
-                    className="underline text-blue-500 text-xs"
-                  >
-                    {item.post.title}
-                  </a>
-                </div>
-                <span className="text-xs bg-yellow-200 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-200 px-2 py-0.5 rounded-full">
-                  {item.reason ?? "flagged"}
-                </span>
-              </div>
-
-              <p className="text-sm text-gray-800 dark:text-gray-100 whitespace-pre-wrap bg-white dark:bg-zinc-900 rounded p-3 border border-gray-200 dark:border-zinc-700">
-                {item.bodyMd}
-              </p>
-
-              <div className="flex gap-3 mt-3">
-                <button
-                  onClick={() => approve(item.id)}
-                  className="px-4 py-1.5 text-sm bg-green-600 hover:bg-green-700 text-white rounded-md font-medium"
-                >
-                  ✓ Aprovar
-                </button>
-                <button
-                  onClick={() => reject(item.id)}
-                  className="px-4 py-1.5 text-sm bg-red-600 hover:bg-red-700 text-white rounded-md font-medium"
-                >
-                  ✕ Rejeitar
-                </button>
-              </div>
-            </div>
-          ))}
+      {!loading && items.length === 0 && (
+        <div className="bg-card rounded-xl border border-border p-12 text-center">
+          <p className="text-muted-foreground">{t("empty")}</p>
         </div>
+      )}
 
-        {
-          pagination && pagination.totalPages > 1 && (
-            <div className="flex justify-center gap-3 mt-8">
-              <button
-                disabled={page === 1}
-                onClick={() => setPage((p) => p - 1)}
-                className="px-4 py-2 border rounded disabled:opacity-40"
-              >
-                Anterior
-              </button>
-              <span className="px-4 py-2 text-sm text-gray-500">
-                {page} / {pagination.totalPages}
+      <div className="space-y-4">
+        {items.map((item) => (
+          <div
+            key={item.id}
+            className="border border-yellow-300 dark:border-yellow-700 rounded-lg p-4 bg-yellow-50 dark:bg-yellow-950"
+          >
+            <div className="flex items-center justify-between mb-2">
+              <div className="text-sm text-muted-foreground">
+                <span className="font-semibold text-foreground">{item.author.username}</span>
+                {" · "}
+                <span className="text-xs">{item.author.email}</span>
+                {" · "}
+                <a
+                  href={`/${locale}/blog/${item.post.slug}`}
+                  target="_blank"
+                  className="underline text-primary text-xs"
+                >
+                  {item.post.title}
+                </a>
+              </div>
+              <span className="text-xs bg-yellow-200 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-200 px-2 py-0.5 rounded-full">
+                {item.reason ?? t("flagged")}
               </span>
+            </div>
+
+            <p className="text-sm text-foreground whitespace-pre-wrap bg-background rounded p-3 border border-border">
+              {item.bodyMd}
+            </p>
+
+            <div className="flex gap-3 mt-3">
               <button
-                disabled={page === pagination.totalPages}
-                onClick={() => setPage((p) => p + 1)}
-                className="px-4 py-2 border rounded disabled:opacity-40"
+                onClick={() => approve(item.id)}
+                className="px-4 py-1.5 text-sm bg-green-600 hover:bg-green-700 text-white rounded-md font-medium"
               >
-                Próxima
+                {t("approve")}
+              </button>
+              <button
+                onClick={() => reject(item.id)}
+                className="px-4 py-1.5 text-sm bg-red-600 hover:bg-red-700 text-white rounded-md font-medium"
+              >
+                {t("reject")}
               </button>
             </div>
-          )
-        }
-      </main >
-    </div >
+          </div>
+        ))}
+      </div>
+
+      {pagination && pagination.totalPages > 1 && (
+        <div className="flex justify-center gap-3 mt-8">
+          <button
+            disabled={page === 1}
+            onClick={() => setPage((currentPage) => currentPage - 1)}
+            className="px-4 py-2 border border-border rounded disabled:opacity-40 text-foreground hover:bg-muted transition"
+          >
+            {t("previous")}
+          </button>
+          <span className="px-4 py-2 text-sm text-muted-foreground">
+            {t("page", {
+              page: formatNumber.format(page),
+              totalPages: formatNumber.format(pagination.totalPages),
+            })}
+          </span>
+          <button
+            disabled={page === pagination.totalPages}
+            onClick={() => setPage((currentPage) => currentPage + 1)}
+            className="px-4 py-2 border border-border rounded disabled:opacity-40 text-foreground hover:bg-muted transition"
+          >
+            {t("next")}
+          </button>
+        </div>
+      )}
+    </main>
   );
 }
