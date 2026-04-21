@@ -1,21 +1,22 @@
-// components/auth/GoogleButton.tsx
+﻿// components/auth/GoogleButton.tsx
 "use client"
 
 import { useState } from "react"
 import { signIn } from "next-auth/react"
 import CircularProgress from "@mui/material/CircularProgress"
 import { FcGoogle } from "react-icons/fc"
+import { useTranslations } from "next-intl"
 
 interface Props {
   disabled?: boolean
 }
 
 export function GoogleButton({ disabled }: Props) {
+  const t = useTranslations("auth")
   const [loading, setLoading] = useState(false)
 
   async function handleClick() {
     setLoading(true)
-    // setLoading(false) não é necessário pois a página vai redirecionar
     await signIn("google", { callbackUrl: window.location.href })
   }
 
@@ -31,7 +32,7 @@ export function GoogleButton({ disabled }: Props) {
       ) : (
         <>
           <FcGoogle className="text-2xl" />
-          <span>Continuar com Google</span>
+          <span>{t("google.continue")}</span>
         </>
       )}
     </button>
