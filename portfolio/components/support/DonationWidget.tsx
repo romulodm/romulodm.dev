@@ -1,8 +1,9 @@
-'use client'
+﻿'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useTheme } from 'next-themes'
-import { loadStripe, type Stripe } from '@stripe/stripe-js'
+import { useTranslations } from 'next-intl'
+import { loadStripe } from '@stripe/stripe-js'
 import { Elements } from '@stripe/react-stripe-js'
 
 import { StripeForm } from './StripeForm'
@@ -12,7 +13,6 @@ import { SuccessView } from './SuccessView'
 import { FaPix } from 'react-icons/fa6'
 import { FaCreditCard, FaEthereum } from 'react-icons/fa'
 
-// Inicializa o Stripe fora do componente para evitar recriação a cada render
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
 
 const COFFEE_PRICE_BRL = 5
@@ -20,7 +20,6 @@ const QUANTITIES = [1, 3, 5, 10]
 
 type PaymentMethod = 'pix' | 'card' | 'eth'
 
-// Cada step corresponde a uma tela do widget
 type Step = 'form' | 'pix-qr' | 'stripe' | 'eth' | 'success'
 
 interface FormState {
@@ -44,19 +43,14 @@ const INITIAL_FORM: FormState = {
 }
 
 export function DonationWidget() {
+    const t = useTranslations('support')
     const { resolvedTheme } = useTheme()
-    const [stripeInstance, setStripeInstance] = useState<Stripe | null>(null)
-    useEffect(() => {
-        stripePromise.then((s) => setStripeInstance(s))
-    }, [])
-
     const [step, setStep] = useState<Step>('form')
     const [form, setForm] = useState<FormState>(INITIAL_FORM)
     const [clientSecret, setClientSecret] = useState('')
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
 
-    // No estado
     const [pixData, setPixData] = useState<{
         pixId: string
         donationId: string
@@ -64,8 +58,6 @@ export function DonationWidget() {
         brCodeBase64: string
     } | null>(null)
 
-
-    // Quantidade real: custom tem prioridade sobre os botões pré-definidos
     const coffees = form.customCoffees ? Math.max(1, parseInt(form.customCoffees) || 1) : form.coffees
     const total = coffees * COFFEE_PRICE_BRL
 
@@ -99,7 +91,6 @@ export function DonationWidget() {
                 const data = await res.json()
                 setPixData(data)
                 setStep('pix-qr')
-
             } else if (form.method === 'card') {
                 const res = await fetch('/api/donations/stripe/create-intent', {
                     method: 'POST',
@@ -109,19 +100,15 @@ export function DonationWidget() {
                 const data = await res.json()
                 setClientSecret(data.clientSecret)
                 setStep('stripe')
-
             } else {
-                // ETH não precisa de chamada prévia à API — a transação é feita direto pela MetaMask
                 setStep('eth')
             }
         } catch {
-            setError('Algo deu errado. Tente novamente.')
+            setError(t('widget.genericError'))
         } finally {
             setLoading(false)
         }
     }
-
-    // ── Telas secundárias ────────────────────────────────────────────────
 
     if (step === 'success') {
         return <SuccessView onReset={reset} />
@@ -131,7 +118,7 @@ export function DonationWidget() {
         return <PixView {...pixData} onSuccess={() => setStep('success')} />
     }
 
-    if (step === 'stripe' && clientSecret && stripeInstance) {
+    if (step === 'stripe' && clientSecret) {
         const stripeTheme = resolvedTheme === 'dark' ? 'night' : 'stripe'
 
         return (
@@ -144,11 +131,9 @@ export function DonationWidget() {
                         theme: stripeTheme,
                         variables: {
                             borderRadius: '8px',
-                            // Garante contraste no dark mode
                             colorBackground: stripeTheme === 'night' ? '#1c1c1e' : '#ffffff',
                         },
                     },
-                    // Força o carregamento imediato do iframe
                     loader: 'always',
                 }}
             >
@@ -170,12 +155,8 @@ export function DonationWidget() {
         )
     }
 
-    // ── Tela principal (formulário de seleção) ───────────────────────────
-
     return (
         <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
-
-            {/* Seletor de quantidade */}
             <div className="flex items-center gap-3 mb-2">
                 <span className="text-3xl">☕</span>
                 <span className="text-lg font-medium text-foreground">×</span>
@@ -196,7 +177,6 @@ export function DonationWidget() {
                         </button>
                     ))}
 
-                    {/* Campo livre para quem quiser enviar mais */}
                     <input
                         type="number"
                         min={1}
@@ -217,17 +197,16 @@ export function DonationWidget() {
                 = <span className="font-bold text-foreground text-base">R$ {total},00</span>
             </p>
 
-            {/* Dados do apoiador */}
             <div className="space-y-3 mb-4">
                 <input
                     type="text"
-                    placeholder="Nome ou @social"
+                    placeholder={t('widget.namePlaceholder')}
                     value={form.name}
                     onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
                     className="w-full px-4 py-2.5 rounded-lg border border-border bg-background text-foreground placeholder:text-muted-foreground text-sm focus:outline-none focus:border-primary"
                 />
                 <textarea
-                    placeholder="Deixe uma mensagem..."
+                    placeholder={t('widget.messagePlaceholder')}
                     value={form.message}
                     onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))}
                     rows={3}
@@ -236,28 +215,26 @@ export function DonationWidget() {
                 />
             </div>
 
-            {/* Método de pagamento */}
             <div className="mb-4">
-                <p className="text-xs text-muted-foreground mb-3 uppercase tracking-wide">Pagar com</p>
+                <p className="text-xs text-muted-foreground mb-3 uppercase tracking-wide">{t('widget.payWith')}</p>
                 <div className="grid grid-cols-3 gap-2">
-                    {(['pix', 'card', 'eth'] as const).map((m) => (
+                    {(['pix', 'card', 'eth'] as const).map((method) => (
                         <button
-                            key={m}
+                            key={method}
                             type="button"
-                            onClick={() => setForm((f) => ({ ...f, method: m }))}
-                            className={`py-2.5 flex items-center justify-center gap-1.5 rounded-lg border text-sm font-medium transition-all ${form.method === m
+                            onClick={() => setForm((f) => ({ ...f, method }))}
+                            className={`py-2.5 flex items-center justify-center gap-1.5 rounded-lg border text-sm font-medium transition-all ${form.method === method
                                 ? 'border-primary bg-primary/5 text-primary'
                                 : 'border-border text-muted-foreground hover:border-primary/50'
                                 }`}
                         >
-                            {m === 'pix' ? <FaPix /> : m === 'card' ? <FaCreditCard /> : <FaEthereum />}
-                            {m === 'pix' ? 'PIX' : m === 'card' ? 'Cartão' : 'ETH'}
+                            {method === 'pix' ? <FaPix /> : method === 'card' ? <FaCreditCard /> : <FaEthereum />}
+                            {method === 'pix' ? t('widget.methods.pix') : method === 'card' ? t('widget.methods.card') : t('widget.methods.eth')}
                         </button>
                     ))}
                 </div>
             </div>
 
-            {/* Opções extras */}
             <div className="flex gap-4 mb-5 text-sm text-muted-foreground">
                 <label className="flex items-center gap-2 cursor-pointer select-none">
                     <input
@@ -265,7 +242,7 @@ export function DonationWidget() {
                         checked={form.isPrivate}
                         onChange={(e) => setForm((f) => ({ ...f, isPrivate: e.target.checked }))}
                     />
-                    Mensagem privada
+                    {t('widget.privateMessage')}
                 </label>
             </div>
 
@@ -277,7 +254,7 @@ export function DonationWidget() {
                 disabled={loading}
                 className="w-full py-3 rounded-lg bg-primary text-primary-foreground font-bold text-base hover:opacity-90 transition disabled:opacity-50"
             >
-                {loading ? 'Aguarde...' : `Apoiar com R$ ${total},00`}
+                {loading ? t('widget.loading') : t('widget.supportWith', { amount: total })}
             </button>
         </div>
     )

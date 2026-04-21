@@ -1,6 +1,7 @@
-"use client";
+﻿"use client";
 
 import { useRef, useState, useCallback } from "react";
+import { useTranslations } from 'next-intl'
 import "@/styles/apoiase.css";
 import Link from "next/link";
 import { FaArrowRightLong } from "react-icons/fa6";
@@ -8,6 +9,7 @@ import { FaArrowRightLong } from "react-icons/fa6";
 type FaceState = "neutral" | "surprised" | "happy";
 
 const ApoiaseCard = () => {
+    const t = useTranslations('support')
     const containerRef = useRef<HTMLDivElement>(null);
     const [faceState, setFaceState] = useState<FaceState>("neutral");
     const [eyeOffset, setEyeOffset] = useState({ x: 0, y: 0 });
@@ -20,18 +22,11 @@ const ApoiaseCard = () => {
         const mouseX = e.clientX - rect.left;
         const mouseY = e.clientY - rect.top;
 
-        // Calcula a posicao relativa do mouse no card
         const ratioX = (mouseX - rect.width / 2) / rect.width;
         const ratioY = (mouseY - rect.height / 2) / rect.height;
 
-        // Os olhos e boca seguem o mouse com amplitude maior
         setEyeOffset({ x: ratioX * 14, y: ratioY * 12 });
-
-        // O emoji inteiro se move apenas levemente
-        setFaceNudge({
-            x: ratioX * 8,
-            y: ratioY * 6
-        });
+        setFaceNudge({ x: ratioX * 8, y: ratioY * 6 });
     }, [isOnButton]);
 
     const handleCardEnter = () => setFaceState("surprised");
@@ -46,7 +41,6 @@ const ApoiaseCard = () => {
     const handleButtonEnter = () => {
         setFaceState("happy");
         setIsOnButton(true);
-        // Volta ao centro e olha para o usuario
         setEyeOffset({ x: 0, y: 0 });
         setFaceNudge({ x: 0, y: 0 });
     };
@@ -64,8 +58,6 @@ const ApoiaseCard = () => {
             onMouseLeave={handleCardLeave}
             className="relative flex flex-col items-center justify-start p-10 w-full max-w-7xl overflow-hidden"
         >
-
-            {/* Face */}
             <div
                 className="apoiase-face-wrapper"
                 style={{
@@ -81,7 +73,6 @@ const ApoiaseCard = () => {
                             transition: "transform 0.15s ease-out",
                         }}
                     >
-                        {/* Eyes */}
                         <div className="apoiase-eyes">
                             <div
                                 className={`apoiase-eye ${faceState === "surprised" || faceState === "happy" ? "surprised" : ""}`}
@@ -102,7 +93,6 @@ const ApoiaseCard = () => {
                                 {(faceState === "surprised" || faceState === "happy") && <div className="apoiase-eye-white" />}
                             </div>
                         </div>
-                        {/* Mouth */}
                         <div
                             className={`apoiase-mouth ${faceState}`}
                             style={{
@@ -114,24 +104,21 @@ const ApoiaseCard = () => {
                 </div>
             </div>
 
-            {/* Content */}
             <div className="apoiase-content">
-
-
                 <div className="w-full -mt-5 flex flex-col sm:flex-row items-center justify-center mb-1 gap-1">
                     <h1 className="text-3xl mb-1.5 text-center font-extrabold text-primary leading-tight">
-                        Apoie este projeto
+                        {t('apoiase.title')}
                     </h1>
                     <img
                         src="https://fonts.gstatic.com/s/e/notoemoji/latest/2764_fe0f/512.gif"
-                        alt="❤"
+                        alt="heart"
                         width="27"
                         height="27"
                     />
                 </div>
 
                 <p className="text-lg text-center text-foreground mb-4">
-                    Sua contribuição faz toda a diferença!
+                    {t('apoiase.description')}
                 </p>
                 <Link
                     href={"/support"}
@@ -140,7 +127,7 @@ const ApoiaseCard = () => {
                     onMouseLeave={handleButtonLeave}
                     className="inline-flex items-center gap-2.5 bg-[#5A7CE2] text-white text-[0.95rem] font-medium px-[22px] py-[13px] rounded-full hover:opacity-90 transition-opacity"
                 >
-                    Apoiar
+                    {t('apoiase.button')}
                     <span className="bg-[#F9733D] text-white w-[26px] h-[26px] rounded-full flex items-center justify-center text-[0.85rem]">
                         <FaArrowRightLong />
                     </span>

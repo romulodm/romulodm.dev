@@ -1,7 +1,8 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { useStripe, useElements, PaymentElement } from '@stripe/react-stripe-js'
+import { useTranslations } from 'next-intl'
 
 interface Props {
     onBack: () => void
@@ -9,6 +10,7 @@ interface Props {
 }
 
 export function StripeForm({ onBack, onSuccess }: Props) {
+    const t = useTranslations('support')
     const stripe = useStripe()
     const elements = useElements()
     const [message, setMessage] = useState('')
@@ -32,8 +34,8 @@ export function StripeForm({ onBack, onSuccess }: Props) {
         if (error) {
             setMessage(
                 error.type === 'card_error' || error.type === 'validation_error'
-                    ? (error.message ?? 'Erro no cartão.')
-                    : 'Ocorreu um erro inesperado.'
+                    ? (error.message ?? t('stripe.cardError'))
+                    : t('stripe.unexpectedError')
             )
             setIsProcessing(false)
         } else {
@@ -48,15 +50,14 @@ export function StripeForm({ onBack, onSuccess }: Props) {
                 onClick={onBack}
                 className="text-sm text-muted-foreground mb-4 hover:text-foreground transition-colors"
             >
-                ← Voltar
+                ← {t('stripe.back')}
             </button>
 
             <form onSubmit={handleSubmit}>
-                {/* min-h garante que o iframe do Stripe tenha espaço para renderizar */}
                 <div className="min-h-[200px]">
                     <PaymentElement
                         options={{
-                            layout: 'tabs', // 'tabs' é mais compacto que 'accordion'
+                            layout: 'tabs',
                         }}
                     />
                 </div>
@@ -68,7 +69,7 @@ export function StripeForm({ onBack, onSuccess }: Props) {
                     disabled={isProcessing || !stripe || !elements}
                     className="w-full mt-5 py-3 rounded-lg bg-primary text-primary-foreground font-bold hover:opacity-90 transition disabled:opacity-50"
                 >
-                    {isProcessing ? 'Processando...' : 'Pagar'}
+                    {isProcessing ? t('stripe.processing') : t('stripe.pay')}
                 </button>
             </form>
         </div>
