@@ -217,11 +217,13 @@ function ProfileCommentItem({
       const remarkParse = (await import("remark-parse")).default;
       const remarkGfm = (await import("remark-gfm")).default;
       const remarkRehype = (await import("remark-rehype")).default;
+      const rehypeSanitize = (await import("rehype-sanitize")).default;
       const rehypeStringify = (await import("rehype-stringify")).default;
       const result = await unified()
         .use(remarkParse)
         .use(remarkGfm)
         .use(remarkRehype)
+        .use(rehypeSanitize)
         .use(rehypeStringify)
         .process(preview);
       if (!cancelled) setHtml(result.toString());

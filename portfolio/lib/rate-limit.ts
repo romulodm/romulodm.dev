@@ -18,10 +18,16 @@ export async function rateLimit(
 }
 
 export function getRequestIp(request: Request) {
+  const realIp = request.headers.get("x-real-ip");
+  if (realIp) return realIp.trim();
+
+  // Nginx appends $remote_addr to X-Forwarded-For via $proxy_add_x_forwarded_for,
+  // so the last entry is always the real client IP and cannot be spoofed.
   const forwardedFor = request.headers.get("x-forwarded-for");
   if (forwardedFor) {
-    return forwardedFor.split(",")[0]?.trim() ?? "anonymous";
+    const entries = forwardedFor.split(",");
+    return entries[entries.length - 1]?.trim() ?? "anonymous";
   }
 
-  return request.headers.get("x-real-ip") ?? "anonymous";
+  return "anonymous";
 }
