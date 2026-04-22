@@ -16,9 +16,9 @@ import {
   optionalPlainText,
   parseJsonBodyWithMessages,
   RequestValidationError,
-  sanitizeHtmlFragment,
   sanitizePlainText,
 } from "@/lib/api-validation";
+import { sanitizeNewsletterHtml } from "@/lib/newsletter-html-sanitizer";
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "";
 
@@ -40,7 +40,7 @@ function createUpdateCampaignSchema(t: Awaited<ReturnType<typeof getApiTranslato
       .string()
       .optional()
       .transform((value) =>
-        value === undefined ? undefined : sanitizeHtmlFragment(value, 50000),
+        value === undefined ? undefined : sanitizeNewsletterHtml(value, 50000),
       ),
     postId: z.string().trim().optional(),
   });

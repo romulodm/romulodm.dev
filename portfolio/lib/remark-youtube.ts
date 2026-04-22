@@ -5,6 +5,14 @@ function extractYoutubeId(url: string): string | null {
     return match ? match[1] : null
 }
 
+/** Escapa caracteres especiais para uso seguro em atributos HTML. */
+function escapeHtmlAttr(str: string): string {
+    return str
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+}
 
 /**
  * Use esta função para pré-processar o markdown ANTES de passar ao unified.
@@ -18,7 +26,8 @@ export function preprocessYoutube(markdown: string): string {
             const videoId = extractYoutubeId(url)
             if (!videoId) return _ // mantém original se URL inválida
 
-            return `\n<div class="youtube-embed"><iframe src="https://www.youtube.com/embed/${videoId}" title="${title || 'YouTube video'}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>\n`
+            const safeTitle = escapeHtmlAttr(title || 'YouTube video')
+            return `\n<div class="youtube-embed"><iframe src="https://www.youtube.com/embed/${videoId}" title="${safeTitle}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>\n`
         }
     )
 }

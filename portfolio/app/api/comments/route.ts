@@ -60,21 +60,27 @@ export async function GET(req: NextRequest) {
         take: limit,
         include: {
             author: {
-                select: { id: true, username: true, email: true },
+                select: { id: true, username: true },
             },
-            votes: true,
+            votes: {
+                select: { value: true },
+            },
             replies: {
                 include: {
                     author: {
-                        select: { id: true, username: true, email: true },
+                        select: { id: true, username: true },
                     },
-                    votes: true,
+                    votes: {
+                        select: { value: true },
+                    },
                     replies: {
                         include: {
                             author: {
-                                select: { id: true, username: true, email: true },
+                                select: { id: true, username: true },
                             },
-                            votes: true,
+                            votes: {
+                                select: { value: true },
+                            },
                             replies: true,
                         },
                     },

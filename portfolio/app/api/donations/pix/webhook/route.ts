@@ -11,7 +11,9 @@ import { getApiTranslator } from "@/lib/api-intl";
 
 export async function POST(req: NextRequest) {
   const t = await getApiTranslator(req);
-  const webhookSecret = req.nextUrl.searchParams.get("webhookSecret");
+  // Segredo lido do header HTTP — NÃO usar query param (seria logado pelo nginx/CDN).
+  // Configure o AbacatePay para enviar: X-Webhook-Secret: <ABACATE_PAY_WEBHOOK_SECRET>
+  const webhookSecret = req.headers.get("x-webhook-secret");
 
   if (webhookSecret !== process.env.ABACATE_PAY_WEBHOOK_SECRET) {
     return unauthorizedResponse(t("common.unauthorized"));
