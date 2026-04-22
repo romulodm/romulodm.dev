@@ -36,28 +36,34 @@ export async function GET(req: NextRequest, props: { params: Promise<{ id: strin
         where: { id: commentId },
         include: {
             author: {
-                select: { id: true, username: true, email: true },
+                select: { id: true, username: true },
             },
-            votes: true,
+            votes: {
+                select: { value: true },
+            },
             parent: {
                 include: {
                     author: {
-                        select: { id: true, username: true, email: true },
+                        select: { id: true, username: true },
                     },
                 },
             },
             replies: {
                 include: {
                     author: {
-                        select: { id: true, username: true, email: true },
+                        select: { id: true, username: true },
                     },
-                    votes: true,
+                    votes: {
+                        select: { value: true },
+                    },
                     replies: {
                         include: {
                             author: {
-                                select: { id: true, username: true, email: true },
+                                select: { id: true, username: true },
                             },
-                            votes: true,
+                            votes: {
+                                select: { value: true },
+                            },
                             replies: true,
                         },
                     },

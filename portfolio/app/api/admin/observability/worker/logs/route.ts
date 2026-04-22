@@ -6,8 +6,9 @@ import { getRedis } from '@/lib/redis';
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
-    if (!(await requireAdmin())) {
-        return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    const auth = await requireAdmin();
+    if (!auth.ok) {
+        return NextResponse.json({ error: 'Forbidden' }, { status: auth.status });
     }
 
     const limit = Math.min(

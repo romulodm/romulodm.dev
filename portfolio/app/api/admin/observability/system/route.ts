@@ -5,8 +5,9 @@ import { requireAdmin } from '@/lib/auth-helpers';
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
-    if (!(await requireAdmin())) {
-        return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    const auth = await requireAdmin();
+    if (!auth.ok) {
+        return NextResponse.json({ error: 'Forbidden' }, { status: auth.status });
     }
 
     try {

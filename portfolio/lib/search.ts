@@ -1,5 +1,11 @@
 const SEARCH_URL = process.env.SEARCH_GO_URL ?? 'http://localhost:8080'
 
+/** Retorna o header Authorization para operações de escrita no serviço de busca. */
+function internalAuthHeaders(): HeadersInit {
+    const secret = process.env.SEARCH_INTERNAL_SECRET
+    return secret ? { Authorization: `Bearer ${secret}` } : {}
+}
+
 export interface GoSearchHit {
     slug: string
     title: string
@@ -27,11 +33,14 @@ export async function goIndex(doc: {
 }) {
     await fetch(`${SEARCH_URL}/index`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...internalAuthHeaders() },
         body: JSON.stringify(doc),
     })
 }
 
 export async function goRemove(docID: string) {
-    await fetch(`${SEARCH_URL}/index/${docID}`, { method: 'DELETE' })
+    await fetch(`${SEARCH_URL}/index/${docID}`, {
+        method: 'DELETE',
+        headers: internalAuthHeaders(),
+    })
 }

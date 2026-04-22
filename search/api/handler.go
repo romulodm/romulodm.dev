@@ -3,7 +3,9 @@ package api
 import (
 	"encoding/json"
 	"net/http"
+	"os"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 
@@ -47,16 +49,35 @@ func NewHandler(e *engine.SearchEngine, snap *SnapshotManager, initialDocs []Ind
 	return h
 }
 
+// requireAuth retorna um middleware que exige Bearer token via Authorization header.
+// O token é lido de SEARCH_INTERNAL_SECRET; se a variável não estiver definida,
+// a autenticação é ignorada (compatibilidade com ambientes de dev sem secret).
+func (h *Handler) requireAuth(next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		secret := os.Getenv("SEARCH_INTERNAL_SECRET")
+		if secret != "" {
+			auth := r.Header.Get("Authorization")
+			if !strings.HasPrefix(auth, "Bearer ") || strings.TrimPrefix(auth, "Bearer ") != secret {
+				http.Error(w, `{"error":"unauthorized"}`, http.StatusUnauthorized)
+				return
+			}
+		}
+		next(w, r)
+	}
+}
+
 // Routes registers all endpoints and returns the configured mux.
+// Rotas públicas:  GET /health, GET /search
+// Rotas protegidas (requerem SEARCH_INTERNAL_SECRET): todas as demais.
 func (h *Handler) Routes() *http.ServeMux {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /health", h.health)
-	mux.HandleFunc("GET /debug", h.debug)
-	mux.HandleFunc("GET /stats", h.stats)
 	mux.HandleFunc("GET /search", h.search)
-	mux.HandleFunc("POST /index", h.index)
-	mux.HandleFunc("DELETE /index/{docID}", h.remove)
-	mux.HandleFunc("POST /reindex", h.reindex)
+	mux.HandleFunc("GET /debug", h.requireAuth(h.debug))
+	mux.HandleFunc("GET /stats", h.requireAuth(h.stats))
+	mux.HandleFunc("POST /index", h.requireAuth(h.index))
+	mux.HandleFunc("DELETE /index/{docID}", h.requireAuth(h.remove))
+	mux.HandleFunc("POST /reindex", h.requireAuth(h.reindex))
 	return mux
 }
 
