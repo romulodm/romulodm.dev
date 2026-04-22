@@ -12,9 +12,10 @@ async function renderToHtml(markdown: string): Promise<string> {
   const remarkGfm = (await import('remark-gfm')).default;
   const remarkRehype = (await import('remark-rehype')).default;
   const rehypeHighlight = (await import('rehype-highlight')).default;
+  const rehypeSanitize = (await import('rehype-sanitize')).default;
   const rehypeStringify = (await import('rehype-stringify')).default;
 
-  const result = await unified().use(remarkParse).use(remarkGfm).use(remarkRehype).use(rehypeHighlight).use(rehypeStringify).process(markdown);
+  const result = await unified().use(remarkParse).use(remarkGfm).use(remarkRehype).use(rehypeHighlight).use(rehypeSanitize).use(rehypeStringify).process(markdown);
   return result.toString();
 }
 
