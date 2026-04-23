@@ -1224,43 +1224,43 @@
     }
   },
   "cookieBanner": {
-    "ariaLabel": "Aviso de consentimento de cookies",
-    "title": "Permitir o uso de cookies?",
-    "safeExperience": "Ofereca uma experiencia mais segura utilizando informacoes recebidas dos cookies.",
-    "descriptionPrefix": "Saiba mais sobre cookies e como os utilizamos na",
-    "policyLink": "Politica de Cookies",
+    "ariaLabel": "Banner de consentimento de cookies",
+    "title": "Permitir cookies?",
+    "safeExperience": "Usamos cookies para oferecer uma experiência de navegação mais segura e personalizada.",
+    "descriptionPrefix": "Saiba mais sobre como usamos cookies na nossa",
+    "policyLink": "Política de Cookies",
     "accept": "Permitir",
     "decline": "Recusar"
   },
   "legal": {
     "cookiePolicy": {
-      "title": "Politica de Cookies",
-      "updatedAt": "Ultima atualizacao: Fevereiro 2026",
+      "title": "Política de Cookies",
+      "updatedAt": "Última atualização: Fevereiro de 2026",
       "close": "Fechar",
       "sections": {
         "whatAreCookies": {
-          "title": "O que sao cookies?",
-          "body": "Cookies sao pequenos ficheiros de texto armazenados no seu dispositivo quando voce visita um site. Eles sao amplamente usados para fazer sites funcionarem de forma mais eficiente e para fornecer informacoes aos proprietarios do site."
+          "title": "O que são cookies?",
+          "body": "Cookies são pequenos arquivos de texto armazenados no seu dispositivo quando você visita um site. Eles são amplamente usados para fazer os sites funcionarem de forma mais eficiente e para fornecer informações aos proprietários do site."
         },
         "essential": {
           "title": "1. Cookies essenciais",
-          "body": "Esses cookies sao necessarios para o funcionamento basico do website. Eles incluem cookies que permitem iniciar sessao em areas seguras ou utilizar funcionalidades essenciais. Sem eles, os servicos solicitados nao podem ser fornecidos."
+          "body": "Esses cookies são necessários para o funcionamento básico do site. Incluem cookies que permitem que você acesse áreas seguras ou use funcionalidades principais. Sem eles, os serviços solicitados não podem ser fornecidos."
         },
         "performance": {
           "title": "2. Cookies de desempenho",
-          "body": "Esses cookies recolhem informacoes sobre como os visitantes utilizam o website, como paginas mais visitadas e se ha mensagens de erro. Eles nao recolhem informacoes que identifiquem o visitante pessoalmente."
+          "body": "Esses cookies coletam informações sobre como os visitantes usam o site — como as páginas mais acessadas ou se encontram mensagens de erro. Não coletam informações que identifiquem um visitante pessoalmente."
         },
         "functionality": {
           "title": "3. Cookies de funcionalidade",
-          "body": "Esses cookies permitem que o website se lembre das escolhas feitas por voce, como idioma ou regiao, e forneca funcionalidades melhoradas e mais personalizadas. As informacoes recolhidas podem ser anonimizadas e nao acompanham sua navegacao em outros sites."
+          "body": "Esses cookies permitem que o site lembre suas escolhas, como idioma ou região, e ofereça recursos mais personalizados. As informações coletadas podem ser anonimizadas e não rastreiam a atividade de navegação em outros sites."
         },
         "targeting": {
-          "title": "4. Cookies de segmentacao",
-          "body": "Esses cookies sao usados para apresentar conteudos mais relevantes e tambem podem ajudar a limitar o numero de vezes que voce ve um anuncio e medir a eficacia de campanhas."
+          "title": "4. Cookies de segmentação",
+          "body": "Esses cookies são usados para apresentar conteúdo mais relevante e podem ajudar a limitar quantas vezes você vê um anúncio, além de medir a eficácia de campanhas."
         },
         "manage": {
-          "title": "5. Como gerir cookies",
-          "body": "A maioria dos navegadores permite controlar cookies pelas preferencias. Limitar cookies pode piorar sua experiencia de navegacao e impedir que o site lembre configuracoes personalizadas."
+          "title": "5. Como gerenciar cookies",
+          "body": "A maioria dos navegadores permite controlar cookies pelas configurações de preferências. Limitar os cookies pode piorar sua experiência de navegação e impedir que o site lembre configurações personalizadas."
         }
       }
     },

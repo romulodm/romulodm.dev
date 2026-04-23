@@ -1226,8 +1226,8 @@
   "cookieBanner": {
     "ariaLabel": "Cookie consent banner",
     "title": "Allow cookies?",
-    "safeExperience": "Provide a safer browsing experience using information received from cookies.",
-    "descriptionPrefix": "Learn more about cookies and how we use them in the",
+    "safeExperience": "We use cookies to provide a safer, more personalized browsing experience.",
+    "descriptionPrefix": "Learn more about how we use cookies in our",
     "policyLink": "Cookie Policy",
     "accept": "Allow",
     "decline": "Decline"
@@ -1248,19 +1248,19 @@
         },
         "performance": {
           "title": "2. Performance cookies",
-          "body": "These cookies collect information about how visitors use the website, such as the pages visited most often or whether they encounter error messages. They do not collect information that identifies a visitor personally."
+          "body": "These cookies collect information about how visitors use the website — such as the pages visited most often or whether they encounter error messages. They do not collect information that personally identifies a visitor."
         },
         "functionality": {
           "title": "3. Functionality cookies",
-          "body": "These cookies allow the website to remember your choices, such as language or region, and provide enhanced, more personalized features. The information they collect can be anonymized and cannot track browsing activity across other websites."
+          "body": "These cookies allow the website to remember your choices, such as language or region, and provide enhanced, more personalized features. The information collected can be anonymized and cannot track browsing activity on other websites."
         },
         "targeting": {
           "title": "4. Targeting cookies",
-          "body": "These cookies are used to present more relevant content and can also help limit how many times you see an advertisement and measure the effectiveness of campaigns."
+          "body": "These cookies are used to present more relevant content and can help limit how many times you see an advertisement, as well as measure the effectiveness of campaigns."
         },
         "manage": {
           "title": "5. How to manage cookies",
-          "body": "Most browsers allow you to control cookies through preference settings. Limiting cookies may worsen your browsing experience and prevent the website from remembering personalized settings."
+          "body": "Most browsers allow you to control cookies through preference settings. Limiting cookies may affect your browsing experience and prevent the website from remembering personalized settings."
         }
       }
     },
