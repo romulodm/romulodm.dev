@@ -3,44 +3,76 @@
 import { ChevronDown } from "lucide-react";
 import dynamic from "next/dynamic";
 
+
 const LanyardDisplay = dynamic(() => import("@/components/lanyard/LanyardDisplay"), {
     ssr: false,
     loading: () => null,
 });
 
+// Skeleton placeholder for mobile card that matches final dimensions
+const StaticCardSkeleton = () => (
+    <div className="flex justify-center py-4">
+        <div style={{ width: 260, height: 340 }} className="flex items-center justify-center">
+            <div className="w-[180px] h-[240px] rounded-xl bg-black/20 dark:bg-white/10 animate-pulse" />
+        </div>
+    </div>
+);
+
 const StaticCardDisplay = dynamic(() => import("@/components/lanyard/StaticCardDisplay"), {
     ssr: false,
-    loading: () => (
-        <div className="flex justify-center py-8">
-            <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-        </div>
-    ),
+    loading: () => <StaticCardSkeleton />,
 });
 
+/**
+ * HeroIgaratipo é importado diretamente (sem dynamic) porque:
+ * - É um SVG animado puro, sem APIs exclusivas de browser no módulo raiz
+ * - Renderiza no servidor como SVG vazio e hidrata no cliente sem layout shift
+ *
+ * Se ainda ocorrer erro de hidratação, troque pelo dynamic abaixo:
+ *
+ * const HeroIgaratipo = dynamic(() => import("@/components/HeroIgaratipo"), {
+ *     ssr: false,
+ *     loading: () => <div style={{ width: "100%", aspectRatio: "1400/320" }} />,
+ * });
+ */
+import HeroIgaratipo from '@/components/HeroIgaratipo';
+
 export default function Hero() {
+
+    const darkGradient =
+        `radial-gradient(
+          circle at 50% 100%,
+          rgba(255, 100, 50, 1) 0%,
+          rgba(255, 150, 100, 0.8) 20%,
+          rgba(100, 120, 200, 0.7) 40%,
+          rgba(0, 0, 0, 1) 90%,
+          rgba(20, 20, 30, 1) 100%
+        )`
+
+    const lightGradient =
+        `radial-gradient(
+          circle at 50% 100%,
+          rgba(255, 100, 50, 1) 0%,
+          rgba(255, 150, 100, 0.8) 20%,
+          rgba(100, 120, 200, 0.7) 40%,
+          rgba(255, 255, 255, 1) 90%,
+          rgba(255, 255, 255, 1) 100%
+        )`
+
+
     return (
-        <section className="relative h-[113vh] min-h-screen overflow-hidden">
+        <section className="relative h-[107vh] min-h-screen overflow-hidden">
+            <div
+                className="dark:hidden absolute inset-0 transition-colors duration-500"
+                style={{ background: lightGradient }}
+            />
+
+            <div
+                className="hidden dark:inline absolute inset-0 transition-colors duration-500"
+                style={{ background: darkGradient }}
+            />
 
             <div className="absolute inset-0">
-                {/* Spline como background */}
-                <span className="dark:hidden">
-                    <iframe
-                        src={'https://my.spline.design/animatedbackgroundgradientforweb-eNmu3GwlWtMWzIk1ENC16Pb5/'}
-                        className="absolute h-[115vh] inset-0 w-full h-full"
-                        style={{ border: 'none', pointerEvents: 'none' }}
-                        loading="lazy"
-                    />
-                </span>
-
-                <span className="hidden dark:inline">
-                    <iframe
-                        src={'https://my.spline.design/animatedbackgroundgradientforweb-QQDE8jgzmEYbMsrm64TEbR92/'}
-                        className="absolute h-[115vh] inset-0 w-full h-full"
-                        style={{ border: 'none', pointerEvents: 'none' }}
-                        loading="lazy"
-                    />
-                </span>
-
                 {/* Grain overlay */}
                 <div
                     className="absolute inset-0 pointer-events-none"
@@ -52,6 +84,32 @@ export default function Hero() {
                         opacity: 0.6,
                     }}
                 />
+            </div>
+
+            {/*
+             * Igaratipo: reserva o espaço com aspect-ratio idêntico ao viewBox (1400x320).
+             * O SVG server-renderiza vazio (paths sem "d") e anima ao hidratar.
+             * Não há loading visível nem layout shift.
+             */}
+            <div
+                className="top-[10vh] mx-auto mt-[15vh] w-full max-w-4xl pointer-events-none z-10"
+                style={{ aspectRatio: "1400 / 320" }}
+            >
+                <span className="dark:hidden">
+                    <HeroIgaratipo
+                        randomLetters={false}
+                        strokeColor="black"
+                        letterChoices={[2, 0, 1, 0, 1, 0, undefined, 2]}
+                    />
+                </span>
+
+                <span className="hidden dark:inline">
+                    <HeroIgaratipo
+                        randomLetters={false}
+                        strokeColor="white"
+                        letterChoices={[2, 0, 1, 0, 1, 0, undefined, 2]}
+                    />
+                </span>
             </div>
 
             {/* Grain overlay (second layer) */}
@@ -83,54 +141,16 @@ export default function Hero() {
                 <StaticCardDisplay />
             </div>
 
-            {/* Desktop text content */}
-            <div className="hidden sm:block absolute inset-0 pointer-events-none">
-
-                {/* ── LEFT: Headline estilo ABRAhub ── */}
-                <div className="absolute left-5 lg:left-32 bottom-[20vh] max-w-sm">
-
-                    {/* Big headline */}
-                    <h1
-                        className="text-[2.6rem] leading-[1.05] font-black uppercase tracking-tight"
-                        style={{ fontFamily: 'inherit' }}
-                    >
-                        {/* First lines — adapts to light/dark */}
-                        <span className="block text-black/85 dark:text-white/90">
-                            O CÓDIGO
-                        </span>
-                        <span className="block text-black/85 dark:text-white/90">
-                            NÃO É ESCRITO,
-                        </span>
-                        {/* Last line — accent color (coral/orange, matches the lanyard) */}
-                        <span
-                            className="block"
-                            style={{ color: '#f97316' }}
-                        >
-                            É PENSADO.
-                        </span>
-                    </h1>
-                </div>
-
-                {/* ── RIGHT: Quote ── */}
-                <div className="absolute right-5 lg:right-32 bottom-[20vh] max-w-[260px] text-left border-l border-black dark:border-white pl-4">
-                    <p className="text-[0.95rem] leading-relaxed text-black dark:text-white font-medium">
-                        Transformo problemas complexos em interfaces simples, elegantes e que as pessoas adoram usar.
-                    </p>
-                </div>
-
-            </div>
-
             {/* "View more" label — bottom center */}
-            <div className="absolute bottom-[17vh] left-0 right-0 flex justify-center pointer-events-none">
-                <span className="flex items-center gap-1 text-sm text-black/80 dark:text-white/80 tracking-widest uppercase">
+            <div className="absolute bottom-[11vh] left-0 right-0 flex justify-center pointer-events-none">
+                <span className="flex flex-col items-center text-xs text-black dark:text-white tracking-widest uppercase">
                     View more <ChevronDown />
                 </span>
             </div>
 
             {/* Fade bottom */}
-            <div className="absolute bottom-14 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent" />
+            <div className="absolute bottom-14 left-0 right-0 h-[15vh] bg-gradient-to-t from-background to-transparent" />
             <div className="absolute bottom-0 left-0 right-0 bg-background h-14" />
-
         </section>
     );
 }
