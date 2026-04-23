@@ -1,15 +1,21 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/auth-helpers';
 import { prisma } from '@romulo/database';
+import { forbiddenResponse, unauthorizedResponse } from '@/lib/api-errors';
+import { getApiTranslator } from '@/lib/api-intl';
 
 export const dynamic = 'force-dynamic';
 
 const SEARCH_URL = process.env.SEARCH_GO_URL ?? 'http://localhost:8080';
 
 // GET /api/admin/search — returns health + stats merged
-export async function GET() {
-    if (!(await requireAdmin())) {
-        return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+export async function GET(req: NextRequest) {
+    const t = await getApiTranslator(req);
+    const auth = await requireAdmin();
+    if (!auth.ok) {
+        return auth.status === 401
+            ? unauthorizedResponse(t("common.unauthorized"))
+            : forbiddenResponse(t("common.forbidden"));
     }
 
     try {
@@ -31,9 +37,13 @@ export async function GET() {
 }
 
 // POST /api/admin/search — fetches all published posts and sends to Go /reindex
-export async function POST() {
-    if (!(await requireAdmin())) {
-        return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+export async function POST(req: NextRequest) {
+    const t = await getApiTranslator(req);
+    const auth = await requireAdmin();
+    if (!auth.ok) {
+        return auth.status === 401
+            ? unauthorizedResponse(t("common.unauthorized"))
+            : forbiddenResponse(t("common.forbidden"));
     }
 
     // In-memory rate limit: max 1 reindex per 60s per process

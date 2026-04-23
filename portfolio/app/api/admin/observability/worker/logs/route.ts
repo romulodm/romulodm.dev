@@ -1,4 +1,3 @@
-// app/api/admin/worker/logs/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/auth-helpers';
 import { getRedis } from '@/lib/redis';
