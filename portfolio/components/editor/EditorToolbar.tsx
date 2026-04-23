@@ -82,20 +82,20 @@ export function EditorToolbar({
   ]
 
   return (
-    <div className="border-t border-b border-gray-200 bg-gray-50 p-2">
+    <div className="border-t border-b border-gray-200 bg-gray-50 p-2 dark:border-zinc-700 dark:bg-zinc-800">
       <div className="flex gap-1 items-center">
         {tools.map((tool, index) =>
           tool.type === 'divider' ? (
-            <div key={index} className="w-px h-5 bg-gray-300 mx-1" />
+            <div key={index} className="w-px h-5 bg-gray-300 mx-1 dark:bg-zinc-600" />
           ) : (
             <button
               key={index}
               onClick={tool.action}
               disabled={tool.disabled}
               title={tool.label}
-              className="p-2 rounded hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="p-2 rounded hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed dark:hover:bg-zinc-700"
             >
-              <tool.icon size={18} className="text-gray-700" />
+              <tool.icon size={18} className="text-gray-700 dark:text-zinc-300" />
             </button>
           )
         )}

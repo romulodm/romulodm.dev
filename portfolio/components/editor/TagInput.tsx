@@ -39,14 +39,14 @@ export function TagInput({ tags, onChange, maxTags = 4 }: TagInputProps) {
         {tags.map((tag, index) => (
           <span
             key={index}
-            className="inline-flex items-center gap-1 px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm"
+            className="inline-flex items-center gap-1 px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm dark:bg-zinc-700 dark:text-zinc-300"
           >
             #{tag}
             <button
               onClick={() => removeTag(index)}
               className="hover:text-red-600"
             >
-              <X size={14} />
+              <X size={14} className='mt-0.5' />
             </button>
           </span>
         ))}
@@ -59,7 +59,7 @@ export function TagInput({ tags, onChange, maxTags = 4 }: TagInputProps) {
           onKeyDown={handleKeyDown}
           onBlur={addTag}
           placeholder={`Add up to ${maxTags} tags...`}
-          className="w-full px-0 py-2 text-gray-600 placeholder-gray-400 focus:outline-none"
+          className="w-full bg-gray-100 dark:bg-zinc-800 px-2 py-2 text-gray-600 text-black dark:text-white placeholder-gray-400 focus:outline-none"
         />
       )}
     </div>
