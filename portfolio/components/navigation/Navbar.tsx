@@ -11,6 +11,7 @@ import { LanguageModal } from "../modals/LanguageModal";
 import { useTheme } from "next-themes";
 import { Dropdown } from "./Dropdown";
 import { MobileMenu } from "./MobileMenu";
+import { SearchDialog } from "../blog/SearchDialog";
 
 export const navItems = [
     { label: "Home", href: "/", icon: <Home className="h-4 w-4" /> },
@@ -38,8 +39,6 @@ const Navbar = () => {
     const { data, status } = useSession();
 
     const isAdmin = !!data?.user?.admin;
-
-    const userImage = data?.user?.image ?? "/default.png";
 
     useEffect(() => {
         const handler = () => setScrolled(window.scrollY > 50);
@@ -81,29 +80,31 @@ const Navbar = () => {
 
                     {/* Desktop */}
                     <div className="flex items-center gap-2">
+                        <SearchDialog />
+
                         <Button
                             variant="ghost"
                             size="icon"
                             onClick={() => setLanguageModalOpen(true)}
-                            className="hidden md:flex text-foreground hover:bg-gray-200 dark:hover:bg-secondary hover:text-black dark:hover:text-foreground"
+                            className="hidden p-2.5 md:flex text-foreground hover:bg-gray-200 dark:hover:bg-secondary hover:text-black dark:hover:text-foreground"
                         >
-                            <Languages className="h-5 w-5" />
+                            <Languages className="h-4 w-4" />
                         </Button>
 
                         <Button
                             variant="ghost"
                             size="icon"
                             onClick={toggleTheme}
-                            className="hidden md:flex text-foreground hover:bg-gray-200 dark:hover:bg-secondary hover:text-black dark:hover:text-foreground"
+                            className="hidden p-2.5 md:flex text-foreground hover:bg-gray-200 dark:hover:bg-secondary hover:text-black dark:hover:text-foreground"
                         >
                             {
                                 <>
                                     <span className="dark:hidden">
-                                        <Sun className="h-5 w-5" />
+                                        <Sun className="h-4 w-4" />
                                     </span>
 
                                     <span className="hidden dark:inline">
-                                        <Moon className="h-5 w-5" />
+                                        <Moon className="h-4 w-4" />
                                     </span>
 
                                 </>
@@ -119,7 +120,7 @@ const Navbar = () => {
                             <>
                                 <button
                                     onClick={openAuthModal}
-                                    className="text-sm mr-2 font-medium bg-primary text-white px-4 py-2 rounded hover:opacity-90 transition-opacity"
+                                    className="text-sm mr-2 font-medium bg-primary text-white px-3 py-2 rounded hover:opacity-90 transition-opacity"
                                 >
                                     Login
                                 </button>
