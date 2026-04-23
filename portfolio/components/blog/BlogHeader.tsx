@@ -180,8 +180,8 @@ export function BlogHeader({
         <button
           onClick={() => onLayoutChange('grid')}
           className={`flex items-center justify-center rounded-l-xs px-3 transition-colors ${H} ${layout === 'grid'
-              ? 'bg-primary/20 text-foreground hover:bg-primary/30 dark:bg-primary/10 dark:hover:bg-primary/20'
-              : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+            ? 'bg-primary/20 text-foreground hover:bg-primary/30 dark:bg-primary/10 dark:hover:bg-primary/20'
+            : 'text-muted-foreground hover:bg-muted hover:text-foreground'
             }`}
         >
           <LayoutGrid size={15} />
@@ -191,8 +191,8 @@ export function BlogHeader({
         <button
           onClick={() => onLayoutChange('list')}
           className={`flex items-center justify-center rounded-r-xs border-l border-border px-3 transition-colors ${H} ${layout === 'list'
-              ? 'bg-primary/20 text-foreground hover:bg-primary/30 dark:bg-primary/10 dark:hover:bg-primary/20'
-              : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+            ? 'bg-primary/20 text-foreground hover:bg-primary/30 dark:bg-primary/10 dark:hover:bg-primary/20'
+            : 'text-muted-foreground hover:bg-muted hover:text-foreground'
             }`}
         >
           <LayoutList size={15} />
