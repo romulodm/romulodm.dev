@@ -1,4 +1,4 @@
-﻿import Link from 'next/link';
+import Link from 'next/link';
 import { prisma } from '@romulo/database';
 import { Plus } from 'lucide-react';
 import { getLocale, getTranslations } from 'next-intl/server';
