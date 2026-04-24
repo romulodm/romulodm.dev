@@ -14,11 +14,11 @@ import { RightSidebar } from '@/components/blog/RightSidebar'
 import { Footer } from '@/components/Footer'
 import { Clock } from 'lucide-react'
 import Link from 'next/link'
-import { SUPPORTED_LOCALES } from '@/lib/locales'
 import { ViewTracker } from './ViewTracker'
 
+// ✅ Next.js 15: params é uma Promise
 interface PageProps {
-  params: { locale: string; slug: string }
+  params: Promise<{ locale: string; slug: string }>
 }
 
 const BLOG_POST_REVALIDATE_SECONDS = 300
@@ -48,62 +48,69 @@ function YoutubeEmbed({ url }: { url: string }) {
   )
 }
 
-const getCachedPostBySlug = unstable_cache(
-  async (slug: string) => {
-    return prisma.post.findFirst({
-      where: {
-        slug,
-        status: 'PUBLISHED',
-      },
-      include: {
-        postTags: { select: { tag: true } },
-        author: {
-          select: {
-            id: true,
-            username: true,
-            image: true,
-            about: true,
-            githubUrl: true,
-            linkedinUrl: true,
+// ✅ Factory por slug — cada post tem sua própria entrada de cache
+const getCachedPostBySlug = (slug: string) =>
+  unstable_cache(
+    async () => {
+      return prisma.post.findFirst({
+        where: { slug, status: 'PUBLISHED' },
+        include: {
+          postTags: { select: { tag: true } },
+          author: {
+            select: {
+              id: true,
+              username: true,
+              image: true,
+              about: true,
+              githubUrl: true,
+              linkedinUrl: true,
+            },
+          },
+          translations: {
+            select: {
+              locale: true,
+              title: true,
+              summary: true,
+              excerpt: true,
+              contentMarkdown: true,
+              canonicalUrl: true,
+            },
           },
         },
-        translations: {
-          // traz todas as translations para o language switcher
-          select: { locale: true, title: true, summary: true, excerpt: true, contentMarkdown: true, canonicalUrl: true },
-        },
-      },
-    })
-  },
-  ['blog-post-by-slug'],
-  { revalidate: BLOG_POST_REVALIDATE_SECONDS },
-)
+      })
+    },
+    [`blog-post-by-slug-${slug}`], // ✅ chave única por slug
+    { revalidate: BLOG_POST_REVALIDATE_SECONDS },
+  )()
 
-const getCachedRelatedPosts = unstable_cache(
-  async (locale: string, currentPostId: string) => {
-    return prisma.post.findMany({
-      where: {
-        id: { not: currentPostId },
-        status: 'PUBLISHED',
-        publishedAt: { not: null },
-        translations: { some: { locale } },
-      },
-      orderBy: { publishedAt: 'desc' },
-      take: 4,
-      select: {
-        id: true,
-        slug: true,
-        publishedAt: true,
-        coverImageUrl: true,
-        translations: {
-          where: { locale },
-          select: { title: true },
+// ✅ Factory por locale + postId
+const getCachedRelatedPosts = (locale: string, currentPostId: string) =>
+  unstable_cache(
+    async () => {
+      return prisma.post.findMany({
+        where: {
+          id: { not: currentPostId },
+          status: 'PUBLISHED',
+          publishedAt: { not: null },
+          translations: { some: { locale } },
         },
-      },
-    })
-  },
-  ['blog-related-posts'],
-  { revalidate: BLOG_POST_REVALIDATE_SECONDS },
-)
+        orderBy: { publishedAt: 'desc' },
+        take: 4,
+        select: {
+          id: true,
+          slug: true,
+          publishedAt: true,
+          coverImageUrl: true,
+          translations: {
+            where: { locale },
+            select: { title: true },
+          },
+        },
+      })
+    },
+    [`blog-related-posts-${locale}-${currentPostId}`], // ✅ chave única
+    { revalidate: BLOG_POST_REVALIDATE_SECONDS },
+  )()
 
 export async function generateStaticParams() {
   try {
@@ -115,7 +122,7 @@ export async function generateStaticParams() {
       },
     })
     return posts.flatMap((p) =>
-      p.translations.map((t) => ({ locale: t.locale, slug: p.slug }))
+      p.translations.map((t) => ({ locale: t.locale, slug: p.slug })),
     )
   } catch {
     return []
@@ -123,10 +130,13 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const post = await getCachedPostBySlug(params.slug)
+  const { locale, slug } = await params // ✅ await params
+
+  const post = await getCachedPostBySlug(slug)
   if (!post) return { title: 'Post não encontrado' }
 
-  const translation = post.translations.find((t) => t.locale === params.locale)
+  const translation =
+    post.translations.find((t) => t.locale === locale) ?? post.translations[0]
   if (!translation) return { title: 'Post não encontrado' }
 
   return {
@@ -142,16 +152,21 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       description: translation.summary ?? translation.excerpt ?? undefined,
       images: post.coverImageUrl ? [post.coverImageUrl] : undefined,
       type: 'article',
-      publishedTime: post.publishedAt ? new Date(post.publishedAt).toISOString() : undefined,
+      publishedTime: post.publishedAt
+        ? new Date(post.publishedAt).toISOString()
+        : undefined,
     },
   }
 }
 
 export default async function PostPage({ params }: PageProps) {
-  const post = await getCachedPostBySlug(params.slug)
+  const { locale, slug } = await params // ✅ await params
+
+  const post = await getCachedPostBySlug(slug)
   if (!post) notFound()
 
-  const translation = post.translations.find((t) => t.locale === params.locale)
+  const translation =
+    post.translations.find((t) => t.locale === locale) ?? post.translations[0]
   if (!translation) notFound()
 
   const tags = post.postTags.map((t) => t.tag)
@@ -162,11 +177,12 @@ export default async function PostPage({ params }: PageProps) {
     avatarUrl: post.author.image ?? null,
   }
 
-  const [htmlContent, { items: initialComments, nextCursor }, relatedRaw] = await Promise.all([
-    markdownToHtml(translation.contentMarkdown),
-    listPostComments({ postId: post.id, sort: defaultSort }),
-    getCachedRelatedPosts(params.locale, post.id),
-  ])
+  const [htmlContent, { items: initialComments, nextCursor }, relatedRaw] =
+    await Promise.all([
+      markdownToHtml(translation.contentMarkdown),
+      listPostComments({ postId: post.id, sort: defaultSort }),
+      getCachedRelatedPosts(locale, post.id),
+    ])
 
   const relatedPosts = relatedRaw.map((p) => ({
     id: p.id,
@@ -194,7 +210,6 @@ export default async function PostPage({ params }: PageProps) {
         </aside>
 
         <main className="flex-1 min-w-0 max-w-4xl md:px-4 pb-12">
-
           <article className="rounded-lg shadow-sm">
             {post.coverImageUrl && (
               <div className="overflow-hidden md:rounded-t-2xl">
@@ -322,10 +337,14 @@ export default async function PostPage({ params }: PageProps) {
           </article>
         </main>
 
-        <RightSidebar relatedPosts={relatedPosts} currentPostId={post.id} />
+        <RightSidebar
+          relatedPosts={relatedPosts}
+          currentPostId={post.id}
+          locale={locale}
+        />
       </div>
 
       <Footer />
-    </div>
+    </div >
   )
 }
