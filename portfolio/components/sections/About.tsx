@@ -21,7 +21,7 @@ const stats: Stat[] = [
     { value: "1", label: "Article published" },
 ];
 
-function useInView(threshold = 0.15): [RefObject<HTMLElement>, boolean] {
+function useInView(threshold = 0.15): [RefObject<HTMLElement | null>, boolean] {
     const ref = useRef<HTMLElement>(null);
     const [inView, setInView] = useState<boolean>(false);
 
