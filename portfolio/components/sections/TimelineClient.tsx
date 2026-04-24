@@ -2,6 +2,8 @@
 
 import { useState, useRef } from 'react';
 import { useLocale } from 'next-intl';
+import type { ReactElement } from 'react';
+
 
 import { getTimelineData } from '@/data/timeline';
 
@@ -9,17 +11,17 @@ interface IconProps {
     className?: string;
 }
 
-interface TimelineEvent {
-    heading: string;
-    Icon: (props: IconProps) => JSX.Element;
-    description: string;
-}
-
 interface TimelineObject {
     [year: string]: TimelineEvent[];
 }
 
-export default function TimelineClient(): JSX.Element {
+interface TimelineEvent {
+    heading: string;
+    Icon: (props: IconProps) => ReactElement;
+    description: string;
+}
+
+export default function TimelineClient(): ReactElement {
     const locale = useLocale();
     const timelineObject: TimelineObject = getTimelineData(locale);
 
