@@ -30,12 +30,9 @@ async function getStats() {
         }),
     ])
 
-    const mask = <T extends { isPrivate: boolean; message: string | null }>(donors: T[]) =>
-        donors.map(d => ({ ...d, message: d.isPrivate ? null : d.message }))
-
     return {
-        topDonors: mask(topDonors),
-        recentDonors: mask(recentDonors),
+        topDonors: topDonors.map((d: typeof topDonors[number]) => ({ ...d, message: d.isPrivate ? null : d.message })),
+        recentDonors: recentDonors.map((d: typeof recentDonors[number]) => ({ ...d, message: d.isPrivate ? null : d.message })),
         stats,
     }
 }
