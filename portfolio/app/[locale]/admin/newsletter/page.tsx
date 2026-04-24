@@ -1,4 +1,4 @@
-﻿import Link from 'next/link';
+import Link from 'next/link';
 import { prisma } from '@romulo/database';
 import { ChevronRight, Clock, Code2, FileText, MailCheck, Plus, Send, TrendingUp, UserMinus, Users } from 'lucide-react';
 import { getLocale, getTranslations } from 'next-intl/server';
