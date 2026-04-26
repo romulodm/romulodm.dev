@@ -18,9 +18,9 @@
       "or": "OU"
     },
     "modal": {
-      "loginDescription": "Fa?a login para come?ar a interagir nas postagens do blog.",
+      "loginDescription": "Faça login para começar a interagir nas postagens do blog.",
       "registerDescription": "Crie sua conta e comece a interagir nas postagens do blog.",
-      "forgotDescription": "Digite seu e-mail e siga as instru??es."
+      "forgotDescription": "Digite seu e-mail e siga as instruções."
     },
     "google": {
       "continue": "Continuar com Google"
@@ -31,7 +31,7 @@
       "submit": "Entrar",
       "invalidCredentials": "E-mail ou senha incorretos.",
       "forgotPassword": "Esqueceu sua senha?",
-      "noAccount": "N?o tem conta?",
+      "noAccount": "Não tem conta?",
       "createNow": "Criar agora"
     },
     "register": {
@@ -40,18 +40,18 @@
       "passwordPlaceholder": "Senha",
       "confirmPasswordPlaceholder": "Confirmar senha",
       "submit": "Criar conta",
-      "genericError": "N?o foi poss?vel criar sua conta.",
-      "hasAccount": "J? tem conta?",
+      "genericError": "Não foi possível criar sua conta.",
+      "hasAccount": "Já tem conta?",
       "login": "Entrar"
     },
     "forgot": {
       "emailPlaceholder": "E-mail",
-      "submit": "Enviar link de recupera??o",
-      "genericError": "N?o foi poss?vel enviar o e-mail.",
+      "submit": "Enviar link de recuperação",
+      "genericError": "Não foi possível enviar o e-mail.",
       "successTitle": "Verifique sua caixa de entrada",
-      "successDescription": "Se esse e-mail estiver cadastrado, voc? receber? um link para redefinir sua senha. O link expira em 1 hora.",
+      "successDescription": "Se esse e-mail estiver cadastrado, você receberá um link para redefinir sua senha. O link expira em 1 hora.",
       "rememberedPassword": "Lembrou a senha?",
-      "didntForgetPassword": "N?o esqueceu sua senha?",
+      "didntForgetPassword": "Não esqueceu sua senha?",
       "login": "Entrar"
     },
     "reset": {
@@ -59,17 +59,17 @@
       "passwordPlaceholder": "Nova senha",
       "confirmPasswordPlaceholder": "Confirmar nova senha",
       "submit": "Salvar nova senha",
-      "genericError": "N?o foi poss?vel redefinir sua senha.",
+      "genericError": "Não foi possível redefinir sua senha.",
       "successTitle": "Senha redefinida!",
       "successDescription": "Sua senha foi atualizada com sucesso.",
       "goToLogin": "Ir para o login"
     },
     "validation": {
-      "emailInvalid": "E-mail inv?lido.",
-      "passwordRequired": "Senha obrigat?ria.",
+      "emailInvalid": "E-mail inválido.",
+      "passwordRequired": "Senha obrigatória.",
       "usernameTooShort": "Username muito curto.",
-      "passwordMin": "M?nimo 8 caracteres.",
-      "passwordsDoNotMatch": "As senhas n?o coincidem."
+      "passwordMin": "Mínimo 8 caracteres.",
+      "passwordsDoNotMatch": "As senhas não coincidem."
     }
   },
   "blog": {
@@ -146,7 +146,7 @@
       "deals": "Negócios fechados",
       "leads": "Leads gerados",
       "yearsCoding": "Anos programando",
-      "usersImpacted": "Usu?rios impactados",
+      "usersImpacted": "Usuários impactados",
       "projectsShipped": "Projetos entregues",
       "articlesPublished": "Artigos publicados"
     },
@@ -158,10 +158,10 @@
       "contact": "Contato"
     },
     "images": {
-      "whiteboardAlt": "Sess?o de whiteboard em equipe",
-      "collaborationAlt": "Colabora??o em equipe",
+      "whiteboardAlt": "Sessão de whiteboard em equipe",
+      "collaborationAlt": "Colaboração em equipe",
       "memberAlt": "Membro da equipe",
-      "workspaceAlt": "Espa?o de coworking",
+      "workspaceAlt": "Espaço de coworking",
       "extraAlt": "Foto adicional da equipe"
     }
   },
@@ -387,16 +387,16 @@
     }
   },
   "blogPost": {
-    "notFoundTitle": "Post n?o encontrado",
-    "videoTitle": "V?deo do post",
+    "notFoundTitle": "Post não encontrado",
+    "videoTitle": "Vídeo do post",
     "published": "Publicado {time}",
     "readingTime": "{minutes} min de leitura",
     "originallyPublishedAt": "Publicado originalmente em:"
   },
   "commentsPage": {
-    "metadataNotFound": "Coment?rio n?o encontrado",
-    "metadataTitle": "Coment?rio de @{username} em \"{postTitle}\"",
-    "comment": "Coment?rio",
+    "metadataNotFound": "Comentário não encontrado",
+    "metadataTitle": "Comentário de @{username} em \"{postTitle}\"",
+    "comment": "Comentário",
     "replyingTo": "Respondendo a @{username}",
     "backToPost": "Ir para \"{title}\""
   },
@@ -405,39 +405,39 @@
       "loadingTitle": "Confirmando...",
       "successTitle": "Tudo certo!",
       "errorTitle": "Ops! Algo deu errado",
-      "successDefaultMessage": "Inscri??o confirmada!",
-      "errorDefaultMessage": "Erro ao confirmar inscri??o.",
-      "networkError": "Erro de conex?o. Tente novamente mais tarde.",
-      "successListTitle": "A partir de agora voc? vai receber:",
+      "successDefaultMessage": "Inscrição confirmada!",
+      "errorDefaultMessage": "Erro ao confirmar inscrição.",
+      "networkError": "Erro de conexão. Tente novamente mais tarde.",
+      "successListTitle": "A partir de agora você vai receber:",
       "successItems": {
         "posts": "Novos posts assim que publicados",
-        "exclusive": "Dicas e conte?dos exclusivos",
+        "exclusive": "Dicas e conteúdos exclusivos",
         "updates": "Novidades e projetos"
       },
-      "errorListTitle": "Poss?veis causas:",
+      "errorListTitle": "Possíveis causas:",
       "errorItems": {
-        "expired": "O link expirou (v?lido por 24h)",
-        "alreadyConfirmed": "Este e-mail j? foi confirmado",
-        "incorrect": "O link est? incorreto"
+        "expired": "O link expirou (válido por 24h)",
+        "alreadyConfirmed": "Este e-mail já foi confirmado",
+        "incorrect": "O link está incorreto"
       },
-      "backHome": "Ir para o in?cio",
+      "backHome": "Ir para o início",
       "persistentProblem": "Problema persistindo?",
       "subscribeAgain": "Inscreva-se novamente"
     },
     "unsubscribe": {
-      "confirmTitle": "Cancelar inscri??o?",
+      "confirmTitle": "Cancelar inscrição?",
       "loadingTitle": "Processando...",
-      "successTitle": "Inscri??o cancelada",
+      "successTitle": "Inscrição cancelada",
       "errorTitle": "Ops! Algo deu errado",
-      "successDefaultMessage": "Inscri??o cancelada com sucesso.",
-      "errorDefaultMessage": "Erro ao cancelar inscri??o.",
-      "networkError": "Erro de conex?o. Tente novamente.",
-      "description": "Voc? n?o receber? mais novos posts e atualiza??es por e-mail. Pode se inscrever novamente a qualquer momento.",
-      "confirmButton": "Sim, cancelar inscri??o",
-      "stayButton": "N?o, quero continuar",
+      "successDefaultMessage": "Inscrição cancelada com sucesso.",
+      "errorDefaultMessage": "Erro ao cancelar inscrição.",
+      "networkError": "Erro de conexão. Tente novamente.",
+      "description": "Você não receberá mais novos posts e atualizações por e-mail. Pode se inscrever novamente a qualquer momento.",
+      "confirmButton": "Sim, cancelar inscrição",
+      "stayButton": "Não, quero continuar",
       "farewellTitle": "Sentiremos sua falta!",
-      "farewellDescription": "Voc? pode se inscrever novamente a qualquer momento.",
-      "backHome": "Ir para o in?cio"
+      "farewellDescription": "Você pode se inscrever novamente a qualquer momento.",
+      "backHome": "Ir para o início"
     }
   },
   "newsletterForm": {
@@ -453,11 +453,11 @@
   "support": {
     "metadata": {
       "title": "Apoie o blog",
-      "description": "Me pague um caf? e ajude a manter o blog no ar!"
+      "description": "Me pague um café e ajude a manter o blog no ar!"
     },
     "page": {
-      "title": "Compre um caf?",
-      "description": "Cada caf? me ajuda a continuar escrevendo e mantendo o blog. Obrigado pelo apoio!",
+      "title": "Compre um café",
+      "description": "Cada café me ajuda a continuar escrevendo e mantendo o blog. Obrigado pelo apoio!",
       "supporters": "{count} apoiadores"
     },
     "widget": {
@@ -470,19 +470,19 @@
       "genericError": "Algo deu errado. Tente novamente.",
       "methods": {
         "pix": "PIX",
-        "card": "Cart?o",
+        "card": "Cartão",
         "eth": "ETH"
       }
     },
     "pix": {
       "title": "Pague via PIX",
-      "description": "Escaneie o QR code ou copie o c?digo. O pagamento ? confirmado automaticamente.",
+      "description": "Escaneie o QR code ou copie o código. O pagamento é confirmado automaticamente.",
       "qrAlt": "QR Code PIX",
-      "copy": "Copiar c?digo PIX",
+      "copy": "Copiar código PIX",
       "copied": "Copiado!",
       "simulate": "Simular pagamento (dev)",
       "simulating": "Simulando...",
-      "alreadyPaid": "J? paguei"
+      "alreadyPaid": "Já paguei"
     },
     "crypto": {
       "back": "Voltar",
@@ -490,19 +490,19 @@
       "waiting": "Aguardando MetaMask...",
       "send": "Enviar via MetaMask",
       "genericError": "Erro ao processar ETH.",
-      "verifyError": "Erro ao verificar transa??o.",
-      "missingWallet": "MetaMask n?o encontrada. Instale em metamask.io",
-      "coffees": "{count} caf?(s)"
+      "verifyError": "Erro ao verificar transação.",
+      "missingWallet": "MetaMask não encontrada. Instale em metamask.io",
+      "coffees": "{count} café(s)"
     },
     "stripe": {
       "back": "Voltar",
-      "cardError": "Erro no cart?o.",
+      "cardError": "Erro no cartão.",
       "unexpectedError": "Ocorreu um erro inesperado.",
       "processing": "Processando...",
       "pay": "Pagar"
     },
     "success": {
-      "title": "Obrigado pelo caf?!",
+      "title": "Obrigado pelo café!",
       "description": "Seu apoio significa muito. Continue acompanhando o blog!",
       "supportAgain": "Apoiar novamente"
     },
@@ -513,76 +513,76 @@
       "topSupporters": "Top apoiadores",
       "recentSupport": "Apoios recentes",
       "beFirst": "Seja o primeiro a apoiar!",
-      "anonymous": "An?nimo",
-      "someone": "Algu?m",
-      "coffees": "{count} caf?(s)"
+      "anonymous": "Anônimo",
+      "someone": "Alguém",
+      "coffees": "{count} café(s)"
     },
     "messageModal": {
-      "defaultName": "An?nimo",
+      "defaultName": "Anônimo",
       "label": "deixou a seguinte mensagem:"
     },
     "apoiase": {
       "title": "Apoie este projeto",
-      "description": "Sua contribui??o faz toda a diferen?a!",
+      "description": "Sua contribuição faz toda a diferença!",
       "button": "Apoiar"
     }
   },
   "api": {
     "common": {
-      "invalidRequest": "Dados da requisi??o inv?lidos.",
-      "invalidBody": "Corpo da requisi??o inv?lido.",
-      "unauthorized": "Autentica??o necess?ria.",
+      "invalidRequest": "Dados da requisição inválidos.",
+      "invalidBody": "Corpo da requisição inválido.",
+      "unauthorized": "Autenticação necessária.",
       "forbidden": "Acesso negado.",
-      "notFound": "Recurso n?o encontrado.",
-      "conflict": "N?o foi poss?vel concluir a solicita??o.",
+      "notFound": "Recurso não encontrado.",
+      "conflict": "Não foi possível concluir a solicitação.",
       "rateLimited": "Muitas tentativas. Tente novamente em alguns instantes.",
       "internalError": "Erro interno.",
       "internalRetry": "Erro interno. Tente novamente.",
-      "emailRequired": "E-mail e obrigatorio.",
-      "emailInvalid": "E-mail invalido."
+      "emailRequired": "E-mail é obrigatório.",
+      "emailInvalid": "E-mail inválido."
     },
     "auth": {
       "forgot": {
         "rateLimited": "Muitas tentativas. Tente novamente em 10 minutos.",
-        "success": "Se esse e-mail estiver cadastrado, voc? receber? um link em breve.",
+        "success": "Se esse e-mail estiver cadastrado, você receberá um link em breve.",
         "internal": "Erro interno."
       },
       "register": {
         "rateLimited": "Muitas tentativas de cadastro. Tente novamente mais tarde.",
-        "conflict": "N?o foi poss?vel concluir o cadastro com os dados informados.",
-        "conflictRetry": "N?o foi poss?vel concluir o cadastro. Tente novamente.",
-        "passwordRequired": "Senha e obrigatoria.",
+        "conflict": "Não foi possível concluir o cadastro com os dados informados.",
+        "conflictRetry": "Não foi possível concluir o cadastro. Tente novamente.",
+        "passwordRequired": "Senha é obrigatória.",
         "passwordMin": "A senha deve ter pelo menos 8 caracteres.",
-        "passwordMax": "A senha deve ter no maximo 128 caracteres."
+        "passwordMax": "A senha deve ter no máximo 128 caracteres."
       }
     },
     "comments": {
-      "postIdRequired": "postId ? obrigat?rio.",
-      "empty": "Coment?rio n?o pode estar vazio.",
-      "tooLong": "Coment?rio muito longo (m?x. 2000 caracteres).",
-      "rateLimited": "Muitos coment?rios em pouco tempo. Aguarde um momento.",
-      "cannotComment": "Voc? n?o pode comentar.",
-      "postNotFound": "Post n?o encontrado.",
-      "parentNotFound": "Coment?rio pai n?o encontrado.",
-      "commentNotFound": "Coment?rio n?o encontrado.",
-      "invalidVote": "Valor de voto invalido."
+      "postIdRequired": "postId é obrigatório.",
+      "empty": "Comentário não pode estar vazio.",
+      "tooLong": "Comentário muito longo (máx. 2000 caracteres).",
+      "rateLimited": "Muitos comentários em pouco tempo. Aguarde um momento.",
+      "cannotComment": "Você não pode comentar.",
+      "postNotFound": "Post não encontrado.",
+      "parentNotFound": "Comentário pai não encontrado.",
+      "commentNotFound": "Comentário não encontrado.",
+      "invalidVote": "Valor de voto inválido."
     },
     "newsletter": {
       "subscribe": {
         "rateLimited": "Muitas tentativas. Tente novamente em alguns minutos.",
-        "success": "Verifique seu e-mail para confirmar a inscri??o.",
+        "success": "Verifique seu e-mail para confirmar a inscrição.",
         "internal": "Erro interno. Tente novamente."
       },
       "confirm": {
         "missingToken": "Token ausente.",
-        "invalidToken": "Token inv?lido ou expirado. Solicite uma nova inscri??o.",
-        "success": "Inscri??o confirmada com sucesso! Bem-vindo(a).",
+        "invalidToken": "Token inválido ou expirado. Solicite uma nova inscrição.",
+        "success": "Inscrição confirmada com sucesso! Bem-vindo(a).",
         "internal": "Erro interno."
       },
       "unsubscribe": {
         "missingToken": "Token ausente.",
-        "invalidToken": "Token inv?lido.",
-        "success": "Voc? foi removido da newsletter com sucesso.",
+        "invalidToken": "Token inválido.",
+        "success": "Você foi removido da newsletter com sucesso.",
         "internal": "Erro interno."
       },
       "requestUnsubscribe": {
@@ -593,60 +593,60 @@
     },
     "donations": {
       "eth": {
-        "invalidTransaction": "Transa??o inv?lida."
+        "invalidTransaction": "Transação inválida."
       },
       "pix": {
-        "notAvailableInProduction": "N?o dispon?vel em produ??o.",
+        "notAvailableInProduction": "Não disponível em produção.",
         "missingDonationId": "donationId ausente.",
-        "chargeDescription": "{count}x cafe para o blog",
-        "internal": "Nao foi possivel criar a cobranca PIX. Tente novamente."
+        "chargeDescription": "{count}x café para o blog",
+        "internal": "Não foi possível criar a cobrança PIX. Tente novamente."
       },
       "stripe": {
         "missingSignature": "Assinatura ausente.",
-        "invalidSignature": "Assinatura inv?lida.",
-        "internal": "Nao foi possivel criar a intencao de pagamento Stripe. Tente novamente."
+        "invalidSignature": "Assinatura inválida.",
+        "internal": "Não foi possível criar a intenção de pagamento Stripe. Tente novamente."
       },
-      "invalidCoffeeCount": "Quantidade de cafes invalida."
+      "invalidCoffeeCount": "Quantidade de cafés inválida."
     },
     "posts": {
       "noPosts": "Nenhum post encontrado.",
-      "notFound": "Post n?o encontrado.",
+      "notFound": "Post não encontrado.",
       "internalError": "Erro interno do servidor.",
-      "missingRequiredFields": "Campos obrigat?rios ausentes.",
-      "invalidBody": "Corpo inv?lido.",
-      "identifierRequired": "Identificador obrigat?rio.",
+      "missingRequiredFields": "Campos obrigatórios ausentes.",
+      "invalidBody": "Corpo inválido.",
+      "identifierRequired": "Identificador obrigatório.",
       "queueOnly": "O flush de views agora roda exclusivamente pelo caminho de fila com worker."
     },
     "uploads": {
-      "missingFields": "Campos obrigat?rios ausentes: filename, contentType, kind.",
-      "invalidKind": "Tipo inv?lido. Deve ser \"cover\" ou \"inline\".",
-      "invalidContentType": "Tipo de arquivo nao suportado.",
-      "fileTooLarge": "O arquivo e grande demais.",
-      "internal": "Nao foi possivel preparar o upload. Tente novamente."
+      "missingFields": "Campos obrigatórios ausentes: filename, contentType, kind.",
+      "invalidKind": "Tipo inválido. Deve ser \"cover\" ou \"inline\".",
+      "invalidContentType": "Tipo de arquivo não suportado.",
+      "fileTooLarge": "O arquivo é grande demais.",
+      "internal": "Não foi possível preparar o upload. Tente novamente."
     },
     "admin": {
       "newsletterCampaigns": {
-        "subjectRequired": "Assunto e obrigatorio.",
-        "postIdRequired": "postId e obrigatorio para campanhas baseadas em post.",
-        "postNotFound": "Post nao encontrado.",
-        "postMustBePublished": "So e possivel criar campanhas para posts publicados.",
-        "missingPortugueseTranslation": "O post precisa ter traducao em portugues primeiro.",
-        "customContentRequired": "Conteudo e obrigatorio para campanhas personalizadas.",
+        "subjectRequired": "Assunto é obrigatório.",
+        "postIdRequired": "postId é obrigatório para campanhas baseadas em post.",
+        "postNotFound": "Post não encontrado.",
+        "postMustBePublished": "Só é possível criar campanhas para posts publicados.",
+        "missingPortugueseTranslation": "O post precisa ter tradução em português primeiro.",
+        "customContentRequired": "Conteúdo é obrigatório para campanhas personalizadas.",
         "readArticle": "Ler artigo ->",
-        "notFound": "Campanha nao encontrada.",
+        "notFound": "Campanha não encontrada.",
         "draftOnlyEdit": "Apenas campanhas em rascunho podem ser editadas.",
-        "invalidPost": "Post invalido ou nao publicado.",
-        "cannotDeleteSending": "Nao e possivel excluir uma campanha em envio.",
-        "deleted": "Campanha excluida.",
+        "invalidPost": "Post inválido ou não publicado.",
+        "cannotDeleteSending": "Não é possível excluir uma campanha em envio.",
+        "deleted": "Campanha excluída.",
         "draftOnlySend": "Apenas campanhas em rascunho podem ser enviadas.",
-        "invalidScheduledAt": "scheduledAt invalido.",
+        "invalidScheduledAt": "scheduledAt inválido.",
         "futureScheduledAt": "scheduledAt deve ser uma data futura.",
         "scheduled": "Campanha agendada com sucesso.",
         "queued": "Campanha enfileirada para envio.",
         "dispatchFailed": "Falha ao despachar campanha."
       },
       "suspiciousComments": {
-        "notFound": "Comentario suspeito nao encontrado."
+        "notFound": "Comentário suspeito não encontrado."
       }
     }
   },
@@ -661,12 +661,14 @@
         "allPosts": "Todos os posts",
         "newPost": "Novo post",
         "newsletter": "Newsletter",
-        "newsletterOverview": "Visao geral",
+        "newsletterOverview": "Visão geral",
         "campaigns": "Campanhas",
         "newCampaign": "Nova campanha",
-        "suspiciousComments": "Comentarios suspeitos",
-        "bannedUsers": "Usuarios banidos",
-        "donations": "Doacoes",
+        "suspiciousComments": "Comentários suspeitos",
+        "bannedUsers": "Usuários banidos",
+        "coffees": "Cafés",
+        "donations": "Doações",
+        "onchain": "Doações on-chain",
         "observability": "Observabilidade",
         "system": "Sistema",
         "search": "Motor de busca",
@@ -676,20 +678,20 @@
     },
     "dashboard": {
       "title": "Dashboard",
-      "description": "Visao geral do seu blog e das doacoes.",
-      "recentTransactions": "Transacoes recentes",
+      "description": "Visão geral do seu blog e das doações.",
+      "recentTransactions": "Transações recentes",
       "topSupporters": "Maiores apoiadores",
-      "noDonationsYet": "Nenhuma doacao ainda.",
-      "anonymous": "Anonimo",
-      "someone": "Alguem",
-      "coffees": "{count, plural, one {# cafe} other {# cafes}}",
+      "noDonationsYet": "Nenhuma doação ainda.",
+      "anonymous": "Anônimo",
+      "someone": "Alguém",
+      "coffees": "{count, plural, one {# café} other {# cafés}}",
       "stats": {
         "raised": {
           "label": "Total arrecadado",
           "sub": "{count, plural, one {# apoiador} other {# apoiadores}}"
         },
         "views": {
-          "label": "Visualizacoes",
+          "label": "Visualizações",
           "sub": "{count, plural, one {# post publicado} other {# posts publicados}}"
         },
         "likes": {
@@ -697,28 +699,28 @@
           "sub": "Em todos os posts"
         },
         "comments": {
-          "label": "Comentarios",
+          "label": "Comentários",
           "sub": "Em todos os posts"
         }
       }
     },
     "donationsPage": {
-      "title": "Doacoes",
+      "title": "Doações",
       "description": "Gerencie apoiadores e mensagens.",
       "stats": {
         "raised": "Total arrecadado",
         "supporters": "Apoiadores",
-        "donations": "Total de doacoes",
-        "averageTicket": "Ticket medio"
+        "donations": "Total de doações",
+        "averageTicket": "Ticket médio"
       },
       "preview": {
         "topSupporters": {
           "title": "10 maiores apoiadores",
-          "subtitle": "Aparece no ranking da pagina de apoio"
+          "subtitle": "Aparece no ranking da página de apoio"
         },
         "recent": {
           "title": "10 mais recentes",
-          "subtitle": "Aparece nos apoios recentes da pagina de apoio"
+          "subtitle": "Aparece nos apoios recentes da página de apoio"
         }
       }
     },
@@ -728,15 +730,15 @@
       "newPost": "Novo post",
       "empty": "Nenhum post ainda.",
       "createFirst": "Criar primeiro post",
-      "untitled": "(sem titulo)",
-      "missingTranslation": "Sem traducao: {locale}",
+      "untitled": "(sem título)",
+      "missingTranslation": "Sem tradução: {locale}",
       "columns": {
-        "title": "Titulo",
+        "title": "Título",
         "status": "Status",
         "locales": "Idiomas",
         "tags": "Tags",
         "updated": "Atualizado",
-        "actions": "Acoes"
+        "actions": "Ações"
       },
       "status": {
         "published": "Publicado",
@@ -748,10 +750,10 @@
       }
     },
     "bannedUsers": {
-      "title": "Usuarios banidos",
-      "description": "Gerencie usuarios que nao podem comentar.",
+      "title": "Usuários banidos",
+      "description": "Gerencie usuários que não podem comentar.",
       "loading": "Carregando...",
-      "empty": "Nenhum usuario banido.",
+      "empty": "Nenhum usuário banido.",
       "bannedAt": "Banido em {date}",
       "unban": "Desbanir"
     },
@@ -764,13 +766,13 @@
       "scheduledFor": "Agendado: {date}",
       "stats": {
         "active": "Inscritos ativos",
-        "pending": "Aguardando confirmacao",
+        "pending": "Aguardando confirmação",
         "unsubscribed": "Descadastros",
         "openRate": "Taxa de abertura geral"
       },
       "empty": {
         "title": "Nenhuma campanha ainda",
-        "description": "Crie sua primeira campanha para comecar."
+        "description": "Crie sua primeira campanha para começar."
       },
       "status": {
         "draft": "Rascunho",
@@ -785,11 +787,11 @@
       }
     },
     "donationsTable": {
-      "title": "Todas as doacoes",
-      "empty": "Nenhuma doacao encontrada.",
-      "anonymous": "Anonimo",
+      "title": "Todas as doações",
+      "empty": "Nenhuma doação encontrada.",
+      "anonymous": "Anônimo",
       "private": "privado",
-      "coffees": "{count, plural, one {# cafe} other {# cafes}}",
+      "coffees": "{count, plural, one {# café} other {# cafés}}",
       "messagePlaceholder": "Mensagem (deixe vazio para remover)",
       "cancel": "Cancelar",
       "save": "Salvar",
@@ -797,24 +799,24 @@
       "viewFullMessage": "Ver mensagem completa",
       "noMessage": "sem mensagem",
       "editMessage": "Editar mensagem",
-      "deleteDonation": "Excluir doacao",
-      "confirmDelete": "Excluir esta doacao? Esta acao nao pode ser desfeita.",
-      "page": "Pagina {page} de {totalPages}",
+      "deleteDonation": "Excluir doação",
+      "confirmDelete": "Excluir esta doação? Esta ação não pode ser desfeita.",
+      "page": "Página {page} de {totalPages}",
       "filters": {
         "all": "Todos",
-        "completed": "Concluidas",
+        "completed": "Concluídas",
         "pending": "Pendentes"
       },
       "status": {
-        "completed": "Concluida",
+        "completed": "Concluída",
         "pending": "Pendente",
         "failed": "Falhou",
         "expired": "Expirada"
       }
     },
     "donationsPreview": {
-      "empty": "Nenhuma doacao.",
-      "anonymous": "Anonimo",
+      "empty": "Nenhuma doação.",
+      "anonymous": "Anônimo",
       "messagePlaceholder": "Mensagem (deixe vazio para remover)",
       "cancel": "Cancelar",
       "save": "Salvar",
@@ -831,16 +833,16 @@
       "delete": "Excluir"
     },
     "suspiciousCommentsPage": {
-      "title": "Comentarios suspeitos",
-      "pending": "{count} comentario(s) aguardando revisao",
+      "title": "Comentários suspeitos",
+      "pending": "{count} comentário(s) aguardando revisão",
       "loading": "Carregando...",
-      "empty": "Nenhum comentario suspeito no momento.",
+      "empty": "Nenhum comentário suspeito no momento.",
       "flagged": "sinalizado",
       "approve": "Aprovar",
       "reject": "Rejeitar",
       "previous": "Anterior",
-      "page": "Pagina {page} de {totalPages}",
-      "next": "Proxima"
+      "page": "Página {page} de {totalPages}",
+      "next": "Próxima"
     },
     "newCampaignPage": {
       "title": "Nova campanha",
@@ -850,11 +852,11 @@
       "title": "Campanhas",
       "total": "{count} no total",
       "newCampaign": "Nova campanha",
-      "unavailableTitle": "Titulo indisponivel",
+      "unavailableTitle": "Título indisponível",
       "empty": "Nenhuma campanha criada ainda.",
       "previous": "Anterior",
-      "page": "Pagina {page} de {totalPages}",
-      "next": "Proxima",
+      "page": "Página {page} de {totalPages}",
+      "next": "Próxima",
       "columns": {
         "subject": "Assunto",
         "type": "Tipo",
@@ -876,11 +878,11 @@
       }
     },
     "campaignDetail": {
-      "unavailableTitle": "Titulo indisponivel",
+      "unavailableTitle": "Título indisponível",
       "createdAt": "Criado em {date}",
       "linkedPost": "Post vinculado:",
       "editTitle": "Editar campanha",
-      "sentContent": "Conteudo enviado",
+      "sentContent": "Conteúdo enviado",
       "status": {
         "draft": "Rascunho",
         "scheduled": "Agendado",
@@ -911,18 +913,18 @@
         "optional": "opcional"
       },
       "errors": {
-        "save": "Nao foi possivel salvar a campanha.",
-        "send": "Nao foi possivel enviar a campanha."
+        "save": "Não foi possível salvar a campanha.",
+        "send": "Não foi possível enviar a campanha."
       },
       "type": {
         "label": "Tipo de campanha",
         "post": {
           "title": "Baseada em post",
-          "description": "Template fixo com titulo, resumo e link do artigo"
+          "description": "Template fixo com título, resumo e link do artigo"
         },
         "custom": {
           "title": "HTML personalizado",
-          "description": "Escreva seu proprio HTML para o e-mail"
+          "description": "Escreva seu próprio HTML para o e-mail"
         }
       },
       "post": {
@@ -939,7 +941,7 @@
       "subject": {
         "label": "Assunto do e-mail",
         "placeholderPost": "Preenchido automaticamente ao selecionar o post",
-        "placeholderCustom": "Ex: Novo artigo: Como escalar uma aplicacao Node.js",
+        "placeholderCustom": "Ex: Novo artigo: Como escalar uma aplicação Node.js",
         "counter": "{count}/150 caracteres"
       },
       "previewText": {
@@ -947,23 +949,23 @@
         "placeholder": "Texto exibido antes de abrir o e-mail no cliente de e-mail"
       },
       "content": {
-        "label": "Conteudo (HTML)",
-        "help": "HTML com estilos inline. O template base (header, footer, unsubscribe) e aplicado automaticamente.",
-        "placeholder": "<h2>Titulo da campanha</h2>\n<p>Corpo do e-mail...</p>\n<a href=\"...\">Leia mais -></a>"
+        "label": "Conteúdo (HTML)",
+        "help": "HTML com estilos inline. O template base (header, footer, unsubscribe) é aplicado automaticamente.",
+        "placeholder": "<h2>Título da campanha</h2>\n<p>Corpo do e-mail...</p>\n<a href=\"...\">Leia mais -></a>"
       },
       "schedule": {
         "label": "Agendar envio",
         "hint": "deixe vazio para enviar imediatamente"
       },
       "save": {
-        "saved": "Salvo! ?",
+        "saved": "Salvo! ✓",
         "action": "Salvar rascunho"
       },
       "send": {
         "confirm": "Confirmar envio agora",
         "schedule": "Agendar envio",
         "action": "Enviar campanha",
-        "confirmHelp": "Clique novamente para confirmar. Esta acao enviara e-mails para todos os inscritos ativos."
+        "confirmHelp": "Clique novamente para confirmar. Esta ação enviará e-mails para todos os inscritos ativos."
       },
       "sendSuccess": {
         "scheduled": "Campanha agendada com sucesso!",
@@ -974,29 +976,29 @@
       "locale": {
         "postLanguage": "Idioma do post:",
         "translateWithAi": "Traduzir com IA",
-        "translation": "Traducao:",
+        "translation": "Tradução:",
         "editing": "editando"
       },
       "common": {
         "optional": "opcional"
       },
       "errors": {
-        "invalidYoutube": "Link invalido. Use um link do YouTube (ex: https://youtu.be/xxxxx).",
+        "invalidYoutube": "Link inválido. Use um link do YouTube (ex: https://youtu.be/xxxxx).",
         "upload": "Falha ao fazer upload da imagem. Tente novamente.",
-        "titleRequired": "Por favor, insira um titulo.",
-        "contentRequired": "Por favor, insira o conteudo do post.",
-        "invalidYoutubeShort": "O link do YouTube e invalido.",
+        "titleRequired": "Por favor, insira um título.",
+        "contentRequired": "Por favor, insira o conteúdo do post.",
+        "invalidYoutubeShort": "O link do YouTube é inválido.",
         "save": "Falha ao salvar o post. Tente novamente."
       },
       "saving": {
-        "translating": "Gerando traducoes com IA...",
+        "translating": "Gerando traduções com IA...",
         "publishing": "Publicando...",
         "saving": "Salvando..."
       },
       "title": {
         "edit": "Editar post",
         "new": "Novo post",
-        "placeholder": "Titulo do post..."
+        "placeholder": "Título do post..."
       },
       "mode": {
         "edit": "Editar",
@@ -1010,15 +1012,15 @@
         "remove": "Remover"
       },
       "youtube": {
-        "title": "Video do YouTube",
+        "title": "Vídeo do YouTube",
         "placeholder": "https://www.youtube.com/watch?v=xxxxx",
         "preview": "Preview:",
         "previewTitle": "Preview do YouTube",
-        "remove": "Remover video"
+        "remove": "Remover vídeo"
       },
       "summary": {
         "title": "Resumo",
-        "placeholder": "Uma breve descricao do que o leitor vai encontrar neste post...",
+        "placeholder": "Uma breve descrição do que o leitor vai encontrar neste post...",
         "remaining": "{count} restantes"
       },
       "readingTime": {
@@ -1026,8 +1028,8 @@
         "unit": "minutos"
       },
       "content": {
-        "imageAlt": "Descricao da imagem",
-        "placeholderEditor": "Escreva o conteudo do post aqui..."
+        "imageAlt": "Descrição da imagem",
+        "placeholderEditor": "Escreva o conteúdo do post aqui..."
       },
       "actions": {
         "publish": "Publicar",
@@ -1038,8 +1040,8 @@
   },
   "blogUi": {
     "header": {
-      "gridView": "Visualizacao em grade",
-      "listView": "Visualizacao em lista",
+      "gridView": "Visualização em grade",
+      "listView": "Visualização em lista",
       "sort": {
         "placeholder": "Ordenar por",
         "newest": "Mais recentes",
@@ -1048,7 +1050,7 @@
         "oldest": "Mais antigos"
       },
       "random": {
-        "action": "Post aleatorio",
+        "action": "Post aleatório",
         "loading": "Carregando..."
       },
       "tag": {
@@ -1063,31 +1065,31 @@
     },
     "carousel": {
       "previousSlide": "Slide anterior",
-      "nextSlide": "Proximo slide"
+      "nextSlide": "Próximo slide"
     },
     "reactions": {
       "like": "Curtir post",
       "unlike": "Descurtir post",
-      "viewComments": "Ver comentarios",
+      "viewComments": "Ver comentários",
       "support": "Apoie",
       "share": "Compartilhar",
       "shareAria": "Compartilhar este post"
     },
     "sidebar": {
-      "otherPosts": "Outras publicacoes"
+      "otherPosts": "Outras publicações"
     },
     "toc": {
-      "title": "Nesta pagina",
+      "title": "Nesta página",
       "scrollToTop": "Voltar ao topo"
     }
   },
   "commentsUi": {
     "composer": {
-      "tooManyComments": "Muitos comentarios seguidos. Aguarde um momento.",
+      "tooManyComments": "Muitos comentários seguidos. Aguarde um momento.",
       "publishError": "Erro ao publicar.",
-      "published": "Comentario publicado!",
-      "publishCommentError": "Erro ao publicar comentario.",
-      "loginAction": "Faca login",
+      "published": "Comentário publicado!",
+      "publishCommentError": "Erro ao publicar comentário.",
+      "loginAction": "Faça login",
       "loginPrompt": "para comentar.",
       "reply": "Responder",
       "comment": "Comentar"
@@ -1095,54 +1097,54 @@
     "editor": {
       "tabs": {
         "write": "Escrever",
-        "preview": "Pre-visualizar"
+        "preview": "Pré-visualizar"
       },
       "tools": {
         "bold": "Negrito (Ctrl+B)",
-        "italic": "Italico (Ctrl+I)",
+        "italic": "Itálico (Ctrl+I)",
         "link": "Link",
         "list": "Lista",
         "orderedList": "Lista numerada",
-        "quote": "Citacao",
-        "inlineCode": "Codigo inline",
-        "codeBlock": "Bloco de codigo"
+        "quote": "Citação",
+        "inlineCode": "Código inline",
+        "codeBlock": "Bloco de código"
       },
-      "placeholder": "Escreva seu comentario...",
-      "nothingToPreview": "Nada para pre-visualizar.",
+      "placeholder": "Escreva seu comentário...",
+      "nothingToPreview": "Nada para pré-visualizar.",
       "remaining": "{count} restantes",
       "cancel": "Cancelar",
       "saving": "Salvando...",
       "submit": "Comentar"
     },
     "deleteModal": {
-      "title": "Apagar comentario",
-      "subtitle": "Esta acao nao pode ser desfeita.",
+      "title": "Apagar comentário",
+      "subtitle": "Esta ação não pode ser desfeita.",
       "close": "Fechar",
-      "previewLabel": "Seu comentario",
+      "previewLabel": "Seu comentário",
       "cancel": "Cancelar",
       "deleting": "Apagando...",
       "confirm": "Apagar",
       "warning": {
-        "prefix": "Ao apagar este comentario, todas as respostas tambem serao removidas",
+        "prefix": "Ao apagar este comentário, todas as respostas também serão removidas",
         "highlight": "permanentemente"
       },
       "errors": {
-        "delete": "Nao foi possivel apagar o comentario."
+        "delete": "Não foi possível apagar o comentário."
       }
     },
     "card": {
-      "updated": "Comentario atualizado.",
-      "deleted": "Comentario apagado.",
-      "saveEdit": "Salvar edicao",
-      "editing": "Editando comentario",
-      "shareTitle": "Comentario de @{username}",
+      "updated": "Comentário atualizado.",
+      "deleted": "Comentário apagado.",
+      "saveEdit": "Salvar edição",
+      "editing": "Editando comentário",
+      "shareTitle": "Comentário de @{username}",
       "linkCopied": "Link copiado!",
       "collapsedCount": "{count} ocultos",
       "vote": {
         "up": "Voto positivo",
         "down": "Voto negativo"
       },
-      "hideComment": "Ocultar comentario",
+      "hideComment": "Ocultar comentário",
       "contextLabel": "Comentando em",
       "edited": "editado",
       "edit": "Editar",
@@ -1151,13 +1153,13 @@
       "share": "Compartilhar",
       "time": {
         "now": "agora",
-        "minutes": "{count} min atras",
-        "hours": "{count} h atras",
-        "days": "{count} dias atras"
+        "minutes": "{count} min atrás",
+        "hours": "{count} h atrás",
+        "days": "{count} dias atrás"
       },
       "errors": {
-        "edit": "Nao foi possivel editar o comentario.",
-        "delete": "Nao foi possivel apagar o comentario."
+        "edit": "Não foi possível editar o comentário.",
+        "delete": "Não foi possível apagar o comentário."
       }
     }
   },
@@ -1169,11 +1171,11 @@
     "submitting": "Enviando...",
     "success": {
       "title": "Verifique seu e-mail!",
-      "description": "Enviamos um link de confirmacao para voce."
+      "description": "Enviamos um link de confirmação para você."
     },
     "errors": {
       "generic": "Algo deu errado.",
-      "connection": "Erro de conexao. Tente novamente."
+      "connection": "Erro de conexão. Tente novamente."
     }
   },
   "common": {
@@ -1194,33 +1196,33 @@
     "submit": "Inscrever-se",
     "privacy": {
       "prefix": "Sem spam, nunca.",
-      "suffix": "Voce pode conferir a politica de privacidade aqui."
+      "suffix": "Você pode conferir a política de privacidade aqui."
     },
     "success": {
       "title": "Verifique seu e-mail!",
-      "description": "Enviamos um link de confirmacao para ativar sua inscricao.",
+      "description": "Enviamos um link de confirmação para ativar sua inscrição.",
       "useAnotherEmail": "Usar outro e-mail"
     },
     "errors": {
       "generic": "Algo deu errado. Tente novamente.",
-      "connection": "Erro de conexao. Tente novamente."
+      "connection": "Erro de conexão. Tente novamente."
     }
   },
   "unsubscribeModal": {
-    "trigger": "Cancelar inscricao",
-    "title": "Cancelar inscricao na newsletter",
-    "description": "Digite seu e-mail para receber um link de confirmacao.",
+    "trigger": "Cancelar inscrição",
+    "title": "Cancelar inscrição na newsletter",
+    "description": "Digite seu e-mail para receber um link de confirmação.",
     "emailLabel": "E-mail",
     "emailPlaceholder": "seu@email.com",
     "cancel": "Cancelar",
-    "submit": "Enviar confirmacao",
+    "submit": "Enviar confirmação",
     "close": "Fechar",
     "success": {
-      "message": "E-mail de confirmacao enviado com sucesso! Verifique sua caixa de entrada e clique no link para concluir o cancelamento."
+      "message": "E-mail de confirmação enviado com sucesso! Verifique sua caixa de entrada e clique no link para concluir o cancelamento."
     },
     "errors": {
-      "generic": "Nao foi possivel processar sua solicitacao.",
-      "connection": "Erro de conexao. Tente novamente mais tarde."
+      "generic": "Não foi possível processar sua solicitação.",
+      "connection": "Erro de conexão. Tente novamente mais tarde."
     }
   },
   "cookieBanner": {
@@ -1265,33 +1267,33 @@
       }
     },
     "terms": {
-      "title": "Termos e Condicoes",
-      "updatedAt": "Ultima atualizacao: Fevereiro 2026",
+      "title": "Termos e Condições",
+      "updatedAt": "Última atualização: Fevereiro 2026",
       "close": "Fechar",
       "sections": {
         "network": {
           "title": "Importante - Verifique a rede",
-          "body": "Antes de comprar um bilhete, verifique se a loteria esta executando na mesma rede da sua carteira. Compras feitas na rede errada nao sao reembolsaveis e nao sao de responsabilidade da plataforma."
+          "body": "Antes de comprar um bilhete, verifique se a loteria está executando na mesma rede da sua carteira. Compras feitas na rede errada não são reembolsáveis e não são de responsabilidade da plataforma."
         },
         "service": {
-          "title": "1. Natureza do servico",
-          "body": "Esta plataforma e uma loteria descentralizada operando na blockchain, pensada para oferecer transparencia e justica em todos os sorteios. Atualmente, o servico encontra-se em periodo de teste na rede Sepolia."
+          "title": "1. Natureza do serviço",
+          "body": "Esta plataforma é uma loteria descentralizada operando na blockchain, pensada para oferecer transparência e justiça em todos os sorteios. Atualmente, o serviço encontra-se em período de teste na rede Sepolia."
         },
         "testing": {
-          "title": "2. Periodo de teste",
-          "body": "Durante o periodo de validacao, todas as transacoes utilizam tokens de teste (Sepolia ETH) que nao possuem valor economico real. Nenhum valor monetario verdadeiro esta envolvido nesta fase."
+          "title": "2. Período de teste",
+          "body": "Durante o período de validação, todas as transações utilizam tokens de teste (Sepolia ETH) que não possuem valor econômico real. Nenhum valor monetário verdadeiro está envolvido nesta fase."
         },
         "fairness": {
-          "title": "3. Justica e transparencia",
-          "body": "Todos os sorteios sao realizados de forma transparente na blockchain. Os resultados podem ser verificados por qualquer pessoa atraves do contrato inteligente. A plataforma utiliza fontes de aleatoriedade verificaveis para garantir a justica dos sorteios."
+          "title": "3. Justiça e transparência",
+          "body": "Todos os sorteios são realizados de forma transparente na blockchain. Os resultados podem ser verificados por qualquer pessoa através do contrato inteligente. A plataforma utiliza fontes de aleatoriedade verificáveis para garantir a justiça dos sorteios."
         },
         "userResponsibility": {
           "title": "4. Responsabilidade do utilizador",
-          "body": "O utilizador e responsavel por garantir que esta conectado a rede correta antes de realizar qualquer transacao. A plataforma nao se responsabiliza por perdas decorrentes de erros do utilizador, incluindo envio de fundos para enderecos incorretos."
+          "body": "O utilizador é responsável por garantir que está conectado à rede correta antes de realizar qualquer transação. A plataforma não se responsabiliza por perdas decorrentes de erros do utilizador, incluindo envio de fundos para endereços incorretos."
         },
         "changes": {
-          "title": "5. Modificacoes dos termos",
-          "body": "A plataforma reserva-se o direito de modificar estes termos a qualquer momento. As alteracoes serao comunicadas pela plataforma. O uso continuado do servico apos as alteracoes constitui aceitacao dos novos termos."
+          "title": "5. Modificações dos termos",
+          "body": "A plataforma reserva-se o direito de modificar estes termos a qualquer momento. As alterações serão comunicadas pela plataforma. O uso continuado do serviço após as alterações constitui aceitação dos novos termos."
         }
       }
     }
@@ -1301,15 +1303,15 @@
     "signOut": "Sair",
     "tabs": {
       "profile": "Perfil",
-      "comments": "Comentarios"
+      "comments": "Comentários"
     },
     "stats": {
-      "title": "Estatisticas",
-      "comments": "Comentarios"
+      "title": "Estatísticas",
+      "comments": "Comentários"
     },
-    "emptyComments": "Nenhum comentario ainda.",
+    "emptyComments": "Nenhum comentário ainda.",
     "loadMore": "Carregar mais",
     "commentingOn": "Comentando em",
-    "viewComment": "Ver comentario ->"
+    "viewComment": "Ver comentário ->"
   }
 }
