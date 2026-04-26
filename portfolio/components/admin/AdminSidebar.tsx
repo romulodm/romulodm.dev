@@ -58,7 +58,15 @@ const NAV_ITEMS: NavItem[] = [
   },
   { id: 'suspiciousComments', href: '/admin/suspicious-comments', icon: AlertTriangle },
   { id: 'bannedUsers', href: '/admin/banned-users', icon: Ban },
-  { id: 'donations', href: '/admin/donations', icon: Coffee },
+  {
+    id: 'coffees',
+    href: '/admin/donations',
+    icon: Coffee,
+    children: [
+      { id: 'donations', href: '/admin/donations' },
+      { id: 'onchain', href: '/admin/donations/crypto' },
+    ],
+  },
   {
     id: 'observability',
     href: '/admin/observability/system',
