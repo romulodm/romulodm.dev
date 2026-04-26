@@ -297,7 +297,7 @@ enum DonationStatus {
 model Donation {
   id        String           @id @default(cuid())
   name      String?          @db.VarChar(100)
-  message   String?          @db.VarChar(500)
+  message   String?          @db.VarChar(700)
   coffees   Int              @default(1)
   amount    Int
   currency  String           @default("BRL")
@@ -319,4 +319,28 @@ model Donation {
   @@index([status, isPrivate, currency, amount])
   @@index([amount])
   @@index([provider])
+}
+
+model OnChainDonation {
+  id               String   @id @default(cuid())
+  txHash           String   @unique
+  network          String
+  token            String
+  rawAmount        String
+  amountUsd        Float
+  amountBrl        Float
+  coffees          Int
+  donor            String
+  name             String?  @db.VarChar(100)
+  message          String?  @db.VarChar(1400)
+  encryptedMessage String?  @db.Text
+  isPrivate        Boolean  @default(false)
+  blockNumber      String
+  donatedAt        DateTime
+  createdAt        DateTime @default(now())
+
+  @@index([network, donatedAt])
+  @@index([donor])
+  @@index([amountBrl])
+  @@index([token])
 }
