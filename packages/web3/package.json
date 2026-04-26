@@ -1,0 +1,18 @@
+{
+    "name": "@romulo/web3",
+    "version": "0.0.1",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "scripts": {
+        "build": "tsc"
+    },
+    "dependencies": {
+        "viem": "*",
+        "tweetnacl": "*",
+        "tweetnacl-util": "*"
+    },
+    "devDependencies": {
+        "@types/node": "*",
+        "typescript": "*"
+    }
+}
