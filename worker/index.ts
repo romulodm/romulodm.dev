@@ -1,6 +1,12 @@
 import "./env";
 
-import { createQueue, QUEUE_BACKUPS, QUEUE_CAMPAIGN, QUEUE_NOTIFICATIONS, QUEUE_TRANSACTIONAL } from "@romulo/queues";
+import {
+  createQueue,
+  QUEUE_BACKUPS,
+  QUEUE_CAMPAIGN,
+  QUEUE_NOTIFICATIONS,
+  QUEUE_TRANSACTIONAL,
+} from "@romulo/queues";
 import { prisma } from "@romulo/database";
 import type { Worker } from "bullmq";
 
@@ -21,15 +27,16 @@ import { scheduleViewsFlush } from "./workers/views.worker";
 import { startSearchConsumer, reindexAll } from "./workers/search.worker";
 import { startMetricsWorker } from "./workers/metrics.worker";
 import { startBackupWorker } from "./workers/backup.worker";
+import { scheduleOnchainRetry } from "./workers/onchain.worker";
 
 // ── Monitoring queues ─────────────────────────────────────────────────────────
-// These queue instances are used only for health monitoring (job counts, lag).
-// They are separate from the workers' internal connections.
+// Used only for health monitoring (job counts, lag).
+// Separate from workers' internal connections.
 const monitoringQueues = {
   [QUEUE_TRANSACTIONAL]: createQueue(QUEUE_TRANSACTIONAL, redis),
   [QUEUE_CAMPAIGN]: createQueue(QUEUE_CAMPAIGN, redis),
   [QUEUE_NOTIFICATIONS]: createQueue(QUEUE_NOTIFICATIONS, redis),
-  [QUEUE_BACKUPS]: createQueue(QUEUE_BACKUPS, redis),  // ← novo
+  [QUEUE_BACKUPS]: createQueue(QUEUE_BACKUPS, redis),
 };
 
 const failureTracker = createFailureTracker();
@@ -41,31 +48,26 @@ async function main() {
   // Enable log persistence to Redis as early as possible so startup events
   // (email verify, reindex, etc.) are captured in the ring buffer.
   setLogRedis(redis);
-
   logWorkerEvent("info", "worker.starting");
 
-  // Verify SMTP connectivity at startup — log a warning but don't abort if it fails,
-  // since the worker can still process jobs when the connection recovers.
+  // Verify SMTP connectivity — log a warning but don't abort if it fails.
   await emailService.verify().catch((err) => {
     logWorkerEvent("warn", "worker.email_verify_failed", {
       error: err instanceof Error ? err.message : String(err),
     });
   });
 
-  // ── Search: reindexação completa no startup ───────────────────────────────
-  // Envia todos os posts publicados para o serviço Go de busca.
-  // O serviço Go mantém o índice em memória — ao reiniciar perde o estado,
-  // portanto reconstruímos via POST /reindex a cada startup do worker.
-  // Não aborta o worker se falhar (o Go pode estar subindo em paralelo).
+  // ── Search: full reindex on startup ──────────────────────────────────────
+  // The Go search service keeps its index in memory — it loses state on restart,
+  // so we rebuild via POST /reindex on every worker startup.
   await reindexAll().catch((err: unknown) => {
     logWorkerEvent("warn", "worker.search_reindex_failed", {
       error: err instanceof Error ? err.message : String(err),
     });
   });
 
-
-  // ── System metrics: Docker colect + host stats → Redis ───────────────────
-  if (process.env.ENABLE_METRICS !== 'false') {
+  // ── System metrics ────────────────────────────────────────────────────────
+  if (process.env.ENABLE_METRICS !== "false") {
     startMetricsWorker().catch((err: unknown) => {
       logWorkerEvent("warn", "worker.metrics_start_failed", {
         error: err instanceof Error ? err.message : String(err),
@@ -73,23 +75,24 @@ async function main() {
     });
   }
 
-  // Instantiate workers — must happen after all imports have resolved
+  // ── Workers ───────────────────────────────────────────────────────────────
   const { transactionalWorker, campaignWorker } = startEmailWorkers(redis);
   const notificationWorker = startNotificationWorker(redis);
   const searchConsumer = startSearchConsumer();
   const backupWorker = startBackupWorker(redis);
 
-  // Register repeatable jobs (idempotent — safe to call on every restart)
+  // ── Repeatable jobs (idempotent — safe to call on every restart) ──────────
   await scheduleDailyStatus(redis);
   await scheduleViewsFlush(redis);
+  await scheduleOnchainRetry(redis);
 
-  // Attach structured logging to every worker
+  // ── Structured logging ────────────────────────────────────────────────────
   attachLogger(transactionalWorker, QUEUE_TRANSACTIONAL);
   attachLogger(campaignWorker, QUEUE_CAMPAIGN);
   attachLogger(notificationWorker, QUEUE_NOTIFICATIONS);
   attachLogger(backupWorker, QUEUE_BACKUPS);
 
-  // Start the periodic health monitor (queue lag, failure rates, redis ping)
+  // ── Health monitor ────────────────────────────────────────────────────────
   healthMonitor = startWorkerHealthMonitor({
     queues: monitoringQueues,
     redis,
@@ -101,9 +104,7 @@ async function main() {
     queues: Object.keys(monitoringQueues),
   });
 
-  // ── Graceful shutdown ───────────────────────────────────────────────────────
-  // Defined inside main() so it closes over the worker instances above.
-  // Waits for in-flight jobs to finish before exiting.
+  // ── Graceful shutdown ─────────────────────────────────────────────────────
   async function shutdown(signal: string): Promise<never> {
     logWorkerEvent("info", "worker.shutdown_requested", { signal });
 
@@ -115,7 +116,7 @@ async function main() {
       campaignWorker.close(),
       notificationWorker.close(),
       backupWorker.close(),
-      ...Object.values(monitoringQueues).map((queue) => queue.close()),
+      ...Object.values(monitoringQueues).map((q) => q.close()),
     ]);
 
     await prisma.$disconnect();
@@ -131,10 +132,6 @@ async function main() {
 
 // ── Structured log helper ─────────────────────────────────────────────────────
 
-/**
- * Attaches `completed`, `failed`, and `error` event listeners to a worker.
- * All events are forwarded to the structured logger with queue context.
- */
 function attachLogger(worker: Worker, queueName: string) {
   worker.on("completed", (job) => {
     logWorkerEvent("info", "worker.job_completed", {
@@ -167,8 +164,7 @@ function attachLogger(worker: Worker, queueName: string) {
 }
 
 // ── Heartbeat ─────────────────────────────────────────────────────────────────
-// Emits a log line every 30 s so that log-based uptime monitors can detect
-// a silent process hang (no events, but process still alive).
+// Emits a log line every 30s so uptime monitors detect silent hangs.
 setInterval(() => {
   logWorkerEvent("info", "worker.heartbeat");
 }, 30_000);
