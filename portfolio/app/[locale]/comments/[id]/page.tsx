@@ -7,19 +7,26 @@ import { getCommentById } from "@/lib/comments";
 import type { Metadata } from "next";
 
 interface PageProps {
-    params: { id: string };
+    params: Promise<{ id: string }>;
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-    const comment = await getCommentById(params.id);
+    const { id } = await params;
+
+    const comment = await getCommentById(id);
+
     if (!comment) return { title: "Comentário não encontrado" };
+
     return {
         title: `Comentário de @${comment.author.username} em "${comment.post.title}"`,
     };
 }
 
 export default async function CommentPage({ params }: PageProps) {
-    const comment = await getCommentById(params.id);
+    const { id } = await params;
+
+    const comment = await getCommentById(id);
+
     if (!comment) notFound();
 
     const isReply = !!comment.parentId;
