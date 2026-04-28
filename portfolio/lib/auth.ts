@@ -1,6 +1,7 @@
 // lib/auth.ts
-import type { NextAuthOptions, Session } from "next-auth";
+import type { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
+import GitHubProvider from "next-auth/providers/github";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { prisma } from "@romulo/database";
@@ -8,13 +9,81 @@ import { headers } from "next/headers";
 import { rateLimit } from "./rate-limit";
 import { generateUniqueUsername } from "./username";
 
+type OAuthProvider = "GOOGLE" | "GITHUB";
+
+// Returning a string from signIn() redirects to that URL directly,
+// which lets us pass a custom ?error= param that useAuthToasts reads.
+// Throwing or returning false with JWT strategy doesn't produce ?error= —
+// it redirects to the signIn page with ?callbackUrl= instead.
+const ERRORS = {
+  accountNotLinked: "/?error=AccountNotLinked",
+} as const;
+
+async function handleOAuthSignIn(user: any, account: any, provider: OAuthProvider) {
+  const email = user.email?.trim().toLowerCase();
+  if (!email) return false;
+
+  const sub = account.providerAccountId;
+
+  const existing = await prisma.user.findUnique({
+    where: { email },
+    select: { id: true, provider: true, sub: true, admin: true, username: true },
+  });
+
+  // E-mail already registered with a different provider
+  if (existing && existing.provider !== provider) {
+    return ERRORS.accountNotLinked;
+  }
+
+  // New user — create
+  if (!existing) {
+    const username = await generateUniqueUsername(email, user.name);
+    const created = await prisma.user.create({
+      data: {
+        email,
+        provider,
+        sub,
+        username,
+        image: user.image ?? null,
+        emailVerified: true,
+      },
+      select: { id: true, admin: true, username: true },
+    });
+    user.id = created.id;
+    user.provider = provider;
+    user.admin = created.admin;
+    user.username = created.username;
+    return true;
+  }
+
+  // Existing user with same provider — ensure sub matches
+  if (existing.sub && existing.sub !== sub) {
+    return ERRORS.accountNotLinked;
+  }
+
+  if (!existing.sub) {
+    await prisma.user.update({ where: { id: existing.id }, data: { sub } });
+  }
+
+  user.id = existing.id;
+  user.provider = provider;
+  user.admin = existing.admin;
+  user.username = existing.username;
+  return true;
+}
+
 export const authOptions: NextAuthOptions = {
-  debug: process.env.NODE_ENV !== 'production',
+  debug: process.env.NODE_ENV !== "production",
+
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-      // authorization: { params: { prompt: "consent", access_type: "offline", response_type: "code" } }
+    }),
+
+    GitHubProvider({
+      clientId: process.env.GITHUB_CLIENT_ID!,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET!,
     }),
 
     CredentialsProvider({
@@ -28,7 +97,6 @@ export const authOptions: NextAuthOptions = {
         const password = credentials?.password;
         if (!email || !password) return null;
 
-        // ── Rate limit via IP ──────────────────────────────────────
         const headersList = await headers();
         const ip =
           headersList.get("x-forwarded-for")?.split(",")[0]?.trim() ??
@@ -36,18 +104,25 @@ export const authOptions: NextAuthOptions = {
           "unknown";
 
         const limited = await rateLimit(`nextauth:credentials:${ip}:${email}`, 10, 60);
-        if (limited) throw new Error("CredentialsSignin"); // NextAuth trata como login inválido
+        if (limited) throw new Error("RateLimited");
 
-        // ── Busca usuário ─────────────────────────────────────────
         const user = await prisma.user.findUnique({
           where: { email },
           select: {
-            id: true, email: true, username: true,
-            image: true, admin: true, provider: true, password: true,
+            id: true,
+            email: true,
+            username: true,
+            image: true,
+            admin: true,
+            provider: true,
+            password: true,
+            banned: true,
           },
         });
 
         if (!user || user.provider !== "EMAIL_PASSWORD" || !user.password) return null;
+
+        if (user.banned) throw new Error("AccountBanned");
 
         const ok = await bcrypt.compare(password, user.password);
         if (!ok) return null;
@@ -69,69 +144,12 @@ export const authOptions: NextAuthOptions = {
 
   callbacks: {
     async signIn({ user, account }) {
-      // ----- GOOGLE LOGIN FLOW -----
-      if (account?.provider === "google") {
-        const email = user.email?.trim().toLowerCase();
-        if (!email) return false;
-
-        const sub = account.providerAccountId; // id estável do provider (Google "sub")
-
-        const existing = await prisma.user.findUnique({
-          where: { email },
-          select: { id: true, provider: true, sub: true, admin: true, username: true },
-        });
-
-        // existe mas foi criado com senha -> bloqueia Google
-        if (existing && existing.provider !== "GOOGLE") {
-          return false;
-        }
-
-        // não existe -> cria com GOOGLE
-        if (!existing) {
-          const username = await generateUniqueUsername(email, user.name);
-
-          const created = await prisma.user.create({
-            data: {
-              email,
-              provider: "GOOGLE",
-              sub,
-              username,
-              image: user.image ?? null,
-              emailVerified: true,
-            },
-            select: { id: true, admin: true, username: true },
-          });
-
-          user.id = created.id;
-          (user as any).provider = "GOOGLE";
-          (user as any).admin = created.admin;
-          (user as any).username = created.username;
-          return true;
-        }
-
-        // existe e é GOOGLE -> garante sub e atualiza se necessário
-        if (existing.sub && existing.sub !== sub) return false;
-
-        if (!existing.sub) {
-          await prisma.user.update({
-            where: { id: existing.id },
-            data: { sub },
-          });
-        }
-
-        user.id = existing.id;
-        (user as any).provider = "GOOGLE";
-        (user as any).admin = existing.admin;
-        (user as any).username = existing.username;
-        return true;
-      }
-
-      // ----- CREDENTIALS FLOW -----
+      if (account?.provider === "google") return handleOAuthSignIn(user, account, "GOOGLE");
+      if (account?.provider === "github") return handleOAuthSignIn(user, account, "GITHUB");
       return true;
     },
 
     async jwt({ token, user }) {
-      // primeira vez após login
       if (user) {
         token.id = user.id;
         token.provider = (user as any).provider;
@@ -139,13 +157,11 @@ export const authOptions: NextAuthOptions = {
         token.username = (user as any).username ?? null;
       }
 
-      // garante que token tenha provider/admin quando refresh
       if (token.email && (!token.id || !token.provider)) {
         const dbUser = await prisma.user.findUnique({
           where: { email: token.email },
           select: { id: true, provider: true, admin: true, username: true },
         });
-
         if (dbUser) {
           token.id = dbUser.id;
           token.provider = dbUser.provider;
