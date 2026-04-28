@@ -3,6 +3,7 @@
 
 import { useState } from "react"
 import { signIn } from "next-auth/react"
+import { toast } from "sonner"
 import CircularProgress from "@mui/material/CircularProgress"
 import { FcGoogle } from "react-icons/fc"
 import { useTranslations } from "next-intl"
@@ -17,7 +18,12 @@ export function GoogleButton({ disabled }: Props) {
 
   async function handleClick() {
     setLoading(true)
-    await signIn("google", { callbackUrl: window.location.href })
+    try {
+      await signIn("google", { callbackUrl: window.location.href })
+    } catch {
+      toast.error(t("toasts.oauthSignin"))
+      setLoading(false)
+    }
   }
 
   return (

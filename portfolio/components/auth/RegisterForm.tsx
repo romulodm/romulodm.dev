@@ -12,6 +12,7 @@ import { useTranslations } from "next-intl"
 
 import { createRegisterSchema, type RegisterValues } from "./schemas"
 import { GoogleButton } from "./GoogleButton"
+import { GitHubButton } from "./GitHubButton"
 
 interface Props {
   onSuccess: () => void
@@ -92,7 +93,10 @@ export function RegisterForm({ onSuccess, onLogin }: Props) {
         </p>
       )}
 
-      <GoogleButton disabled={isSubmitting} />
+      <div className="w-full flex flex-col gap-2">
+        <GoogleButton disabled={isSubmitting} />
+        <GitHubButton disabled={isSubmitting} />
+      </div>
 
       <div className="flex w-full items-center gap-2 my-4 text-xs text-gray-300 dark:text-neutral-600">
         <hr className="flex-1 border-gray-200 dark:border-neutral-700" />

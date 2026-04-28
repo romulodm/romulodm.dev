@@ -5,6 +5,7 @@ import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { signIn } from "next-auth/react"
+import { toast } from "sonner"
 import CircularProgress from "@mui/material/CircularProgress"
 import { MdOutlineAlternateEmail } from "react-icons/md"
 import { RiLockPasswordLine } from "react-icons/ri"
@@ -13,6 +14,7 @@ import { useTranslations } from "next-intl"
 
 import { createLoginSchema, type LoginValues } from "./schemas"
 import { GoogleButton } from "./GoogleButton"
+import { GitHubButton } from "./GitHubButton"
 
 interface Props {
   onSuccess: () => void
@@ -22,7 +24,6 @@ interface Props {
 
 export function LoginForm({ onSuccess, onForgotPassword, onRegister }: Props) {
   const t = useTranslations("auth")
-  const [serverError, setServerError] = useState<string | null>(null)
   const [showPassword, setShowPassword] = useState(false)
   const schema = createLoginSchema(t)
 
@@ -33,8 +34,6 @@ export function LoginForm({ onSuccess, onForgotPassword, onRegister }: Props) {
   } = useForm<LoginValues>({ resolver: zodResolver(schema) })
 
   async function onSubmit(values: LoginValues) {
-    setServerError(null)
-
     const res = await signIn("credentials", {
       email: values.email,
       password: values.password,
@@ -42,10 +41,19 @@ export function LoginForm({ onSuccess, onForgotPassword, onRegister }: Props) {
     })
 
     if (!res?.ok) {
-      setServerError(t("login.invalidCredentials"))
+      const err = res?.error
+
+      if (err === "RateLimited") {
+        toast.error(t("toasts.rateLimited"))
+      } else if (err === "AccountBanned") {
+        toast.error(t("toasts.accountBanned"))
+      } else {
+        toast.error(t("toasts.invalidCredentials"))
+      }
       return
     }
 
+    toast.success(t("toasts.loginSuccess"))
     onSuccess()
   }
 
@@ -55,13 +63,10 @@ export function LoginForm({ onSuccess, onForgotPassword, onRegister }: Props) {
       noValidate
       className="flex flex-col items-center w-full"
     >
-      {serverError && (
-        <p className="w-full mb-3 text-sm text-red-500 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg px-3 py-2">
-          {serverError}
-        </p>
-      )}
-
-      <GoogleButton disabled={isSubmitting} />
+      <div className="w-full flex flex-col gap-2">
+        <GoogleButton disabled={isSubmitting} />
+        <GitHubButton disabled={isSubmitting} />
+      </div>
 
       <div className="flex w-full items-center gap-2 my-4 text-xs text-gray-300 dark:text-neutral-600">
         <hr className="flex-1 border-gray-200 dark:border-neutral-700" />
@@ -70,8 +75,7 @@ export function LoginForm({ onSuccess, onForgotPassword, onRegister }: Props) {
       </div>
 
       <div
-        className={`h-12 w-full bg-neutral-200/90 dark:bg-neutral-800 rounded-lg flex items-center mb-4 border ${errors.email ? "border-red-400" : "border-transparent"
-          }`}
+        className={`h-12 w-full bg-neutral-200/90 dark:bg-neutral-800 rounded-lg flex items-center mb-4 border ${errors.email ? "border-red-400" : "border-transparent"}`}
       >
         <MdOutlineAlternateEmail
           className={`ml-3 text-lg shrink-0 ${errors.email ? "text-red-400" : "text-gray-400 dark:text-neutral-400"}`}
@@ -89,8 +93,7 @@ export function LoginForm({ onSuccess, onForgotPassword, onRegister }: Props) {
       )}
 
       <div
-        className={`h-12 w-full bg-neutral-200/90 dark:bg-neutral-800 rounded-lg flex items-center mb-1 border ${errors.password ? "border-red-400" : "border-transparent"
-          }`}
+        className={`h-12 w-full bg-neutral-200/90 dark:bg-neutral-800 rounded-lg flex items-center mb-1 border ${errors.password ? "border-red-400" : "border-transparent"}`}
       >
         <RiLockPasswordLine
           className={`ml-3 text-lg shrink-0 ${errors.password ? "text-red-400" : "text-gray-400 dark:text-neutral-400"}`}
