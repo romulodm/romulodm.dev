@@ -13,6 +13,7 @@ import "./globals.css";
 import Providers from "../providers";
 import { CookieBanner } from "@/components/CookieBanner";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
+import { ToastProvider } from "@/components/ToastProvider";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const jetbrains = JetBrains_Mono({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--font-jetbrains" });
@@ -51,6 +52,7 @@ export default async function RootLayout({
             <Providers session={session}>
               {children}
               <CookieBanner />
+              <ToastProvider />
             </Providers>
           </ThemeProvider>
         </NextIntlClientProvider>
