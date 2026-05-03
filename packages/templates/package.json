@@ -1,0 +1,14 @@
+{
+  "name": "@romulo/templates",
+  "version": "1.0.0",
+  "description": "Transactional and newsletter email templates for romulodm",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
