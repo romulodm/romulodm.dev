@@ -11,6 +11,15 @@
  * must be called explicitly from the app entry point (index.ts) after all modules
  * have finished loading. This avoids circular-dependency crashes where
  * `queueRuntimeConfig` would be `undefined` at import time.
+ *
+ * Each queue uses its own isolated EmailService instance:
+ *   - processTransactionalEmailJob → transactionalEmailService (no rate limit)
+ *   - processCampaignEmailJob      → campaignEmailService (rate-limited pool)
+ *
+ * This separation ensures that a campaign burst never delays a transactional
+ * email: nodemailer's pool rate limiter is global per transporter instance, so
+ * sharing a single emailService would serialise all sends behind the campaign
+ * rate limit.
  */
 
 import { type JobsOptions, type Job, Worker } from "bullmq";
@@ -29,14 +38,25 @@ import {
   type TransactionalEmailJob,
 } from "@romulo/queues";
 
-import { emailService } from "../lib/email/email.service";
+// Import isolated service instances — each has its own transporter pool and
+// circuit breaker so neither queue can interfere with the other.
+import { transactionalEmailService, campaignEmailService } from "../lib/email/email.service";
 import {
   campaignTemplate,
   confirmationTemplate,
   passwordResetTemplate,
   unsubscribeConfirmTemplate,
   welcomeTemplate,
-} from "../lib/email/templates";
+  type BrandConfig,
+} from "@romulo/templates";
+
+// ── Brand config ──────────────────────────────────────────────────────────────
+
+const BRAND: BrandConfig = {
+  name: process.env.NEXT_PUBLIC_APP_NAME ?? "romulodm",
+  baseUrl: process.env.NEXT_PUBLIC_APP_URL ?? "https://romulodm.com.br",
+  accentColor: "#f57842",
+};
 
 // ── Type aliases for job handler contexts ────────────────────────────────────
 
@@ -47,10 +67,6 @@ export type TransactionalJobContext = Pick<Job<TransactionalEmailJob>, "data">;
 export type CampaignJobContext = Pick<Job<CampaignEmailJob>, "data" | "attemptsMade" | "opts">;
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
-
-function getAppName(): string {
-  return process.env.NEXT_PUBLIC_APP_NAME ?? "Your Blog";
-}
 
 /**
  * Returns true if the current attempt is the last one allowed for this job.
@@ -67,9 +83,6 @@ function isFinalAttempt(job: { attemptsMade: number; opts: JobsOptions }): boole
 /**
  * After each campaign email is processed (sent or failed), checks whether
  * all recipients have been handled. If so, marks the campaign as SENT.
- *
- * Uses `sentCount + failedCount >= totalRecipients` as the completion signal,
- * so it handles both partial failures and full success.
  */
 export async function markCampaignCompleteIfDone(campaignId: string): Promise<void> {
   const campaign = await prisma.campaign.findUnique({
@@ -100,9 +113,8 @@ export async function markCampaignCompleteIfDone(campaignId: string): Promise<vo
 /**
  * Handles a single transactional email job.
  *
- * Each job type maps to a specific email template and subject line.
- * A stable `messageId` is derived from the job payload so that retries
- * don't produce duplicate Message-ID headers.
+ * Uses `transactionalEmailService` which has no SMTP rate limiting, so these
+ * sends are never queued behind campaign traffic.
  */
 export async function processTransactionalEmailJob(job: TransactionalJobContext): Promise<void> {
   const { data } = job;
@@ -110,39 +122,40 @@ export async function processTransactionalEmailJob(job: TransactionalJobContext)
 
   switch (data.type) {
     case "CONFIRMATION":
-      await emailService.send({
+      await transactionalEmailService.send({
         to: data.email,
-        subject: `Confirme sua inscrição - ${getAppName()}`,
-        html: confirmationTemplate(data.confirmationUrl),
+        subject: `Confirme sua inscrição - ${BRAND.name}`,
+        html: confirmationTemplate({ confirmationUrl: data.confirmationUrl, brand: BRAND }),
         messageId,
       });
       return;
 
     case "WELCOME":
-      await emailService.send({
+      await transactionalEmailService.send({
         to: data.email,
-        subject: `Bem-vindo(a) à newsletter de ${getAppName()}!`,
-        html: welcomeTemplate(data.unsubscribeUrl),
+        subject: `Bem-vindo(a) à newsletter de ${BRAND.name}!`,
+        html: welcomeTemplate({ unsubscribeUrl: data.unsubscribeUrl, brand: BRAND }),
         messageId,
       });
       return;
 
     case "UNSUBSCRIBE_CONFIRM":
-      await emailService.send({
+      await transactionalEmailService.send({
         to: data.email,
-        subject: `Confirme o cancelamento - ${getAppName()}`,
-        html: unsubscribeConfirmTemplate(data.unsubscribeUrl),
+        subject: `Confirme o cancelamento - ${BRAND.name}`,
+        html: unsubscribeConfirmTemplate({ unsubscribeUrl: data.unsubscribeUrl, brand: BRAND }),
         messageId,
       });
       return;
 
     case "PASSWORD_RESET":
-      await emailService.send({
+      await transactionalEmailService.send({
         to: data.email,
-        subject: `Seu código de recuperação - ${getAppName()}`,
+        subject: `Seu código de recuperação - ${BRAND.name}`,
         html: passwordResetTemplate({
           code: data.code,
           expiresInMinutes: data.expiresInMinutes,
+          brand: BRAND,
         }),
         messageId,
       });
@@ -156,6 +169,10 @@ export async function processTransactionalEmailJob(job: TransactionalJobContext)
 /**
  * Handles a single campaign email job.
  *
+ * Uses `campaignEmailService` which applies SMTP rate limiting at the pool
+ * level. Keeping campaign sends on their own instance means the rate limiter
+ * never blocks transactional sends.
+ *
  * Flow:
  * 1. Fetch the recipient row — skip if already processed (idempotency guard).
  * 2. Send the email.
@@ -163,14 +180,10 @@ export async function processTransactionalEmailJob(job: TransactionalJobContext)
  * 4. On failure: if this is the final retry, mark recipient FAILED and
  *    increment campaign.failedCount.
  * 5. Always: check whether the campaign is now fully complete.
- *
- * The `updateMany` with `status: "PENDING"` filter acts as an optimistic lock,
- * preventing double-counting if two workers somehow race on the same recipient.
  */
 export async function processCampaignEmailJob(job: CampaignJobContext): Promise<void> {
   const { data } = job;
 
-  // Idempotency: skip if this recipient was already handled by a previous attempt
   const recipient = await prisma.campaignRecipient.findUnique({
     where: { id: data.recipientId },
   });
@@ -179,7 +192,7 @@ export async function processCampaignEmailJob(job: CampaignJobContext): Promise<
   const deliveryId = buildCampaignJobId(data);
 
   try {
-    await emailService.send({
+    await campaignEmailService.send({
       to: data.email,
       subject: data.subject,
       html: campaignTemplate({
@@ -187,11 +200,11 @@ export async function processCampaignEmailJob(job: CampaignJobContext): Promise<
         content: data.content,
         unsubscribeUrl: data.unsubscribeUrl,
         trackingPixelUrl: data.trackingPixelUrl,
+        brand: BRAND,
       }),
       messageId: buildEmailMessageId("campaign", deliveryId),
     });
 
-    // Only count as sent if the row was still PENDING (race-condition guard)
     const updated = await prisma.campaignRecipient.updateMany({
       where: { id: data.recipientId, status: "PENDING" },
       data: { status: "SENT", sentAt: new Date(), errorMessage: null },
@@ -208,7 +221,6 @@ export async function processCampaignEmailJob(job: CampaignJobContext): Promise<
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Unknown error";
 
-    // Only persist the failure on the last retry to avoid premature FAILED status
     if (isFinalAttempt(job)) {
       const failed = await prisma.campaignRecipient.updateMany({
         where: { id: data.recipientId, status: "PENDING" },
@@ -224,10 +236,8 @@ export async function processCampaignEmailJob(job: CampaignJobContext): Promise<
     }
 
     console.error(`[CampaignWorker] Failed for ${data.email}: ${message}`);
-    throw error; // Re-throw so BullMQ can schedule the next retry
+    throw error;
   } finally {
-    // Always check completion, even after a failure, so the campaign doesn't
-    // get stuck in SENDING if the last job failed.
     await markCampaignCompleteIfDone(data.campaignId).catch((err) =>
       console.error("[CampaignWorker] markCampaignCompleteIfDone error:", err),
     );
@@ -236,16 +246,6 @@ export async function processCampaignEmailJob(job: CampaignJobContext): Promise<
 
 // ── Worker factory ────────────────────────────────────────────────────────────
 
-/**
- * Creates and returns the transactional and campaign BullMQ workers.
- *
- * Accepts a shared `redis` connection from the caller (index.ts) so that
- * the app controls connection lifecycle and avoids creating multiple
- * redundant connections.
- *
- * Call this function once, inside `main()`, after all module imports have
- * resolved — never at the top level of a module.
- */
 export function startEmailWorkers(redis: Redis) {
   const transactionalWorker = new Worker<TransactionalEmailJob>(
     QUEUE_TRANSACTIONAL,
@@ -263,7 +263,6 @@ export function startEmailWorkers(redis: Redis) {
       connection: redis,
       concurrency: queueRuntimeConfig.campaignWorkerConcurrency,
       limiter: {
-        // Caps outbound email rate to avoid hitting ESP rate limits
         max: queueRuntimeConfig.campaignRateLimitMax,
         duration: queueRuntimeConfig.campaignRateLimitDurationMs,
       },

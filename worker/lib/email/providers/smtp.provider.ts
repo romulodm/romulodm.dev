@@ -2,15 +2,46 @@ import nodemailer from "nodemailer";
 import type SMTPPool from "nodemailer/lib/smtp-pool/index.js";
 import type { EmailProvider, SendEmailOptions, SendResult } from "./base.provider";
 
+// ── Mode ──────────────────────────────────────────────────────────────────────
+//
+// "transactional" — user-triggered one-off emails (confirmation, password reset,
+//   welcome, unsubscribe). Must be fast. No rate limiting so a burst of campaign
+//   sends never delays a confirmation email. Fewer max connections because these
+//   jobs fire sparsely.
+//
+// "campaign"      — bulk sends to many recipients. Rate-limited to stay within
+//   provider thresholds. More connections to sustain throughput across the BullMQ
+//   campaign worker's concurrency.
+
+export type SmtpMode = "transactional" | "campaign";
+
+const TRANSACTIONAL_CONFIG = {
+  maxConnections: 3,
+  maxMessages: 50,
+  // No rateLimit / rateDelta — transactional emails must never queue behind
+  // a campaign burst.
+} as const;
+
+const CAMPAIGN_CONFIG = {
+  maxConnections: 5,
+  maxMessages: 100,
+  // 5 messages per second — keeps us under most shared-hosting SMTP limits
+  // (e.g. Hostinger allows ~100/h on lower plans; tune via env if needed).
+  rateDelta: 1_000,
+  rateLimit: 5,
+} as const;
+
 export class SmtpProvider implements EmailProvider {
   readonly name = "smtp";
   private transporter: nodemailer.Transporter<SMTPPool.SentMessageInfo>;
   private fromAddress: string;
   private fromName: string;
 
-  constructor() {
+  constructor(mode: SmtpMode = "transactional") {
     this.fromAddress = process.env.SMTP_FROM ?? "noreply@yourdomain.com";
     this.fromName = process.env.EMAIL_FROM_NAME ?? "Newsletter";
+
+    const modeConfig = mode === "campaign" ? CAMPAIGN_CONFIG : TRANSACTIONAL_CONFIG;
 
     this.transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST ?? "smtp.hostinger.com",
@@ -25,11 +56,10 @@ export class SmtpProvider implements EmailProvider {
         }
         : {}),
       pool: true,
-      maxConnections: 5,
-      maxMessages: 100,
-      rateDelta: 1000,
-      rateLimit: 5,
+      ...modeConfig,
     });
+
+    console.log(`[SmtpProvider] mode=${mode} maxConnections=${modeConfig.maxConnections}`);
   }
 
   async send(opts: SendEmailOptions): Promise<SendResult> {
@@ -48,5 +78,18 @@ export class SmtpProvider implements EmailProvider {
   async verify(): Promise<boolean> {
     await this.transporter.verify();
     return true;
+  }
+
+  /**
+   * Pre-warms the connection pool by opening a TCP+TLS connection to the SMTP
+   * server without sending any message. Call once on worker startup so the first
+   * real email does not pay the TLS handshake cost (~200–800 ms).
+   *
+   * This is essentially the same as `verify()` but semantically distinct: verify
+   * is a health-check assertion, warmUp is a performance optimisation. Both open
+   * a connection; warmUp is safe to call even after verify has already run.
+   */
+  async warmUp(): Promise<void> {
+    await this.transporter.verify();
   }
 }

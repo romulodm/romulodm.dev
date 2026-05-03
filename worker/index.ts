@@ -57,6 +57,15 @@ async function main() {
     });
   });
 
+  // Pre-warm the transactional SMTP pool so the first real send does not pay
+  // the TLS handshake cost. emailService is an alias for transactionalEmailService.
+  // The campaign pool is intentionally not pre-warmed — it connects on first use.
+  await emailService.warmUp().catch((err) => {
+    logWorkerEvent("warn", "worker.email_warmup_failed", {
+      error: err instanceof Error ? err.message : String(err),
+    });
+  });
+
   // ── Search: full reindex on startup ──────────────────────────────────────
   // The Go search service keeps its index in memory — it loses state on restart,
   // so we rebuild via POST /reindex on every worker startup.
