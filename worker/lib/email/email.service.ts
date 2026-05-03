@@ -1,23 +1,55 @@
 // src/lib/email/email.service.ts
 //
-// Seleciona o provider via EMAIL_PROVIDER=ses|smtp (padrão: smtp).
+// Selects the provider via EMAIL_PROVIDER=ses|smtp (default: smtp).
 //
+// Two isolated service instances are exported:
+//
+//   transactionalEmailService — for user-triggered one-off emails.
+//     No SMTP rate limiting. Circuit breaker with tight threshold so a
+//     failing provider is detected quickly and callers can surface errors.
+//
+//   campaignEmailService — for bulk campaign sends.
+//     SMTP rate limiting is configured at the provider level. Looser circuit
+//     breaker threshold to tolerate transient failures during long-running
+//     campaigns without tripping the breaker prematurely.
+//
+// Sharing a single instance was the root cause of transactional emails being
+// delayed by campaign rate limits: nodemailer's pool rate limiter is global
+// across all callers of the same transporter.
+//
+// `emailService` is kept as a backward-compatible alias for
+// `transactionalEmailService` so callers that only do verify() / warmUp() in
+// index.ts do not need to be updated.
 
 import type { EmailProvider, SendEmailOptions } from "./providers/base.provider";
-import { SmtpProvider } from "./providers/smtp.provider";
+import { SmtpProvider, type SmtpMode } from "./providers/smtp.provider";
 import { SesProvider } from "./providers/ses.provider";
 
-function createProvider(): EmailProvider {
+// ── Provider factory ──────────────────────────────────────────────────────────
+
+/**
+ * Creates the appropriate email provider for the given mode.
+ *
+ * SES does not need a mode-aware constructor because rate limiting for SES is
+ * enforced by AWS on their side (via sending quotas), not by a local pool.
+ * SMTP needs separate transporter instances per mode so their pool rate limits
+ * remain isolated.
+ */
+function createProvider(mode: SmtpMode): EmailProvider {
   const chosen = (process.env.EMAIL_PROVIDER ?? "smtp").toLowerCase();
 
   switch (chosen) {
     case "ses":
+      // SES has no local pool — AWS enforces rate limits server-side.
+      // A single SesProvider constructor is sufficient for both modes.
       return new SesProvider();
     case "smtp":
     default:
-      return new SmtpProvider();
+      return new SmtpProvider(mode);
   }
 }
+
+// ── Circuit breaker ───────────────────────────────────────────────────────────
 
 type CBState = "CLOSED" | "OPEN" | "HALF_OPEN";
 
@@ -70,14 +102,28 @@ class CircuitBreaker {
   }
 }
 
+// ── Service ───────────────────────────────────────────────────────────────────
+
 class EmailService {
   private provider: EmailProvider;
   private breaker: CircuitBreaker;
 
-  constructor() {
-    this.provider = createProvider();
-    this.breaker = new CircuitBreaker(5, 60_000);
-    console.log(`[EmailService] Provider: ${this.provider.name}`);
+  /**
+   * @param mode - Controls provider configuration (pool size, rate limiting).
+   *   "transactional" uses a tighter circuit breaker (threshold=3) because a
+   *   failing confirmation email should surface quickly. "campaign" uses a
+   *   looser threshold (threshold=10) to tolerate transient failures in a long
+   *   bulk send without tripping the breaker for the whole campaign.
+   */
+  constructor(mode: SmtpMode = "transactional") {
+    this.provider = createProvider(mode);
+
+    const breakerThreshold = mode === "transactional" ? 3 : 10;
+    this.breaker = new CircuitBreaker(breakerThreshold, 60_000);
+
+    console.log(
+      `[EmailService] mode=${mode} provider=${this.provider.name} breakerThreshold=${breakerThreshold}`,
+    );
   }
 
   async send(opts: SendEmailOptions): Promise<void> {
@@ -91,10 +137,46 @@ class EmailService {
     }
   }
 
+  /**
+   * Pre-warms the underlying transport connection pool. Call once on startup
+   * so the first real send does not pay the TLS handshake cost. Delegates to
+   * the provider's warmUp() if it exposes one (SmtpProvider does; SesProvider
+   * uses HTTP and has no persistent pool to warm).
+   *
+   * Safe to call after verify() — both open a connection; this is intentionally
+   * a no-op for providers that don't benefit from pre-warming.
+   */
+  async warmUp(): Promise<void> {
+    if ("warmUp" in this.provider && typeof (this.provider as { warmUp?: unknown }).warmUp === "function") {
+      await (this.provider as { warmUp: () => Promise<void> }).warmUp();
+      console.log(`[EmailService] Pool warmed up (provider: ${this.provider.name})`);
+    }
+  }
+
   isAvailable(): boolean {
     return !this.breaker.isOpen();
   }
 }
 
-export const emailService = new EmailService();
+// ── Exports ───────────────────────────────────────────────────────────────────
+
+/**
+ * Dedicated service for transactional emails (confirmation, welcome, password
+ * reset, unsubscribe confirm). No SMTP rate limiting — these must be fast.
+ */
+export const transactionalEmailService = new EmailService("transactional");
+
+/**
+ * Dedicated service for campaign bulk sends. SMTP rate limiting is applied at
+ * the provider level to stay within hosting quotas.
+ */
+export const campaignEmailService = new EmailService("campaign");
+
+/**
+ * Backward-compatible alias. index.ts calls verify() and warmUp() on this
+ * reference at startup; pointing it at the transactional instance is correct
+ * because that is the pool most sensitive to cold-start latency.
+ */
+export const emailService = transactionalEmailService;
+
 export type { SendEmailOptions };
