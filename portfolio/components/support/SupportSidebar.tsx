@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useLocale, useTranslations } from 'next-intl'
+import Link from 'next/link'
 import { formatDistanceToNow } from '@/lib/utils'
 import { Trophy, Clock } from 'lucide-react'
 import { MessageModal } from './MessageModal'
@@ -15,6 +16,9 @@ interface Donor {
     coffees: number
     createdAt: Date
     currency?: string
+    // Linked account (optional)
+    userId: string | null
+    username: string | null
 }
 
 interface Props {
@@ -34,21 +38,10 @@ function MessageLine({
     onOpen: () => void
 }) {
     const t = useTranslations('support')
-
-    if (isPrivate) {
-        return (
-            <p className="text-xs text-muted-foreground/60 mt-0.5 italic">
-                {t('sidebar.privateMessage')}
-            </p>
-        )
-    }
-    if (!message) {
-        return (
-            <p className="text-xs text-muted-foreground/60 mt-0.5 italic">
-                {t('sidebar.noMessage')}
-            </p>
-        )
-    }
+    if (isPrivate)
+        return <p className="text-xs text-muted-foreground/60 mt-0.5 italic">{t('sidebar.privateMessage')}</p>
+    if (!message)
+        return <p className="text-xs text-muted-foreground/60 mt-0.5 italic">{t('sidebar.noMessage')}</p>
     return (
         <button
             onClick={onOpen}
@@ -59,14 +52,38 @@ function MessageLine({
     )
 }
 
+function DonorName({
+    donor,
+    locale,
+}: {
+    donor: Donor
+    locale: string
+}) {
+    const t = useTranslations('support')
+    const displayName = donor.username ?? donor.name
+
+    if (donor.username) {
+        return (
+            <Link
+                href={`/${locale}/profile/${donor.username}`}
+                className="font-medium text-sm text-foreground hover:text-primary transition-colors truncate"
+            >
+                @{donor.username}
+            </Link>
+        )
+    }
+
+    return (
+        <span className="font-medium text-sm text-foreground truncate">
+            {displayName || t('sidebar.anonymous')}
+        </span>
+    )
+}
+
 export function SupportersSidebar({ topDonors, recentDonors }: Props) {
     const t = useTranslations('support')
     const locale = useLocale()
     const [modal, setModal] = useState<ModalState>(null)
-
-    function openModal(name: string | null, message: string) {
-        setModal({ name, message })
-    }
 
     return (
         <>
@@ -81,20 +98,20 @@ export function SupportersSidebar({ topDonors, recentDonors }: Props) {
                             {topDonors.map((donor, index) => (
                                 <li key={donor.id} className="flex items-start gap-1">
                                     <span className={`text-sm font-bold min-w-[24px] ${index === 0 ? 'text-amber-500'
-                                        : index === 1 ? 'text-slate-600 dark:text-slate-200'
-                                            : index === 2 ? 'text-orange-600'
-                                                : 'text-muted-foreground'
+                                            : index === 1 ? 'text-slate-600 dark:text-slate-200'
+                                                : index === 2 ? 'text-orange-600'
+                                                    : 'text-muted-foreground'
                                         }`}>
                                         #{index + 1}
                                     </span>
                                     <div className="flex-1 min-w-0">
                                         <div className="flex items-center justify-between gap-2">
-                                            <span className="font-medium text-sm text-foreground truncate">
-                                                {donor.name || t('sidebar.anonymous')}
-                                                <span className="text-muted-foreground font-normal ml-1">
+                                            <div className="flex items-center gap-1 min-w-0">
+                                                <DonorName donor={donor} locale={locale} />
+                                                <span className="text-muted-foreground font-normal text-sm shrink-0">
                                                     · {t('sidebar.coffees', { count: donor.coffees })}
                                                 </span>
-                                            </span>
+                                            </div>
                                             <span className="text-sm font-semibold text-foreground shrink-0">
                                                 R$ {(donor.amount / 100).toFixed(2)}
                                             </span>
@@ -102,7 +119,7 @@ export function SupportersSidebar({ topDonors, recentDonors }: Props) {
                                         <MessageLine
                                             isPrivate={donor.isPrivate}
                                             message={donor.message}
-                                            onOpen={() => openModal(donor.name, donor.message!)}
+                                            onOpen={() => setModal({ name: donor.name, message: donor.message! })}
                                         />
                                     </div>
                                 </li>
@@ -125,9 +142,7 @@ export function SupportersSidebar({ topDonors, recentDonors }: Props) {
                                     </div>
                                     <div className="flex-1 flex flex-col min-w-0">
                                         <div className="flex items-center justify-between gap-2">
-                                            <span className="font-medium text-sm text-foreground truncate">
-                                                {donor.name || t('sidebar.someone')}
-                                            </span>
+                                            <DonorName donor={donor} locale={locale} />
                                             <span className="text-xs text-muted-foreground shrink-0">
                                                 {formatDistanceToNow(donor.createdAt, locale)}
                                             </span>
@@ -135,7 +150,7 @@ export function SupportersSidebar({ topDonors, recentDonors }: Props) {
                                         <MessageLine
                                             isPrivate={donor.isPrivate}
                                             message={donor.message}
-                                            onOpen={() => openModal(donor.name, donor.message!)}
+                                            onOpen={() => setModal({ name: donor.name, message: donor.message! })}
                                         />
                                         <span className="text-xs text-muted-foreground mt-1">
                                             {donor.currency === 'ETH'

@@ -1,12 +1,12 @@
-﻿// src/components/support/DonationWidget.tsx
-'use client'
+﻿'use client'
 
 import { useState, useEffect } from 'react'
+import { useSession } from 'next-auth/react'
 import { useTheme } from 'next-themes'
 import { useTranslations } from 'next-intl'
 import { loadStripe } from '@stripe/stripe-js'
 import { Elements } from '@stripe/react-stripe-js'
-import { Info, ExternalLink, Wallet, Loader2, CheckCircle2, X, AlertCircle } from 'lucide-react'
+import { Info, ExternalLink, Wallet, Loader2, CheckCircle2, X, AlertCircle, Link2 } from 'lucide-react'
 import { encodeFunctionData } from 'viem'
 import { FaPix } from 'react-icons/fa6'
 import { FaCreditCard } from 'react-icons/fa'
@@ -54,7 +54,6 @@ const INITIAL_FORM: FormState = {
     isPrivate: false, isMonthly: false, method: 'pix',
 }
 
-// Adiciona Ethereum mainnet
 const ALL_NETWORKS = {
     ethereum: {
         id: 1,
@@ -88,13 +87,42 @@ function getTokenAddress(token: TokenKey, network: AllNetworkKey): `0x${string}`
     return TOKENS[token].addresses[network as NetworkKey]
 }
 
+function InfoTooltip({ children }: { children: React.ReactNode }) {
+    const [visible, setVisible] = useState(false);
+    return (
+        <div
+            className="relative shrink-0"
+            onMouseEnter={() => setVisible(true)}
+            onMouseLeave={() => setVisible(false)}
+        >
+            <Info className="h-3.5 w-3.5 cursor-help text-muted-foreground/50 hover:text-primary/70 transition-colors" />
+            {visible && (
+                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 rounded-lg
+                                bg-popover border border-border shadow-lg px-3 py-2.5
+                                text-xs text-foreground z-50 pointer-events-none leading-relaxed">
+                    {children}
+                    <div className="absolute top-full left-1/2 -translate-x-1/2
+                                    border-4 border-transparent border-t-border" />
+                </div>
+            )}
+        </div>
+    );
+}
+
 export function DonationWidget() {
     const t = useTranslations('support')
     const { resolvedTheme } = useTheme()
+    const { data: session } = useSession()
 
-    // ── Form state ──────────────────────────────────────────────────────────────
+    // ── Session-derived values ────────────────────────────────────────────────
+    const isLoggedIn = Boolean(session?.user)
+    const sessionUsername = (session?.user as any)?.username as string | undefined
+    const sessionUserId = (session?.user as any)?.id as string | undefined
+
+    // ── Form state ────────────────────────────────────────────────────────────
     const [step, setStep] = useState<Step>('form')
     const [form, setForm] = useState<FormState>(INITIAL_FORM)
+    const [linkToAccount, setLinkToAccount] = useState(false)
     const [clientSecret, setClientSecret] = useState('')
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
@@ -102,7 +130,7 @@ export function DonationWidget() {
         pixId: string; donationId: string; brCode: string; brCodeBase64: string
     } | null>(null)
 
-    // ── Crypto state ─────────────────────────────────────────────────────────────
+    // ── Crypto state ──────────────────────────────────────────────────────────
     const [network, setNetwork] = useState<AllNetworkKey>('base')
     const [token, setToken] = useState<TokenKey>('USDC')
     const [wallets, setWallets] = useState<EIP6963Provider[]>([])
@@ -122,18 +150,18 @@ export function DonationWidget() {
     const tokenConfig = TOKENS[token]
     const availTokens = getTokensForNetwork(network)
 
-    // Reset token se rede não suportar
+    // The name actually sent in requests
+    const effectiveName = linkToAccount ? (sessionUsername ?? '') : form.name
+
     useEffect(() => {
         if (!availTokens.includes(token)) setToken(availTokens[0])
     }, [network])
 
-    // Preço ETH
     useEffect(() => {
         if (form.method !== 'crypto' || token !== 'ETH') return
         fetch('/api/prices').then(r => r.json()).then(d => setEthPrice(d.ethUsd)).catch(() => { })
     }, [token, network, form.method])
 
-    // Detecta carteiras EIP-6963
     useEffect(() => {
         if (form.method !== 'crypto') return
         const found: EIP6963Provider[] = []
@@ -146,30 +174,50 @@ export function DonationWidget() {
         }
         window.addEventListener('eip6963:announceProvider', handler)
         window.dispatchEvent(new Event('eip6963:requestProvider'))
-        const t = setTimeout(() => {
+        const timer = setTimeout(() => {
             if (found.length === 0 && (window as any).ethereum)
                 setWallets([{ info: { uuid: 'legacy', name: 'MetaMask', icon: '' }, provider: (window as any).ethereum }])
         }, 200)
-        return () => { window.removeEventListener('eip6963:announceProvider', handler); clearTimeout(t) }
+        return () => { window.removeEventListener('eip6963:announceProvider', handler); clearTimeout(timer) }
     }, [form.method])
 
     function reset() {
         setStep('form'); setForm(INITIAL_FORM); setClientSecret(''); setPixData(null)
         setError(''); setSendStep('idle'); setTxHash(null); setCryptoError(null)
+        setLinkToAccount(false)
     }
 
-    // ── PIX / Card ───────────────────────────────────────────────────────────────
+    // ── Shared payload builder ────────────────────────────────────────────────
+    function basePayload() {
+        return {
+            coffees,
+            name: effectiveName,
+            message: form.message,
+            isPrivate: form.isPrivate,
+            isMonthly: form.isMonthly,
+            ...(linkToAccount && sessionUserId ? { userId: sessionUserId } : {}),
+        }
+    }
+
+    // ── PIX / Card ────────────────────────────────────────────────────────────
     async function handleSupport() {
         if (form.method === 'crypto') return
         setError(''); setLoading(true)
-        const payload = { coffees, name: form.name, message: form.message, isPrivate: form.isPrivate, isMonthly: form.isMonthly }
         try {
             if (form.method === 'pix') {
-                const res = await fetch('/api/donations/pix/create', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
+                const res = await fetch('/api/donations/pix/create', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(basePayload()),
+                })
                 const data = await res.json()
                 setPixData(data); setStep('pix-qr')
             } else {
-                const res = await fetch('/api/donations/stripe/create-intent', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
+                const res = await fetch('/api/donations/stripe/create-intent', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(basePayload()),
+                })
                 const data = await res.json()
                 setClientSecret(data.clientSecret); setStep('stripe')
             }
@@ -177,7 +225,7 @@ export function DonationWidget() {
         finally { setLoading(false) }
     }
 
-    // ── Crypto ───────────────────────────────────────────────────────────────────
+    // ── Crypto ────────────────────────────────────────────────────────────────
     async function connectWallet(wallet: EIP6963Provider) {
         try {
             const accounts = await wallet.provider.request({ method: 'eth_requestAccounts' }) as string[]
@@ -229,10 +277,25 @@ export function DonationWidget() {
             setTxHash(tx)
             setSendStep('confirming')
 
-            const encryptedMsg = form.isPrivate ? encryptMessage(form.message, process.env.NEXT_PUBLIC_ENCRYPTION_PUBLIC_KEY!) : null
+            const encryptedMsg = form.isPrivate
+                ? encryptMessage(form.message, process.env.NEXT_PUBLIC_ENCRYPTION_PUBLIC_KEY!)
+                : null
+
             await fetch('/api/donations/onchain/register', {
-                method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ txHash: tx, network, token, coffees, name: form.isPrivate ? '' : form.name, message: form.isPrivate ? '' : form.message, encryptedMessage: encryptedMsg, isPrivate: form.isPrivate, walletAddress: connected.address }),
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    txHash: tx,
+                    network,
+                    token,
+                    coffees,
+                    name: form.isPrivate ? '' : effectiveName,
+                    message: form.isPrivate ? '' : form.message,
+                    encryptedMessage: encryptedMsg,
+                    isPrivate: form.isPrivate,
+                    walletAddress: connected.address,
+                    ...(linkToAccount && sessionUserId ? { userId: sessionUserId } : {}),
+                }),
             })
 
             setSendStep('done')
@@ -244,7 +307,7 @@ export function DonationWidget() {
         }
     }
 
-    // ── Derived ──────────────────────────────────────────────────────────────────
+    // ── Derived ───────────────────────────────────────────────────────────────
     const ethEquiv = ethPrice ? (totalUsd / ethPrice).toFixed(5) : null
     const isCryptoLoading = ['switching', 'sending', 'confirming'].includes(sendStep)
     const explorerTx = txHash ? `${netConfig.explorer}/tx/${txHash}` : null
@@ -257,26 +320,51 @@ export function DonationWidget() {
         done: 'Enviado!',
     }
 
-    // ── Fiat label ───────────────────────────────────────────────────────────────
     const fiatLabel = loading ? t('widget.loading') : t('widget.supportWith', { amount: totalBrl })
 
-    // ── Early returns ────────────────────────────────────────────────────────────
+    // ── Early returns ─────────────────────────────────────────────────────────
     if (step === 'success') return <SuccessView onReset={reset} />
-    if (step === 'pix-qr' && pixData) return <PixView {...pixData} onSuccess={() => setStep('success')} />
+    if (step === 'pix-qr' && pixData) return (
+        <PixView
+            {...pixData}
+            coffees={coffees}
+            amount={coffees * 500}
+            onSuccess={() => setStep('success')}
+        />
+    )
     if (step === 'stripe' && clientSecret) {
         const stripeTheme = resolvedTheme === 'dark' ? 'night' : 'stripe'
         return (
-            <Elements stripe={stripePromise} options={{ clientSecret, locale: 'pt-BR', appearance: { theme: stripeTheme, variables: { borderRadius: '8px', colorBackground: stripeTheme === 'night' ? '#1c1c1e' : '#ffffff' } }, loader: 'always' }}>
-                <StripeForm onBack={() => setStep('form')} onSuccess={() => setStep('success')} />
+            <Elements
+                stripe={stripePromise}
+                options={{
+                    clientSecret,
+                    locale: 'pt-BR',
+                    appearance: {
+                        theme: stripeTheme,
+                        variables: {
+                            borderRadius: '8px',
+                            colorBackground: stripeTheme === 'night' ? '#1c1c1e' : '#ffffff',
+                        },
+                    },
+                    loader: 'always',
+                }}
+            >
+                <StripeForm
+                    coffees={coffees}
+                    amount={coffees * 500}
+                    onBack={() => setStep('form')}
+                    onSuccess={() => setStep('success')}
+                />
             </Elements>
         )
     }
 
-    // ── Render ───────────────────────────────────────────────────────────────────
+    // ── Render ────────────────────────────────────────────────────────────────
     return (
         <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
 
-            {/* Quantidade de cafés */}
+            {/* Quantidade */}
             <div className="flex items-center gap-3 mb-2">
                 <span className="text-3xl">☕</span>
                 <span className="text-lg font-medium text-foreground">×</span>
@@ -287,59 +375,86 @@ export function DonationWidget() {
                             type="button"
                             onClick={() => setForm(f => ({ ...f, coffees: q, customCoffees: '' }))}
                             className={`w-10 h-10 rounded-full font-bold text-sm border transition-all
-                ${q === 3 ? 'hidden sm:flex items-center justify-center' : ''}
-                ${form.coffees === q && !form.customCoffees
+                                ${q === 3 ? 'hidden sm:flex items-center justify-center' : ''}
+                                ${form.coffees === q && !form.customCoffees
                                     ? 'bg-primary text-primary-foreground border-primary'
-                                    : 'border-border hover:border-primary text-foreground'}`}
+                                    : 'border-border hover:border-primary text-foreground'
+                                }`}
                         >
                             {q}
                         </button>
                     ))}
                     <input
-                        type="number" min={1} placeholder="?"
+                        type="number"
+                        min={1}
+                        placeholder="?"
                         value={form.customCoffees}
                         onChange={(e) => setForm(f => ({ ...f, customCoffees: e.target.value }))}
                         className={`w-10 h-10 rounded-full border text-center text-sm bg-background text-foreground focus:outline-none transition-all
-              [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none
-              ${form.customCoffees ? 'bg-primary text-primary-foreground border-primary' : 'border-border hover:border-primary'}`}
+                            [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none
+                            ${form.customCoffees ? 'bg-primary text-primary-foreground border-primary' : 'border-border hover:border-primary'}`}
                     />
                 </div>
             </div>
 
-            {/* Valor — muda conforme método */}
+            {/* Valor */}
             <p className="text-sm text-muted-foreground mb-5">
                 {form.method !== 'crypto' ? (
                     <>= <span className="font-bold text-foreground text-base">R$ {totalBrl},00</span></>
                 ) : token === 'ETH' && ethEquiv ? (
-                    <>= <span className="font-bold text-foreground text-base">${totalUsd.toFixed(2)}</span>
-                        <span className="ml-2 text-muted-foreground">≈ {ethEquiv} ETH</span></>
+                    <>
+                        = <span className="font-bold text-foreground text-base">${totalUsd.toFixed(2)}</span>
+                        <span className="ml-2 text-muted-foreground">≈ {ethEquiv} ETH</span>
+                    </>
                 ) : (
-                    <>= <span className="font-bold text-foreground text-base">${totalUsd.toFixed(2)}</span>
-                        {(token === 'USDC' || token === 'USDT') && <span className="ml-2 text-muted-foreground">= {totalUsd.toFixed(2)} {token}</span>}</>
+                    <>
+                        = <span className="font-bold text-foreground text-base">${totalUsd.toFixed(2)}</span>
+                        {(token === 'USDC' || token === 'USDT') && (
+                            <span className="ml-2 text-muted-foreground">= {totalUsd.toFixed(2)} {token}</span>
+                        )}
+                    </>
                 )}
             </p>
 
             {/* Nome + mensagem */}
             <div className="space-y-3 mb-4">
-                <input
-                    type="text"
-                    placeholder={t('widget.namePlaceholder')}
-                    value={form.name}
-                    onChange={(e) => setForm(f => ({ ...f, name: e.target.value }))}
-                    className="w-full px-4 py-2.5 rounded-lg border border-border bg-background text-foreground placeholder:text-muted-foreground text-sm focus:outline-none focus:border-primary"
-                />
+                {/* Name field — replaced by account pill when linking */}
+                {linkToAccount ? (
+                    <div className="w-full px-4 py-2.5 rounded-lg border border-border bg-muted/40
+                                    text-sm text-muted-foreground flex items-center gap-2">
+                        <Link2 className="w-3.5 h-3.5 shrink-0" />
+                        <span className="text-foreground font-medium">@{sessionUsername}</span>
+                        <span>· vinculado à sua conta</span>
+                    </div>
+                ) : (
+                    <input
+                        type="text"
+                        placeholder={t('widget.namePlaceholder')}
+                        value={form.name}
+                        onChange={(e) => setForm(f => ({ ...f, name: e.target.value }))}
+                        className="w-full px-4 py-2.5 rounded-lg border border-border bg-background
+                                   text-foreground placeholder:text-muted-foreground text-sm
+                                   focus:outline-none focus:border-primary"
+                    />
+                )}
+
                 <textarea
                     placeholder={t('widget.messagePlaceholder')}
                     value={form.message}
                     onChange={(e) => setForm(f => ({ ...f, message: e.target.value }))}
-                    rows={3} maxLength={200}
-                    className="w-full px-4 py-2.5 rounded-lg border border-border bg-background text-foreground placeholder:text-muted-foreground text-sm focus:outline-none focus:border-primary resize-none"
+                    rows={3}
+                    maxLength={200}
+                    className="w-full px-4 py-2.5 rounded-lg border border-border bg-background
+                               text-foreground placeholder:text-muted-foreground text-sm
+                               focus:outline-none focus:border-primary resize-none"
                 />
             </div>
 
             {/* Método de pagamento */}
             <div className="mb-4">
-                <p className="text-xs text-muted-foreground mb-3 uppercase tracking-wide">{t('widget.payWith')}</p>
+                <p className="text-xs text-muted-foreground mb-3 uppercase tracking-wide">
+                    {t('widget.payWith')}
+                </p>
                 <div className="grid grid-cols-3 gap-2">
                     {(['pix', 'card', 'crypto'] as const).map((method) => (
                         <button
@@ -347,26 +462,21 @@ export function DonationWidget() {
                             type="button"
                             onClick={() => setForm(f => ({ ...f, method }))}
                             className={`py-2.5 flex items-center justify-center gap-1.5 rounded-lg border text-sm font-medium transition-all ${form.method === method
-                                    ? 'border-primary bg-primary/5 text-primary'
-                                    : 'border-border text-muted-foreground hover:border-primary/50'
+                                ? 'border-primary bg-primary/5 text-primary'
+                                : 'border-border text-muted-foreground hover:border-primary/50'
                                 }`}
                         >
-                            {method === 'pix' ? <FaPix /> :
-                                method === 'card' ? <FaCreditCard /> :
-                                    <span className="text-base">₿</span>}
-                            {method === 'pix' ? t('widget.methods.pix') :
-                                method === 'card' ? t('widget.methods.card') :
-                                    'Crypto'}
+                            {method === 'pix' ? <FaPix /> : method === 'card' ? <FaCreditCard /> : <span className="text-base">₿</span>}
+                            {method === 'pix' ? t('widget.methods.pix') : method === 'card' ? t('widget.methods.card') : 'Crypto'}
                         </button>
                     ))}
                 </div>
             </div>
 
-            {/* ── Painel crypto ──────────────────────────────────────────────────────── */}
+            {/* Painel crypto */}
             {form.method === 'crypto' && (
                 <div className="space-y-4 mb-4">
-
-                    {/* Rede — estilo tabs */}
+                    {/* Rede */}
                     <div>
                         <div className="flex border-b border-border gap-1">
                             {(Object.keys(ALL_NETWORKS) as AllNetworkKey[]).map(n => (
@@ -375,8 +485,8 @@ export function DonationWidget() {
                                     type="button"
                                     onClick={() => setNetwork(n)}
                                     className={`px-3 py-2 text-xs font-semibold transition-all border-b-2 -mb-px ${network === n
-                                            ? 'border-primary text-foreground'
-                                            : 'border-transparent text-muted-foreground hover:text-foreground'
+                                        ? 'border-primary text-foreground'
+                                        : 'border-transparent text-muted-foreground hover:text-foreground'
                                         }`}
                                     style={network === n ? { borderBottomColor: ALL_NETWORKS[n].color, color: ALL_NETWORKS[n].color } : {}}
                                 >
@@ -394,8 +504,8 @@ export function DonationWidget() {
                                 type="button"
                                 onClick={() => setToken(tk)}
                                 className={`px-4 py-1.5 rounded-lg text-sm font-semibold border transition-all ${token === tk
-                                        ? 'border-primary bg-primary/10 text-primary'
-                                        : 'border-border text-muted-foreground hover:border-primary/50'
+                                    ? 'border-primary bg-primary/10 text-primary'
+                                    : 'border-border text-muted-foreground hover:border-primary/50'
                                     }`}
                             >
                                 {tk}
@@ -417,7 +527,9 @@ export function DonationWidget() {
                         <div className="flex items-center justify-between bg-muted/40 rounded-lg px-3 py-2">
                             <div className="flex items-center gap-2">
                                 <div className="w-2 h-2 rounded-full bg-green-500" />
-                                <span className="font-mono text-xs text-foreground">{connected.address.slice(0, 6)}…{connected.address.slice(-4)}</span>
+                                <span className="font-mono text-xs text-foreground">
+                                    {connected.address.slice(0, 6)}…{connected.address.slice(-4)}
+                                </span>
                                 <span className="text-muted-foreground text-xs">({connected.name})</span>
                             </div>
                             <button type="button" onClick={() => setConnected(null)} className="text-muted-foreground hover:text-foreground">
@@ -435,7 +547,6 @@ export function DonationWidget() {
                         </button>
                     )}
 
-                    {/* TX confirmado */}
                     {explorerTx && (
                         <a href={explorerTx} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-xs text-primary hover:underline">
                             <ExternalLink className="h-3 w-3" />
@@ -452,28 +563,49 @@ export function DonationWidget() {
                 </div>
             )}
 
-            {/* Mensagem privada */}
-            <div className="flex gap-4 mb-5 text-sm text-muted-foreground">
-                <label className="flex items-center gap-2 cursor-pointer select-none">
-                    <input
-                        type="checkbox"
-                        checked={form.isPrivate}
-                        onChange={(e) => setForm(f => ({ ...f, isPrivate: e.target.checked }))}
-                    />
-                    {t('widget.privateMessage')}
-                </label>
+            {/* Checkboxes row */}
+            <div className="flex flex-col gap-2.5 mb-5">
 
-                {form.isPrivate && form.method === 'crypto' && (
-                    <div className="relative" onMouseEnter={() => setShowTooltip(true)} onMouseLeave={() => setShowTooltip(false)}>
-                        <Info className="h-3.5 w-3.5 cursor-help text-primary/70 mt-0.5" />
-                        {showTooltip && (
-                            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 rounded-lg bg-popover border border-border shadow-lg px-3 py-2 text-xs text-foreground z-50">
-                                Criptografada com X25519 antes de sair do navegador.
-                                <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-border" />
-                            </div>
-                        )}
+                {/* Mensagem privada */}
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <label className="flex items-center gap-2 cursor-pointer select-none">
+                        <input
+                            type="checkbox"
+                            className="cursor-pointer"
+                            checked={form.isPrivate}
+                            onChange={(e) => setForm(f => ({ ...f, isPrivate: e.target.checked }))}
+                        />
+                        {t('widget.privateMessage')}
+                    </label>
+                    <InfoTooltip>
+                        {form.method === 'crypto'
+                            ? 'Seu nome e mensagem não aparecerão publicamente. A mensagem é criptografada com X25519 antes de sair do navegador.'
+                            : 'Seu nome e mensagem não aparecerão na lista pública de apoiadores.'
+                        }
+                    </InfoTooltip>
+                </div>
+
+                {/* Vincular à conta — só aparece quando logado */}
+                {isLoggedIn && (
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <label className="flex items-center gap-2 cursor-pointer select-none">
+                            <input
+                                type="checkbox"
+                                className="cursor-pointer"
+                                checked={linkToAccount}
+                                onChange={(e) => setLinkToAccount(e.target.checked)}
+                            />
+                            <Link2 className="h-3.5 w-3.5" />
+                            Vincular à minha conta
+                        </label>
+                        <InfoTooltip>
+                            Associa este apoio ao seu perfil @{sessionUsername}.
+                            Seu username substituirá o campo de nome e o apoio aparecerá
+                            na aba "Doações" do seu perfil publicamente.
+                        </InfoTooltip>
                     </div>
                 )}
+
             </div>
 
             {error && <p className="text-sm text-red-500 mb-3">{error}</p>}
@@ -512,11 +644,18 @@ export function DonationWidget() {
                             </button>
                         </div>
                         {wallets.length === 0 ? (
-                            <p className="text-sm text-muted-foreground text-center py-6">Nenhuma carteira detectada. Instale MetaMask, Rainbow ou Coinbase Wallet.</p>
+                            <p className="text-sm text-muted-foreground text-center py-6">
+                                Nenhuma carteira detectada. Instale MetaMask, Rainbow ou Coinbase Wallet.
+                            </p>
                         ) : (
                             <div className="space-y-2">
                                 {wallets.map(w => (
-                                    <button key={w.info.uuid} type="button" onClick={() => connectWallet(w)} className="w-full flex items-center gap-3 px-4 py-3 rounded-lg border border-border hover:bg-muted transition text-left">
+                                    <button
+                                        key={w.info.uuid}
+                                        type="button"
+                                        onClick={() => connectWallet(w)}
+                                        className="w-full flex items-center gap-3 px-4 py-3 rounded-lg border border-border hover:bg-muted transition text-left"
+                                    >
                                         {w.info.icon
                                             ? <img src={w.info.icon} alt={w.info.name} className="w-7 h-7 rounded-md" />
                                             : <div className="w-7 h-7 rounded-md bg-muted flex items-center justify-center"><Wallet className="h-4 w-4 text-muted-foreground" /></div>

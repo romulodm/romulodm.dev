@@ -16,13 +16,23 @@ async function getStats() {
             where: { status: 'COMPLETED', currency: 'BRL' },
             orderBy: { amount: 'desc' },
             take: 10,
-            select: { id: true, name: true, message: true, isPrivate: true, amount: true, coffees: true, createdAt: true },
+            select: {
+                id: true, name: true, message: true, isPrivate: true,
+                amount: true, coffees: true, createdAt: true,
+                userId: true,
+                user: { select: { username: true } },
+            },
         }),
         prisma.donation.findMany({
             where: { status: 'COMPLETED' },
             orderBy: { createdAt: 'desc' },
             take: 8,
-            select: { id: true, name: true, message: true, isPrivate: true, amount: true, coffees: true, createdAt: true, currency: true },
+            select: {
+                id: true, name: true, message: true, isPrivate: true,
+                amount: true, coffees: true, createdAt: true, currency: true,
+                userId: true,
+                user: { select: { username: true } },
+            },
         }),
         prisma.donation.aggregate({
             where: { status: 'COMPLETED', currency: 'BRL' },
@@ -31,8 +41,16 @@ async function getStats() {
     ])
 
     return {
-        topDonors: topDonors.map((d: typeof topDonors[number]) => ({ ...d, message: d.isPrivate ? null : d.message })),
-        recentDonors: recentDonors.map((d: typeof recentDonors[number]) => ({ ...d, message: d.isPrivate ? null : d.message })),
+        topDonors: topDonors.map((d) => ({
+            ...d,
+            message: d.isPrivate ? null : d.message,
+            username: (d as any).user?.username as string | null ?? null,
+        })),
+        recentDonors: recentDonors.map((d) => ({
+            ...d,
+            message: d.isPrivate ? null : d.message,
+            username: (d as any).user?.username as string | null ?? null,
+        })),
         stats,
     }
 }
@@ -45,7 +63,6 @@ export default async function SupportPage() {
         <div className="min-h-screen bg-background">
             <Navbar />
             <main className="max-w-5xl mx-auto px-4 py-24">
-                {/* Header */}
                 <div className="text-center mb-8">
                     <h1 className="text-3xl font-bold text-foreground mb-2">Compre um café</h1>
                     <p className="text-muted-foreground max-w-md mx-auto">
@@ -59,7 +76,6 @@ export default async function SupportPage() {
                     )}
                 </div>
 
-                {/* Layout */}
                 <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
                     <div className="lg:col-span-3">
                         <SupportersSidebar topDonors={topDonors} recentDonors={recentDonors} />

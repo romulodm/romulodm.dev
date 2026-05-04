@@ -1,5 +1,6 @@
 ﻿import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { getServerSession } from "next-auth";
 
 import { prisma } from "@romulo/database";
 
@@ -16,6 +17,7 @@ import {
 import { getApiTranslator } from "@/lib/api-intl";
 import { createPixCharge } from "@/lib/payments/abacate";
 import { getRequestIp, rateLimit } from "@/lib/rate-limit";
+import { authOptions } from "@/lib/auth";
 
 const COFFEE_CENTS = 500;
 const DONATION_RATE_LIMIT_MAX = 10;
@@ -28,30 +30,15 @@ function createPixDonationSchema(t: Awaited<ReturnType<typeof getApiTranslator>>
       .int(t("donations.invalidCoffeeCount"))
       .min(1, t("donations.invalidCoffeeCount"))
       .max(1000, t("donations.invalidCoffeeCount")),
-    name: z
-      .unknown()
-      .optional()
-      .transform((value) => optionalPlainText(value, 100)),
-    message: z
-      .unknown()
-      .optional()
-      .transform((value) => optionalPlainText(value, 500)),
+    name: z.unknown().optional().transform((v) => optionalPlainText(v, 100)),
+    message: z.unknown().optional().transform((v) => optionalPlainText(v, 500)),
     isPrivate: z.coerce.boolean().optional().default(false),
     isMonthly: z.coerce.boolean().optional().default(false),
-    email: z
-      .string()
-      .trim()
-      .min(1, t("common.emailRequired"))
-      .email(t("common.emailInvalid"))
-      .optional(),
-    cellphone: z
-      .unknown()
-      .optional()
-      .transform((value) => optionalPlainText(value, 32)),
-    taxId: z
-      .unknown()
-      .optional()
-      .transform((value) => optionalPlainText(value, 32)),
+    email: z.string().trim().email().optional(),
+    cellphone: z.unknown().optional().transform((v) => optionalPlainText(v, 32)),
+    taxId: z.unknown().optional().transform((v) => optionalPlainText(v, 32)),
+    // Optional: link donation to the authenticated user's account
+    userId: z.string().optional(),
   });
 }
 
@@ -64,15 +51,24 @@ export async function POST(req: NextRequest) {
       DONATION_RATE_LIMIT_MAX,
       DONATION_RATE_LIMIT_WINDOW_SECONDS,
     );
-    if (limited) {
-      return rateLimitResponse(t("common.rateLimited"));
-    }
+    if (limited) return rateLimitResponse(t("common.rateLimited"));
 
-    const { coffees, name, message, isPrivate, isMonthly, email, cellphone, taxId } =
+    const { coffees, name, message, isPrivate, isMonthly, email, cellphone, taxId, userId } =
       await parseJsonBodyWithMessages(req, createPixDonationSchema(t), {
         invalidBodyMessage: t("common.invalidBody"),
         fallbackMessage: t("common.invalidRequest"),
       });
+
+    // Security: only link to the session user — never trust the client's userId blindly
+    let verifiedUserId: string | null = null;
+    if (userId) {
+      const session = await getServerSession(authOptions);
+      const sessionUserId = (session?.user as any)?.id as string | undefined;
+      if (sessionUserId && sessionUserId === userId) {
+        verifiedUserId = userId;
+      }
+    }
+
     const amount = coffees * COFFEE_CENTS;
 
     const donation = await prisma.donation.create({
@@ -86,6 +82,7 @@ export async function POST(req: NextRequest) {
         isPrivate,
         isMonthly,
         status: "PENDING",
+        ...(verifiedUserId ? { userId: verifiedUserId } : {}),
       },
     });
 
@@ -116,22 +113,12 @@ export async function POST(req: NextRequest) {
         where: { id: donation.id },
         data: { status: "FAILED" },
       });
-
-      return internalErrorResponse(
-        "donations-pix-create",
-        error,
-        t("donations.pix.internal"),
-      );
+      return internalErrorResponse("donations-pix-create", error, t("donations.pix.internal"));
     }
   } catch (error) {
     if (error instanceof z.ZodError || error instanceof RequestValidationError) {
       return validationErrorResponse(error, t("common.invalidRequest"));
     }
-
-    return internalErrorResponse(
-      "donations-pix-create",
-      error,
-      t("donations.pix.internal"),
-    );
+    return internalErrorResponse("donations-pix-create", error, t("donations.pix.internal"));
   }
 }
