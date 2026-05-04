@@ -25,6 +25,9 @@
     "google": {
       "continue": "Continuar com Google"
     },
+    "github": {
+      "continue": "Continuar com GitHub"
+    },
     "login": {
       "emailPlaceholder": "E-mail",
       "passwordPlaceholder": "Senha",
@@ -70,6 +73,35 @@
       "usernameTooShort": "Username muito curto.",
       "passwordMin": "Mínimo 8 caracteres.",
       "passwordsDoNotMatch": "As senhas não coincidem."
+    },
+    "toasts": {
+      "loginSuccess": "Bem-vindo de volta!",
+      "registerSuccess": "Conta criada com sucesso!",
+      "invalidCredentials": "E-mail ou senha incorretos.",
+      "rateLimited": "Muitas tentativas. Aguarde alguns minutos e tente novamente.",
+      "accountBanned": "Esta conta foi suspensa. Entre em contato pelo blog.",
+      "accountNotLinked": "E-mail já cadastrado com outro método.",
+      "accountNotLinkedDescription": "Use o mesmo método com o qual você criou sua conta (Google, GitHub ou e-mail e senha).",
+      "accessDenied": "Acesso negado.",
+      "oauthCallback": "Erro ao conectar com o provedor. Tente novamente.",
+      "oauthSignin": "Não foi possível iniciar o login. Tente novamente.",
+      "verification": "Link de verificação inválido ou expirado.",
+      "sessionRequired": "Você precisa estar logado para acessar isso.",
+      "generic": "Ocorreu um erro inesperado. Tente novamente."
+    }
+  },
+  "authGuard": {
+    "title": "Entre ou crie sua conta",
+    "description": "Você precisa estar logado para interagir.",
+    "action": "Entrar"
+  },
+  "wall": {
+    "compose": {
+      "composing": "Digitando…",
+      "placeholder": "Escreva algo legal…",
+      "alreadyPosted": "Você já deixou uma mensagem!",
+      "error": "Algo deu errado. Tente novamente.",
+      "success": "Mensagem postada!"
     }
   },
   "blog": {
@@ -664,6 +696,7 @@
         "newsletterOverview": "Visão geral",
         "campaigns": "Campanhas",
         "newCampaign": "Nova campanha",
+        "templates": "Templates",
         "suspiciousComments": "Comentários suspeitos",
         "bannedUsers": "Usuários banidos",
         "coffees": "Cafés",

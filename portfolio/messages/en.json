@@ -25,6 +25,9 @@
     "google": {
       "continue": "Continue with Google"
     },
+    "github": {
+      "continue": "Continue with GitHub"
+    },
     "login": {
       "emailPlaceholder": "Email",
       "passwordPlaceholder": "Password",
@@ -70,6 +73,35 @@
       "usernameTooShort": "Username is too short.",
       "passwordMin": "Minimum 8 characters.",
       "passwordsDoNotMatch": "Passwords do not match."
+    },
+    "toasts": {
+      "loginSuccess": "Welcome back!",
+      "registerSuccess": "Account created successfully!",
+      "invalidCredentials": "Incorrect email or password.",
+      "rateLimited": "Too many attempts. Please wait a few minutes and try again.",
+      "accountBanned": "This account has been suspended. Contact us through the blog.",
+      "accountNotLinked": "Email already registered with another method.",
+      "accountNotLinkedDescription": "Use the same method you signed up with (Google, GitHub, or email and password).",
+      "accessDenied": "Access denied.",
+      "oauthCallback": "Error connecting to the provider. Please try again.",
+      "oauthSignin": "Could not start login. Please try again.",
+      "verification": "Verification link is invalid or expired.",
+      "sessionRequired": "You need to be logged in to access this.",
+      "generic": "An unexpected error occurred. Please try again."
+    }
+  },
+  "authGuard": {
+    "title": "Sign in to interact",
+    "description": "You need to be logged in to interact.",
+    "action": "Sign in"
+  },
+  "wall": {
+    "compose": {
+      "composing": "Composing…",
+      "placeholder": "Type something nice…",
+      "alreadyPosted": "You already left a message!",
+      "error": "Something went wrong. Please try again.",
+      "success": "Message posted!"
     }
   },
   "blog": {
@@ -664,6 +696,7 @@
         "newsletterOverview": "Overview",
         "campaigns": "Campaigns",
         "newCampaign": "New campaign",
+        "templates": "Templates",
         "suspiciousComments": "Suspicious comments",
         "bannedUsers": "Banned users",
         "coffees": "Coffees",
