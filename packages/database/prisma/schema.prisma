@@ -23,7 +23,8 @@ model User {
   password      String?  @db.VarChar(255)
   email         String   @unique
   emailVerified Boolean  @default(false)
-  image         String? //URL
+  sub           String?
+  image         String?
   about         String?  @db.VarChar(1000)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -34,18 +35,16 @@ model User {
   bannedAt  DateTime?
   banReason String?   @db.VarChar(500)
 
-  suspiciousComments SuspiciousComment[]
-
-  provider            AuthProvider
-  sub                 String? // provider-specific user ID
-  passwordResetTokens PasswordResetToken[]
-
+  suspiciousComments    SuspiciousComment[]
+  provider              AuthProvider
+  passwordResetTokens   PasswordResetToken[]
   comments              Comment[]
   votes                 CommentVote[]
   postLikes             PostLike[]
   posts                 Post[]
   wallMessages          WallMessage[]
   newsletterSubscribers NewsletterSubscriber[]
+  donations             Donation[]
 }
 
 model PasswordResetToken {
@@ -304,15 +303,17 @@ enum DonationStatus {
 
 model Donation {
   id        String           @id @default(cuid())
+  userId    String?
   name      String?          @db.VarChar(100)
   message   String?          @db.VarChar(500)
   coffees   Int              @default(1)
   amount    Int
   currency  String           @default("BRL")
-  provider  DonationProvider
-  status    DonationStatus   @default(PENDING)
   isPrivate Boolean          @default(false)
   isMonthly Boolean          @default(false)
+  user      User?            @relation(fields: [userId], references: [id], onDelete: SetNull)
+  provider  DonationProvider
+  status    DonationStatus   @default(PENDING)
 
   stripePaymentIntentId String? @unique
   abacatePayChargeId    String? @unique
@@ -322,6 +323,7 @@ model Donation {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@index([userId])
   @@index([status, createdAt])
   @@index([status, isPrivate, createdAt])
   @@index([status, isPrivate, currency, amount])
