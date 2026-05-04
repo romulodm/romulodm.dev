@@ -34,6 +34,7 @@
     "@react-three/rapier": "^1.5.0",
     "@romulo/database": "*",
     "@romulo/queues": "*",
+    "@romulo/templates": "*",
     "@stripe/react-stripe-js": "^6.0.0",
     "@stripe/stripe-js": "^9.0.0",
     "bcryptjs": "^2.4.3",
