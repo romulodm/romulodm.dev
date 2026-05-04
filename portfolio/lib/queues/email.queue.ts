@@ -2,7 +2,6 @@ import {
   buildCampaignJobId,
   buildTransactionalJobId,
   campaignEmailJobOptions,
-  createRedisConnection,
   createQueue,
   QUEUE_TRANSACTIONAL,
   QUEUE_CAMPAIGN,
@@ -10,8 +9,9 @@ import {
   type TransactionalEmailJob,
   type CampaignEmailJob,
 } from "@romulo/queues";
+import { getRedis } from "../redis";
 
-const redis = createRedisConnection();
+const redis = getRedis();
 
 export const transactionalQueue = createQueue<TransactionalEmailJob>(
   QUEUE_TRANSACTIONAL,
@@ -23,41 +23,61 @@ export const campaignQueue = createQueue<CampaignEmailJob>(
   redis,
 );
 
-// helpers — esses ficam só aqui porque só o Next.js enfileira
-export async function enqueueConfirmation(email: string, confirmationUrl: string) {
-  const job: TransactionalEmailJob = { type: "CONFIRMATION", email, confirmationUrl };
-  await transactionalQueue.add(
-    "confirmation",
-    job,
-    {
-      ...transactionalEmailJobOptions,
-      jobId: buildTransactionalJobId(job),
-    },
-  );
+export async function enqueueConfirmation(
+  email: string,
+  confirmationUrl: string,
+  displayName: string,
+  locale: string,
+) {
+  const job: TransactionalEmailJob = {
+    type: "CONFIRMATION",
+    email,
+    confirmationUrl,
+    displayName,
+    locale,
+  };
+  await transactionalQueue.add("confirmation", job, {
+    ...transactionalEmailJobOptions,
+    jobId: buildTransactionalJobId(job),
+  });
 }
 
-export async function enqueueWelcome(email: string, unsubscribeUrl: string) {
-  const job: TransactionalEmailJob = { type: "WELCOME", email, unsubscribeUrl };
-  await transactionalQueue.add(
-    "welcome",
-    job,
-    {
-      ...transactionalEmailJobOptions,
-      jobId: buildTransactionalJobId(job),
-    },
-  );
+export async function enqueueWelcome(
+  email: string,
+  unsubscribeUrl: string,
+  displayName: string,
+  locale: string,
+) {
+  const job: TransactionalEmailJob = {
+    type: "WELCOME",
+    email,
+    unsubscribeUrl,
+    displayName,
+    locale,
+  };
+  await transactionalQueue.add("welcome", job, {
+    ...transactionalEmailJobOptions,
+    jobId: buildTransactionalJobId(job),
+  });
 }
 
-export async function enqueueUnsubscribeConfirm(email: string, unsubscribeUrl: string) {
-  const job: TransactionalEmailJob = { type: "UNSUBSCRIBE_CONFIRM", email, unsubscribeUrl };
-  await transactionalQueue.add(
-    "unsubscribe-confirm",
-    job,
-    {
-      ...transactionalEmailJobOptions,
-      jobId: buildTransactionalJobId(job),
-    },
-  );
+export async function enqueueUnsubscribeConfirm(
+  email: string,
+  unsubscribeUrl: string,
+  displayName: string,
+  locale: string,
+) {
+  const job: TransactionalEmailJob = {
+    type: "UNSUBSCRIBE_CONFIRM",
+    email,
+    unsubscribeUrl,
+    displayName,
+    locale,
+  };
+  await transactionalQueue.add("unsubscribe-confirm", job, {
+    ...transactionalEmailJobOptions,
+    jobId: buildTransactionalJobId(job),
+  });
 }
 
 export async function enqueueCampaignEmail(job: CampaignEmailJob, delayMs = 0) {

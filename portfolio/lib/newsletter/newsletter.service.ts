@@ -8,6 +8,7 @@ import {
   enqueueUnsubscribeConfirm,
   enqueueCampaignEmail,
 } from "@/lib/queues/email.queue";
+import { displayNameFromEmail, resolveLocale } from "@romulo/templates";
 
 const CONFIRMATION_TTL_HOURS = 24;
 
@@ -23,11 +24,74 @@ function trackingPixelUrl(trackingId: string) {
   return `${process.env.NEXT_PUBLIC_APP_URL}/api/newsletter/track/${trackingId}`;
 }
 
+/**
+ * Returns the display name and preferred locale for an email address.
+ *
+ * Priority:
+ *  1. Linked User account → username + user-level locale preference
+ *  2. Existing subscriber row → stored preferredLocale, capitalised email prefix
+ *  3. Fallback → capitalised email prefix + "en"
+ */
+async function resolveRecipientContext(
+  email: string,
+  subscriber?: { preferredLocale: string; userId: string | null } | null,
+): Promise<{ displayName: string; locale: string }> {
+  // If the subscriber is already linked to a user, use the username
+  const userId = subscriber?.userId;
+  if (userId) {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { username: true },
+    });
+    if (user) {
+      return {
+        displayName: user.username,
+        locale: resolveLocale(subscriber?.preferredLocale),
+      };
+    }
+  }
+
+  // Try to look up a user with the same email (not yet linked)
+  const user = await prisma.user.findUnique({
+    where: { email },
+    select: { id: true, username: true },
+  });
+
+  if (user) {
+    // Opportunistically link the subscriber to this user
+    if (subscriber && !subscriber.userId) {
+      await prisma.newsletterSubscriber
+        .update({
+          where: { email },
+          data: { userId: user.id },
+        })
+        .catch(() => void 0); // non-critical, ignore errors
+    }
+    return {
+      displayName: user.username,
+      locale: resolveLocale(subscriber?.preferredLocale),
+    };
+  }
+
+  return {
+    displayName: displayNameFromEmail(email),
+    locale: resolveLocale(subscriber?.preferredLocale),
+  };
+}
+
 // ── Subscribe ────────────────────────────────────────────────────────────────
 
 export async function subscribe(email: string) {
   const existing = await prisma.newsletterSubscriber.findUnique({
     where: { email },
+    select: {
+      id: true,
+      isConfirmed: true,
+      unsubscribedAt: true,
+      unsubscribeToken: true,
+      preferredLocale: true,
+      userId: true,
+    },
   });
 
   if (existing?.isConfirmed && !existing.unsubscribedAt) {
@@ -58,7 +122,9 @@ export async function subscribe(email: string) {
     });
   }
 
-  await enqueueConfirmation(email, confirmUrl(confirmationToken));
+  const { displayName, locale } = await resolveRecipientContext(email, existing);
+
+  await enqueueConfirmation(email, confirmUrl(confirmationToken), displayName, locale);
   return { status: "confirmation_sent" as const };
 }
 
@@ -70,9 +136,26 @@ export async function confirmSubscription(token: string) {
       confirmationToken: token,
       confirmationExpires: { gt: new Date() },
     },
+    select: {
+      id: true,
+      email: true,
+      unsubscribeToken: true,
+      preferredLocale: true,
+      userId: true,
+    },
   });
 
   if (!subscriber) return { status: "invalid_token" as const };
+
+  // ── Link to User account with the same email (if not already linked) ────────
+  let resolvedUserId: string | null = subscriber.userId;
+  if (!resolvedUserId) {
+    const user = await prisma.user.findUnique({
+      where: { email: subscriber.email },
+      select: { id: true },
+    });
+    if (user) resolvedUserId = user.id;
+  }
 
   await prisma.newsletterSubscriber.update({
     where: { id: subscriber.id },
@@ -81,12 +164,21 @@ export async function confirmSubscription(token: string) {
       subscribedAt: new Date(),
       confirmationToken: null,
       confirmationExpires: null,
+      // Persist the link — no-op if already set or no account found
+      ...(resolvedUserId ? { userId: resolvedUserId } : {}),
     },
   });
+
+  const { displayName, locale } = await resolveRecipientContext(
+    subscriber.email,
+    { ...subscriber, userId: resolvedUserId },
+  );
 
   await enqueueWelcome(
     subscriber.email,
     unsubscribeUrl(subscriber.unsubscribeToken),
+    displayName,
+    locale,
   );
   return { status: "confirmed" as const };
 }
@@ -96,13 +188,27 @@ export async function confirmSubscription(token: string) {
 export async function requestUnsubscribe(email: string) {
   const subscriber = await prisma.newsletterSubscriber.findFirst({
     where: { email, isConfirmed: true, unsubscribedAt: null },
+    select: {
+      id: true,
+      email: true,
+      unsubscribeToken: true,
+      preferredLocale: true,
+      userId: true,
+    },
   });
 
   if (!subscriber) return { status: "email_sent" as const };
 
+  const { displayName, locale } = await resolveRecipientContext(
+    email,
+    subscriber,
+  );
+
   await enqueueUnsubscribeConfirm(
     email,
     unsubscribeUrl(subscriber.unsubscribeToken),
+    displayName,
+    locale,
   );
   return { status: "email_sent" as const };
 }
@@ -119,47 +225,34 @@ export async function confirmUnsubscribe(token: string) {
 
   await prisma.newsletterSubscriber.update({
     where: { id: subscriber.id },
-    data: { unsubscribedAt: new Date() },
+    data: {
+      unsubscribedAt: new Date(),
+      // ── Unlink the User account — subscriber is no longer active ────────────
+      userId: null,
+    },
   });
 
   return { status: "unsubscribed" as const };
 }
 
 // ── Dispatch Campaign ─────────────────────────────────────────────────────────
-//
-// Called by the send route. Does NOT require the campaign to be DRAFT —
-// the route already validated that. Guard here only against double-dispatch.
 
-export async function dispatchCampaign(
-  campaignId: string,
-  scheduledAt?: Date,
-) {
-  const campaign = await prisma.campaign.findUnique({
-    where: { id: campaignId },
-  });
+export async function dispatchCampaign(campaignId: string, scheduledAt?: Date) {
+  const campaign = await prisma.campaign.findUnique({ where: { id: campaignId } });
   if (!campaign) throw new Error("Campaign not found");
+  if (campaign.status === "SENT") throw new Error("Campaign already sent.");
+  if (campaign.status === "SENDING") throw new Error("Campaign is already being sent.");
 
-  // ── BUG FIX: original code threw on SENDING/SENT which is correct,
-  //    but also need to allow SCHEDULED to be re-dispatched immediately
-  //    if scheduledAt is now removed. Only block truly final states.
-  if (campaign.status === "SENT") {
-    throw new Error("Campaign already sent — cannot dispatch again.");
-  }
-  // Allow DRAFT, SCHEDULED, FAILED to be dispatched.
-  // (SENDING means it's already going — also block that)
-  if (campaign.status === "SENDING") {
-    throw new Error("Campaign is already being sent.");
-  }
-
-  // Fetch all active confirmed subscribers
   const subscribers = await prisma.newsletterSubscriber.findMany({
     where: { isConfirmed: true, unsubscribedAt: null },
-    select: { id: true, email: true, unsubscribeToken: true },
+    select: {
+      id: true,
+      email: true,
+      unsubscribeToken: true,
+      preferredLocale: true,
+      userId: true,
+    },
   });
-
-  console.log(
-    `[dispatchCampaign] Campaign "${campaign.subject}" — ${subscribers.length} active subscribers`,
-  );
 
   if (subscribers.length === 0) {
     await prisma.campaign.update({
@@ -170,52 +263,66 @@ export async function dispatchCampaign(
   }
 
   const now = new Date();
-  const delayMs = scheduledAt
-    ? Math.max(0, scheduledAt.getTime() - now.getTime())
-    : 0;
+  const delayMs = scheduledAt ? Math.max(0, scheduledAt.getTime() - now.getTime()) : 0;
 
   await prisma.campaignRecipient.createMany({
-    data: subscribers.map((subscriber) => ({
-      campaignId,
-      subscriberId: subscriber.id,
-    })),
+    data: subscribers.map((s) => ({ campaignId, subscriberId: s.id })),
     skipDuplicates: true,
   });
 
-  // Re-fetch to get trackingIds
   const recipients = await prisma.campaignRecipient.findMany({
     where: { campaignId, status: "PENDING" },
     select: {
       id: true,
       trackingId: true,
       subscriber: {
-        select: { email: true, unsubscribeToken: true },
+        select: {
+          email: true,
+          unsubscribeToken: true,
+          preferredLocale: true,
+          userId: true,
+        },
       },
     },
   });
 
-  console.log(
-    `[dispatchCampaign] Enqueuing ${recipients.length} campaign email jobs…`,
+  // Batch-resolve usernames for linked accounts
+  const userIds = recipients.flatMap((r) =>
+    r.subscriber.userId ? [r.subscriber.userId] : []
   );
 
-  // Enqueue one BullMQ job per recipient
+  const usersMap = new Map<string, string>();
+  if (userIds.length > 0) {
+    const users = await prisma.user.findMany({
+      where: { id: { in: userIds } },
+      select: { id: true, username: true },
+    });
+    for (const u of users) usersMap.set(u.id, u.username);
+  }
+
   for (const r of recipients) {
+    const sub = r.subscriber;
+    const linkedUsername = sub.userId ? usersMap.get(sub.userId) : undefined;
+    const displayName = linkedUsername ?? displayNameFromEmail(sub.email);
+    const locale = resolveLocale(sub.preferredLocale);
+
     await enqueueCampaignEmail(
       {
         campaignId,
         recipientId: r.id,
         trackingId: r.trackingId,
-        email: r.subscriber.email,
+        email: sub.email,
         subject: campaign.subject,
         content: campaign.content,
-        unsubscribeUrl: unsubscribeUrl(r.subscriber.unsubscribeToken),
+        unsubscribeUrl: unsubscribeUrl(sub.unsubscribeToken),
         trackingPixelUrl: trackingPixelUrl(r.trackingId),
+        displayName,
+        locale,
       },
       delayMs,
     );
   }
 
-  // Update campaign status
   await prisma.campaign.update({
     where: { id: campaignId },
     data: {
@@ -225,30 +332,15 @@ export async function dispatchCampaign(
     },
   });
 
-  console.log(
-    `[dispatchCampaign] Done — status set to "${scheduledAt ? "SCHEDULED" : "SENDING"}"`,
-  );
-
   return { dispatched: recipients.length };
 }
 
-// ── Campaign completion (called by the worker after all jobs finish) ──────────
-//
-// The campaign worker increments sentCount / failedCount per job.
-// This function checks if all recipients are done and flips status to SENT.
-// Call it at the end of each campaign worker job:
-//   await markCampaignCompleteIfDone(data.campaignId)
+// ── Campaign completion ───────────────────────────────────────────────────────
 
 export async function markCampaignCompleteIfDone(campaignId: string) {
   const campaign = await prisma.campaign.findUnique({
     where: { id: campaignId },
-    select: {
-      id: true,
-      status: true,
-      totalRecipients: true,
-      sentCount: true,
-      failedCount: true,
-    },
+    select: { id: true, status: true, totalRecipients: true, sentCount: true, failedCount: true },
   });
   if (!campaign || campaign.status !== "SENDING") return;
 
@@ -256,55 +348,7 @@ export async function markCampaignCompleteIfDone(campaignId: string) {
   if (done >= campaign.totalRecipients) {
     await prisma.campaign.update({
       where: { id: campaignId },
-      data: {
-        status: "SENT",
-        sentAt: new Date(),
-      },
+      data: { status: "SENT", sentAt: new Date() },
     });
-    console.log(`[dispatchCampaign] Campaign ${campaignId} completed — status → SENT`);
   }
-}
-
-// ── Auto-send on new post ────────────────────────────────────────────────────
-
-export async function autoSendPostCampaign(post: {
-  id: string;
-  title: string;
-  slug: string;
-  excerpt?: string | null;
-}) {
-  const postUrl = `${process.env.NEXT_PUBLIC_APP_URL}/blog/${post.slug}`;
-
-  const content = `
-    <h2 style="margin:0 0 16px;color:#111827;font-size:20px;font-weight:700;">
-      ${post.title}
-    </h2>
-    ${post.excerpt
-      ? `<p style="margin:0 0 20px;color:#6b7280;font-size:16px;line-height:1.6;">${post.excerpt}</p>`
-      : ""
-    }
-    <table width="100%" cellpadding="0" cellspacing="0" role="presentation">
-      <tr>
-        <td style="padding:16px 0;">
-          <a href="${postUrl}"
-             style="display:inline-block;padding:12px 28px;background:#22c55e;
-                    color:#ffffff;text-decoration:none;border-radius:6px;
-                    font-size:15px;font-weight:600;">
-            Ler artigo completo →
-          </a>
-        </td>
-      </tr>
-    </table>
-  `;
-
-  const campaign = await prisma.campaign.create({
-    data: {
-      subject: `Novo post: ${post.title}`,
-      content,
-      postId: post.id,
-      status: "DRAFT",
-    },
-  });
-
-  return dispatchCampaign(campaign.id);
 }
