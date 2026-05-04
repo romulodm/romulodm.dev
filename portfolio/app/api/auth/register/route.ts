@@ -79,6 +79,22 @@ export async function POST(req: NextRequest) {
       select: { id: true },
     });
 
+    // ── Link newsletter subscription if one exists for this email ─────────────
+    // Fire-and-forget: linking is non-critical and must not fail the registration
+    prisma.newsletterSubscriber
+      .updateMany({
+        where: {
+          email,
+          isConfirmed: true,
+          unsubscribedAt: null,
+          userId: null, // only link if not already linked
+        },
+        data: { userId: created.id },
+      })
+      .catch((err) =>
+        console.error("[register] newsletter link failed:", err),
+      );
+
     return NextResponse.json({ ok: true, userId: created.id }, { status: 201 });
   } catch (error) {
     if ((error as { code?: string })?.code === "P2002") {
