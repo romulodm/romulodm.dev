@@ -5,6 +5,7 @@ import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { signIn } from "next-auth/react"
+import { toast } from "react-toastify"
 import CircularProgress from "@mui/material/CircularProgress"
 import { MdOutlineAlternateEmail, MdVisibility, MdVisibilityOff } from "react-icons/md"
 import { RiLockPasswordLine } from "react-icons/ri"
@@ -38,7 +39,6 @@ function strengthColor(score: number, index: number): string {
 
 export function RegisterForm({ onSuccess, onLogin }: Props) {
   const t = useTranslations("auth")
-  const [serverError, setServerError] = useState<string | null>(null)
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [passwordScore, setPasswordScore] = useState(0)
@@ -58,17 +58,19 @@ export function RegisterForm({ onSuccess, onLogin }: Props) {
   }, [passwordValue])
 
   async function onSubmit(values: RegisterValues) {
-    setServerError(null)
-
     const res = await fetch("/api/auth/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username: values.username, email: values.email, password: values.password }),
+      body: JSON.stringify({
+        username: values.username,
+        email: values.email,
+        password: values.password,
+      }),
     })
 
     if (!res.ok) {
       const data = await res.json().catch(() => ({}))
-      setServerError(data.message ?? t("register.genericError"))
+      toast.error(data.message ?? t("register.genericError"))
       return
     }
 
@@ -78,6 +80,7 @@ export function RegisterForm({ onSuccess, onLogin }: Props) {
       redirect: false,
     })
 
+    toast.success(t("toasts.registerSuccess"))
     onSuccess()
   }
 
@@ -87,12 +90,6 @@ export function RegisterForm({ onSuccess, onLogin }: Props) {
       noValidate
       className="flex flex-col items-center w-full"
     >
-      {serverError && (
-        <p className="w-full mb-3 text-sm text-red-500 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg px-3 py-2">
-          {serverError}
-        </p>
-      )}
-
       <div className="w-full flex flex-col gap-2">
         <GoogleButton disabled={isSubmitting} />
         <GitHubButton disabled={isSubmitting} />
@@ -105,8 +102,7 @@ export function RegisterForm({ onSuccess, onLogin }: Props) {
       </div>
 
       <div
-        className={`h-12 w-full bg-neutral-200/90 dark:bg-neutral-800 rounded-lg flex items-center mb-4 border ${errors.username ? "border-red-400" : "border-transparent"
-          }`}
+        className={`h-12 w-full bg-neutral-200/90 dark:bg-neutral-800 rounded-lg flex items-center mb-4 border ${errors.username ? "border-red-400" : "border-transparent"}`}
       >
         <span className="ml-3 text-gray-400 dark:text-neutral-400 text-sm font-medium shrink-0">Aa</span>
         <input
@@ -122,8 +118,7 @@ export function RegisterForm({ onSuccess, onLogin }: Props) {
       )}
 
       <div
-        className={`h-12 w-full bg-neutral-200/90 dark:bg-neutral-800 rounded-lg flex items-center mb-4 border ${errors.email ? "border-red-400" : "border-transparent"
-          }`}
+        className={`h-12 w-full bg-neutral-200/90 dark:bg-neutral-800 rounded-lg flex items-center mb-4 border ${errors.email ? "border-red-400" : "border-transparent"}`}
       >
         <MdOutlineAlternateEmail
           className={`ml-3 text-lg shrink-0 ${errors.email ? "text-red-400" : "text-gray-400 dark:text-neutral-400"}`}
@@ -141,8 +136,7 @@ export function RegisterForm({ onSuccess, onLogin }: Props) {
       )}
 
       <div
-        className={`h-12 w-full bg-neutral-200/90 dark:bg-neutral-800 rounded-lg flex items-center border ${errors.password ? "border-red-400" : "border-transparent"
-          }`}
+        className={`h-12 w-full bg-neutral-200/90 dark:bg-neutral-800 rounded-lg flex items-center border ${errors.password ? "border-red-400" : "border-transparent"}`}
       >
         <RiLockPasswordLine
           className={`ml-3 text-lg shrink-0 ${errors.password ? "text-red-400" : "text-gray-400 dark:text-neutral-400"}`}
@@ -176,8 +170,7 @@ export function RegisterForm({ onSuccess, onLogin }: Props) {
       )}
 
       <div
-        className={`h-12 w-full bg-neutral-200/90 dark:bg-neutral-800 rounded-lg flex items-center mb-4 border ${errors.confirmPassword ? "border-red-400" : "border-transparent"
-          }`}
+        className={`h-12 w-full bg-neutral-200/90 dark:bg-neutral-800 rounded-lg flex items-center mb-4 border ${errors.confirmPassword ? "border-red-400" : "border-transparent"}`}
       >
         <RiLockPasswordLine
           className={`ml-3 text-lg shrink-0 ${errors.confirmPassword ? "text-red-400" : "text-gray-400 dark:text-neutral-400"}`}

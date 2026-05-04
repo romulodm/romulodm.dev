@@ -5,7 +5,7 @@ import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { signIn } from "next-auth/react"
-import { toast } from "sonner"
+import { toast } from "react-toastify"
 import CircularProgress from "@mui/material/CircularProgress"
 import { MdOutlineAlternateEmail } from "react-icons/md"
 import { RiLockPasswordLine } from "react-icons/ri"
@@ -42,7 +42,6 @@ export function LoginForm({ onSuccess, onForgotPassword, onRegister }: Props) {
 
     if (!res?.ok) {
       const err = res?.error
-
       if (err === "RateLimited") {
         toast.error(t("toasts.rateLimited"))
       } else if (err === "AccountBanned") {

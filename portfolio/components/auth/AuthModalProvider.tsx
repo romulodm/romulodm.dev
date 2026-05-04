@@ -1,7 +1,7 @@
 "use client"
 
 import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from "react"
-import { toast } from "sonner"
+import { toast } from "react-toastify"
 import { useTranslations } from "next-intl"
 import { AuthModal, AuthView } from "@/components/auth/AuthModal"
 
@@ -34,7 +34,6 @@ export function AuthModalProvider({ children }: { children: ReactNode }) {
 
         if (!error && !success) return
 
-        // Clean URL before showing toast
         params.delete("error")
         params.delete("authSuccess")
         const query = params.toString()
@@ -52,10 +51,13 @@ export function AuthModalProvider({ children }: { children: ReactNode }) {
         switch (error) {
             case "AccountNotLinked":
             case "OAuthAccountNotLinked":
-                toast.error(t("accountNotLinked"), {
-                    description: t("accountNotLinkedDescription"),
-                    duration: 6000,
-                })
+                toast.error(
+                    <div>
+                        <p style={{ fontWeight: 600, marginBottom: 4 }}>{t("accountNotLinked")}</p>
+                        <p style={{ fontSize: 13, opacity: 0.9 }}>{t("accountNotLinkedDescription")}</p>
+                    </div>,
+                    { autoClose: 6000 }
+                )
                 break
             case "RateLimited":
                 toast.error(t("rateLimited"))

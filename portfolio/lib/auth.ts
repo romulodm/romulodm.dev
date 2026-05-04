@@ -11,13 +11,29 @@ import { generateUniqueUsername } from "./username";
 
 type OAuthProvider = "GOOGLE" | "GITHUB";
 
-// Returning a string from signIn() redirects to that URL directly,
-// which lets us pass a custom ?error= param that useAuthToasts reads.
-// Throwing or returning false with JWT strategy doesn't produce ?error= —
-// it redirects to the signIn page with ?callbackUrl= instead.
 const ERRORS = {
   accountNotLinked: "/?error=AccountNotLinked",
 } as const;
+
+// ── Newsletter linking helper ─────────────────────────────────────────────────
+// Called after a user account is created (or found) via OAuth.
+// Non-critical: errors are swallowed so they never break the sign-in flow.
+
+async function linkNewsletterIfExists(userId: string, email: string): Promise<void> {
+  await prisma.newsletterSubscriber
+    .updateMany({
+      where: {
+        email,
+        isConfirmed: true,
+        unsubscribedAt: null,
+        userId: null, // only link if not already linked
+      },
+      data: { userId },
+    })
+    .catch((err) =>
+      console.error("[auth] newsletter link failed:", err),
+    );
+}
 
 async function handleOAuthSignIn(user: any, account: any, provider: OAuthProvider) {
   const email = user.email?.trim().toLowerCase();
@@ -49,10 +65,15 @@ async function handleOAuthSignIn(user: any, account: any, provider: OAuthProvide
       },
       select: { id: true, admin: true, username: true },
     });
+
     user.id = created.id;
     user.provider = provider;
     user.admin = created.admin;
     user.username = created.username;
+
+    // Link newsletter subscription if one already exists for this email
+    await linkNewsletterIfExists(created.id, email);
+
     return true;
   }
 
@@ -69,6 +90,10 @@ async function handleOAuthSignIn(user: any, account: any, provider: OAuthProvide
   user.provider = provider;
   user.admin = existing.admin;
   user.username = existing.username;
+
+  // Existing user signing in — link newsletter if not yet linked
+  await linkNewsletterIfExists(existing.id, email);
+
   return true;
 }
 
@@ -121,11 +146,13 @@ export const authOptions: NextAuthOptions = {
         });
 
         if (!user || user.provider !== "EMAIL_PASSWORD" || !user.password) return null;
-
         if (user.banned) throw new Error("AccountBanned");
 
         const ok = await bcrypt.compare(password, user.password);
         if (!ok) return null;
+
+        // Link newsletter on every credentials sign-in (no-op if already linked)
+        await linkNewsletterIfExists(user.id, email);
 
         return {
           id: user.id,

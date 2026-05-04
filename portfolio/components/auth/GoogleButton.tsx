@@ -3,7 +3,7 @@
 
 import { useState } from "react"
 import { signIn } from "next-auth/react"
-import { toast } from "sonner"
+import { toast } from "react-toastify"
 import CircularProgress from "@mui/material/CircularProgress"
 import { FcGoogle } from "react-icons/fc"
 import { useTranslations } from "next-intl"
