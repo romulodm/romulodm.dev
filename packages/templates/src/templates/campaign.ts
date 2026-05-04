@@ -1,63 +1,110 @@
-import { wrapper, ctaButton, unsubscribeRow, DEFAULT_ACCENT } from "../base";
+import { wrapper, greetingRow, ctaButton, DEFAULT_ACCENT } from "../base";
+import { getStrings } from "../i18n";
 import { CampaignTemplateOptions, PostMeta } from "../types";
 
-// ─── Post card block ──────────────────────────────────────────────────────────
+// ─── Animated "new post" banner ───────────────────────────────────────────────
+//
+// CSS animations work in Apple Mail, iOS Mail, Samsung Mail, and most
+// webmail clients. Outlook (desktop) ignores @keyframes gracefully —
+// the badge still shows, just without the pulse.
+
+function renderNewPostBanner(label: string, accent: string): string {
+  return `
+  <tr>
+    <td style="padding:0 36px 20px;">
+      <!--[if !mso]><!-->
+      <style>
+        @keyframes rdm-pulse {
+          0%   { opacity: 1;     transform: scale(1); }
+          50%  { opacity: 0.75;  transform: scale(1.04); }
+          100% { opacity: 1;     transform: scale(1); }
+        }
+        .rdm-new-post {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          padding: 5px 14px 5px 8px;
+          background: ${accent}18;
+          border: 1px solid ${accent}44;
+          border-radius: 100px;
+          font-family: 'Inter', sans-serif;
+          font-size: 12px;
+          font-weight: 600;
+          color: ${accent};
+          letter-spacing: 0.2px;
+          animation: rdm-pulse 2.4s ease-in-out infinite;
+        }
+        .rdm-dot {
+          width: 7px;
+          height: 7px;
+          border-radius: 50%;
+          background: ${accent};
+          flex-shrink: 0;
+          animation: rdm-pulse 2.4s ease-in-out infinite;
+        }
+      </style>
+      <span class="rdm-new-post">
+        <span class="rdm-dot"></span>
+        ${label}
+      </span>
+      <!--<![endif]-->
+      <!--[if mso]>
+      <span style="display:inline-block;padding:4px 12px;background:${accent}22;
+                   border:1px solid ${accent}55;border-radius:12px;
+                   font-family:Arial,sans-serif;font-size:12px;font-weight:700;
+                   color:${accent};">
+        ${label}
+      </span>
+      <![endif]-->
+    </td>
+  </tr>`;
+}
+
+// ─── Tags ─────────────────────────────────────────────────────────────────────
 
 function renderTags(tags: string[], accent: string): string {
-  if (!tags.length) return "";
-
   const pills = tags
     .map(
       (tag) =>
         `<span style="display:inline-block;padding:3px 10px;
                       background-color:#fff8f5;border:1px solid #fde8dc;
-                      border-radius:100px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+                      border-radius:100px;font-family:'Inter',sans-serif;
                       font-size:11px;font-weight:600;color:${accent};
                       letter-spacing:0.3px;margin:0 4px 6px 0;
-                      text-transform:lowercase;">
-          #${tag}
-        </span>`
+                      text-transform:lowercase;">#${tag}</span>`,
     )
     .join("");
-
-  return `<div style="margin-bottom:16px;line-height:1;">${pills}</div>`;
+  return `<div style="margin-bottom:14px;line-height:1;">${pills}</div>`;
 }
 
-function renderHeroImage(imageUrl: string): string {
-  return `
-  <tr>
-    <td style="padding:0 40px 0;">
-      <img src="${imageUrl}" alt="Cover image"
-           width="520"
-           style="width:100%;max-width:520px;height:auto;display:block;
-                  border-radius:10px;border:1px solid #ede9e4;object-fit:cover;" />
-    </td>
-  </tr>`;
-}
+// ─── Post card ────────────────────────────────────────────────────────────────
 
-function renderPostCard(post: PostMeta, accent: string): string {
-  const cta = ctaButton(post.url, post.ctaLabel ?? "Ler artigo completo", accent);
-  const tags = post.tags?.length ? renderTags(post.tags, accent) : "";
-
+function renderPostCard(post: PostMeta, accent: string, ctaLabel: string): string {
   return `
-  ${post.imageUrl ? renderHeroImage(post.imageUrl) : ""}
+  ${post.imageUrl
+      ? `<tr><td style="padding:0 36px 0;">
+           <img src="${post.imageUrl}" alt="Cover" width="528"
+                style="width:100%;max-width:528px;height:220px;object-fit:cover;
+                       display:block;border-radius:10px;border:1px solid #ede9e4;" />
+         </td></tr>`
+      : ""
+    }
   <tr>
-    <td style="padding:${post.imageUrl ? "28px" : "40px"} 40px 32px;">
-      ${tags}
-      <h2 style="margin:0 0 12px;font-family:'Georgia',serif;
-                 color:#1a1412;font-size:22px;font-weight:700;
+    <td style="padding:${post.imageUrl ? "20px" : "4px"} 36px 32px;">
+      ${post.tags?.length ? renderTags(post.tags, accent) : ""}
+      <h2 style="margin:0 0 10px;font-family:'Inter',sans-serif;
+                 color:#1a1412;font-size:20px;font-weight:700;
                  line-height:1.3;letter-spacing:-0.3px;">
         ${post.title}
       </h2>
-      ${
-        post.summary
-          ? `<p style="margin:0 0 4px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+      ${post.summary
+      ? `<p style="margin:0;font-family:'Inter',sans-serif;
                       color:#6b6460;font-size:15px;line-height:1.65;">
                ${post.summary}
              </p>`
-          : ""
-      }
-      ${cta}
+      : ""
+    }
+      ${ctaButton(post.url, ctaLabel, accent)}
     </td>
   </tr>`;
 }
@@ -65,46 +112,28 @@ function renderPostCard(post: PostMeta, accent: string): string {
 // ─── Tracking pixel ───────────────────────────────────────────────────────────
 
 function renderTrackingPixel(url: string): string {
-  return `
-  <tr>
-    <td style="padding:0;line-height:0;font-size:0;">
-      <img src="${url}" width="1" height="1" alt=""
-           style="display:block;border:0;" />
-    </td>
-  </tr>`;
+  return `<tr><td style="padding:0;line-height:0;font-size:0;">
+    <img src="${url}" width="1" height="1" alt="" style="display:block;border:0;" />
+  </td></tr>`;
 }
 
 // ─── Main export ──────────────────────────────────────────────────────────────
 
 export function campaignTemplate(opts: CampaignTemplateOptions): string {
   const accent = opts.brand.accentColor ?? DEFAULT_ACCENT;
+  const s = getStrings(opts.recipient.locale);
 
   const contentBlock = opts.post
-    ? renderPostCard(opts.post, accent)
-    : `
-  <tr>
-    <td style="padding:40px 40px 32px;
-               font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-               color:#4a4440;font-size:16px;line-height:1.7;">
-      ${opts.content ?? ""}
-    </td>
-  </tr>`;
-
-  const disclaimer = `
-  <tr>
-    <td style="padding:0 40px 24px;text-align:center;">
-      <p style="margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-                color:#c8c0b8;font-size:11px;line-height:1.5;">
-        Você está recebendo este e-mail porque se inscreveu em ${opts.brand.name}.
-      </p>
-    </td>
-  </tr>`;
+    ? `${renderNewPostBanner(s.newPostLabel, accent)}${renderPostCard(opts.post, accent, opts.post.ctaLabel ?? s.readArticle)}`
+    : `<tr><td style="padding:4px 36px 32px;font-family:'Inter',sans-serif;
+                      color:#4a4440;font-size:15px;line-height:1.7;">
+         ${opts.content ?? ""}
+       </td></tr>`;
 
   const body = `
+  ${greetingRow(opts.recipient.displayName, opts.recipient.locale)}
   ${contentBlock}
-  ${disclaimer}
-  ${unsubscribeRow(opts.unsubscribeUrl)}
   ${opts.trackingPixelUrl ? renderTrackingPixel(opts.trackingPixelUrl) : ""}`;
 
-  return wrapper(body, opts.brand);
+  return wrapper(body, opts.brand, opts.unsubscribeUrl, opts.recipient.locale);
 }

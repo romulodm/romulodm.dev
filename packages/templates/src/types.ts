@@ -1,12 +1,31 @@
-// ─── Core types ──────────────────────────────────────────────────────────────
+import type { EmailLocale } from "./i18n";
+
+// ─── Brand config ─────────────────────────────────────────────────────────────
 
 export interface BrandConfig {
-  /** Displayed name next to the logo, e.g. "romulodm" */
+  /** Displayed in the email footer and subjects, e.g. "romulodm" */
   name: string;
-  /** Full URL of the site, used for the header link */
+  /** Full site URL, used for header link and fallback hrefs */
   baseUrl: string;
-  /** Primary accent color (hex). Defaults to #f57842 */
+  /** Primary accent colour (hex). Defaults to #f57842 */
   accentColor?: string;
+  /** Full URL to the privacy policy page */
+  privacyUrl?: string;
+}
+
+// ─── Shared per-recipient context ─────────────────────────────────────────────
+
+export interface RecipientContext {
+  /**
+   * Display name for the greeting line.
+   * Pass user.username when linked to an account, otherwise the email
+   * prefix (e.g. "fulano" from "fulano@gmail.com"), capitalised.
+   */
+  displayName: string;
+  /**
+   * Preferred locale for this recipient. Defaults to "en".
+   */
+  locale?: EmailLocale;
 }
 
 // ─── Template option bags ─────────────────────────────────────────────────────
@@ -14,45 +33,43 @@ export interface BrandConfig {
 export interface ConfirmationTemplateOptions {
   confirmationUrl: string;
   brand: BrandConfig;
+  recipient: RecipientContext;
 }
 
 export interface WelcomeTemplateOptions {
   unsubscribeUrl: string;
   brand: BrandConfig;
+  recipient: RecipientContext;
 }
 
 export interface UnsubscribeConfirmTemplateOptions {
   unsubscribeUrl: string;
   brand: BrandConfig;
+  recipient: RecipientContext;
 }
 
 export interface PasswordResetTemplateOptions {
   code: string;
   expiresInMinutes?: number;
   brand: BrandConfig;
+  recipient: RecipientContext;
 }
 
 export interface PostMeta {
-  /** Full URL of the cover/hero image */
   imageUrl?: string;
   title: string;
   summary?: string;
-  /** Array of tag strings, e.g. ["typescript", "nextjs"] */
   tags?: string[];
-  /** Canonical post URL the CTA button links to */
   url: string;
-  /** Override the CTA label. Defaults to "Read article" */
   ctaLabel?: string;
 }
 
 export interface CampaignTemplateOptions {
   subject: string;
-  /** Raw HTML body for CUSTOM campaigns */
   content?: string;
-  /** Structured post data for POST_BASED campaigns */
   post?: PostMeta;
   unsubscribeUrl: string;
-  /** 1×1 tracking pixel URL. Omit to skip the pixel. */
   trackingPixelUrl?: string;
   brand: BrandConfig;
+  recipient: RecipientContext;
 }

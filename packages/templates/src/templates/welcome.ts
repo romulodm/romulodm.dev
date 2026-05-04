@@ -1,75 +1,59 @@
-import { wrapper, unsubscribeRow, DEFAULT_ACCENT } from "../base";
+import { wrapper, greetingRow, DEFAULT_ACCENT } from "../base";
+import { getStrings } from "../i18n";
 import { WelcomeTemplateOptions } from "../types";
 
 export function welcomeTemplate(opts: WelcomeTemplateOptions): string {
   const accent = opts.brand.accentColor ?? DEFAULT_ACCENT;
+  const s = getStrings(opts.recipient.locale);
 
-  const items = [
-    { emoji: "📝", text: "Novos artigos assim que publicados" },
-    { emoji: "💡", text: "Dicas e conteúdo técnico exclusivo" },
-    { emoji: "🚀", text: "Projetos e novidades em primeira mão" },
-  ];
-
-  const listItems = items
+  const listItems = s.welcomeItems
     .map(
-      ({ emoji, text }) => `
-      <tr>
-        <td style="padding:0 0 14px;">
-          <table cellpadding="0" cellspacing="0" role="presentation">
-            <tr>
-              <td style="width:32px;vertical-align:top;padding-top:1px;">
-                <span style="font-size:16px;">${emoji}</span>
-              </td>
-              <td style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-                         color:#4a4440;font-size:15px;line-height:1.5;">
-                ${text}
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>`
+      (text, i) => {
+        const icons = ["📝", "💡", "🚀"];
+        return `
+        <tr>
+          <td style="padding-bottom:12px;">
+            <table cellpadding="0" cellspacing="0">
+              <tr>
+                <td style="width:28px;font-size:15px;vertical-align:top;padding-top:2px;">
+                  ${icons[i]}
+                </td>
+                <td style="font-family:'Inter',sans-serif;color:#4a4440;
+                           font-size:15px;line-height:1.5;">
+                  ${text}
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>`;
+      }
     )
     .join("");
 
   const body = `
+  ${greetingRow(opts.recipient.displayName, opts.recipient.locale)}
   <tr>
-    <td style="padding:40px 40px 32px;">
-      <!-- Accent stripe -->
-      <table width="100%" cellpadding="0" cellspacing="0" role="presentation"
-             style="margin-bottom:32px;border-radius:10px;overflow:hidden;">
-        <tr>
-          <td style="background:linear-gradient(135deg,${accent} 0%,#ff9a6c 100%);
-                     padding:28px 32px;">
-            <p style="margin:0 0 4px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-                      color:rgba(255,255,255,0.85);font-size:13px;font-weight:500;
-                      text-transform:uppercase;letter-spacing:1px;">
-              Inscrição confirmada
-            </p>
-            <h1 style="margin:0;font-family:'Georgia',serif;color:#ffffff;
-                       font-size:26px;font-weight:700;letter-spacing:-0.4px;">
-              Bem-vindo(a)! 🎉
-            </h1>
-          </td>
-        </tr>
-      </table>
-
-      <p style="margin:0 0 24px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-                color:#6b6460;font-size:16px;line-height:1.6;">
-        Sua inscrição foi confirmada. A partir de agora você receberá:
+    <td style="padding:20px 36px 8px;">
+      <div style="background:linear-gradient(135deg,${accent} 0%,#ff9a6c 100%);
+                  border-radius:10px;padding:24px 28px;margin-bottom:24px;">
+        <h1 style="margin:0;font-family:'Inter',sans-serif;color:#ffffff;
+                   font-size:22px;font-weight:700;letter-spacing:-0.4px;">
+          ${s.welcomeHeading}
+        </h1>
+      </div>
+      <p style="margin:0 0 20px;font-family:'Inter',sans-serif;
+                color:#6b6460;font-size:15px;line-height:1.65;">
+        ${s.welcomeBody}
       </p>
-
-      <table width="100%" cellpadding="0" cellspacing="0" role="presentation">
+      <table width="100%" cellpadding="0" cellspacing="0">
         ${listItems}
       </table>
-
-      <p style="margin:8px 0 0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-                color:#6b6460;font-size:15px;line-height:1.6;">
-        Obrigado por fazer parte desta comunidade. Fique à vontade para responder
-        este e-mail se tiver alguma dúvida ou sugestão.
+      <p style="margin:8px 0 0;font-family:'Inter',sans-serif;
+                color:#6b6460;font-size:14px;line-height:1.6;">
+        ${s.welcomeSignoff}
       </p>
     </td>
-  </tr>
-  ${unsubscribeRow(opts.unsubscribeUrl)}`;
+  </tr>`;
 
-  return wrapper(body, opts.brand);
+  return wrapper(body, opts.brand, opts.unsubscribeUrl, opts.recipient.locale);
 }
