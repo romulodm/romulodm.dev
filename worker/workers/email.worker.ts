@@ -16,7 +16,6 @@ import {
 
 import { emailService } from "../lib/email/email.service";
 import {
-  campaignTemplate,
   confirmationTemplate,
   passwordResetTemplate,
   unsubscribeConfirmTemplate,
@@ -48,6 +47,21 @@ function isFinalAttempt(job: { attemptsMade: number; opts: JobsOptions }): boole
 
 function recipient(data: { displayName: string; locale: string }): RecipientContext {
   return { displayName: data.displayName, locale: data.locale as RecipientContext["locale"] };
+}
+
+/**
+ * Substitui os placeholders no HTML já renderizado pelo campaignTemplate.
+ * Os placeholders {{displayName}}, {{unsubscribeUrl}} e {{trackingPixelUrl}}
+ * são inseridos pelas rotas da API ao salvar a campanha no banco.
+ */
+function resolvePlaceholders(
+  html: string,
+  values: { displayName: string; unsubscribeUrl: string; trackingPixelUrl: string },
+): string {
+  return html
+    .replace(/\{\{displayName\}\}/g, values.displayName)
+    .replace(/\{\{unsubscribeUrl\}\}/g, values.unsubscribeUrl)
+    .replace(/\{\{trackingPixelUrl\}\}/g, values.trackingPixelUrl);
 }
 
 // ── Campaign completion ───────────────────────────────────────────────────────
@@ -134,17 +148,18 @@ export async function processCampaignEmailJob(job: CampaignJobContext): Promise<
   const deliveryId = buildCampaignJobId(data);
 
   try {
+    // O content já é o HTML completo gerado pelo campaignTemplate nas rotas.
+    // Apenas substituímos os placeholders com os dados do destinatário.
+    const html = resolvePlaceholders(data.content, {
+      displayName: data.displayName,
+      unsubscribeUrl: data.unsubscribeUrl,
+      trackingPixelUrl: data.trackingPixelUrl,
+    });
+
     await emailService.send({
       to: data.email,
       subject: data.subject,
-      html: campaignTemplate({
-        subject: data.subject,
-        content: data.content,
-        unsubscribeUrl: data.unsubscribeUrl,
-        trackingPixelUrl: data.trackingPixelUrl,
-        brand: BRAND,
-        recipient: recipient(data),
-      }),
+      html,
       messageId: buildEmailMessageId("campaign", deliveryId),
     });
 

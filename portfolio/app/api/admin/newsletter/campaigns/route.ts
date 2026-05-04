@@ -19,8 +19,16 @@ import {
   sanitizePlainText,
 } from "@/lib/api-validation";
 import { sanitizeNewsletterHtml } from "@/lib/newsletter-html-sanitizer";
+import { campaignTemplate, type BrandConfig } from "@romulo/templates";
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "";
+
+const BRAND: BrandConfig = {
+  name: process.env.NEXT_PUBLIC_APP_NAME ?? "romulodm",
+  baseUrl: APP_URL || "https://romulodm.com.br",
+  accentColor: "#f57842",
+  privacyUrl: `${APP_URL || "https://romulodm.com.br"}/privacy`,
+};
 
 function createCampaignSchema(t: Awaited<ReturnType<typeof getApiTranslator>>) {
   return z.object({
@@ -41,23 +49,6 @@ function createCampaignSchema(t: Awaited<ReturnType<typeof getApiTranslator>>) {
       ),
     postId: z.string().trim().optional(),
   });
-}
-
-function buildPostContent(
-  post: { title: string; summary: string | null; slug: string },
-  readArticleLabel: string,
-): string {
-  const url = `${APP_URL}/blog/${post.slug}`;
-  return `
-<h2 style="margin:0 0 12px;font-size:22px;color:#111;font-family:sans-serif;">${post.title}</h2>
-${post.summary ? `<p style="margin:0 0 20px;font-size:15px;color:#444;line-height:1.6;font-family:sans-serif;">${post.summary}</p>` : ""}
-<a href="${url}"
-   style="display:inline-block;padding:12px 28px;background:#16a34a;color:#ffffff;
-          border-radius:8px;text-decoration:none;font-weight:600;font-size:14px;
-          font-family:sans-serif;">
-  ${readArticleLabel}
-</a>
-`.trim();
 }
 
 export async function POST(req: NextRequest) {
@@ -86,6 +77,8 @@ export async function POST(req: NextRequest) {
           id: true,
           slug: true,
           status: true,
+          coverImageUrl: true,
+          postTags: { select: { tag: true } },
           translations: {
             where: { locale: "pt" },
             select: { title: true, summary: true },
@@ -116,14 +109,20 @@ export async function POST(req: NextRequest) {
           type: "POST_BASED",
           subject: body.subject,
           previewText: body.previewText,
-          content: buildPostContent(
-            {
+          content: campaignTemplate({
+            subject: body.subject,
+            post: {
+              imageUrl: post.coverImageUrl ?? undefined,
               title: translation.title,
-              summary: translation.summary ?? null,
-              slug: post.slug,
+              summary: translation.summary ?? undefined,
+              tags: post.postTags.map((pt) => pt.tag),
+              url: `${APP_URL}/pt/blog/${post.slug}`,
             },
-            t("admin.newsletterCampaigns.readArticle"),
-          ),
+            unsubscribeUrl: "{{unsubscribeUrl}}",
+            trackingPixelUrl: "{{trackingPixelUrl}}",
+            brand: BRAND,
+            recipient: { displayName: "{{displayName}}", locale: "pt" },
+          }),
           postId: post.id,
           status: "DRAFT",
         },
