@@ -7,10 +7,11 @@ export const metadata: Metadata = {
   robots: "noindex",
 };
 
-export default function NewsletterConfirmPage({
+export default async function NewsletterConfirmPage({
   params,
 }: {
-  params: { token: string };
+  params: Promise<{ token: string }>;
 }) {
-  return <NewsletterConfirmClient token={params.token} />;
+  const { token } = await params;
+  return <NewsletterConfirmClient token={token} />;
 }

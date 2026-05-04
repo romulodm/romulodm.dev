@@ -7,10 +7,11 @@ export const metadata: Metadata = {
   robots: "noindex",
 };
 
-export default function NewsletterUnsubscribePage({
+export default async function NewsletterUnsubscribePage({
   params,
 }: {
-  params: { token: string };
+  params: Promise<{ token: string }>;
 }) {
-  return <NewsletterUnsubscribeClient token={params.token} />;
+  const { token } = await params;
+  return <NewsletterUnsubscribeClient token={token} />;
 }
