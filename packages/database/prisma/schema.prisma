@@ -40,11 +40,12 @@ model User {
   sub                 String? // provider-specific user ID
   passwordResetTokens PasswordResetToken[]
 
-  comments     Comment[]
-  votes        CommentVote[]
-  postLikes    PostLike[]
-  posts        Post[]
-  wallMessages WallMessage[]
+  comments              Comment[]
+  votes                 CommentVote[]
+  postLikes             PostLike[]
+  posts                 Post[]
+  wallMessages          WallMessage[]
+  newsletterSubscribers NewsletterSubscriber[]
 }
 
 model PasswordResetToken {
@@ -206,14 +207,19 @@ model NewsletterSubscriber {
   subscribedAt        DateTime?
   unsubscribedAt      DateTime?
   unsubscribeToken    String    @unique
-  createdAt           DateTime  @default(now())
-  updatedAt           DateTime  @updatedAt
+  preferredLocale     String    @default("en")
+  userId              String?
+  user                User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   recipients CampaignRecipient[]
 
   @@index([confirmationToken])
   @@index([unsubscribeToken])
   @@index([isConfirmed, unsubscribedAt])
+  @@index([userId])
 }
 
 enum CampaignStatus {
