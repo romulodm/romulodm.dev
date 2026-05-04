@@ -92,7 +92,7 @@ export function greetingRow(displayName: string, locale?: string | null): string
   const s = getStrings(locale);
   return `
   <tr>
-    <td style="padding:32px 36px 20px;">
+    <td style="padding:32px 36px 25px;">
       <p style="margin:0;font-family:'Inter',sans-serif;
                 font-size:22px;font-weight:700;color:#1a1412;line-height:1.3;">
         ${s.greeting(displayName)}
