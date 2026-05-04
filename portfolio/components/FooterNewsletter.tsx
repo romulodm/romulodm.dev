@@ -1,5 +1,6 @@
 'use client';
 
+import { ArrowRight } from "lucide-react";
 import { useState } from "react";
 
 export function FooterNewsletter() {
@@ -72,7 +73,7 @@ export function FooterNewsletter() {
                                     disabled={state === "loading"}
                                     className="flex-1 px-4 py-3 bg-white/5 border border-white/10 rounded
                                                 text-white placeholder-white/30
-                                                focus:outline-none focus:ring-2 focus:ring-[#F9733D]/50
+                                                focus:outline-none focus:ring-2 focus:ring-primary/50
                                                 disabled:opacity-50 disabled:cursor-not-allowed
                                                 transition-all
                                                 "
@@ -80,11 +81,12 @@ export function FooterNewsletter() {
                                 <button
                                     type="submit"
                                     disabled={state === "loading" || !email}
-                                    className="w-full sm:w-auto px-6 py-3 bg-[#F9733D] text-[#0e0e0e] rounded
-                             font-semibold hover:bg-[#F9733D]/90 transition-colors
+                                    className="w-full flex gap-1 items-center sm:w-auto px-6 py-3 bg-primary text-white rounded
+                             font-semibold hover:bg-primary/90 transition-colors
                               disabled:cursor-not-allowed"
                                 >
                                     {state === "loading" ? "Enviando..." : "Inscrever-se"}
+                                    <ArrowRight size={18} />
                                 </button>
                             </div>
                             {state === "error" && (
