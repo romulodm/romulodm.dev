@@ -23,6 +23,7 @@ type DocMeta struct {
 	CoverImageURL string
 	MaxFreq       int            // frequência máxima de qualquer termo neste doc (para TF)
 	Terms         map[string]int // stem → freq (permite remoção O(1) sem SCAN)
+	TagStems      map[string]bool
 }
 
 // InvertedIndex é o núcleo do motor de busca.
@@ -72,22 +73,28 @@ func (idx *InvertedIndex) AddDocument(doc *DocMeta, fullText string) {
 		}
 	}
 
+	tagStems := make(map[string]bool)
+	for _, tag := range doc.Tags {
+		for _, t := range idx.prep.Tokenize(tag, doc.Locale) {
+			tagStems[t.Stem] = true
+		}
+	}
+
 	idx.mu.Lock()
 	defer idx.mu.Unlock()
 
-	// Remove versão anterior para evitar acumulação de postings obsoletos
 	if old, exists := idx.docs[doc.ID]; exists {
 		idx.removeLocked(doc.ID, old)
 	}
 
 	doc.MaxFreq = maxFreq
 	doc.Terms = freq
+	doc.TagStems = tagStems
 	idx.docs[doc.ID] = doc
 
 	for stem, f := range freq {
 		if idx.terms[stem] == nil {
 			idx.terms[stem] = &TermEntry{Postings: make(map[string]int)}
-			// Novo stem: indexa no trie e bk-tree
 			idx.trie.Insert(stem)
 			idx.bktree.Insert(stem)
 		}
@@ -96,6 +103,19 @@ func (idx *InvertedIndex) AddDocument(doc *DocMeta, fullText string) {
 			entry.DF++
 		}
 		entry.Postings[doc.ID] = f
+	}
+
+	for stem := range tagStems {
+		if _, exists := idx.terms[stem]; !exists {
+			idx.terms[stem] = &TermEntry{Postings: make(map[string]int)}
+			idx.trie.Insert(stem)
+			idx.bktree.Insert(stem)
+		}
+		entry := idx.terms[stem]
+		if _, had := entry.Postings[doc.ID]; !had {
+			entry.DF++
+			entry.Postings[doc.ID] = 0
+		}
 	}
 
 	idx.n++

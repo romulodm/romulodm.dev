@@ -19,14 +19,18 @@ func NewVectorModel(idx *InvertedIndex) *VectorModel {
 //	idf_i     = log10(N / df_i)
 //	weight    = tf * idf
 func (v *VectorModel) docWeight(stem, docID string) float64 {
-	postings := v.idx.Postings(stem)
-	freq, ok := postings[docID]
-	if !ok || freq == 0 {
+	doc := v.idx.Doc(docID)
+	if doc == nil {
 		return 0
 	}
 
-	doc := v.idx.Doc(docID)
-	if doc == nil || doc.MaxFreq == 0 {
+	if doc.TagStems[stem] {
+		return v.idx.IDF(stem)
+	}
+
+	postings := v.idx.Postings(stem)
+	freq, ok := postings[docID]
+	if !ok || freq == 0 || doc.MaxFreq == 0 {
 		return 0
 	}
 
