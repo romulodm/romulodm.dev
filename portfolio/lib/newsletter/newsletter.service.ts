@@ -309,6 +309,8 @@ export async function dispatchCampaign(campaignId: string, scheduledAt?: Date) {
     await enqueueCampaignEmail(
       {
         campaignId,
+        campaignType: campaign.type,
+        postId: campaign.postId,
         recipientId: r.id,
         trackingId: r.trackingId,
         email: sub.email,

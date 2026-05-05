@@ -1,25 +1,17 @@
-// src/lib/mail.ts
-import { transactionalQueue } from "@/lib/queues/email.queue";
-import {
-    buildTransactionalJobId,
-    transactionalEmailJobOptions,
-    type TransactionalEmailJob,
-} from "@romulo/queues";
+import { prisma } from "@romulo/database";
+import { enqueuePasswordReset } from "@/lib/queues/email.queue";
+import { displayNameFromEmail, resolveLocale } from "@romulo/templates";
 
 export async function sendPasswordResetEmail(email: string, token: string) {
-    const job: TransactionalEmailJob = {
-        type: "PASSWORD_RESET",
-        email,
-        code: token,
-        expiresInMinutes: 60,
-    };
+    const user = await prisma.user.findUnique({
+        where: { email },
+        select: { username: true },
+    });
 
-    await transactionalQueue.add(
-        "password-reset",
-        job,
-        {
-            ...transactionalEmailJobOptions,
-            jobId: buildTransactionalJobId(job),
-        },
+    await enqueuePasswordReset(
+        email,
+        token,
+        user?.username ?? displayNameFromEmail(email),
+        resolveLocale(undefined),
     );
 }

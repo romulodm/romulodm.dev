@@ -9,19 +9,25 @@ import {
   type TransactionalEmailJob,
   type CampaignEmailJob,
 } from "@romulo/queues";
+import type { Queue } from "bullmq";
 import { getRedis } from "../redis";
 
-const redis = getRedis();
+let _transactionalQueue: Queue<TransactionalEmailJob> | null = null;
+let _campaignQueue: Queue<CampaignEmailJob> | null = null;
 
-export const transactionalQueue = createQueue<TransactionalEmailJob>(
-  QUEUE_TRANSACTIONAL,
-  redis,
-);
+function getTransactionalQueue(): Queue<TransactionalEmailJob> {
+  return (_transactionalQueue ??= createQueue<TransactionalEmailJob>(
+    QUEUE_TRANSACTIONAL,
+    getRedis(),
+  ));
+}
 
-export const campaignQueue = createQueue<CampaignEmailJob>(
-  QUEUE_CAMPAIGN,
-  redis,
-);
+function getCampaignQueue(): Queue<CampaignEmailJob> {
+  return (_campaignQueue ??= createQueue<CampaignEmailJob>(
+    QUEUE_CAMPAIGN,
+    getRedis(),
+  ));
+}
 
 export async function enqueueConfirmation(
   email: string,
@@ -36,7 +42,7 @@ export async function enqueueConfirmation(
     displayName,
     locale,
   };
-  await transactionalQueue.add("confirmation", job, {
+  await getTransactionalQueue().add("confirmation", job, {
     ...transactionalEmailJobOptions,
     jobId: buildTransactionalJobId(job),
   });
@@ -55,7 +61,7 @@ export async function enqueueWelcome(
     displayName,
     locale,
   };
-  await transactionalQueue.add("welcome", job, {
+  await getTransactionalQueue().add("welcome", job, {
     ...transactionalEmailJobOptions,
     jobId: buildTransactionalJobId(job),
   });
@@ -74,14 +80,35 @@ export async function enqueueUnsubscribeConfirm(
     displayName,
     locale,
   };
-  await transactionalQueue.add("unsubscribe-confirm", job, {
+  await getTransactionalQueue().add("unsubscribe-confirm", job, {
+    ...transactionalEmailJobOptions,
+    jobId: buildTransactionalJobId(job),
+  });
+}
+
+export async function enqueuePasswordReset(
+  email: string,
+  token: string,
+  displayName: string,
+  locale: string,
+  expiresInMinutes = 60,
+) {
+  const job: TransactionalEmailJob = {
+    type: "PASSWORD_RESET",
+    email,
+    code: token,
+    expiresInMinutes,
+    displayName,
+    locale,
+  };
+  await getTransactionalQueue().add("password-reset", job, {
     ...transactionalEmailJobOptions,
     jobId: buildTransactionalJobId(job),
   });
 }
 
 export async function enqueueCampaignEmail(job: CampaignEmailJob, delayMs = 0) {
-  await campaignQueue.add(
+  await getCampaignQueue().add(
     `campaign-${job.campaignId}-${job.recipientId}`,
     job,
     {
