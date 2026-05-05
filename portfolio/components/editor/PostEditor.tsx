@@ -112,12 +112,20 @@ function EditLocaleTabs({
   existingTranslations,
   selectedLocale,
   onLocaleChange,
+  translateWithAI,
+  onToggleAI,
 }: {
   existingTranslations: ExistingTranslation[];
   selectedLocale: string;
   onLocaleChange: (locale: LocaleCode) => void;
+  translateWithAI: boolean;
+  onToggleAI: () => void;
 }) {
   const t = useTranslations('admin.postEditor');
+  const existingCodes = existingTranslations.map((tr) => tr.locale);
+  const missingLocales = SUPPORTED_LOCALES.filter(
+    (l) => !existingCodes.includes(l.code),
+  );
 
   return (
     <div className="p-3 border-b border-border bg-muted/30 flex items-center gap-2 flex-wrap">
@@ -126,7 +134,6 @@ function EditLocaleTabs({
       {existingTranslations.map((translation) => {
         const meta = SUPPORTED_LOCALES.find((item) => item.code === translation.locale);
         const isActive = translation.locale === selectedLocale;
-
         return (
           <button
             key={translation.locale}
@@ -134,15 +141,40 @@ function EditLocaleTabs({
             title={translation.title}
             className={`px-3 py-1 rounded-full text-xs font-medium transition-colors border ${isActive
               ? 'bg-primary text-primary-foreground border-primary'
-              : 'bg-background text-muted-foreground border-border hover:border-foreground hover:text-foreground'}`}
+              : 'bg-background text-muted-foreground border-border hover:border-foreground hover:text-foreground'
+              }`}
           >
             {meta?.flag} {meta?.shortLabel ?? translation.locale}
           </button>
         );
       })}
       <span className="text-xs text-muted-foreground ml-1">
-        - {t('locale.editing')}: <strong>{SUPPORTED_LOCALES.find((item) => item.code === selectedLocale)?.label}</strong>
+        - {t('locale.editing')}:{' '}
+        <strong>{SUPPORTED_LOCALES.find((item) => item.code === selectedLocale)?.label}</strong>
       </span>
+
+      {/* Toggle de tradução — só aparece se há locales sem tradução */}
+      {missingLocales.length > 0 && (
+        <label className="flex items-center gap-2 cursor-pointer select-none ml-auto">
+          <div
+            onClick={onToggleAI}
+            className={`relative w-9 h-5 rounded-full transition-colors ${translateWithAI ? 'bg-primary' : 'bg-border'
+              }`}
+          >
+            <span
+              className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${translateWithAI ? 'translate-x-4' : ''
+                }`}
+            />
+          </div>
+          <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+          <span className="text-sm text-foreground">{t('locale.translateWithAi')}</span>
+          {translateWithAI && (
+            <span className="text-xs text-muted-foreground">
+              {'-> '}{missingLocales.map((l) => l.flag + ' ' + l.shortLabel).join(', ')}
+            </span>
+          )}
+        </label>
+      )}
     </div>
   );
 }
@@ -202,8 +234,16 @@ export function PostEditor({
         body: JSON.stringify({ filename: file.name, contentType: file.type, kind: 'cover' }),
       });
       if (!presignRes.ok) throw new Error(t('errors.upload'));
+
       const { uploadUrl, publicUrl } = await presignRes.json();
-      await fetch(uploadUrl, { method: 'PUT', body: file, headers: { 'Content-Type': file.type } });
+
+      const uploadRes = await fetch(uploadUrl, {
+        method: 'PUT',
+        body: file,
+        headers: { 'Content-Type': file.type },
+      });
+      if (!uploadRes.ok) throw new Error(`S3 upload failed: ${uploadRes.status}`);
+
       setCoverImageUrl(publicUrl);
     } catch {
       alert(t('errors.upload'));
@@ -222,8 +262,16 @@ export function PostEditor({
         body: JSON.stringify({ filename: file.name, contentType: file.type, kind: 'inline' }),
       });
       if (!presignRes.ok) throw new Error(t('errors.upload'));
+
       const { uploadUrl, publicUrl } = await presignRes.json();
-      await fetch(uploadUrl, { method: 'PUT', body: file, headers: { 'Content-Type': file.type } });
+
+      const uploadRes = await fetch(uploadUrl, {
+        method: 'PUT',
+        body: file,
+        headers: { 'Content-Type': file.type },
+      });
+      if (!uploadRes.ok) throw new Error(`S3 upload failed: ${uploadRes.status}`);
+
       const textarea = textareaRef.current;
       if (textarea) {
         const start = textarea.selectionStart;
@@ -269,7 +317,7 @@ export function PostEditor({
       );
       await onSave({
         locale,
-        translateWithAI: mode === 'new' ? translateWithAI : false,
+        translateWithAI,
         title,
         contentMarkdown,
         coverImageUrl,
@@ -328,6 +376,8 @@ export function PostEditor({
                   existingTranslations={existingTranslations}
                   selectedLocale={selectedLocale ?? locale}
                   onLocaleChange={handleLocaleSelect}
+                  translateWithAI={translateWithAI}
+                  onToggleAI={() => setTranslateWithAI((v) => !v)}
                 />
               )
             )}

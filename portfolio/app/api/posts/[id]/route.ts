@@ -2,6 +2,8 @@
 
 import { prisma } from "@romulo/database";
 
+import { getOtherLocales } from "@/lib/locales";
+import { translatePost } from "@/lib/translate";
 import { isAdminAuthenticated } from "@/lib/auth-helpers";
 import {
   badRequestResponse,
@@ -81,6 +83,7 @@ export async function PATCH(
       canonicalUrl,
       summary,
       readingTime,
+      translateWithAI,
     } = body;
 
     const existingPost = await prisma.post.findUnique({
@@ -92,22 +95,27 @@ export async function PATCH(
       return notFoundResponse(t("posts.notFound"));
     }
 
+    // Build the top-level post update payload (fields shared across all locales)
     const postUpdate: Record<string, unknown> = {};
     if (readingTime !== undefined) postUpdate.readingTime = readingTime ?? 0;
     if (coverImageUrl !== undefined) postUpdate.coverImageUrl = coverImageUrl || null;
     if (youtubeUrl !== undefined) postUpdate.youtubeUrl = youtubeUrl || null;
     if (status !== undefined) {
       postUpdate.status = status;
+      // Stamp publishedAt only on the first DRAFT → PUBLISHED transition
       if (status === "PUBLISHED" && existingPost.status === "DRAFT") {
         postUpdate.publishedAt = new Date();
       }
     }
 
     const existingTranslation = existingPost.translations[0];
+
+    // Regenerate the slug only when the title actually changes
     if (title !== undefined && title !== existingTranslation?.title) {
       postUpdate.slug = await uniqueSlug(slugify(String(title)), params.id);
     }
 
+    // Build the locale-specific translation update payload
     const translationUpdate: Record<string, unknown> = {};
     if (title !== undefined) translationUpdate.title = title;
     if (contentMarkdown !== undefined) {
@@ -117,6 +125,7 @@ export async function PATCH(
     if (summary !== undefined) translationUpdate.summary = summary || null;
     if (canonicalUrl !== undefined) translationUpdate.canonicalUrl = canonicalUrl || null;
 
+    // Persist all core changes atomically: post metadata, translation, and tags
     await prisma.$transaction(async (tx) => {
       if (Object.keys(postUpdate).length > 0) {
         await tx.post.update({ where: { id: params.id }, data: postUpdate });
@@ -129,6 +138,7 @@ export async function PATCH(
             data: translationUpdate,
           });
         } else {
+          // First time saving this locale — create the translation row
           await tx.postTranslation.create({
             data: {
               postId: params.id,
@@ -143,6 +153,7 @@ export async function PATCH(
         }
       }
 
+      // Replace tags wholesale: delete existing ones and re-insert
       if (tags !== undefined) {
         await tx.postTag.deleteMany({ where: { postId: params.id } });
         if (Array.isArray(tags) && tags.length > 0) {
@@ -155,6 +166,50 @@ export async function PATCH(
         }
       }
     });
+
+    // Generate AI translations for any locale that doesn't have one yet.
+    // Runs after the main transaction so a translation failure never rolls
+    // back the user's actual save. allSettled ensures one failure doesn't
+    // cancel the remaining locales.
+    if (translateWithAI && locale && title && contentMarkdown) {
+      const existingLocales = await prisma.postTranslation.findMany({
+        where: { postId: params.id },
+        select: { locale: true },
+      });
+      const existingCodes = new Set(existingLocales.map((tr) => tr.locale));
+      const missingLocales = getOtherLocales(String(locale)).filter(
+        (l) => !existingCodes.has(l.code),
+      );
+
+      await Promise.allSettled(
+        missingLocales.map(async (target) => {
+          try {
+            const result = await translatePost(
+              {
+                title: String(title),
+                contentMarkdown: String(contentMarkdown),
+                summary: typeof summary === "string" ? summary : undefined,
+                excerpt: typeof summary === "string" ? summary : undefined,
+              },
+              String(locale),
+              target.code,
+            );
+            await prisma.postTranslation.create({
+              data: {
+                postId: params.id,
+                locale: target.code,
+                title: result.title,
+                contentMarkdown: result.contentMarkdown,
+                summary: result.summary ?? null,
+                excerpt: result.excerpt ?? null,
+              },
+            });
+          } catch (error) {
+            console.error(`[translate] ${target.code} failed:`, error);
+          }
+        }),
+      );
+    }
 
     const updated = await prisma.post.findUnique({
       where: { id: params.id },

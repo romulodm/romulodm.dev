@@ -34,10 +34,17 @@ export async function generatePresignedUpload(
     ContentType: contentType,
   })
 
-  const uploadUrl = await getSignedUrl(s3Client, command, {
+  const uploadUrlRaw = await getSignedUrl(s3Client, command, {
     expiresIn: 3600,
     unhoistableHeaders: new Set(['x-amz-checksum-crc32', 'x-amz-sdk-checksum-algorithm']),
   })
+
+  // The presigned URL is signed against the internal Docker endpoint —
+  // replace it with the public URL so the browser can reach MinIO directly.
+  // The HMAC signature remains valid because it covers the path and headers,
+  // not the hostname.
+  const internalEndpoint = `http://${process.env.MINIO_ENDPOINT}:${process.env.MINIO_PORT}`
+  const uploadUrl = uploadUrlRaw.replace(internalEndpoint, process.env.MINIO_PUBLIC_URL!)
 
   const publicUrl = `${process.env.MINIO_PUBLIC_URL}/${process.env.MINIO_BUCKET_NAME}/${key}`
 
@@ -55,7 +62,6 @@ export const ALLOWED_IMAGE_TYPES = [
   'image/gif',
   'image/webp',
 ]
-
 
 export const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB
 
