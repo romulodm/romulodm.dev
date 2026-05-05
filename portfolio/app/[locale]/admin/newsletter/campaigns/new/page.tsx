@@ -5,6 +5,26 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { prisma } from "@romulo/database";
 import { isAdminAuthenticated } from "@/lib/auth-helpers";
 import CampaignForm from "../CampaignForm";
+import {
+  campaignTemplate,
+  type BrandConfig,
+} from "@romulo/templates";
+
+// ── Brand config (mirrors the worker / email service) ─────────────────────────
+
+const BRAND: BrandConfig = {
+  name: process.env.NEXT_PUBLIC_APP_NAME ?? "romulodm",
+  baseUrl: process.env.NEXT_PUBLIC_APP_URL ?? "https://romulodm.com.br",
+  accentColor: "#f57842",
+  privacyUrl: `${process.env.NEXT_PUBLIC_APP_URL ?? "https://romulodm.com.br"}/privacy`,
+};
+
+// ── Dummy recipient used for preview only ─────────────────────────────────────
+
+const PREVIEW_RECIPIENT = {
+  displayName: "you",
+  locale: "en" as const,
+};
 
 export default async function NewCampaignPage() {
   const locale = await getLocale();
@@ -19,6 +39,8 @@ export default async function NewCampaignPage() {
       id: true,
       slug: true,
       publishedAt: true,
+      coverImageUrl: true,
+      postTags: { select: { tag: true } },
       translations: {
         where: { locale: "pt" },
         select: { title: true, summary: true },
@@ -26,6 +48,31 @@ export default async function NewCampaignPage() {
       },
     },
   });
+
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://romulodm.com.br";
+
+  // Pre-render one full email HTML per post so the client can display it
+  // without needing to call the server again on select.
+  const previewHtmlMap: Record<string, string> = {};
+  for (const post of publishedPosts) {
+    const title = post.translations[0]?.title ?? "";
+    const summary = post.translations[0]?.summary ?? undefined;
+    const tags = post.postTags.map((t) => t.tag);
+
+    previewHtmlMap[post.id] = campaignTemplate({
+      subject: title,
+      post: {
+        imageUrl: post.coverImageUrl ?? undefined,
+        title,
+        summary,
+        tags,
+        url: `${baseUrl}/${locale}/blog/${post.slug}`,
+      },
+      unsubscribeUrl: `${baseUrl}/newsletter/unsubscribe?token=preview`,
+      brand: BRAND,
+      recipient: PREVIEW_RECIPIENT,
+    });
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -50,7 +97,8 @@ export default async function NewCampaignPage() {
         <div className="bg-white dark:bg-neutral-900 rounded-xl border border-gray-100 dark:border-neutral-800 shadow-sm p-8">
           <CampaignForm
             mode="create"
-            publishedPosts={publishedPosts.map((post: typeof publishedPosts[number]) => ({
+            previewHtmlMap={previewHtmlMap}
+            publishedPosts={publishedPosts.map((post) => ({
               id: post.id,
               slug: post.slug,
               publishedAt: post.publishedAt?.toISOString() ?? null,
