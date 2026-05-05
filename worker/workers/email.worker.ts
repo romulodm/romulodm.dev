@@ -16,6 +16,7 @@ import {
 
 import { emailService } from "../lib/email/email.service";
 import {
+  campaignTemplate,
   confirmationTemplate,
   passwordResetTemplate,
   unsubscribeConfirmTemplate,
@@ -50,9 +51,7 @@ function recipient(data: { displayName: string; locale: string }): RecipientCont
 }
 
 /**
- * Substitui os placeholders no HTML já renderizado pelo campaignTemplate.
- * Os placeholders {{displayName}}, {{unsubscribeUrl}} e {{trackingPixelUrl}}
- * são inseridos pelas rotas da API ao salvar a campanha no banco.
+ * Substitui os placeholders no HTML armazenado (usado apenas para CUSTOM).
  */
 function resolvePlaceholders(
   html: string,
@@ -62,6 +61,77 @@ function resolvePlaceholders(
     .replace(/\{\{displayName\}\}/g, values.displayName)
     .replace(/\{\{unsubscribeUrl\}\}/g, values.unsubscribeUrl)
     .replace(/\{\{trackingPixelUrl\}\}/g, values.trackingPixelUrl);
+}
+
+/**
+ * Para POST_BASED, busca a tradução no idioma do destinatário (com fallback
+ * para "pt") e renderiza o template completo na hora do envio.
+ *
+ * Isso garante que cada destinatário receba o e-mail no seu idioma preferido,
+ * tanto nos textos do template quanto no conteúdo do post.
+ */
+async function renderPostBasedEmail(
+  data: CampaignEmailJob & { postId: string },
+): Promise<string> {
+  const recipientLocale = data.locale ?? "pt";
+
+  const post = await prisma.post.findUnique({
+    where: { id: data.postId },
+    select: {
+      slug: true,
+      coverImageUrl: true,
+      postTags: { select: { tag: true } },
+      translations: {
+        where: { locale: { in: [recipientLocale, "pt"] } },
+        select: { locale: true, title: true, summary: true },
+      },
+    },
+  });
+
+  if (!post) {
+    // Fallback: usa o HTML armazenado com substituição de placeholders
+    console.warn(
+      `[CampaignWorker] Post ${data.postId} not found — falling back to stored content`,
+    );
+    return resolvePlaceholders(data.content, {
+      displayName: data.displayName,
+      unsubscribeUrl: data.unsubscribeUrl,
+      trackingPixelUrl: data.trackingPixelUrl,
+    });
+  }
+
+  // Prefere a tradução no idioma do destinatário, cai em "pt" se não existir
+  const translation =
+    post.translations.find((t) => t.locale === recipientLocale) ??
+    post.translations.find((t) => t.locale === "pt");
+
+  if (!translation) {
+    console.warn(
+      `[CampaignWorker] No translation found for post ${data.postId} (locale: ${recipientLocale}) — falling back to stored content`,
+    );
+    return resolvePlaceholders(data.content, {
+      displayName: data.displayName,
+      unsubscribeUrl: data.unsubscribeUrl,
+      trackingPixelUrl: data.trackingPixelUrl,
+    });
+  }
+
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://romulodm.com.br";
+
+  return campaignTemplate({
+    subject: data.subject,
+    post: {
+      imageUrl: post.coverImageUrl ?? undefined,
+      title: translation.title,
+      summary: translation.summary ?? undefined,
+      tags: post.postTags.map((pt) => pt.tag),
+      url: `${baseUrl}/${recipientLocale}/blog/${post.slug}`,
+    },
+    unsubscribeUrl: data.unsubscribeUrl,
+    trackingPixelUrl: data.trackingPixelUrl,
+    brand: BRAND,
+    recipient: recipient(data),
+  });
 }
 
 // ── Campaign completion ───────────────────────────────────────────────────────
@@ -148,13 +218,20 @@ export async function processCampaignEmailJob(job: CampaignJobContext): Promise<
   const deliveryId = buildCampaignJobId(data);
 
   try {
-    // O content já é o HTML completo gerado pelo campaignTemplate nas rotas.
-    // Apenas substituímos os placeholders com os dados do destinatário.
-    const html = resolvePlaceholders(data.content, {
-      displayName: data.displayName,
-      unsubscribeUrl: data.unsubscribeUrl,
-      trackingPixelUrl: data.trackingPixelUrl,
-    });
+    let html: string;
+
+    if (data.campaignType === "POST_BASED" && data.postId) {
+      // Renderiza o template na hora com a locale do destinatário,
+      // buscando a tradução correta do post no banco.
+      html = await renderPostBasedEmail(data as CampaignEmailJob & { postId: string });
+    } else {
+      // CUSTOM: o HTML já está completo, apenas substitui os placeholders.
+      html = resolvePlaceholders(data.content, {
+        displayName: data.displayName,
+        unsubscribeUrl: data.unsubscribeUrl,
+        trackingPixelUrl: data.trackingPixelUrl,
+      });
+    }
 
     await emailService.send({
       to: data.email,
@@ -175,7 +252,7 @@ export async function processCampaignEmailJob(job: CampaignJobContext): Promise<
       });
     }
 
-    console.log(`[CampaignWorker] Sent to ${data.email} (campaign ${data.campaignId})`);
+    console.log(`[CampaignWorker] Sent to ${data.email} (campaign ${data.campaignId}, locale: ${data.locale})`);
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Unknown error";
 
