@@ -8,6 +8,7 @@ export type {
   PasswordResetTemplateOptions,
   PostMeta,
   CampaignTemplateOptions,
+  DigestTemplateOptions,
 } from "./types";
 
 // ─── i18n ─────────────────────────────────────────────────────────────────────
@@ -15,11 +16,12 @@ export type { EmailLocale } from "./i18n";
 export { resolveLocale, getStrings, SUPPORTED_LOCALES } from "./i18n";
 
 // ─── Templates ────────────────────────────────────────────────────────────────
-export { confirmationTemplate } from "./templates/confirmation";
-export { welcomeTemplate } from "./templates/welcome";
-export { unsubscribeConfirmTemplate } from "./templates/unsubscribe";
-export { passwordResetTemplate } from "./templates/password-reset";
-export { campaignTemplate } from "./templates/campaign";
+export { confirmationTemplate } from "./templates/confirmation.template";
+export { welcomeTemplate } from "./templates/welcome.template";
+export { unsubscribeConfirmTemplate } from "./templates/unsubscribe.template";
+export { passwordResetTemplate } from "./templates/password-reset.template";
+export { campaignTemplate } from "./templates/campaign.template";
+export { digestTemplate } from "./templates/digest.template";
 
 // ─── Utilities ────────────────────────────────────────────────────────────────
 export { logoImg } from "./logo";

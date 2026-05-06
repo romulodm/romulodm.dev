@@ -28,6 +28,14 @@ export interface RecipientContext {
   locale?: EmailLocale;
 }
 
+export type DigestPost = {
+  title: string;
+  summary?: string;
+  tags?: string[];
+  imageUrl?: string;
+  url: string;
+};
+
 // ─── Template option bags ─────────────────────────────────────────────────────
 
 export interface ConfirmationTemplateOptions {
@@ -73,3 +81,12 @@ export interface CampaignTemplateOptions {
   brand: BrandConfig;
   recipient: RecipientContext;
 }
+
+export type DigestTemplateOptions = {
+  subject: string;
+  posts: DigestPost[];
+  unsubscribeUrl: string;
+  trackingPixelUrl?: string;
+  brand: BrandConfig;
+  recipient: RecipientContext;
+};
