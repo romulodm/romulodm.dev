@@ -69,6 +69,7 @@ model Post {
   postTags           PostTag[]
   translations       PostTranslation[]
   suspiciousComments SuspiciousComment[]
+  campaignPosts      CampaignPost[]
 
   @@index([status, publishedAt])
   @@index([status, likes, publishedAt])
@@ -210,6 +211,7 @@ model Campaign {
   type            CampaignType        @default(CUSTOM)
   post            Post?               @relation(fields: [postId], references: [id])
   recipients      CampaignRecipient[]
+  campaignPosts   CampaignPost[]
 
   @@index([status, scheduledAt])
   @@index([postId])
@@ -235,6 +237,19 @@ model CampaignRecipient {
   @@index([campaignId, status])
   @@index([subscriberId])
   @@index([trackingId])
+}
+
+model CampaignPost {
+  id         String @id @default(cuid())
+  campaignId String
+  postId     String
+  order      Int    @default(0)
+
+  campaign Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  post     Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([campaignId, postId])
+  @@index([campaignId, order])
 }
 
 model Donation {
@@ -323,6 +338,7 @@ enum CampaignStatus {
 enum CampaignType {
   POST_BASED
   CUSTOM
+  DIGEST
 }
 
 enum DonationProvider {
