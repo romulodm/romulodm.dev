@@ -30,8 +30,9 @@ export type TransactionalEmailJob =
     };
 
 export interface CampaignEmailJob {
-    campaignType: 'POST_BASED' | 'CUSTOM'
+    campaignType: "POST_BASED" | "CUSTOM" | "DIGEST";
     postId: string | null;
+    postIds?: string[];
     campaignId: string;
     recipientId: string;
     trackingId: string;
