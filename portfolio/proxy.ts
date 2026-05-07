@@ -9,21 +9,11 @@ const intl = createIntlMiddleware({
 });
 
 export default async function proxy(req: NextRequest) {
-    // 1) i18n primeiro: garante /pt e /en
-    const intlResponse = intl(req);
-    if (intlResponse) return intlResponse;
-
-    return NextResponse.next();
+    return intl(req); // retorna direto, sem o if
 }
 
 export const config = {
     matcher: [
-        "/((?!api|_next|.*\\..*|_next/static|_next/image|favicon.ico).*)", // Exclui API, arquivos estáticos e outros
+        "/((?!api|_next|.*\\..*|_next/static|_next/image|favicon.ico).*)",
     ],
 };
-
-/*
-export const config = {
-    matcher: ["/((?!api|_next|.*\\..*).*)"],
-};
-*/
