@@ -32,7 +32,7 @@ const BRAND: BrandConfig = {
 
 function createCampaignSchema(t: Awaited<ReturnType<typeof getApiTranslator>>) {
   return z.object({
-    type: z.enum(["POST_BASED", "CUSTOM"]).optional().default("CUSTOM"),
+    type: z.enum(["POST_BASED", "CUSTOM", "DIGEST"]).optional().default("CUSTOM"),
     subject: z
       .string()
       .transform((value) => sanitizePlainText(value, 160))
@@ -48,6 +48,7 @@ function createCampaignSchema(t: Awaited<ReturnType<typeof getApiTranslator>>) {
         value === undefined ? undefined : sanitizeNewsletterHtml(value, 50000),
       ),
     postId: z.string().trim().optional(),
+    postIds: z.array(z.string().trim()).optional(),
   });
 }
 
@@ -66,6 +67,46 @@ export async function POST(req: NextRequest) {
       fallbackMessage: t("common.invalidRequest"),
     });
 
+    // ── DIGEST ──────────────────────────────────────────────────────────────
+    if (body.type === "DIGEST") {
+      if (!body.postIds || body.postIds.length < 2) {
+        throw new RequestValidationError(
+          t("admin.newsletterCampaigns.digestMinPosts"),
+        );
+      }
+
+      // Valida que todos os posts existem e estão publicados
+      const posts = await prisma.post.findMany({
+        where: { id: { in: body.postIds }, status: "PUBLISHED" },
+        select: { id: true },
+      });
+
+      if (posts.length !== body.postIds.length) {
+        throw new RequestValidationError(
+          t("admin.newsletterCampaigns.digestInvalidPosts"),
+        );
+      }
+
+      const campaign = await prisma.campaign.create({
+        data: {
+          type: "DIGEST",
+          subject: body.subject,
+          previewText: body.previewText,
+          // O worker renderiza o template por destinatário na hora do envio,
+          // assim como faz com POST_BASED. Não há HTML pré-gerado aqui.
+          content: "",
+          status: "DRAFT",
+          // Persiste a ordem escolhida pelo admin via tabela de relação
+          campaignPosts: {
+            create: body.postIds.map((postId, order) => ({ postId, order })),
+          },
+        },
+      });
+
+      return NextResponse.json(campaign, { status: 201 });
+    }
+
+    // ── POST_BASED ───────────────────────────────────────────────────────────
     if (body.type === "POST_BASED") {
       if (!body.postId) {
         throw new RequestValidationError(t("admin.newsletterCampaigns.postIdRequired"));
@@ -131,6 +172,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(campaign, { status: 201 });
     }
 
+    // ── CUSTOM ───────────────────────────────────────────────────────────────
     if (!body.content) {
       throw new RequestValidationError(
         t("admin.newsletterCampaigns.customContentRequired"),
