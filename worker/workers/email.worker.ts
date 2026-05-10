@@ -18,6 +18,7 @@ import { emailService } from "../lib/email/email.service";
 import {
   campaignTemplate,
   confirmationTemplate,
+  digestTemplate,
   passwordResetTemplate,
   unsubscribeConfirmTemplate,
   welcomeTemplate,
@@ -61,6 +62,61 @@ function resolvePlaceholders(
     .replace(/\{\{displayName\}\}/g, values.displayName)
     .replace(/\{\{unsubscribeUrl\}\}/g, values.unsubscribeUrl)
     .replace(/\{\{trackingPixelUrl\}\}/g, values.trackingPixelUrl);
+}
+
+async function renderDigestEmail(
+  data: CampaignEmailJob & { postIds: string[] }
+): Promise<string> {
+  const locale = data.locale ?? "pt"
+
+  console.log(`[Worker] renderDigestEmail postIds=`, data.postIds);
+
+
+  const posts = await prisma.post.findMany({
+    where: { id: { in: data.postIds } },
+    select: {
+      id: true,
+      slug: true,
+      coverImageUrl: true,
+      postTags: { select: { tag: true } },
+      translations: {
+        where: { locale: { in: [locale, "pt"] } },
+        select: { locale: true, title: true, summary: true },
+      },
+    },
+  })
+
+  // Mantém a ordem original definida no admin
+  const ordered = data.postIds
+    .map((id) => posts.find((p) => p.id === id))
+    .filter(Boolean) as typeof posts
+
+  console.log(`[Worker] posts found=`, posts.length, `ordered=`, ordered.length);
+
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? ""
+
+  const digestPosts = ordered.map((post) => {
+    const translation =
+      post.translations.find((t) => t.locale === locale) ??
+      post.translations.find((t) => t.locale === "pt")
+
+    return {
+      title: translation?.title ?? "",
+      summary: translation?.summary ?? undefined,
+      tags: post.postTags.map((t) => t.tag),
+      imageUrl: post.coverImageUrl ?? undefined,
+      url: `${baseUrl}/${locale}/blog/${post.slug}`,
+    }
+  })
+
+  return digestTemplate({
+    subject: data.subject,
+    posts: digestPosts,
+    unsubscribeUrl: data.unsubscribeUrl,
+    trackingPixelUrl: data.trackingPixelUrl,
+    brand: BRAND,
+    recipient: recipient(data),
+  })
 }
 
 /**
@@ -220,12 +276,11 @@ export async function processCampaignEmailJob(job: CampaignJobContext): Promise<
   try {
     let html: string;
 
-    if (data.campaignType === "POST_BASED" && data.postId) {
-      // Renderiza o template na hora com a locale do destinatário,
-      // buscando a tradução correta do post no banco.
-      html = await renderPostBasedEmail(data as CampaignEmailJob & { postId: string });
+    if (data.campaignType === "DIGEST" && data.postIds?.length) {
+      html = await renderDigestEmail(data as CampaignEmailJob & { postIds: string[] })
+    } else if (data.campaignType === "POST_BASED" && data.postId) {
+      html = await renderPostBasedEmail(data as CampaignEmailJob & { postId: string })
     } else {
-      // CUSTOM: o HTML já está completo, apenas substitui os placeholders.
       html = resolvePlaceholders(data.content, {
         displayName: data.displayName,
         unsubscribeUrl: data.unsubscribeUrl,
