@@ -4,7 +4,7 @@ import { ArrowLeft } from "lucide-react";
 import { getLocale, getTranslations } from "next-intl/server";
 import { prisma } from "@romulo/database";
 import { isAdminAuthenticated } from "@/lib/auth-helpers";
-import CampaignForm from "../CampaignForm";
+import CampaignForm from "./CampaignForm";
 import {
   campaignTemplate,
   type BrandConfig,

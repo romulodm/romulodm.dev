@@ -8,9 +8,11 @@ import {
     unsubscribeConfirmTemplate,
     passwordResetTemplate,
     campaignTemplate,
+    digestTemplate,
     type BrandConfig,
     type RecipientContext,
 } from "@romulo/templates";
+import { InteractiveCustomPreviewCard } from "./InteractiveCustomPreviewCard";
 
 // ─── Brand config ─────────────────────────────────────────────────────────────
 
@@ -43,6 +45,7 @@ function buildPreviews() {
                 brand: BRAND,
                 recipient: PREVIEW_RECIPIENT,
             }),
+            interactive: false,
         },
         {
             id: "welcome",
@@ -53,6 +56,7 @@ function buildPreviews() {
                 brand: BRAND,
                 recipient: PREVIEW_RECIPIENT,
             }),
+            interactive: false,
         },
         {
             id: "unsubscribe",
@@ -63,6 +67,7 @@ function buildPreviews() {
                 brand: BRAND,
                 recipient: PREVIEW_RECIPIENT,
             }),
+            interactive: false,
         },
         {
             id: "password-reset",
@@ -74,10 +79,11 @@ function buildPreviews() {
                 brand: BRAND,
                 recipient: PREVIEW_RECIPIENT,
             }),
+            interactive: false,
         },
         {
             id: "campaign-post",
-            label: "Newsletter — Post",
+            label: "Newsletter — Post único",
             description: "Campanha baseada em artigo do blog, com imagem, tags e resumo.",
             html: campaignTemplate({
                 subject: "Por que Todo Dev Deveria Aprender os Fundamentos de Redes",
@@ -94,11 +100,45 @@ function buildPreviews() {
                 brand: BRAND,
                 recipient: PREVIEW_RECIPIENT,
             }),
+            interactive: false,
+        },
+        {
+            id: "campaign-digest",
+            label: "Newsletter — Digest (múltiplos posts)",
+            description: "Compilado semanal/quinzenal com vários artigos em um só e-mail.",
+            html: digestTemplate({
+                subject: "Novidades de maio — 3 artigos para você",
+                posts: [
+                    {
+                        title: "Por que Todo Dev Deveria Aprender os Fundamentos de Redes",
+                        summary: "Você já passou horas depurando um bug que, no fim, era só um problema de CORS?",
+                        tags: ["redes", "backend"],
+                        imageUrl: "https://romulodm.com.br/og/redes.png",
+                        url: `${base}/pt/blog/fundamentos-de-redes`,
+                    },
+                    {
+                        title: "TypeScript: Tipos Condicionais na Prática",
+                        summary: "Como usar infer, extends e tipos condicionais para escrever código mais expressivo.",
+                        tags: ["typescript"],
+                        url: `${base}/pt/blog/typescript-tipos-condicionais`,
+                    },
+                    {
+                        title: "Clean Architecture em Node.js sem Complicar",
+                        summary: "Uma abordagem pragmática para separar responsabilidades sem criar burocracia desnecessária.",
+                        tags: ["arquitetura", "nodejs"],
+                        url: `${base}/pt/blog/clean-architecture-nodejs`,
+                    },
+                ],
+                unsubscribeUrl: `${base}/newsletter/unsubscribe?token=abc123`,
+                brand: BRAND,
+                recipient: PREVIEW_RECIPIENT,
+            }),
+            interactive: false,
         },
         {
             id: "campaign-custom",
             label: "Newsletter — HTML personalizado",
-            description: "Campanha com conteúdo HTML livre para envios especiais.",
+            description: "Campanha com conteúdo HTML livre. Use o editor abaixo para visualizar o seu HTML em tempo real.",
             html: campaignTemplate({
                 subject: "Novidades de Maio 🌱",
                 content: `
@@ -119,6 +159,7 @@ function buildPreviews() {
                 brand: BRAND,
                 recipient: PREVIEW_RECIPIENT,
             }),
+            interactive: true, // ← habilita o editor ao vivo
         },
     ] as const;
 }
@@ -141,15 +182,19 @@ export default async function EmailTemplatesPage() {
             </div>
 
             <div className="space-y-10">
-                {previews.map((preview) => (
-                    <TemplatePreviewCard key={preview.id} {...preview} />
-                ))}
+                {previews.map((preview) =>
+                    preview.interactive ? (
+                        <InteractiveCustomPreviewCard key={preview.id} {...preview} />
+                    ) : (
+                        <TemplatePreviewCard key={preview.id} {...preview} />
+                    ),
+                )}
             </div>
         </main>
     );
 }
 
-// ─── Card ─────────────────────────────────────────────────────────────────────
+// ─── Static preview card ──────────────────────────────────────────────────────
 
 function TemplatePreviewCard({
     id,

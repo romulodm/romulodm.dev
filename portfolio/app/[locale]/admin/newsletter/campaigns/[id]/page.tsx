@@ -13,7 +13,7 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { prisma } from "@romulo/database";
 import { isAdminAuthenticated } from "@/lib/auth-helpers";
 import { getIntlLocaleCode } from "@/lib/locales";
-import CampaignForm from "../CampaignForm";
+import CampaignForm from "../new/CampaignForm";
 import DeleteCampaignButton from "./DeleteCampaignButton";
 
 const STATUS_CLASSES: Record<string, string> = {
@@ -65,6 +65,10 @@ export default async function CampaignDetailPage(props: {
               take: 1,
             },
           },
+        },
+        campaignPosts: {
+          orderBy: { order: "asc" },
+          select: { postId: true },
         },
       },
     }),
@@ -269,11 +273,12 @@ export default async function CampaignDetailPage(props: {
             mode="edit"
             campaign={{
               id: campaign.id,
-              type: campaign.type as "POST_BASED" | "CUSTOM",
+              type: campaign.type as "POST_BASED" | "CUSTOM" | "DIGEST",
               subject: campaign.subject,
               previewText: campaign.previewText ?? undefined,
               content: campaign.content,
               postId: campaign.postId,
+              postIds: campaign.campaignPosts.map((cp) => cp.postId),
             }}
             publishedPosts={publishedPosts.map((post: typeof publishedPosts[number]) => ({
               id: post.id,
