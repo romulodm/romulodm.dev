@@ -24,19 +24,10 @@ function trackingPixelUrl(trackingId: string) {
   return `${process.env.NEXT_PUBLIC_APP_URL}/api/newsletter/track/${trackingId}`;
 }
 
-/**
- * Returns the display name and preferred locale for an email address.
- *
- * Priority:
- *  1. Linked User account → username + user-level locale preference
- *  2. Existing subscriber row → stored preferredLocale, capitalised email prefix
- *  3. Fallback → capitalised email prefix + "en"
- */
 async function resolveRecipientContext(
   email: string,
   subscriber?: { preferredLocale: string; userId: string | null } | null,
 ): Promise<{ displayName: string; locale: string }> {
-  // If the subscriber is already linked to a user, use the username
   const userId = subscriber?.userId;
   if (userId) {
     const user = await prisma.user.findUnique({
@@ -51,21 +42,19 @@ async function resolveRecipientContext(
     }
   }
 
-  // Try to look up a user with the same email (not yet linked)
   const user = await prisma.user.findUnique({
     where: { email },
     select: { id: true, username: true },
   });
 
   if (user) {
-    // Opportunistically link the subscriber to this user
     if (subscriber && !subscriber.userId) {
       await prisma.newsletterSubscriber
         .update({
           where: { email },
           data: { userId: user.id },
         })
-        .catch(() => void 0); // non-critical, ignore errors
+        .catch(() => void 0);
     }
     return {
       displayName: user.username,
@@ -147,7 +136,6 @@ export async function confirmSubscription(token: string) {
 
   if (!subscriber) return { status: "invalid_token" as const };
 
-  // ── Link to User account with the same email (if not already linked) ────────
   let resolvedUserId: string | null = subscriber.userId;
   if (!resolvedUserId) {
     const user = await prisma.user.findUnique({
@@ -164,7 +152,6 @@ export async function confirmSubscription(token: string) {
       subscribedAt: new Date(),
       confirmationToken: null,
       confirmationExpires: null,
-      // Persist the link — no-op if already set or no account found
       ...(resolvedUserId ? { userId: resolvedUserId } : {}),
     },
   });
@@ -227,7 +214,6 @@ export async function confirmUnsubscribe(token: string) {
     where: { id: subscriber.id },
     data: {
       unsubscribedAt: new Date(),
-      // ── Unlink the User account — subscriber is no longer active ────────────
       userId: null,
     },
   });
@@ -238,10 +224,23 @@ export async function confirmUnsubscribe(token: string) {
 // ── Dispatch Campaign ─────────────────────────────────────────────────────────
 
 export async function dispatchCampaign(campaignId: string, scheduledAt?: Date) {
-  const campaign = await prisma.campaign.findUnique({ where: { id: campaignId } });
+  // Inclui campaignPosts para campanhas do tipo DIGEST
+  const campaign = await prisma.campaign.findUnique({
+    where: { id: campaignId },
+    include: {
+      campaignPosts: {
+        orderBy: { order: "asc" },
+        select: { postId: true },
+      },
+    },
+  });
+
   if (!campaign) throw new Error("Campaign not found");
   if (campaign.status === "SENT") throw new Error("Campaign already sent.");
   if (campaign.status === "SENDING") throw new Error("Campaign is already being sent.");
+
+  const postIds = campaign.campaignPosts.map((cp) => cp.postId);
+  console.log(`[Dispatch] campaign ${campaignId} type=${campaign.type} postIds=`, postIds);
 
   const subscribers = await prisma.newsletterSubscriber.findMany({
     where: { isConfirmed: true, unsubscribedAt: null },
@@ -288,7 +287,7 @@ export async function dispatchCampaign(campaignId: string, scheduledAt?: Date) {
 
   // Batch-resolve usernames for linked accounts
   const userIds = recipients.flatMap((r) =>
-    r.subscriber.userId ? [r.subscriber.userId] : []
+    r.subscriber.userId ? [r.subscriber.userId] : [],
   );
 
   const usersMap = new Map<string, string>();
@@ -311,6 +310,7 @@ export async function dispatchCampaign(campaignId: string, scheduledAt?: Date) {
         campaignId,
         campaignType: campaign.type,
         postId: campaign.postId,
+        postIds,                              // ← passado para DIGEST; vazio para outros tipos
         recipientId: r.id,
         trackingId: r.trackingId,
         email: sub.email,
