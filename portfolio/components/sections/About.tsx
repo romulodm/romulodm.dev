@@ -2,10 +2,11 @@
 
 import Image from "next/image";
 
-import team1 from "@/public/assets/team-1.jpg";
-import team2 from "@/public/assets/team-2.jpg";
-import team3 from "@/public/assets/team-3.jpg";
-import team4 from "@/public/assets/team-4.jpg";
+import pic_1 from "@/public/assets/formatura.png";
+import pic_2 from "@/public/assets/work.png";
+import pic_3 from "@/public/assets/curso.png";
+import pic_4 from "@/public/assets/cristo.png";
+import pic_5 from "@/public/assets/evento_3.png";
 import { RefObject, useEffect, useRef, useState } from "react";
 import { ArrowRight, Github, Mail, MapPin } from "lucide-react";
 
@@ -63,7 +64,7 @@ const About: React.FC = () => {
                     About us
                 </p>
                 <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground leading-[1.1] max-w-2xl">
-                    On a mission to empower remote teams
+                    On a mission to empower remote pic_s
                 </h1>
                 <p className="mt-6 text-lg text-muted-foreground max-w-2xl leading-relaxed">
                     Aliquet nec orci mattis amet quisque ullamcorper neque, nibh sem. At
@@ -148,46 +149,46 @@ const About: React.FC = () => {
                 </div>
 
                 <div className="grid grid-cols-5 grid-rows-8 gap-3 md:-mt-20 h-[700px] lg:h-[820px]">
-                    {/* team2 — top right */}
+                    {/* pic_2 — top right */}
                     <div className="col-start-4 col-span-2 row-start-1 row-span-2 rounded-2xl overflow-hidden">
                         <Image
-                            src={team2}
-                            alt="Team whiteboard session"
+                            src={pic_2}
+                            alt="pic_ whiteboard session"
                             className="w-full h-full object-cover"
                         />
                     </div>
 
-                    {/* team1 — middle left (tall) */}
+                    {/* pic_1 — middle left (tall) */}
                     <div className="col-start-1 col-span-3 row-start-2 row-span-3 rounded-2xl overflow-hidden">
                         <Image
-                            src={team1}
-                            alt="Team collaboration"
+                            src={pic_1}
+                            alt="pic_ collaboration"
                             className="w-full h-full object-cover"
                         />
                     </div>
 
-                    {/* team4 — middle right */}
+                    {/* pic_4 — middle right */}
                     <div className="col-start-4 col-span-2 row-start-3 row-span-3 rounded-2xl overflow-hidden">
                         <Image
-                            src={team4}
-                            alt="Team member"
+                            src={pic_4}
+                            alt="pic_ member"
                             className="w-full h-full object-cover"
                         />
                     </div>
 
-                    {/* team3 — bottom left */}
+                    {/* pic_3 — bottom left */}
                     <div className="col-start-1 col-span-3 row-start-5 row-span-2 rounded-2xl overflow-hidden">
                         <Image
-                            src={team3}
+                            src={pic_3}
                             alt="Coworking space"
                             className="w-full h-full object-cover"
                         />
                     </div>
 
-                    {/* team1 (nova) — bottom right, logo abaixo de team4 */}
+                    {/* pic_5 (nova) — bottom right, logo abaixo de pic_4 */}
                     <div className="col-start-4 col-span-2 row-start-6 row-span-2 rounded-2xl overflow-hidden">
                         <Image
-                            src={team1}
+                            src={pic_5}
                             alt="Nova imagem"
                             className="w-full h-full object-cover"
                         />
