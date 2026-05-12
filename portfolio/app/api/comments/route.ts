@@ -15,11 +15,10 @@ import {
     parseJsonBodyWithMessages,
     sanitizeMultilineText,
 } from "@/lib/api-validation";
-import { notificationQueue } from '@/lib/queues/notification.queue';
+import { enqueueNotification } from '@/lib/queues/notification.queue';
 import { moderate } from '@/lib/moderation';
 import { getRequestIp, rateLimit } from '@/lib/rate-limit';
-import { buildNotificationJobId, notificationJobOptions } from "@romulo/queues";
-import { getApiTranslator } from '@/lib/api-intl'
+import { getApiTranslator } from '@/lib/api-intl';
 
 function createCommentSchema(t: Awaited<ReturnType<typeof getApiTranslator>>) {
     return z.object({
@@ -34,7 +33,7 @@ function createCommentSchema(t: Awaited<ReturnType<typeof getApiTranslator>>) {
 }
 
 export async function GET(req: NextRequest) {
-    const t = await getApiTranslator(req)
+    const t = await getApiTranslator(req);
     const { searchParams } = new URL(req.url);
     const postId = searchParams.get('postId');
     const sortBy = searchParams.get('sortBy') || 'score';
@@ -51,36 +50,21 @@ export async function GET(req: NextRequest) {
         : [{ createdAt: 'desc' as const }];
 
     const comments = await prisma.comment.findMany({
-        where: {
-            postId,
-            parentId: null,
-        },
+        where: { postId, parentId: null },
         orderBy,
         skip,
         take: limit,
         include: {
-            author: {
-                select: { id: true, username: true },
-            },
-            votes: {
-                select: { value: true },
-            },
+            author: { select: { id: true, username: true } },
+            votes: { select: { value: true } },
             replies: {
                 include: {
-                    author: {
-                        select: { id: true, username: true },
-                    },
-                    votes: {
-                        select: { value: true },
-                    },
+                    author: { select: { id: true, username: true } },
+                    votes: { select: { value: true } },
                     replies: {
                         include: {
-                            author: {
-                                select: { id: true, username: true },
-                            },
-                            votes: {
-                                select: { value: true },
-                            },
+                            author: { select: { id: true, username: true } },
+                            votes: { select: { value: true } },
                             replies: true,
                         },
                     },
@@ -105,7 +89,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-    const t = await getApiTranslator(request)
+    const t = await getApiTranslator(request);
     const auth = await requireAuth();
     if (!auth.ok) {
         return unauthorizedResponse(t('common.unauthorized'));
@@ -140,9 +124,7 @@ export async function POST(request: NextRequest) {
             select: {
                 id: true,
                 slug: true,
-                translations: {
-                    select: { title: true, locale: true },
-                },
+                translations: { select: { title: true, locale: true } },
             },
         });
         if (!post) {
@@ -163,52 +145,34 @@ export async function POST(request: NextRequest) {
 
         if (!allowed) {
             await prisma.suspiciousComment.create({
-                data: {
-                    postId,
-                    parentId,
-                    authorId: auth.user.id,
-                    bodyMd,
-                    reason,
-                },
+                data: { postId, parentId, authorId: auth.user.id, bodyMd, reason },
             });
-
             return NextResponse.json(
                 { id: "pending", bodyMd, pending: true },
-                { status: 201 }
+                { status: 201 },
             );
         }
 
         const comment = await prisma.$transaction(async (tx) => {
             const created = await tx.comment.create({
-                data: {
-                    postId,
-                    parentId,
-                    authorId: auth.user.id,
-                    bodyMd,
-                },
+                data: { postId, parentId, authorId: auth.user.id, bodyMd },
                 include: {
                     author: { select: { id: true, username: true, image: true } },
                 },
             });
-
             await tx.post.update({
                 where: { id: postId },
                 data: { commentsCount: { increment: 1 } },
             });
-
             return created;
         });
 
-        const notificationJob = {
-            type: 'comment' as const,
+        const job = await enqueueNotification({
+            type: 'comment',
             id: comment.id,
             author: comment.author.username,
             postTitle: post.translations[0]?.title ?? post.slug,
             postSlug: post.slug,
-        };
-        const job = await notificationQueue.add('comment', notificationJob, {
-            ...notificationJobOptions,
-            jobId: buildNotificationJobId(notificationJob),
         });
         console.log(`[Queue] Job publicado: ${job.id}`);
 
@@ -217,7 +181,6 @@ export async function POST(request: NextRequest) {
         if (error instanceof z.ZodError || error instanceof RequestValidationError) {
             return validationErrorResponse(error, t('common.invalidRequest'));
         }
-
         return internalErrorResponse("comments-create", error, t('common.internalError'));
     }
 }
