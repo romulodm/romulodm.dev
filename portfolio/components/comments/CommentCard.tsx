@@ -6,7 +6,7 @@ import Link from "next/link";
 import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useSession } from "next-auth/react";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 import { CommentComposer } from "@/components/comments/CommentComposer";
 import { DeleteCommentModal } from "@/components/comments/DeleteCommentModal";
 import { MarkdownEditor } from "@/components/comments/MarkdownEditor";
@@ -60,9 +60,7 @@ function CommentBody({ markdown }: { markdown: string }) {
     }
 
     render();
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, [markdown]);
 
   if (!html) {
@@ -228,10 +226,16 @@ export function CommentCard({
     try {
       await navigator.clipboard.writeText(url);
     } catch {
-      // Ignore clipboard failures and still show the feedback URL below.
+      // ignore
     }
 
-    toast.success(t("linkCopied"), { description: url });
+    // react-toastify doesn't have description prop — render JSX instead
+    toast.success(
+      <div>
+        <p style={{ fontWeight: 600, marginBottom: 2 }}>{t("linkCopied")}</p>
+        <p style={{ fontSize: 12, opacity: 0.75, wordBreak: "break-all" }}>{url}</p>
+      </div>
+    );
   }
 
   if (collapsed) {
@@ -284,23 +288,9 @@ export function CommentCard({
             </Link>
 
             <div className="hidden sm:flex flex-col items-center mt-0.5">
-              <VoteButton
-                direction="up"
-                active={optimisticVote === 1}
-                disabled={isPending}
-                onClick={() => handleVote(1)}
-                title={t("vote.up")}
-              />
-              <span className={`text-xs font-mono font-semibold leading-none my-0.5 ${scoreColor}`}>
-                {optimisticScore}
-              </span>
-              <VoteButton
-                direction="down"
-                active={optimisticVote === -1}
-                disabled={isPending}
-                onClick={() => handleVote(-1)}
-                title={t("vote.down")}
-              />
+              <VoteButton direction="up" active={optimisticVote === 1} disabled={isPending} onClick={() => handleVote(1)} title={t("vote.up")} />
+              <span className={`text-xs font-mono font-semibold leading-none my-0.5 ${scoreColor}`}>{optimisticScore}</span>
+              <VoteButton direction="down" active={optimisticVote === -1} disabled={isPending} onClick={() => handleVote(-1)} title={t("vote.down")} />
             </div>
 
             <div
@@ -377,11 +367,7 @@ export function CommentCard({
               <InlineEditor
                 commentId={comment.id}
                 initialBody={localBody}
-                onSave={(newBody) => {
-                  setLocalBody(newBody);
-                  setIsEdited(true);
-                  setEditing(false);
-                }}
+                onSave={(newBody) => { setLocalBody(newBody); setIsEdited(true); setEditing(false); }}
                 onCancel={() => setEditing(false)}
               />
             ) : (
@@ -391,23 +377,9 @@ export function CommentCard({
             {!editing && (
               <div className="flex items-center sm:gap-1 mt-2 flex-wrap">
                 <div className="flex sm:hidden items-center gap-0.5 mr-2">
-                  <VoteButton
-                    direction="up"
-                    active={optimisticVote === 1}
-                    disabled={isPending}
-                    onClick={() => handleVote(1)}
-                    title={t("vote.up")}
-                  />
-                  <span className={`text-xs font-mono font-semibold min-w-[1.5ch] text-center ${scoreColor}`}>
-                    {optimisticScore}
-                  </span>
-                  <VoteButton
-                    direction="down"
-                    active={optimisticVote === -1}
-                    disabled={isPending}
-                    onClick={() => handleVote(-1)}
-                    title={t("vote.down")}
-                  />
+                  <VoteButton direction="up" active={optimisticVote === 1} disabled={isPending} onClick={() => handleVote(1)} title={t("vote.up")} />
+                  <span className={`text-xs font-mono font-semibold min-w-[1.5ch] text-center ${scoreColor}`}>{optimisticScore}</span>
+                  <VoteButton direction="down" active={optimisticVote === -1} disabled={isPending} onClick={() => handleVote(-1)} title={t("vote.down")} />
                 </div>
 
                 {depth < maxDepth && (
@@ -436,10 +408,7 @@ export function CommentCard({
                   postId={postId}
                   parentId={comment.id}
                   autoFocus
-                  onSuccess={() => {
-                    setReplying(false);
-                    onReplySuccess?.();
-                  }}
+                  onSuccess={() => { setReplying(false); onReplySuccess?.(); }}
                   onCancel={() => setReplying(false)}
                 />
               </div>
@@ -461,30 +430,16 @@ export function CommentCard({
   );
 }
 
-function VoteButton({
-  direction,
-  active,
-  disabled,
-  onClick,
-  title,
-}: {
-  direction: "up" | "down";
-  active: boolean;
-  disabled: boolean;
-  onClick: () => void;
-  title: string;
+function VoteButton({ direction, active, disabled, onClick, title }: {
+  direction: "up" | "down"; active: boolean; disabled: boolean; onClick: () => void; title: string;
 }) {
   const activeColor = direction === "up" ? "text-primary" : "text-blue-500";
   const hoverColor = direction === "up" ? "hover:text-primary" : "hover:text-blue-500";
   const path = direction === "up" ? "M5 15l7-7 7 7" : "M19 9l-7 7-7-7";
 
   return (
-    <button
-      onClick={onClick}
-      disabled={disabled}
-      title={title}
-      className={`w-6 h-6 flex items-center justify-center rounded transition-colors ${active ? activeColor : `text-muted-foreground ${hoverColor}`}`}
-    >
+    <button onClick={onClick} disabled={disabled} title={title}
+      className={`w-6 h-6 flex items-center justify-center rounded transition-colors ${active ? activeColor : `text-muted-foreground ${hoverColor}`}`}>
       <svg className="w-3.5 h-3.5" fill={active ? "currentColor" : "none"} viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
         <path strokeLinecap="round" strokeLinejoin="round" d={path} />
       </svg>
@@ -497,11 +452,7 @@ function countReplies(comment: CommentData): number {
   return comment.replies.length + comment.replies.reduce((total, reply) => total + countReplies(reply), 0);
 }
 
-function formatTimeAgo(
-  date: Date,
-  localeCode: string,
-  t: (key: string, values?: Record<string, string | number>) => string,
-): string {
+function formatTimeAgo(date: Date, localeCode: string, t: (key: string, values?: Record<string, string | number>) => string): string {
   const diff = Math.floor((Date.now() - date.getTime()) / 1000);
 
   if (diff < 60) return t("time.now");
@@ -509,9 +460,10 @@ function formatTimeAgo(
   if (diff < 86400) return t("time.hours", { count: Math.floor(diff / 3600) });
   if (diff < 2_592_000) return t("time.days", { count: Math.floor(diff / 86400) });
 
-  return new Intl.DateTimeFormat(localeCode, {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  }).format(date);
+  return new Intl.DateTimeFormat(localeCode,
+    {
+      day: "numeric",
+      month: "short",
+      year: "numeric"
+    }).format(date);
 }

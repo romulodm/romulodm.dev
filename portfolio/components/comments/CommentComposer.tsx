@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react';
 import { useSession } from 'next-auth/react';
-import { toast } from 'sonner';
+import { toast } from 'react-toastify';
 import { useTranslations } from 'next-intl';
 
 import { MarkdownEditor } from '@/components/comments/MarkdownEditor';
@@ -58,15 +58,30 @@ export function CommentComposer({ postId, parentId = null, onSuccess, onCancel, 
 
   if (!session) {
     return (
-      <div className="cursor-pointer rounded-lg border border-dashed border-border p-5 text-center transition-colors hover:bg-primary/30" onClick={() => guard(() => {})}>
-        <p className="text-sm text-muted-foreground"><span className="font-medium text-foreground underline underline-offset-2">{t('loginAction')}</span> {t('loginPrompt')}</p>
+      <div
+        className="cursor-pointer rounded-lg border border-dashed border-border p-5 text-center transition-colors hover:bg-primary/30"
+        onClick={() => guard(() => { })}
+      >
+        <p className="text-sm text-muted-foreground">
+          <span className="font-medium text-foreground underline underline-offset-2">{t('loginAction')}</span>{' '}
+          {t('loginPrompt')}
+        </p>
       </div>
     );
   }
 
   return (
     <div>
-      <MarkdownEditor value={body} onChange={setBody} onSubmit={handleSubmit} onCancel={onCancel} autoFocus={autoFocus} rows={parentId ? 4 : 6} submitLabel={parentId ? t('reply') : t('comment')} isPending={isPending} />
+      <MarkdownEditor
+        value={body}
+        onChange={setBody}
+        onSubmit={handleSubmit}
+        onCancel={onCancel}
+        autoFocus={autoFocus}
+        rows={parentId ? 4 : 6}
+        submitLabel={parentId ? t('reply') : t('comment')}
+        isPending={isPending}
+      />
       {error && <p className="mt-1 px-1 text-xs text-red-500">{error}</p>}
     </div>
   );

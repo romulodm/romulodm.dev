@@ -3,7 +3,7 @@
 import { useEffect, useRef, useTransition } from "react";
 import { AlertTriangle, Trash2, X } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 
 interface DeleteCommentModalProps {
   open: boolean;
@@ -12,39 +12,29 @@ interface DeleteCommentModalProps {
   bodyPreview?: string;
 }
 
-export function DeleteCommentModal({
-  open,
-  onClose,
-  onConfirm,
-  bodyPreview,
-}: DeleteCommentModalProps) {
+export function DeleteCommentModal({ open, onClose, onConfirm, bodyPreview }: DeleteCommentModalProps) {
   const t = useTranslations("commentsUi.deleteModal");
   const [isPending, startTransition] = useTransition();
   const cancelRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (!open) return;
-
     const timeoutId = setTimeout(() => cancelRef.current?.focus(), 50);
     return () => clearTimeout(timeoutId);
   }, [open]);
 
   useEffect(() => {
     if (!open) return;
-
     const handler = (event: KeyboardEvent) => {
       if (event.key === "Escape" && !isPending) onClose();
     };
-
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   }, [isPending, onClose, open]);
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
-    return () => {
-      document.body.style.overflow = "";
-    };
+    return () => { document.body.style.overflow = ""; };
   }, [open]);
 
   if (!open) return null;
@@ -67,9 +57,7 @@ export function DeleteCommentModal({
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
       style={{ backdropFilter: "blur(4px)", backgroundColor: "rgba(0,0,0,0.45)" }}
-      onClick={(event) => {
-        if (event.target === event.currentTarget && !isPending) onClose();
-      }}
+      onClick={(event) => { if (event.target === event.currentTarget && !isPending) onClose(); }}
       aria-modal="true"
       role="dialog"
       aria-labelledby="delete-modal-title"
@@ -80,15 +68,10 @@ export function DeleteCommentModal({
             <Trash2 className="w-4.5 h-4.5 text-red-500" />
           </div>
           <div className="flex-1 min-w-0">
-            <h2
-              id="delete-modal-title"
-              className="text-sm font-semibold text-foreground leading-snug"
-            >
+            <h2 id="delete-modal-title" className="text-sm font-semibold text-foreground leading-snug">
               {t("title")}
             </h2>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              {t("subtitle")}
-            </p>
+            <p className="text-xs text-muted-foreground mt-0.5">{t("subtitle")}</p>
           </div>
           <button
             onClick={onClose}
@@ -105,10 +88,7 @@ export function DeleteCommentModal({
             <AlertTriangle className="w-4 h-4 text-red-500 mt-0.5 shrink-0" />
             <p className="text-sm text-foreground/80 leading-relaxed">
               {t("warning.prefix")}{" "}
-              <span className="font-semibold text-foreground">
-                {t("warning.highlight")}
-              </span>
-              .
+              <span className="font-semibold text-foreground">{t("warning.highlight")}</span>.
             </p>
           </div>
 
@@ -119,9 +99,7 @@ export function DeleteCommentModal({
               </p>
               <p className="text-sm text-foreground/80 leading-relaxed line-clamp-3 font-mono">
                 {preview}
-                {truncated && (
-                  <span className="text-muted-foreground not-italic"> …</span>
-                )}
+                {truncated && <span className="text-muted-foreground not-italic"> …</span>}
               </p>
             </div>
           )}
