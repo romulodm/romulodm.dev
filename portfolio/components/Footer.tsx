@@ -9,14 +9,15 @@ import { BsGithub, BsInstagram } from 'react-icons/bs'
 import { FaArrowRightLong } from 'react-icons/fa6'
 import { Mail, MapPin } from 'lucide-react'
 import { TermsModal } from './modals/TermsModal'
-import { ContactModal } from './modals/ContactModal' // ajuste o caminho se necessário
+import { ContactModal } from './modals/ContactModal'
+import { GitHubStarsButton } from './GitHubStarsButton'
 
 export function Footer() {
     const t = useTranslations('footer')
     const currentYear = new Date().getFullYear()
 
     const [termsOpen, setTermsOpen] = useState(false)
-    const [contactOpen, setContactOpen] = useState(false)  // ← novo estado
+    const [contactOpen, setContactOpen] = useState(false)
 
     return (
         <footer
@@ -162,14 +163,7 @@ export function Footer() {
                             <BsInstagram />
                         </SocialBtn>
                     </div>
-                    <iframe
-                        className="hidden sm:block"
-                        src="https://ghbtns.com/github-btn.html?user=romulodm&repo=go-chess&type=star&count=true&v=2&dark=1"
-                        width="80"
-                        height="20"
-                        title="Star on GitHub"
-                        loading="lazy"
-                    />
+                    <GitHubStarsButton user="romulodm" repo="go-chess" />
                 </div>
 
                 {/* ── Bottom bar ── */}
