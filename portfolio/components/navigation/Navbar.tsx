@@ -12,10 +12,10 @@ import { useTheme } from "next-themes";
 import { Dropdown } from "./Dropdown";
 import { MobileMenu } from "./MobileMenu";
 import { SearchDialog } from "../blog/SearchDialog";
+import { NavMore } from "./NavMore";
 
 export const navItems = [
     { label: "Home", href: "/", icon: <Home className="h-4 w-4" /> },
-    { label: "Resume", href: "/resume", icon: <FileText className="h-4 w-4" /> },
     { label: "Blog", href: "/blog", icon: <BookOpen className="h-4 w-4" /> },
 ];
 
@@ -70,11 +70,14 @@ const Navbar = () => {
 
                         </div>
 
+                        <NavMore />
+
                         {isAdmin && (
                             <Link href="/admin" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                                 Admin
                             </Link>
                         )}
+
 
                     </div>
 
