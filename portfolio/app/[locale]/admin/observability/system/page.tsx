@@ -494,7 +494,7 @@ function LogDetailModal({ log, onClose }: { log: WorkerLog | null; onClose: () =
     }
 
     const extras = log
-        ? Object.entries(log).filter(([k]) => !['timestamp', 'level', 'event', 'service'].includes(k))
+        ? Object.entries(log).filter(([k]) => !['timestamp', 'level', 'event', 'service', 'queues'].includes(k))
         : [];
 
     return (
