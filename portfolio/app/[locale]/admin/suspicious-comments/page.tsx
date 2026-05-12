@@ -81,7 +81,7 @@ export default function SuspiciousCommentsPage() {
         {items.map((item) => (
           <div
             key={item.id}
-            className="border border-yellow-300 dark:border-yellow-700 rounded-lg p-4 bg-yellow-50 dark:bg-yellow-950"
+            className="border border-border rounded-lg p-4 bg-secondary/20 dark:bg-secondary/20"
           >
             <div className="flex items-center justify-between mb-2">
               <div className="text-sm text-muted-foreground">
@@ -97,7 +97,7 @@ export default function SuspiciousCommentsPage() {
                   {item.post.title}
                 </a>
               </div>
-              <span className="text-xs bg-yellow-200 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-200 px-2 py-0.5 rounded-full">
+              <span className="text-xs bg-primary/20 dark:bg-primary/40 text-black dark:text-white px-2 py-0.5 rounded-full">
                 {item.reason ?? t("flagged")}
               </span>
             </div>
