@@ -112,7 +112,7 @@ export function Dropdown({ user, onOpenLanguageModal }: DropdownProps) {
                     <DropdownMenuSeparator className="bg-border" />
 
                     <DropdownMenuItem
-                        onClick={() => signOut({ callbackUrl: "/" })}
+                        onClick={() => signOut({ callbackUrl: window.location.href })}
                         className="text-destructive cursor-pointer"
                     >
                         <LogOut className="mr-2 h-4 w-4" />
