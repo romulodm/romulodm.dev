@@ -18,7 +18,7 @@ import {
   Text,
   Activity
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import { Logo } from '../Logo';
 
@@ -54,6 +54,7 @@ const NAV_ITEMS: NavItem[] = [
       { id: 'newsletterOverview', href: '/admin/newsletter' },
       { id: 'campaigns', href: '/admin/newsletter/campaigns' },
       { id: 'newCampaign', href: '/admin/newsletter/campaigns/new' },
+      { id: 'templates', href: '/admin/newsletter/templates' },
     ],
   },
   { id: 'suspiciousComments', href: '/admin/suspicious-comments', icon: AlertTriangle },
@@ -87,6 +88,9 @@ export function AdminSidebar({ user }: Props) {
   const router = useRouter();
   const { resolvedTheme, setTheme } = useTheme();
   const [expanded, setExpanded] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
 
   function localizeHref(href: string) {
     return `/${locale}${href}`;
@@ -121,7 +125,11 @@ export function AdminSidebar({ user }: Props) {
           className="rounded-lg p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
           title={t('toggleTheme')}
         >
-          {resolvedTheme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          {mounted ? (
+            resolvedTheme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />
+          ) : (
+            <span className="h-4 w-4 block" />
+          )}
         </button>
 
         <button
