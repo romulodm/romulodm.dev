@@ -8,25 +8,25 @@ import {
 // Measured: 11 rows, each 64px (50px content + 14px gap).
 // Rows correspond to animation groups laid out by the Farmer Generator:
 const ANIM_ROWS: Record<string, number> = {
-  "idle-down":  0,
-  "walk-down":  1,
-  "walk-up":    2,
-  "walk-left":  3,
+  "idle-down": 0,
+  "walk-down": 1,
+  "walk-up": 2,
+  "walk-left": 3,
   "walk-right": 3,  // mirrored left in the sheet; we flip X in Phaser
   // Additional rows (action animations) — extend as needed
-  "action-1":   4,
-  "action-2":   5,
-  "action-3":   6,
+  "action-1": 4,
+  "action-2": 5,
+  "action-3": 6,
 };
 
 // Frame counts per row (measured from pixel scan)
 const ANIM_FRAMES: Record<string, number> = {
-  "idle-down":  4,
-  "walk-down":  24,
-  "walk-up":    24,
-  "walk-left":  36,
+  "idle-down": 4,
+  "walk-down": 24,
+  "walk-up": 24,
+  "walk-left": 36,
   "walk-right": 36,
-  "action-1":   36,
+  "action-1": 36,
 };
 
 const FW = 32;
@@ -82,10 +82,16 @@ export class FarmerCharacter {
 
   /** Play an animation key on all layers simultaneously. */
   play(animKey: string): void {
+    // "right" reuses the "left" frames mirrored on X.
+    const isRight = animKey.endsWith("-right");
+    const key = isRight ? animKey.replace("-right", "-left") : animKey;
+    const baseScale = Math.abs(this.container.scaleX) || this.scale;
+    this.container.scaleX = isRight ? -baseScale : baseScale;
+
     this.sprites.forEach((sprite, code) => {
       const it = ITEM_BY_ID[this.figure[code] ?? ""];
       if (!it) return;
-      const fullKey = `${it.textureKey}_${animKey}`;
+      const fullKey = `${it.textureKey}_${key}`;
       if (this.scene.anims.exists(fullKey)) sprite.play(fullKey, true);
     });
   }
@@ -152,19 +158,19 @@ export function registerFarmerAnims(scene: Phaser.Scene, textureKey: string): vo
   };
 
   // Row 0: 4 frames idle (facing down)
-  mk("idle-down",  0,  4);
+  mk("idle-down", 0, 4);
   // Row 1-2: walk down and up
-  mk("walk-down",  1, 24);
-  mk("walk-up",    2, 24);
+  mk("walk-down", 1, 24);
+  mk("walk-up", 2, 24);
   // Row 3-4: walk left; we flip X for walk-right at play time
-  mk("walk-left",  3, 36);
+  mk("walk-left", 3, 36);
   mk("walk-right", 3, 36); // same frames, flipped by caller
   // Row 9: 8-frame idle for up/left/right
-  mk("idle-up",    9,  8);
-  mk("idle-side",  9,  8);
+  mk("idle-up", 9, 8);
+  mk("idle-side", 9, 8);
 
   // Idle variants for other directions (row 0 only has facing-down)
   // Use single frames as static idles for now
-  scene.anims.create({ key: `${textureKey}_idle-left`,  frames: [{ key: textureKey, frame: 3 * COLS }], frameRate: 1, repeat: 0 });
+  scene.anims.create({ key: `${textureKey}_idle-left`, frames: [{ key: textureKey, frame: 3 * COLS }], frameRate: 1, repeat: 0 });
   scene.anims.create({ key: `${textureKey}_idle-right`, frames: [{ key: textureKey, frame: 3 * COLS }], frameRate: 1, repeat: 0 });
 }
