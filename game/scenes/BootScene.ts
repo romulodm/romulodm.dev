@@ -1,115 +1,140 @@
 import * as Phaser from "phaser";
+import { ASSET_MANIFEST, START_SCENE, DEFAULT_OPTIONS, type GameOptions } from "../config";
 import { initState } from "../state";
 import { registerCharacterAnims } from "../character/Character";
-
-// Asset base path — all game assets live under /game/assets/ in the portfolio.
-const A = (path: string) => `/game/assets/${path}`;
+import { registerFarmerAnims } from "../character/FarmerCharacter";
+import { SLOTS } from "../character/manifest";
+import { loadSave } from "../save/save";
 
 export default class BootScene extends Phaser.Scene {
   constructor() { super("BootScene"); }
 
   preload() {
-    // ── Loading bar ────────────────────────────────────────────────────────
     const bar = this.add.rectangle(480, 300, 0, 12, 0x9fd0ee).setOrigin(0, 0.5);
-    const border = this.add.rectangle(480, 300, 320, 16).setOrigin(0.5).setStrokeStyle(1, 0x5a4632);
-    this.add.text(480, 320, "Carregando...", {
+    this.add.rectangle(480, 300, 322, 16).setStrokeStyle(1, 0x5a4632);
+    this.add.text(480, 322, "Carregando...", {
       fontFamily: "monospace", fontSize: "13px", color: "#c9d6e0",
     }).setOrigin(0.5);
     this.load.on("progress", (p: number) => (bar.width = 320 * p));
 
-    // ── Characters ────────────────────────────────────────────────────────
-    // frameWidth=32 frameHeight=48 for LimeZu 128×192 sheets
-    this.load.spritesheet("abby", A("characters/Abby.png"), {
-      frameWidth: 32, frameHeight: 48,
-    });
-    // Add more character sheets here as you get them, e.g.:
-    // this.load.spritesheet("alex", A("characters/Alex.png"), { frameWidth: 32, frameHeight: 48 });
+    // ── Tilesets ────────────────────────────────────────────────────────
+    const seen = new Set<string>();
+    for (const ts of ASSET_MANIFEST.tilesets) {
+      if (seen.has(ts.textureKey)) continue;
+      seen.add(ts.textureKey);
+      this.load.image(ts.textureKey, ts.path);
+    }
 
-    // ── Shop map (Tiled JSON) ─────────────────────────────────────────────
-    this.load.tilemapTiledJSON("shop_map", A("maps/Fish.json"));
+    // ── Maps ────────────────────────────────────────────────────────────
+    for (const m of ASSET_MANIFEST.maps) {
+      this.load.tilemapTiledJSON(m.key, m.path);
+    }
 
-    // ── Tilesets used by Fish.json ────────────────────────────────────────
-    this.load.image("ts_fishing", A("tilesets/9_Fishing.png"));
-    this.load.image("ts_floors", A("tilesets/Floors_2_TILESET_A2_.png"));
-    this.load.image("ts_grocery", A("tilesets/16_Grocery_store.png"));
-    this.load.image("ts_walls2", A("tilesets/Walls_2_TILESET_A4_.png"));
-    this.load.image("ts_generic", A("tilesets/1_Generic.png"));
+    // ── Legacy character (abby fallback) ─────────────────────────────
+    for (const c of ASSET_MANIFEST.characters) {
+      this.load.spritesheet(c.key, c.path, {
+        frameWidth: c.frameWidth,
+        frameHeight: c.frameHeight,
+      });
+    }
 
-    // ── Fishing scene decorative assets ───────────────────────────────────
-    // Uncomment as you add the PNGs to the assets folder:
-    // this.load.image("tileset_camping", A("tilesets/11_Camping_32x32.png"));
-    // this.load.tilemapTiledJSON("fishing_map", A("maps/fishing_scene.json"));
+    // ── Farmer Generator assets ──────────────────────────────────────
+    // Dedupe by textureKey — multiple items can share a sheet
+    const seenChar = new Set<string>();
+    for (const slot of SLOTS) {
+      for (const item of slot.items) {
+        if (seenChar.has(item.textureKey)) continue;
+        seenChar.add(item.textureKey);
+        this.load.spritesheet(item.textureKey, item.path, {
+          frameWidth: item.frameWidth,
+          frameHeight: item.frameHeight,
+        });
+      }
+    }
 
-    // Handle load errors gracefully — missing files fall back to procedural art
     this.load.on("loaderror", (file: Phaser.Loader.File) => {
-      console.warn(`[BootScene] Asset not found, using fallback: ${file.key}`);
+      console.warn(`[Boot] asset not found (fallback will be used): ${file.key} @ ${file.url}`);
     });
   }
 
-  create() {
-    initState(this.game);
+  async create() {
+    const options = (this.registry.get("options") as GameOptions) ?? DEFAULT_OPTIONS;
+    const save = await loadSave(options);
+    initState(this.game, save);
 
-    // ── Register character animations ──────────────────────────────────────
-    // Works for any 4×4 LimeZu character sheet loaded above
-    ["abby"].forEach((key) => registerCharacterAnims(this, key));
+    // ── Register legacy anims ──────────────────────────────────────────
+    for (const c of ASSET_MANIFEST.characters) {
+      if (this.textures.exists(c.key)) registerCharacterAnims(this, c.key);
+    }
 
-    // ── Procedural fallback textures ──────────────────────────────────────
-    // Used automatically when a PNG failed to load (file not yet in assets/).
-    this.makeFallbacks();
-
-    // ── Start flow ────────────────────────────────────────────────────────
-    this.scene.start("CharacterCreatorScene");
-    this.scene.launch("UIScene");
-    this.scene.bringToTop("UIScene");
-  }
-
-  // ── Procedural pixel-art fallbacks ────────────────────────────────────────
-  private makeFallbacks() {
-    const mk = (key: string, w: number, h: number, draw: (g: Phaser.GameObjects.Graphics) => void) => {
-      if (this.textures.exists(key)) return; // real asset loaded, skip
-      const g = this.make.graphics({ x: 0, y: 0, add: false });
-      draw(g);
-      g.generateTexture(key, w, h);
-      g.destroy();
-    };
-
-    // Fallback player sprite (32×48, no animation — static)
-    mk("abby", 128, 192, (g) => {
-      // Draw a simple placeholder across all 16 frames (4×4 grid)
-      for (let row = 0; row < 4; row++) {
-        for (let col = 0; col < 4; col++) {
-          const ox = col * 32;
-          const oy = row * 48;
-          g.fillStyle(0xe8b890); g.fillRect(ox + 10, oy + 4, 12, 16); // head
-          g.fillStyle(0xc0392b); g.fillRect(ox + 8, oy + 20, 16, 16); // body
-          g.fillStyle(0x2c5f8a); g.fillRect(ox + 8, oy + 36, 6, 10); // legs L
-          g.fillStyle(0x2c5f8a); g.fillRect(ox + 18, oy + 36, 6, 10); // legs R
-          g.fillStyle(0x6b4423); g.fillRect(ox + 8, oy + 2, 16, 6); // hair
+    // ── Register Farmer Generator anims ───────────────────────────────
+    const seenAnim = new Set<string>();
+    for (const slot of SLOTS) {
+      for (const item of slot.items) {
+        if (seenAnim.has(item.textureKey)) continue;
+        seenAnim.add(item.textureKey);
+        if (this.textures.exists(item.textureKey)) {
+          registerFarmerAnims(this, item.textureKey);
         }
       }
-    });
+    }
 
-    // Water tile
-    mk("water_tile", 32, 32, (g) => {
-      g.fillStyle(0x2b6db0); g.fillRect(0, 0, 32, 32);
-      g.fillStyle(0x3a83c6); g.fillRect(0, 0, 32, 14);
-      g.fillStyle(0x9fd0ee, 0.6); g.fillRect(6, 8, 5, 1); g.fillRect(20, 4, 6, 1);
-    });
+    this.makeFallbacks();
 
-    // Dock plank tile
-    mk("plank_tile", 32, 32, (g) => {
-      g.fillStyle(0x9c6b3f); g.fillRect(0, 0, 32, 32);
-      g.fillStyle(0x7a5230); g.fillRect(0, 0, 32, 2); g.fillRect(0, 16, 32, 2);
-      g.fillStyle(0x6b4626); g.fillRect(15, 0, 2, 32);
-    });
+    this.scene.launch("UIScene");
+    this.scene.bringToTop("UIScene");
 
-    // Generic bobber
+    const char = this.registry.get("character") as { name: string; figure?: string };
+    // Go to creator if no name OR no figure string yet
+    if (!char?.name || char.name === "Pescador" || !char?.figure) {
+      this.scene.start("CharacterCreatorScene");
+    } else {
+      this.scene.start("WorldScene", { sceneId: START_SCENE });
+    }
+  }
+
+  private makeFallbacks() {
+    // ── Abby fallback (canvas-based spritesheet) ─────────────────────
+    if (!this.textures.exists("abby")) {
+      const FW = 32, FH = 48, COLS = 4, ROWS = 4;
+      const canvas = document.createElement("canvas");
+      canvas.width = FW * COLS;
+      canvas.height = FH * ROWS;
+      const ctx = canvas.getContext("2d")!;
+      const shirts = ["#c0392b", "#2980b9", "#27ae60", "#8e44ad"];
+      for (let row = 0; row < ROWS; row++) {
+        for (let col = 0; col < COLS; col++) {
+          const ox = col * FW, oy = row * FH;
+          ctx.fillStyle = "#6b4423"; ctx.fillRect(ox + 8, oy + 2, 16, 6);
+          ctx.fillStyle = "#e8b890"; ctx.fillRect(ox + 10, oy + 4, 12, 16);
+          ctx.fillStyle = "#333333";
+          ctx.fillRect(ox + 12, oy + 8, 2, 2);
+          ctx.fillRect(ox + 18, oy + 8, 2, 2);
+          ctx.fillStyle = shirts[row]; ctx.fillRect(ox + 8, oy + 20, 16, 16);
+          const shift = (col % 2) * 2;
+          ctx.fillStyle = "#2c5f8a";
+          ctx.fillRect(ox + 8, oy + 36 + shift, 6, 10 - shift);
+          ctx.fillRect(ox + 18, oy + 36 - shift, 6, 10 - shift);
+        }
+      }
+      this.textures.addSpriteSheet("abby", canvas as unknown as HTMLImageElement, {
+        frameWidth: FW, frameHeight: FH,
+      });
+      registerCharacterAnims(this, "abby");
+    }
+
+    // ── Generic fallbacks ─────────────────────────────────────────────
+    const mk = (key: string, w: number, h: number, draw: (g: Phaser.GameObjects.Graphics) => void) => {
+      if (this.textures.exists(key)) return;
+      const g = this.make.graphics({ x: 0, y: 0 }, false);
+      draw(g); g.generateTexture(key, w, h); g.destroy();
+    };
+
     mk("bobber", 8, 8, (g) => {
       g.fillStyle(0xc0392b); g.fillRect(0, 0, 8, 4);
       g.fillStyle(0xeeeeee); g.fillRect(0, 4, 8, 4);
     });
 
-    // Fish silhouette (tintable)
     mk("fish_icon", 24, 14, (g) => {
       g.fillStyle(0xffffff); g.fillEllipse(11, 7, 18, 11);
       g.fillTriangle(18, 7, 24, 1, 24, 13);

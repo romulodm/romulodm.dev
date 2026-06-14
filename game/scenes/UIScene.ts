@@ -6,6 +6,7 @@ export default class UIScene extends Phaser.Scene {
   private baitText!: Phaser.GameObjects.Text;
   private rodText!: Phaser.GameObjects.Text;
   private nameText!: Phaser.GameObjects.Text;
+  private levelText!: Phaser.GameObjects.Text;
   private toasts: Phaser.GameObjects.Text[] = [];
 
   constructor() { super("UIScene"); }
@@ -13,25 +14,12 @@ export default class UIScene extends Phaser.Scene {
   create() {
     const r = this.registry;
 
-    const panel = this.add.rectangle(960 - 8, 8, 190, 72, 0x1b2733, 0.88)
-      .setOrigin(1, 0)
-      .setStrokeStyle(2, 0x5a4632);
-
-    this.moneyText = this.add.text(960 - 16, 15, "", {
-      fontFamily: "monospace", fontSize: "16px", color: "#f0c674",
-    }).setOrigin(1, 0);
-
-    this.baitText = this.add.text(960 - 16, 35, "", {
-      fontFamily: "monospace", fontSize: "13px", color: "#9fd0ee",
-    }).setOrigin(1, 0);
-
-    this.rodText = this.add.text(960 - 16, 52, "", {
-      fontFamily: "monospace", fontSize: "11px", color: "#c9d6e0",
-    }).setOrigin(1, 0);
-
-    this.nameText = this.add.text(16, 15, "", {
-      fontFamily: "monospace", fontSize: "14px", color: "#f0c674",
-    }).setOrigin(0, 0);
+    this.add.rectangle(960 - 8, 8, 196, 90, 0x1b2733, 0.88).setOrigin(1, 0).setStrokeStyle(2, 0x5a4632);
+    this.moneyText = this.add.text(960 - 16, 14, "", { fontFamily: "monospace", fontSize: "16px", color: "#f0c674" }).setOrigin(1, 0);
+    this.baitText  = this.add.text(960 - 16, 34, "", { fontFamily: "monospace", fontSize: "13px", color: "#9fd0ee" }).setOrigin(1, 0);
+    this.rodText   = this.add.text(960 - 16, 52, "", { fontFamily: "monospace", fontSize: "11px", color: "#c9d6e0" }).setOrigin(1, 0);
+    this.levelText = this.add.text(960 - 16, 70, "", { fontFamily: "monospace", fontSize: "11px", color: "#d39bff" }).setOrigin(1, 0);
+    this.nameText  = this.add.text(16, 14, "", { fontFamily: "monospace", fontSize: "14px", color: "#f0c674" }).setOrigin(0, 0);
 
     this.refresh();
     r.events.on("changedata", this.refresh, this);
@@ -47,25 +35,21 @@ export default class UIScene extends Phaser.Scene {
     this.baitText.setText(`🪱 Iscas: ${r.get("bait")}`);
     const rod = RODS[r.get("rodTier") as number] ?? RODS[1];
     this.rodText.setText(`🎣 ${rod.name}`);
-    const char = r.get("character") as { name: string } | undefined;
-    this.nameText.setText(char?.name ?? "");
+    this.levelText.setText(`⭐ Nv ${r.get("level")} (${r.get("xp")} xp)`);
+    const c = r.get("character") as { name: string } | undefined;
+    this.nameText.setText(c?.name ?? "");
   };
 
-  showToast = (msg: string, color = "#ffffff") => {
-    const y = 80 + this.toasts.length * 28;
+  private showToast = (msg: string, color = "#ffffff") => {
+    const y = 110 + this.toasts.length * 28;
     const t = this.add.text(480, y, msg, {
       fontFamily: "monospace", fontSize: "15px", color,
       backgroundColor: "#1b2733cc", padding: { x: 10, y: 5 },
     }).setOrigin(0.5, 0).setDepth(1000);
-
     this.toasts.push(t);
     this.tweens.add({
-      targets: t, y: y - 20, alpha: { from: 1, to: 0 },
-      delay: 1100, duration: 600,
-      onComplete: () => {
-        t.destroy();
-        this.toasts = this.toasts.filter((x) => x !== t);
-      },
+      targets: t, y: y - 20, alpha: { from: 1, to: 0 }, delay: 1100, duration: 600,
+      onComplete: () => { t.destroy(); this.toasts = this.toasts.filter((x) => x !== t); },
     });
   };
 }
