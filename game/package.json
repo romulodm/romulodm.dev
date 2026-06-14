@@ -4,11 +4,14 @@
   "private": true,
   "main": "./index.ts",
   "types": "./index.ts",
+  "exports": {
+    ".": "./index.ts"
+  },
   "dependencies": {
-    "phaser": "^3.90.0"
+    "centrifuge": "^5.2.2",
+    "phaser": "^3.80.1"
   },
   "devDependencies": {
-    "@types/node": "^20.0.0",
     "typescript": "^5.0.0"
   }
 }
