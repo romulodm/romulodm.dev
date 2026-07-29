@@ -5,7 +5,6 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { useTranslations } from "next-intl";
-import { Wave } from "../ui/Wave";
 import { AvatarCircle } from "../ui/AvatarCircle";
 import type { WallAuthor, WallMsg } from "../utils";
 
@@ -75,25 +74,12 @@ export function ComposeCard({ user, onPosted }: Props) {
   return (
     <div
       className="relative rounded-2xl overflow-hidden flex flex-col h-[220px]
-                 border border-white/10 shadow-[0_10px_40px_-12px_rgba(0,0,0,0.6)]"
+                 shadow-[0_10px_40px_-12px_rgba(0,0,0,0.6)]"
       style={{
         background:
           "radial-gradient(120% 80% at 50% 0%, #a855f722 0%, transparent 55%), linear-gradient(180deg, #3b1f6e 0%, #1a0a3d 100%)",
       }}
     >
-      {/* Spinning deco — top right */}
-      <div className="absolute top-3.5 right-3.5 opacity-35 pointer-events-none">
-        <svg
-          className="w-6 h-6 animate-spin [animation-duration:3s]"
-          viewBox="0 0 24 24" fill="none"
-        >
-          <circle
-            cx="12" cy="12" r="9"
-            stroke="white" strokeWidth="1.5"
-            strokeDasharray="12 44" strokeLinecap="round"
-          />
-        </svg>
-      </div>
 
       {/* Body */}
       <div className="flex-1 flex flex-col px-4 pt-3 pb-1 relative z-10">
@@ -123,44 +109,54 @@ export function ComposeCard({ user, onPosted }: Props) {
         />
       </div>
 
-      {/* Wave */}
-      <Wave />
+      <div>
+        <svg
+          viewBox="0 0 600 40"
+          preserveAspectRatio="none"
+          className="block h-6 w-full"
+          aria-hidden
+        >
+          <path
+            d="M0 25 Q 50 5 100 22 T 200 22 T 300 22 T 400 22 T 500 22 T 600 22 T 600 22 L600 40 L0 40 Z"
+            fill="#141414"
+          />
+        </svg>
 
-      {/* Footer */}
-      <div
-        className="absolute bottom-0 left-0 right-0 h-[48px] bg-[#0b0b10]
-                   flex items-center justify-between px-4 z-10"
-      >
-        {/* Pencil icon + char count */}
-        <div className="flex items-center gap-2">
-          <PencilIcon className="w-3.5 h-3.5 text-white/25" />
-          <span className="text-white/30 text-[10px] tabular-nums">
-            {text.length} / {MAX}
-          </span>
-        </div>
+        <div className="flex items-center justify-between gap-3
+                              bg-[#141414] px-4 border-0 pb-4 pt-2 -mt-0.5">
 
-        {/* Send button */}
-        <button
-          onClick={submit}
-          disabled={!text.trim() || loading}
-          className="bg-white/10 hover:bg-white/20 active:bg-white/25
+          <div className="flex items-center gap-2">
+            <PencilIcon className="w-3.5 h-3.5 text-white/25" />
+            <span className="text-white/30 text-[10px] tabular-nums">
+              {text.length} / {MAX}
+            </span>
+          </div>
+
+          {/* Send button */}
+          <button
+            onClick={submit}
+            disabled={!text.trim() || loading}
+            className="bg-white/10 hover:bg-white/20 active:bg-white/25
                      disabled:opacity-35 border border-white/15
                      text-white rounded-lg w-8 h-7
                      flex items-center justify-center
                      transition-all duration-150"
-          aria-label="Post message"
-        >
-          {loading ? (
-            <svg className="w-3.5 h-3.5 animate-spin" viewBox="0 0 24 24" fill="none">
-              <circle
-                cx="12" cy="12" r="9"
-                stroke="white" strokeWidth="2" strokeDasharray="20 40"
-              />
-            </svg>
-          ) : (
-            <ArrowIcon className="w-3.5 h-3.5" />
-          )}
-        </button>
+            aria-label="Post message"
+          >
+            {loading ? (
+              <svg className="w-3.5 h-3.5 animate-spin" viewBox="0 0 24 24" fill="none">
+                <circle
+                  cx="12" cy="12" r="9"
+                  stroke="white" strokeWidth="2" strokeDasharray="20 40"
+                />
+              </svg>
+            ) : (
+              <ArrowIcon className="w-3.5 h-3.5" />
+            )}
+          </button>
+
+
+        </div>
       </div>
     </div>
   );

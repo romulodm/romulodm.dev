@@ -1,4 +1,3 @@
-import { Wave } from "../ui/Wave";
 import { AvatarCircle } from "../ui/AvatarCircle";
 import { Decoration } from "../ui/Decoration";
 import type { WallAuthor } from "../utils";
@@ -13,19 +12,37 @@ export function AlreadyPostedCard({ user }: { user: WallAuthor }) {
     >
       <Decoration type="diamond-center" />
 
-      <div className="flex-1 flex flex-col items-center justify-center gap-1.5 relative z-10 px-6">
-        <p className="text-white/50 text-[11px]">Your mark is on the wall ✓</p>
-        <p className="text-white/30 text-[10px] text-center">
+      <div className="flex-1 flex flex-col mt-5 items-center justify-center relative z-10 px-6">
+        <p className="text-white text-bold text-lg">Your mark is on the wall ✓</p>
+        <p className="text-white text-center text-sm">
           Scroll down to find your message
         </p>
       </div>
 
-      <Wave />
+      {/* Wave + footer in normal flow */}
+      <div>
+        <svg
+          viewBox="0 0 600 40"
+          preserveAspectRatio="none"
+          className="block h-6 w-full"
+          aria-hidden
+        >
+          <path
+            d="M0 25 Q 50 5 100 22 T 200 22 T 300 22 T 400 22 T 500 22 T 600 22 T 600 22 L600 40 L0 40 Z"
+            fill="#141414"
+          />
+        </svg>
 
-      <div className="absolute bottom-0 left-0 right-0 h-[52px] bg-[#111]/60
-                      flex items-center gap-2.5 px-4 z-10">
-        <AvatarCircle username={user.username} image={user.image} size={26} />
-        <p className="text-white/60 text-[11px] font-medium">{user.username}</p>
+        <div className="flex items-center justify-between gap-3
+                                bg-[#141414] px-4 border-0 pb-4 pt-2 -mt-0.5">
+          <div className="w-full flex justify-center items-center gap-3 min-w-0">
+            <AvatarCircle
+              username={user.username}
+              image={user.image}
+              size={35}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -94,12 +94,6 @@ function DiamondCenter() {
         <line x1="5" y1="5" x2="11" y2="11" stroke="white" strokeWidth="1.4" strokeLinecap="round" />
         <line x1="35" y1="5" x2="29" y2="11" stroke="white" strokeWidth="1.4" strokeLinecap="round" />
       </svg>
-      <svg className="absolute bottom-14 left-1/2 -translate-x-1/2 w-8 h-10 opacity-30"
-        viewBox="0 0 32 40" fill="none">
-        <path d="M16 2 L30 16 L16 38 L2 16 Z" stroke="white" strokeWidth="1.4" />
-        <path d="M2 16 L16 22 L30 16" stroke="white" strokeWidth="1" opacity="0.5" />
-      </svg>
-      <div className="absolute bottom-16 right-8 w-1.5 h-1.5 rounded-full bg-white/25" />
     </>
   );
 }
