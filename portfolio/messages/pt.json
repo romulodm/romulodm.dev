@@ -146,6 +146,72 @@
     "sended-title": "Agradeço seu contato!",
     "sended-content": "Sua mensagem foi enviada com sucesso."
   },
+  "connect": {
+    "getInTouch": {
+      "titlePrefix": "Vamos",
+      "titleHighlight": "manter contato.",
+      "description": "Me manda mensagem sobre <b>qualquer coisa</b>: uma ideia de projeto, uma dúvida sobre algum post, ou só um oi. Costumo responder rápido."
+    },
+    "openSource": {
+      "titleHighlight": "Open source",
+      "joinThe": "e o lado",
+      "darkSide": "sombrio",
+      "boldSide": "iluminado",
+      "ofTheForce": "da força.",
+      "description": "Quase tudo que eu construo fica <b>público no GitHub</b>. Código aberto é a forma mais honesta de aprender: qualquer pessoa pode ler, discordar e melhorar."
+    },
+    "software": {
+      "titleHighlight": "Software",
+      "titleRest": "que nasce da colaboração.",
+      "description": "As melhores decisões técnicas que eu tomei vieram de <b>revisão de código</b> e de conversa difícil, não de inspiração solitária.",
+      "cursorName": "Romulo",
+      "frameOne": "Design.",
+      "frameTwo": "Prototipar.",
+      "frameThree": "Desenvolver.",
+      "frameFour": "Aprimorar.",
+      "productivityTitle": "Produtividade em sua melhor forma.",
+      "productivityBody": "Com <b>qualidade</b> e <b>sustentabilidade</b> no coração.",
+      "commits": "{count, plural, one {# novo commit} other {# novos commits}}",
+      "commentAuthor": "Manager",
+      "commentTime": "2 horas atrás",
+      "commentBody": "Não se esqueça da reunião, amigo!",
+      "ctaSecurity": "Segurança",
+      "ctaCollaborative": "Desenvolvimento colaborativo",
+      "ctaFlexibility": "Flexibilidade",
+      "innovateTitle": "Inovação",
+      "innovateBody": "Definindo as regras do amanhã.",
+      "communityTitle": "Comunidade",
+      "communityBody": "Facilitando a vida das pessoas.",
+      "academiaTitle": "Academia",
+      "academiaBody": "Sempre no estado da arte.",
+      "web3Title": "Web3",
+      "web3Body": "A descentralização é o caminho.",
+      "securityTitle": "Segurança",
+      "securityBody": "Blindado por padrão.",
+      "performanceTitle": "Performance",
+      "performanceBody": "Cada milissegundo conta.",
+      "observabilityTitle": "Observabilidade",
+      "observabilityBody": "Medir antes de confiar."
+    },
+    "lastConnect": {
+      "bubble": "Vamos trocar uma ideia?",
+      "titlePrefix": "Vamos",
+      "titleHighlight": "nos conectar.",
+      "formEmail": "Seu e-mail",
+      "formName": "Seu nome",
+      "formMessage": "Escreva sua mensagem...",
+      "surpriseButton": "Me surpreenda",
+      "submitButton": "Enviar mensagem",
+      "sentButton": "Mensagem enviada",
+      "genericError": "Algo deu errado no envio. Tenta de novo em alguns instantes?",
+      "thanksShort": "Obrigado!",
+      "thanksLong": "Obrigado por escrever!",
+      "thanksBody": "Respondo assim que possível.",
+      "surprise1": "Oi Romulo! Caí aqui por acaso e acabei lendo o site inteiro. Bom demais.",
+      "surprise2": "Tenho uma ideia de projeto que não sai da minha cabeça. Topa ouvir?",
+      "surprise3": "Vim pelo blog, fiquei pela engenharia. Vamos trocar uma ideia sobre isso?"
+    }
+  },
   "hero": {
     "greeting-1": "Bom dia",
     "greeting-2": "Boa tarde",
@@ -277,7 +343,7 @@
     "visitor": "visitante",
     "tooltip": "Você pode usar este terminal",
     "loading": "Carregando a mensagem de acompanhamento levou ",
-    "not-found-fisrt": "Comando não encontrado, digite ",
+    "not-found-first": "Comando não encontrado, digite ",
     "not-found-second": " para uma lista de comandos.",
     "loadings": {
       "help": "Carregar a mensagem de ajuda levou ",
@@ -514,7 +580,8 @@
       "copied": "Copiado!",
       "simulate": "Simular pagamento (dev)",
       "simulating": "Simulando...",
-      "alreadyPaid": "Já paguei"
+      "alreadyPaid": "Já paguei",
+      "expired": "Este QR code expirou. Feche e gere uma nova cobrança."
     },
     "crypto": {
       "back": "Voltar",
@@ -631,7 +698,9 @@
         "notAvailableInProduction": "Não disponível em produção.",
         "missingDonationId": "donationId ausente.",
         "chargeDescription": "{count}x café para o blog",
-        "internal": "Não foi possível criar a cobrança PIX. Tente novamente."
+        "internal": "Não foi possível criar a cobrança PIX. Tente novamente.",
+        "checkFailed": "Não foi possível verificar o pagamento. Tentando novamente...",
+        "expired": "Este QR code expirou. Gere uma nova cobrança."
       },
       "stripe": {
         "missingSignature": "Assinatura ausente.",
@@ -973,7 +1042,24 @@
       "loading": "Carregando...",
       "empty": "Nenhum usuário banido.",
       "bannedAt": "Banido em {date}",
-      "unban": "Desbanir"
+      "unban": "Desbanir",
+      "searchPlaceholder": "Buscar por usuário ou e-mail",
+      "viewReason": "Ver motivo",
+      "table": {
+        "username": "Usuário",
+        "email": "E-mail",
+        "bannedAt": "Banido em",
+        "actions": "Ações"
+      },
+      "pagination": {
+        "showing": "Mostrando {from}–{to} de {total}",
+        "previous": "Anterior",
+        "next": "Próxima"
+      },
+      "reasonModal": {
+        "title": "Motivo do ban",
+        "description": "Registrado no momento em que o usuário foi banido."
+      }
     },
     "newsletterPage": {
       "title": "Newsletter",
@@ -1143,6 +1229,10 @@
         "custom": {
           "title": "HTML personalizado",
           "description": "Escreva seu próprio HTML para o e-mail"
+        },
+        "digest": {
+          "title": "Digest",
+          "description": "Reúne vários posts num único e-mail."
         }
       },
       "post": {
@@ -1154,7 +1244,8 @@
         "previewLabel": "Preview do template",
         "hideHtml": "Ocultar",
         "showHtml": "Ver HTML",
-        "readArticle": "Ler artigo ->"
+        "readArticle": "Ler artigo ->",
+        "showPreview": "Ver prévia"
       },
       "subject": {
         "label": "Assunto do e-mail",
@@ -1253,6 +1344,20 @@
         "publish": "Publicar",
         "saveDraft": "Salvar rascunho",
         "cancel": "Cancelar"
+      }
+    },
+    "banButton": {
+      "ban": "Banir",
+      "unban": "Desbanir",
+      "modal": {
+        "title": "Banir usuário",
+        "description": "O usuário deixa de poder comentar imediatamente. Você pode desfazer isso depois.",
+        "reasonLabel": "Motivo",
+        "optional": "opcional",
+        "reasonPlaceholder": "Ex.: spam recorrente nos comentários",
+        "cancel": "Cancelar",
+        "confirm": "Confirmar ban",
+        "banning": "Banindo..."
       }
     }
   },

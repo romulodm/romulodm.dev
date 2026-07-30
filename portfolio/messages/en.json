@@ -146,6 +146,72 @@
     "sended-title": "Thank you for reaching out!",
     "sended-content": "Your message has been sent successfully."
   },
+  "connect": {
+    "getInTouch": {
+      "titlePrefix": "Let's",
+      "titleHighlight": "keep in touch.",
+      "description": "Message me about <b>anything</b>: a project idea, a question about a post, or just to say hi. I usually reply fast."
+    },
+    "openSource": {
+      "titleHighlight": "Open source",
+      "joinThe": "and the",
+      "darkSide": "dark side",
+      "boldSide": "bold side",
+      "ofTheForce": "of the force.",
+      "description": "Almost everything I build ends up <b>public on GitHub</b>. Open source is the most honest way to learn: anyone can read it, disagree with it, and make it better."
+    },
+    "software": {
+      "titleHighlight": "Software",
+      "titleRest": "born from collaboration.",
+      "description": "The best technical decisions I've made came out of <b>code review</b> and hard conversations, not solitary inspiration.",
+      "cursorName": "Romulo",
+      "frameOne": "Design.",
+      "frameTwo": "Prototype.",
+      "frameThree": "Develop.",
+      "frameFour": "Refine.",
+      "productivityTitle": "Productivity at its best.",
+      "productivityBody": "With <b>quality</b> and <b>sustainability</b> at heart.",
+      "commits": "{count, plural, one {# new commit} other {# new commits}}",
+      "commentAuthor": "Manager",
+      "commentTime": "2 hours ago",
+      "commentBody": "Don't forget the meeting, friend!",
+      "ctaSecurity": "Security",
+      "ctaCollaborative": "Collaborative development",
+      "ctaFlexibility": "Flexibility",
+      "innovateTitle": "Innovation",
+      "innovateBody": "Setting tomorrow's rules.",
+      "communityTitle": "Community",
+      "communityBody": "Making people's lives easier.",
+      "academiaTitle": "Academia",
+      "academiaBody": "Always at the state of the art.",
+      "web3Title": "Web3",
+      "web3Body": "Decentralization is the way.",
+      "securityTitle": "Security",
+      "securityBody": "Hardened by default.",
+      "performanceTitle": "Performance",
+      "performanceBody": "Every millisecond counts.",
+      "observabilityTitle": "Observability",
+      "observabilityBody": "Measure before trusting."
+    },
+    "lastConnect": {
+      "bubble": "Want to chat?",
+      "titlePrefix": "Let's",
+      "titleHighlight": "connect.",
+      "formEmail": "Your email",
+      "formName": "Your name",
+      "formMessage": "Write your message...",
+      "surpriseButton": "Surprise me",
+      "submitButton": "Send message",
+      "sentButton": "Message sent",
+      "genericError": "Something went wrong sending that. Mind trying again in a moment?",
+      "thanksShort": "Thank you!",
+      "thanksLong": "Thanks for reaching out!",
+      "thanksBody": "I'll get back to you as soon as I can.",
+      "surprise1": "Hey Romulo! Landed here by accident and ended up reading the whole site. Really good.",
+      "surprise2": "I have a project idea I can't get out of my head. Up for hearing it?",
+      "surprise3": "Came for the blog, stayed for the engineering. Want to talk about it?"
+    }
+  },
   "hero": {
     "greeting-1": "Good morning",
     "greeting-2": "Good afternoon",
@@ -277,7 +343,7 @@
     "visitor": "visitor",
     "tooltip": "You can use this terminal",
     "loading": "Loading the follow-up message took ",
-    "not-found-fisrt": "Command not found, type ",
+    "not-found-first": "Command not found, type ",
     "not-found-second": " for a list of commands.",
     "loadings": {
       "help": "Loading the help message took ",
@@ -514,7 +580,8 @@
       "copied": "Copied!",
       "simulate": "Simulate payment (dev)",
       "simulating": "Simulating...",
-      "alreadyPaid": "I already paid"
+      "alreadyPaid": "I already paid",
+      "expired": "This QR code has expired. Close and generate a new charge."
     },
     "crypto": {
       "back": "Back",
@@ -631,7 +698,9 @@
         "notAvailableInProduction": "Not available in production.",
         "missingDonationId": "Missing donationId.",
         "chargeDescription": "{count}x coffee for the blog",
-        "internal": "Could not create the PIX charge. Please try again."
+        "internal": "Could not create the PIX charge. Please try again.",
+        "checkFailed": "Could not verify the payment. Retrying...",
+        "expired": "This QR code has expired. Please generate a new charge."
       },
       "stripe": {
         "missingSignature": "Missing signature.",
@@ -973,7 +1042,24 @@
       "loading": "Loading...",
       "empty": "No banned users.",
       "bannedAt": "Banned on {date}",
-      "unban": "Unban"
+      "unban": "Unban",
+      "searchPlaceholder": "Search by username or email",
+      "viewReason": "View reason",
+      "table": {
+        "username": "Username",
+        "email": "Email",
+        "bannedAt": "Banned at",
+        "actions": "Actions"
+      },
+      "pagination": {
+        "showing": "Showing {from}–{to} of {total}",
+        "previous": "Previous",
+        "next": "Next"
+      },
+      "reasonModal": {
+        "title": "Ban reason",
+        "description": "Recorded at the moment the user was banned."
+      }
     },
     "newsletterPage": {
       "title": "Newsletter",
@@ -1143,6 +1229,10 @@
         "custom": {
           "title": "Custom HTML",
           "description": "Write your own HTML for the email"
+        },
+        "digest": {
+          "title": "Digest",
+          "description": "Bundles several posts into a single email."
         }
       },
       "post": {
@@ -1154,7 +1244,8 @@
         "previewLabel": "Template preview",
         "hideHtml": "Hide",
         "showHtml": "View HTML",
-        "readArticle": "Read article ->"
+        "readArticle": "Read article ->",
+        "showPreview": "Show preview"
       },
       "subject": {
         "label": "Email subject",
@@ -1253,6 +1344,20 @@
         "publish": "Publish",
         "saveDraft": "Save draft",
         "cancel": "Cancel"
+      }
+    },
+    "banButton": {
+      "ban": "Ban",
+      "unban": "Unban",
+      "modal": {
+        "title": "Ban user",
+        "description": "The user loses the ability to comment right away. You can undo this later.",
+        "reasonLabel": "Reason",
+        "optional": "optional",
+        "reasonPlaceholder": "e.g. repeated spam in the comments",
+        "cancel": "Cancel",
+        "confirm": "Confirm ban",
+        "banning": "Banning..."
       }
     }
   },
