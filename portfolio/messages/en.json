@@ -712,29 +712,214 @@
     "dashboard": {
       "title": "Dashboard",
       "description": "A quick overview of your blog and donations.",
-      "recentTransactions": "Recent transactions",
-      "topSupporters": "Top supporters",
-      "noDonationsYet": "No donations yet.",
-      "anonymous": "Anonymous",
-      "someone": "Someone",
-      "coffees": "{count, plural, one {# coffee} other {# coffees}}",
-      "stats": {
-        "raised": {
-          "label": "Total raised",
-          "sub": "{count, plural, one {# supporter} other {# supporters}}"
-        },
-        "views": {
-          "label": "Views",
-          "sub": "{count, plural, one {# published post} other {# published posts}}"
-        },
-        "likes": {
-          "label": "Likes",
-          "sub": "Across all posts"
-        },
-        "comments": {
-          "label": "Comments",
-          "sub": "Across all posts"
+      "greeting": "Hi, {name}",
+      "subtitle": "Blog, community and donations in one place.",
+      "liveUpdate": "updated at {time}",
+      "refresh": "Refresh",
+      "statusPage": "Status page",
+      "error": {
+        "title": "Couldn't load the dashboard",
+        "unknown": "Unknown error while fetching the data.",
+        "retry": "Try again"
+      },
+      "period": {
+        "label": "Analysis period",
+        "options": {
+          "7d": "7 days",
+          "30d": "30 days",
+          "90d": "90 days",
+          "12m": "12 months"
         }
+      },
+      "growth": {
+        "flat": "flat",
+        "noBaseline": "no baseline"
+      },
+      "kpi": {
+        "raised": "Raised",
+        "raisedSub": "{count, plural, one {# supporter} other {# supporters}}",
+        "views": "Views",
+        "viewsSub": "{count, plural, one {# post} other {# posts}}",
+        "likes": "Likes",
+        "comments": "Comments",
+        "newUsers": "New users",
+        "published": "Published",
+        "inPeriod": "in {period}",
+        "previous": "previous period: {value}",
+        "perWeek": "{value}/week"
+      },
+      "sections": {
+        "attention": "Needs attention",
+        "performance": "Performance",
+        "performanceHint": "compared to the previous {period}",
+        "community": "Community",
+        "content": "Content",
+        "donations": "Donations"
+      },
+      "alerts": {
+        "title": "Action queue",
+        "summary": "{critical} critical · {warning} warnings",
+        "allClear": "Nothing pending",
+        "allClearSubtitle": "No action needed",
+        "allClearHint": "No stuck donations, failed campaigns or content waiting on review.",
+        "kinds": {
+          "staleDonations": {
+            "label": "{count, plural, one {# donation stuck in PENDING} other {# donations stuck in PENDING}}",
+            "hint": "Unconfirmed for over 24h — likely a webhook failure."
+          },
+          "failingCampaigns": {
+            "label": "{count, plural, one {# email delivery failed} other {# email deliveries failed}}",
+            "hint": "Across {campaigns, plural, one {# campaign} other {# campaigns}}. Check your sending provider."
+          },
+          "suspiciousComments": {
+            "label": "{count, plural, one {# suspicious comment} other {# suspicious comments}}",
+            "hint": "Flagged in the last 72h and still unreviewed."
+          },
+          "suspiciousBacklog": {
+            "label": "{count, plural, one {# older suspicious comment} other {# older suspicious comments}}",
+            "hint": "Outside the 72h window but still in the review queue."
+          },
+          "untranslatedPosts": {
+            "label": "{count, plural, one {# post missing a translation} other {# posts missing a translation}}",
+            "hint": "Published in one language only — losing reach on the other side of the site."
+          },
+          "pendingSubscribers": {
+            "label": "{count, plural, one {# unconfirmed signup} other {# unconfirmed signups}}",
+            "hint": "The confirmation email may be landing in spam."
+          },
+          "orphanPosts": {
+            "label": "{count, plural, one {# post with no comments} other {# posts with no comments}}",
+            "hint": "Published over 30 days ago and never sparked a conversation."
+          },
+          "unverifiedUsers": {
+            "label": "{count, plural, one {# account with unverified email} other {# accounts with unverified email}}",
+            "hint": "Created in the last 30 days."
+          },
+          "staleDrafts": {
+            "label": "{count, plural, one {# open draft} other {# open drafts}}",
+            "hint": "Content started and not yet published."
+          }
+        }
+      },
+      "funnel": {
+        "title": "Engagement funnel",
+        "subtitle": "How much traffic turns into interaction",
+        "steps": {
+          "views": "Views",
+          "likes": "Likes",
+          "comments": "Comments"
+        },
+        "benchmarkTooltip": "Industry reference: {value}%",
+        "engagementRate": "Engagement rate",
+        "depth": "Depth",
+        "depthHint": "Depth is the comments-to-likes ratio: the higher it is, the more your audience writes instead of just reacting."
+      },
+      "contentHealth": {
+        "title": "Content health",
+        "subtitle": "{count, plural, one {# published post} other {# published posts}}",
+        "coverage": "Translation coverage",
+        "untranslated": "{count, plural, one {# post in one language only} other {# posts in one language only}}",
+        "velocity": "Publishing pace",
+        "perWeek": "{value}/wk",
+        "velocityHint": "{current} now · {previous} before",
+        "avgReadingTime": "Avg. reading time",
+        "minutes": "{value} min",
+        "avgViews": "{value} views per post",
+        "orphans": "Posts with no conversation",
+        "orphansHint": "Published 30+ days ago, zero comments",
+        "velocityTrend": "Trend",
+        "orphanShare": "That's {value} of the published catalog."
+      },
+      "recentComments": {
+        "title": "Recent comments",
+        "subtitle": "Latest activity on the blog",
+        "subtitleFlagged": "{count, plural, one {# flagged in the last 72h} other {# flagged in the last 72h}}",
+        "moderateAll": "Moderate",
+        "empty": "No comments yet. As soon as someone replies to a post, it shows up here.",
+        "banned": "banned",
+        "edited": "Edited after posting",
+        "onPost": "on {title}"
+      },
+      "topPosts": {
+        "title": "Most viewed posts",
+        "subtitle": "Ranked by views, with engagement rate",
+        "allPosts": "All posts",
+        "empty": "No published posts yet.",
+        "createPost": "Create the first one",
+        "engagementTooltip": "Likes plus comments divided by views"
+      },
+      "tags": {
+        "title": "Tag performance",
+        "subtitle": "Average views per post, not just volume",
+        "empty": "No tags in use.",
+        "perPost": "/post",
+        "avgViewsTooltip": "Average across {count, plural, one {# post} other {# posts}}",
+        "footnote": "The {tag} tag has the best average: {value} views per post."
+      },
+      "newsletter": {
+        "title": "Newsletter",
+        "subtitle": "{count, plural, one {# active subscriber} other {# active subscribers}}",
+        "manage": "Manage",
+        "netGrowth": "Net growth",
+        "gained": "Gained",
+        "lost": "Lost",
+        "confirmed": "Confirmed",
+        "pending": "Pending",
+        "confirmRate": "Confirmation",
+        "openRate": "Open rate",
+        "churn": "{value} churn in this period.",
+        "sent": "{count, plural, one {# send} other {# sends}}",
+        "opened": "{value} open rate",
+        "failed": "{count, plural, one {# failure} other {# failures}}",
+        "noCampaign": "No campaign sent yet.",
+        "scheduled": "{count, plural, one {# scheduled campaign} other {# scheduled campaigns}}"
+      },
+      "drafts": {
+        "title": "Drafts",
+        "subtitle": "{count, plural, =0 {nothing open} one {# open} other {# open}}",
+        "newPost": "New post",
+        "empty": "No pending drafts.",
+        "startWriting": "Write something",
+        "highlight": "Highlight of the period",
+        "noHighlight": "No post published in this period."
+      },
+      "donations": {
+        "anonymous": "Anonymous",
+        "someone": "Someone",
+        "coffees": "{count, plural, one {# coffee} other {# coffees}}",
+        "empty": "No donations yet.",
+        "recentTitle": "Recent transactions",
+        "recentSubtitle": "Last 10 confirmed",
+        "topTitle": "Top supporters",
+        "topSubtitle": "Sorted by amount donated",
+        "mixTitle": "Donation mix",
+        "mixSubtitle": "By payment method",
+        "txCount": "{count, plural, one {# transaction} other {# transactions}}",
+        "supporters": "Supporters",
+        "repeat": "Repeat",
+        "avgTicket": "Avg. ticket"
+      },
+      "charts": {
+        "views": "Views",
+        "likes": "Likes",
+        "comments": "Comments",
+        "newUsers": "New users",
+        "donations": "Donations",
+        "postsPublished": "Posts published",
+        "engagementTitle": "Engagement over time",
+        "engagementSubtitle": "By the date of the like and the comment · {period}",
+        "audienceTitle": "Audience and revenue",
+        "audienceSubtitle": "New signups versus amount donated",
+        "monthlyTitle": "12-month history",
+        "monthlySubtitle": "Accumulated views and publishing volume",
+        "engagementAria": "Chart of likes and comments over time",
+        "audienceAria": "Chart of new users and donations",
+        "monthlyAria": "Chart of views and posts published per month",
+        "tagAria": "Distribution of views by tag"
+      },
+      "footer": {
+        "autoRefresh": "Auto-refreshes every {seconds}s",
+        "collectedAt": "Collected at {time}"
       }
     },
     "donationsPage": {

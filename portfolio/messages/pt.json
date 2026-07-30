@@ -712,29 +712,214 @@
     "dashboard": {
       "title": "Dashboard",
       "description": "Visão geral do seu blog e das doações.",
-      "recentTransactions": "Transações recentes",
-      "topSupporters": "Maiores apoiadores",
-      "noDonationsYet": "Nenhuma doação ainda.",
-      "anonymous": "Anônimo",
-      "someone": "Alguém",
-      "coffees": "{count, plural, one {# café} other {# cafés}}",
-      "stats": {
-        "raised": {
-          "label": "Total arrecadado",
-          "sub": "{count, plural, one {# apoiador} other {# apoiadores}}"
-        },
-        "views": {
-          "label": "Visualizações",
-          "sub": "{count, plural, one {# post publicado} other {# posts publicados}}"
-        },
-        "likes": {
-          "label": "Curtidas",
-          "sub": "Em todos os posts"
-        },
-        "comments": {
-          "label": "Comentários",
-          "sub": "Em todos os posts"
+      "greeting": "Olá, {name}",
+      "subtitle": "Blog, comunidade e doações num só lugar.",
+      "liveUpdate": "atualizado às {time}",
+      "refresh": "Atualizar",
+      "statusPage": "Página de status",
+      "error": {
+        "title": "Não foi possível carregar o dashboard",
+        "unknown": "Erro desconhecido ao buscar os dados.",
+        "retry": "Tentar novamente"
+      },
+      "period": {
+        "label": "Período de análise",
+        "options": {
+          "7d": "7 dias",
+          "30d": "30 dias",
+          "90d": "90 dias",
+          "12m": "12 meses"
         }
+      },
+      "growth": {
+        "flat": "estável",
+        "noBaseline": "sem base"
+      },
+      "kpi": {
+        "raised": "Arrecadado",
+        "raisedSub": "{count, plural, one {# apoiador} other {# apoiadores}}",
+        "views": "Views",
+        "viewsSub": "{count, plural, one {# post} other {# posts}}",
+        "likes": "Curtidas",
+        "comments": "Comentários",
+        "newUsers": "Novos usuários",
+        "published": "Publicados",
+        "inPeriod": "em {period}",
+        "previous": "período anterior: {value}",
+        "perWeek": "{value}/semana"
+      },
+      "sections": {
+        "attention": "Precisa de atenção",
+        "performance": "Desempenho",
+        "performanceHint": "comparado ao período anterior de {period}",
+        "community": "Comunidade",
+        "content": "Conteúdo",
+        "donations": "Doações"
+      },
+      "alerts": {
+        "title": "Fila de ação",
+        "summary": "{critical} críticos · {warning} avisos",
+        "allClear": "Nada pendente",
+        "allClearSubtitle": "Nenhuma ação necessária",
+        "allClearHint": "Sem doações travadas, campanhas com falha ou conteúdo aguardando revisão.",
+        "kinds": {
+          "staleDonations": {
+            "label": "{count, plural, one {# doação presa em PENDING} other {# doações presas em PENDING}}",
+            "hint": "Há mais de 24h sem confirmação — provável falha de webhook."
+          },
+          "failingCampaigns": {
+            "label": "{count, plural, one {# envio de e-mail falhou} other {# envios de e-mail falharam}}",
+            "hint": "Distribuídos em {campaigns, plural, one {# campanha} other {# campanhas}}. Verifique o provedor de envio."
+          },
+          "suspiciousComments": {
+            "label": "{count, plural, one {# comentário suspeito} other {# comentários suspeitos}}",
+            "hint": "Sinalizados nas últimas 72h e ainda não revisados."
+          },
+          "suspiciousBacklog": {
+            "label": "{count, plural, one {# comentário suspeito antigo} other {# comentários suspeitos antigos}}",
+            "hint": "Fora da janela de 72h, mas seguem na fila de revisão."
+          },
+          "untranslatedPosts": {
+            "label": "{count, plural, one {# post sem tradução} other {# posts sem tradução}}",
+            "hint": "Publicado em apenas um idioma — perde alcance na outra versão do site."
+          },
+          "pendingSubscribers": {
+            "label": "{count, plural, one {# inscrição não confirmada} other {# inscrições não confirmadas}}",
+            "hint": "O e-mail de confirmação pode estar caindo em spam."
+          },
+          "orphanPosts": {
+            "label": "{count, plural, one {# post sem nenhum comentário} other {# posts sem nenhum comentário}}",
+            "hint": "Publicados há mais de 30 dias e nunca geraram conversa."
+          },
+          "unverifiedUsers": {
+            "label": "{count, plural, one {# conta sem e-mail verificado} other {# contas sem e-mail verificado}}",
+            "hint": "Criadas nos últimos 30 dias."
+          },
+          "staleDrafts": {
+            "label": "{count, plural, one {# rascunho aberto} other {# rascunhos abertos}}",
+            "hint": "Conteúdo começado e ainda não publicado."
+          }
+        }
+      },
+      "funnel": {
+        "title": "Funil de engajamento",
+        "subtitle": "Quanto do tráfego vira interação",
+        "steps": {
+          "views": "Views",
+          "likes": "Curtidas",
+          "comments": "Comentários"
+        },
+        "benchmarkTooltip": "Referência de mercado: {value}%",
+        "engagementRate": "Taxa de engajamento",
+        "depth": "Profundidade",
+        "depthHint": "Profundidade é a razão comentários/curtidas: quanto mais alta, mais o público escreve em vez de só reagir."
+      },
+      "contentHealth": {
+        "title": "Saúde do conteúdo",
+        "subtitle": "{count, plural, one {# post publicado} other {# posts publicados}}",
+        "coverage": "Cobertura de tradução",
+        "untranslated": "{count, plural, one {# post só em um idioma} other {# posts só em um idioma}}",
+        "velocity": "Ritmo de publicação",
+        "perWeek": "{value}/sem",
+        "velocityHint": "{current} agora · {previous} antes",
+        "avgReadingTime": "Leitura média",
+        "minutes": "{value} min",
+        "avgViews": "{value} views por post",
+        "orphans": "Posts sem conversa",
+        "orphansHint": "Publicados há +30d, zero comentários",
+        "velocityTrend": "Tendência",
+        "orphanShare": "Isso representa {value} do catálogo publicado."
+      },
+      "recentComments": {
+        "title": "Comentários recentes",
+        "subtitle": "Últimas interações no blog",
+        "subtitleFlagged": "{count, plural, one {# sinalizado nas últimas 72h} other {# sinalizados nas últimas 72h}}",
+        "moderateAll": "Moderar",
+        "empty": "Nenhum comentário ainda. Assim que alguém responder a um post, aparece aqui.",
+        "banned": "banido",
+        "edited": "Editado depois de publicado",
+        "onPost": "em {title}"
+      },
+      "topPosts": {
+        "title": "Posts mais vistos",
+        "subtitle": "Ranking por views, com taxa de engajamento",
+        "allPosts": "Todos os posts",
+        "empty": "Nenhum post publicado ainda.",
+        "createPost": "Criar o primeiro",
+        "engagementTooltip": "Curtidas + comentários dividido por views"
+      },
+      "tags": {
+        "title": "Desempenho por tag",
+        "subtitle": "Views médias por post, não só volume",
+        "empty": "Nenhuma tag em uso.",
+        "perPost": "/post",
+        "avgViewsTooltip": "Média em {count, plural, one {# post} other {# posts}}",
+        "footnote": "A tag {tag} tem a melhor média: {value} views por post."
+      },
+      "newsletter": {
+        "title": "Newsletter",
+        "subtitle": "{count, plural, one {# inscrito ativo} other {# inscritos ativos}}",
+        "manage": "Gerenciar",
+        "netGrowth": "Crescimento líquido",
+        "gained": "Novos",
+        "lost": "Saíram",
+        "confirmed": "Confirmados",
+        "pending": "Pendentes",
+        "confirmRate": "Confirmação",
+        "openRate": "Abertura",
+        "churn": "Churn de {value} no período.",
+        "sent": "{count, plural, one {# envio} other {# envios}}",
+        "opened": "{value} de abertura",
+        "failed": "{count, plural, one {# falha} other {# falhas}}",
+        "noCampaign": "Nenhuma campanha enviada até agora.",
+        "scheduled": "{count, plural, one {# campanha agendada} other {# campanhas agendadas}}"
+      },
+      "drafts": {
+        "title": "Rascunhos",
+        "subtitle": "{count, plural, =0 {nada em aberto} one {# em aberto} other {# em aberto}}",
+        "newPost": "Novo post",
+        "empty": "Nenhum rascunho pendente.",
+        "startWriting": "Escrever algo",
+        "highlight": "Destaque do período",
+        "noHighlight": "Nenhum post publicado neste período."
+      },
+      "donations": {
+        "anonymous": "Anônimo",
+        "someone": "Alguém",
+        "coffees": "{count, plural, one {# café} other {# cafés}}",
+        "empty": "Nenhuma doação ainda.",
+        "recentTitle": "Transações recentes",
+        "recentSubtitle": "Últimas 10 confirmadas",
+        "topTitle": "Maiores apoiadores",
+        "topSubtitle": "Ordenado por valor doado",
+        "mixTitle": "Composição das doações",
+        "mixSubtitle": "Por meio de pagamento",
+        "txCount": "{count, plural, one {# transação} other {# transações}}",
+        "supporters": "Apoiadores",
+        "repeat": "Recorrentes",
+        "avgTicket": "Ticket médio"
+      },
+      "charts": {
+        "views": "Views",
+        "likes": "Curtidas",
+        "comments": "Comentários",
+        "newUsers": "Novos usuários",
+        "donations": "Doações",
+        "postsPublished": "Posts publicados",
+        "engagementTitle": "Engajamento ao longo do tempo",
+        "engagementSubtitle": "Pela data da curtida e do comentário · {period}",
+        "audienceTitle": "Audiência e receita",
+        "audienceSubtitle": "Cadastros novos versus valor doado",
+        "monthlyTitle": "Histórico de 12 meses",
+        "monthlySubtitle": "Views acumuladas e volume de publicação",
+        "engagementAria": "Gráfico de curtidas e comentários ao longo do tempo",
+        "audienceAria": "Gráfico de novos usuários e doações",
+        "monthlyAria": "Gráfico de views e posts publicados por mês",
+        "tagAria": "Distribuição de views por tag"
+      },
+      "footer": {
+        "autoRefresh": "Atualiza automaticamente a cada {seconds}s",
+        "collectedAt": "Coletado às {time}"
       }
     },
     "donationsPage": {
