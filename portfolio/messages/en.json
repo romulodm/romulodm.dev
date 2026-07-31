@@ -481,8 +481,53 @@
     },
     "legal": {
       "madeWith": "Made with ",
+      "coffee": " and a lot of coffee",
       "copyright": "© {year} — All rights reserved."
     }
+  },
+  "faq": {
+    "title": "Frequently asked questions",
+    "subtitle": "The basics about this place, in a few lines.",
+    "items": [
+      {
+        "q": "What is this site?",
+        "a": "It's my portfolio and my blog in one place. On one side, what I've built and the stack I work with; on the other, writing about engineering, infrastructure and the decisions behind the projects — including the mistakes, which usually teach more than the wins.",
+        "cta": "Read the blog",
+        "href": "/blog"
+      },
+      {
+        "q": "Do I have to pay for anything?",
+        "a": "No. Everything here is free: no paywall, no reading limit, no ads. You don't even need an account to read."
+      },
+      {
+        "q": "How can I help?",
+        "a": "Sharing a post with someone who'd enjoy it already helps a lot. If you'd like to support it financially, you can buy me a coffee via PIX, card or crypto — it covers hosting and the time spent writing. Pointing out a mistake in a post counts for a lot too.",
+        "cta": "Buy me a coffee",
+        "href": "/support"
+      },
+      {
+        "q": "What do I get by subscribing to the newsletter?",
+        "a": "An email when a new post goes out, and nothing else. No spam, no list selling, no marketing blasts. The unsubscribe link is in every message and works in one click.",
+        "cta": "Subscribe to the newsletter",
+        "href": "/newsletter"
+      },
+      {
+        "q": "What is the wall?",
+        "a": "An open space for anyone passing by to leave a short note. No theme and no rules beyond common sense: a hello, a topic suggestion, or just marking that you were here.",
+        "cta": "See the wall",
+        "href": "/wall"
+      },
+      {
+        "q": "Do I need an account to comment?",
+        "a": "Not to read. To comment or like, yes — signing in with Google, GitHub, or email and password. The account only exists to keep spam out and the conversation accountable; I don't use your data for anything else."
+      },
+      {
+        "q": "Is this site open source?",
+        "a": "It is. The whole site, the infrastructure and the workers are public on GitHub. If you want to understand how a piece of it works, or reuse something, just browse the repository.",
+        "cta": "See it on GitHub",
+        "href": "https://github.com/romulodm"
+      }
+    ]
   },
   "blogPost": {
     "notFoundTitle": "Post not found",

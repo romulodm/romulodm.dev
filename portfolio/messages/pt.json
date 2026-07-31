@@ -481,8 +481,53 @@
     },
     "legal": {
       "madeWith": "Feito com ",
+      "coffee": " e muito café",
       "copyright": "© {year}. Todos os direitos reservados."
     }
+  },
+  "faq": {
+    "title": "Perguntas frequentes",
+    "subtitle": "O básico sobre este espaço, em poucas linhas.",
+    "items": [
+      {
+        "q": "O que é este site?",
+        "a": "É meu portfólio e meu blog no mesmo lugar. De um lado, o que eu construí e a stack que uso no dia a dia; do outro, textos sobre engenharia, infraestrutura e as decisões técnicas por trás dos projetos — incluindo os erros, que costumam ensinar mais que os acertos.",
+        "cta": "Ler o blog",
+        "href": "/blog"
+      },
+      {
+        "q": "Preciso pagar alguma coisa?",
+        "a": "Não. Todo o conteúdo é gratuito, sem paywall, sem limite de leitura e sem anúncio. Você não precisa nem criar conta para ler."
+      },
+      {
+        "q": "Como posso ajudar?",
+        "a": "Compartilhar um post com quem vai gostar já ajuda bastante. Se quiser apoiar financeiramente, dá para me pagar um café via PIX, cartão ou cripto — o valor cobre a hospedagem e o tempo de escrever. Apontar um erro num texto também vale muito.",
+        "cta": "Me pagar um café",
+        "href": "/support"
+      },
+      {
+        "q": "O que recebo assinando a newsletter?",
+        "a": "Um e-mail quando sai post novo, e nada além disso. Sem spam, sem venda de lista, sem e-mail de marketing. O link de descadastro vai em toda mensagem e funciona em um clique.",
+        "cta": "Assinar a newsletter",
+        "href": "/newsletter"
+      },
+      {
+        "q": "O que é o mural?",
+        "a": "Um espaço aberto para quem passa por aqui deixar um recado curto. Não tem tema nem regra além do bom senso: pode ser um oi, uma sugestão de assunto ou só marcar presença.",
+        "cta": "Ver o mural",
+        "href": "/wall"
+      },
+      {
+        "q": "Preciso de conta para comentar?",
+        "a": "Para ler, não. Para comentar ou curtir, sim — entrando com Google, GitHub ou e-mail e senha. A conta serve só para evitar spam e manter a conversa rastreável; não uso seus dados para mais nada."
+      },
+      {
+        "q": "O código deste site é aberto?",
+        "a": "É. O site inteiro, a infraestrutura e os workers estão públicos no GitHub. Se você quiser entender como alguma parte funciona, ou reaproveitar algo, é só olhar o repositório.",
+        "cta": "Ver no GitHub",
+        "href": "https://github.com/romulodm"
+      }
+    ]
   },
   "blogPost": {
     "notFoundTitle": "Post não encontrado",
