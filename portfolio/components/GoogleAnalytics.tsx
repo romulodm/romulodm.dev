@@ -1,7 +1,3 @@
-// components/GoogleAnalytics.tsx
-// Carrega o script do GA4 apenas após o usuário aceitar cookies.
-// Lê o cookie "cookie-consent" que o seu CookieBanner já define.
-
 'use client';
 
 import Script from 'next/script';
@@ -14,7 +10,7 @@ declare global {
     }
 }
 
-// ── Funções exportadas para rastrear eventos manualmente ──────────────────────
+// ── Funções exportadas para rastrear eventos manualmente
 
 export function trackEvent(action: string, params?: Record<string, unknown>) {
     if (typeof window === 'undefined' || !window.gtag) return;
@@ -26,7 +22,7 @@ export function trackPageView(url: string, title?: string) {
     window.gtag('event', 'page_view', { page_location: url, page_title: title });
 }
 
-// ── Componente principal ──────────────────────────────────────────────────────
+// ── Componente principal
 
 export function GoogleAnalytics({ measurementId }: { measurementId: string }) {
     const [consented, setConsented] = useState(false);
@@ -34,8 +30,8 @@ export function GoogleAnalytics({ measurementId }: { measurementId: string }) {
     useEffect(() => {
         // Verifica se o cookie de consentimento já foi aceito
         function checkConsent() {
-            const match = document.cookie.match(/(?:^|;\s*)cookie-consent=([^;]*)/);
-            setConsented(match?.[1] === 'accepted');
+            const match = document.cookie.match(/(?:^|;\s*)cookie_consent=([^;]*)/);
+            setConsented(decodeURIComponent(match?.[1] ?? '') === 'accepted');
         }
 
         checkConsent();
