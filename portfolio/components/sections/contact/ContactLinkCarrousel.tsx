@@ -9,6 +9,7 @@ import { SiOnlyfans } from 'react-icons/si';
 import Tooltip from '@mui/material/Tooltip';
 import { styled } from '@mui/material/styles';
 import { TooltipProps } from '@mui/material/Tooltip';
+import { LattesIcon } from '@/components/icons/LattesIcon'
 
 interface ItemTooltipProps extends TooltipProps {
   color?: string;
@@ -83,11 +84,11 @@ export default function LinkCarousel(): React.JSX.Element {
       id: 'github',
     },
     {
-      url: 'https://discord.gg/JsDqrwZJ',
-      icon: <FaDiscord />,
-      color: '#7289da',
-      title: 'Discord',
-      id: 'discord',
+      url: 'http://lattes.cnpq.br/0179162809960172',
+      icon: <LattesIcon />,
+      color: '#00549f',
+      title: 'Lattes',
+      id: 'lattes',
     },
     {
       url: 'https://www.instagram.com/romulo_dmr',
@@ -106,7 +107,7 @@ export default function LinkCarousel(): React.JSX.Element {
   ];
 
   return (
-    <div className="flex w-full justify-center">
+    <div className="flex w-full">
       <div className="relative pt-4 pb-2 overflow-hidden w-fit">
         <div className="flex gap-2 justify-center">
           {links.map((link, index) => (
