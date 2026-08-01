@@ -8,15 +8,14 @@ import { FaLinkedinIn } from 'react-icons/fa'
 import { BsGithub, BsInstagram } from 'react-icons/bs'
 import { FaArrowRightLong } from 'react-icons/fa6'
 import { Mail, MapPin } from 'lucide-react'
-import { TermsModal } from './modals/TermsModal'
 import { ContactModal } from './modals/ContactModal'
 import { GitHubStarsButton } from './GitHubStarsButton'
+import { LattesIcon } from './icons/LattesIcon'
 
 export function Footer() {
     const t = useTranslations('footer')
     const currentYear = new Date().getFullYear()
 
-    const [termsOpen, setTermsOpen] = useState(false)
     const [contactOpen, setContactOpen] = useState(false)
 
     return (
@@ -85,30 +84,23 @@ export function Footer() {
                     </div>
 
                     <FooterCol title={t('nav.resources.title')}>
-                        <FooterLink href="/">{t('nav.resources.links.home')}</FooterLink>
-                        <FooterLink href="/resume">{t('nav.resources.links.resume')}</FooterLink>
                         <FooterLink href="/blog">{t('nav.resources.links.blog')}</FooterLink>
-                        <FooterLink href="/profile">{t('nav.resources.links.profile')}</FooterLink>
+                        <FooterLink href="/wall">{t('nav.resources.links.wall')}</FooterLink>
+                        <FooterLink href="/support">{t('nav.resources.links.support')}</FooterLink>
+                        <FooterLink href="/profile/romulodm">{t('nav.resources.links.profile')}</FooterLink>
+                        <FooterLink href="/resume">{t('nav.resources.links.resume')}</FooterLink>
+                        <FooterLink href="/status">{t('nav.resources.links.status')}</FooterLink>
                     </FooterCol>
 
                     <FooterCol title={t('nav.newsletter.title')}>
                         <FooterLink href="/newsletter/about">{t('nav.newsletter.links.about')}</FooterLink>
                         <FooterLink href="/newsletter/login">{t('nav.newsletter.links.login')}</FooterLink>
                         <FooterLink href="/newsletter/logout">{t('nav.newsletter.links.logout')}</FooterLink>
-                        <FooterLink href="/newsletter/privacy">{t('nav.newsletter.links.privacy')}</FooterLink>
                     </FooterCol>
 
                     <FooterCol title={t('nav.legal.title')}>
-                        <FooterLink href="/privacy">{t('nav.legal.links.privacy')}</FooterLink>
-                        <li>
-                            <button
-                                onClick={() => setTermsOpen(true)}
-                                className="text-[0.78rem] text-white/50 no-underline leading-snug hover:text-white/80 transition-colors"
-                            >
-                                {t('nav.legal.links.terms')}
-                            </button>
-                        </li>
-                        <FooterLink href="/legal">{t('nav.legal.links.notices')}</FooterLink>
+                        <FooterLink href="/legal/privacy-policy">{t('nav.legal.links.privacy')}</FooterLink>
+                        <FooterLink href="/legal/terms">{t('nav.legal.links.terms')}</FooterLink>
                     </FooterCol>
 
                     {/* About */}
@@ -153,6 +145,9 @@ export function Footer() {
                 {/* ── Socials ── */}
                 <div className="flex justify-between items-center py-5 border-t border-white/10">
                     <div className="flex gap-2">
+                        <SocialBtn href="http://lattes.cnpq.br/0179162809960172" aria-label="Currículo Lattes">
+                            <LattesIcon />
+                        </SocialBtn>
                         <SocialBtn href="https://github.com/romulodm" aria-label="GitHub">
                             <BsGithub />
                         </SocialBtn>
@@ -179,14 +174,10 @@ export function Footer() {
                                 <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/2764_fe0f/512.gif" alt="❤" width="18" height="18" />
                             </picture>
                         </span>
-                        Next.js & TypeScript
+                        {t('legal.coffee')}
                     </p>
                 </div>
             </div>
-
-            {termsOpen && (
-                <TermsModal open={termsOpen} onClose={() => setTermsOpen(false)} />
-            )}
 
             {/* Modal de contato */}
             <ContactModal open={contactOpen} onOpenChange={setContactOpen} />
