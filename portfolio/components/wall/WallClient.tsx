@@ -81,7 +81,7 @@ export function WallClient({
            • We add overflow-visible + padding so the tilt shadow isn't clipped.
       */}
       <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3
-                      gap-x-3 gap-y-6 [&>*]:transition-all">
+                      gap-x-3 gap-y-6 [&>*]:transition-all [&>*]:min-w-0">
         {/* First slot: compose / sign-in / already-posted */}
         {firstCard()}
 
