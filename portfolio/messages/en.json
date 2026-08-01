@@ -450,10 +450,12 @@
       "resources": {
         "title": "Resources",
         "links": {
-          "home": "Home",
-          "resume": "Resume",
           "blog": "Blog",
-          "profile": "Profile"
+          "wall": "Wall",
+          "support": "Support",
+          "profile": "Profile",
+          "resume": "Resume",
+          "status": "Status"
         }
       },
       "newsletter": {
