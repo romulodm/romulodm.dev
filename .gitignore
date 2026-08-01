@@ -16,3 +16,8 @@ waha-data
 **/waha-data
 .turbo
 tmp
+
+.sentryclirc
+**/.sentryclirc
+.env.sentry-build-plugin
+**/.env.sentry-build-plugin
