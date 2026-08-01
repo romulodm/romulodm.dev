@@ -72,8 +72,8 @@ export function NewsletterTab({ sub, email }: Props) {
         return (
             <div className="rounded-lg border border-border p-6 space-y-4">
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-accent flex items-center justify-center">
-                        <Mail className="w-5 h-5 text-muted-foreground" />
+                    <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
+                        <Mail className="w-5 h-5 dark:text-black text-white" />
                     </div>
                     <div>
                         <p className="text-sm font-semibold text-foreground">Assine a newsletter</p>
@@ -152,8 +152,8 @@ export function NewsletterTab({ sub, email }: Props) {
                                 onClick={() => handleLocaleChange(opt.value)}
                                 disabled={isPending}
                                 className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition-all ${selectedLocale === opt.value
-                                        ? "border-primary bg-primary/10 text-primary"
-                                        : "border-border text-muted-foreground hover:border-primary/50"
+                                    ? "border-primary bg-primary/10 text-primary"
+                                    : "border-border text-muted-foreground hover:border-primary/50"
                                     }`}
                             >
                                 {opt.label}
