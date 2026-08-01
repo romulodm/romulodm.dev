@@ -14,4 +14,7 @@ export const queueRuntimeConfig = {
     viewsFlushBatchSize: readPositiveInt("WORKER_VIEWS_FLUSH_BATCH_SIZE", 100),
     viewsFlushIntervalMs: readPositiveInt("WORKER_VIEWS_FLUSH_INTERVAL_MS", 120_000),
     onchainRetryIntervalMs: readPositiveInt("WORKER_ONCHAIN_RETRY_INTERVAL_MS", 300_000),
+    donationsReconcileIntervalMs: readPositiveInt("WORKER_DONATIONS_RECONCILE_INTERVAL_MS", 300_000),
+    donationsReconcileBatchSize: readPositiveInt("WORKER_DONATIONS_RECONCILE_BATCH", 25),
+    donationsReconcileWindowDays: readPositiveInt("WORKER_DONATIONS_RECONCILE_WINDOW_DAYS", 7),
 } as const;

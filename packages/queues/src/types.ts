@@ -49,7 +49,9 @@ export type NotificationJob =
     | { type: "comment"; id: string; author: string; postTitle: string; postSlug: string }
     | { type: "daily-status" }
     | { type: "flush-views" }
-    | { type: "retry-onchain" };
+    | { type: "retry-onchain" }
+    | { type: "reconcile-donations" }
+    | { type: "audit-donations" };
 
 export type BackupJob =
     | { type: "create-backup"; requestedBy: string };

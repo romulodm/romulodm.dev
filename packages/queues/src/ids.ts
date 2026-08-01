@@ -3,6 +3,8 @@ import {
     DAILY_STATUS_JOB_NAME,
     FLUSH_VIEWS_JOB_NAME,
     RETRY_ONCHAIN_JOB_NAME,
+    RECONCILE_DONATIONS_JOB_NAME,
+    AUDIT_DONATIONS_JOB_NAME,
 } from "./constants";
 import type {
     TransactionalEmailJob,
@@ -47,6 +49,10 @@ export function buildNotificationJobId(job: NotificationJob): string {
             return `notification:${FLUSH_VIEWS_JOB_NAME}`;
         case "retry-onchain":                              // ← novo
             return `notification:${RETRY_ONCHAIN_JOB_NAME}`;
+        case "reconcile-donations":
+            return `notification:${RECONCILE_DONATIONS_JOB_NAME}`;
+        case "audit-donations":
+            return `notification:${AUDIT_DONATIONS_JOB_NAME}`;
         default:
             return `notification:${stableHash([JSON.stringify(job)])}`;
     }
