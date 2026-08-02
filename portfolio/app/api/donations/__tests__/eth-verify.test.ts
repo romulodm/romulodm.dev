@@ -1,7 +1,6 @@
 /**
  * Testes de regressão — POST /api/donations/eth/verify
  *
- * Cobre os casos de segurança introduzidos na correção:
  *   1. txHash com formato inválido → 400
  *   2. txHash duplicado (replay) → 400
  *   3. Rate limit excedido → 429
@@ -11,7 +10,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { NextRequest } from 'next/server'
 
-// ── Mocks ────────────────────────────────────────────────────────────────────
+// ── Mocks
 
 vi.mock('@romulo/database', () => ({
   prisma: {
@@ -37,7 +36,7 @@ const WALLET = '0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef'
 process.env.ETH_WALLET_ADDRESS = WALLET
 process.env.ETHERSCAN_API_KEY = 'test-key'
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+// ── Helpers
 
 function makeRequest(body: Record<string, unknown>) {
   return new NextRequest('http://localhost/api/donations/eth/verify', {
@@ -53,13 +52,18 @@ function mockEtherscan(to: string, value = '0xde0b6b3a7640000') {
   } as unknown as Response)
 }
 
-// ── Testes ────────────────────────────────────────────────────────────────────
+/*
+ * Imports em escopo de modulo. Dentro do callback sincrono do describe, o
+ * `await` faz o esbuild recusar o transform e a suite nunca roda — era o caso
+ * deste arquivo. Os vi.mock acima sao hoistados, entao os mocks valem aqui.
+ */
+const { prisma } = await import('@romulo/database')
+const { rateLimit } = await import('@/lib/rate-limit')
+const { POST } = await import('../eth/verify/route')
+
+// ── Testes
 
 describe('POST /api/donations/eth/verify', () => {
-  const { prisma } = await import('@romulo/database')
-  const { rateLimit } = await import('@/lib/rate-limit')
-  const { POST } = await import('../eth/verify/route')
-
   beforeEach(() => {
     vi.clearAllMocks()
     vi.mocked(rateLimit).mockResolvedValue(false) // sem rate limit por padrão
