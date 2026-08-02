@@ -79,7 +79,7 @@ function ExperienceCard({
             {experience.skills.map((skill, i) => (
               <span
                 key={i}
-                className="rounded-md bg-secondary px-2 py-0.5 text-xs font-medium text-secondary-foreground"
+                className="rounded-md bg-gray-200 dark:bg-muted px-2 py-0.5 text-xs font-medium text-secondary-foreground"
               >
                 {skill}
               </span>
