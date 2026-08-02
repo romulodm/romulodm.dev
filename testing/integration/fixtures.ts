@@ -117,6 +117,31 @@ export async function createTestUser(overrides?: {
   });
 }
 
+export async function createTestDonation(overrides?: {
+  status?: "PENDING" | "COMPLETED" | "FAILED" | "EXPIRED";
+  provider?: "PIX" | "STRIPE" | "ETH";
+  amount?: number;
+  currency?: string;
+  abacatePayChargeId?: string | null;
+  stripePaymentIntentId?: string | null;
+  createdAt?: Date;
+}) {
+  const token = uniqueToken("donation");
+  return prisma.donation.create({
+    data: {
+      name: token,
+      amount: overrides?.amount ?? 500,
+      coffees: 1,
+      currency: overrides?.currency ?? "BRL",
+      provider: overrides?.provider ?? "PIX",
+      status: overrides?.status ?? "PENDING",
+      abacatePayChargeId: overrides?.abacatePayChargeId ?? null,
+      stripePaymentIntentId: overrides?.stripePaymentIntentId ?? null,
+      ...(overrides?.createdAt ? { createdAt: overrides.createdAt } : {}),
+    },
+  });
+}
+
 export async function createPublishedPost(authorId: string, overrides?: {
   slug?: string;
   commentsCount?: number;
