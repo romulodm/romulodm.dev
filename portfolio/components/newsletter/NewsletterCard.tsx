@@ -76,19 +76,20 @@ export default function NewsletterCard({ subscriberCount = 0 }: NewsletterCardPr
 
   return (
     <section className="w-full mx-auto px-6 py-12">
-      <div className="max-w-xl mx-auto">
-        <div className="w-full flex flex-col sm:flex-row items-center justify-center mb-1 gap-1">
-          <h1 className="text-3xl mb-1.5 text-center font-extrabold text-secondary leading-tight">
-            {t("title")}
-          </h1>
-          <img
-            src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f947/512.gif"
-            alt={t("medalAlt")}
-            width="27"
-            height="27"
-          />
-        </div>
+      <div className="w-full flex flex-col sm:flex-row items-center justify-center mb-1 gap-1">
+        <h1 className="text-2xl sm:text-3xl mb-1.5 text-center font-extrabold text-secondary leading-tight sm:whitespace-nowrap">
+          {t("title")}
+        </h1>
+        <img
+          src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f947/512.gif"
+          alt={t("medalAlt")}
+          width="27"
+          height="27"
+          className="shrink-0"
+        />
+      </div>
 
+      <div className="max-w-xl mx-auto">
         <p className="text-lg text-center text-foreground mb-4">
           {t("description")}
           <br />
