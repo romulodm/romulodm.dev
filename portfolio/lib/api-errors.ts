@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/nextjs";
 import { NextResponse } from "next/server";
 import { ZodError } from "zod";
 
@@ -80,10 +81,25 @@ export function logApiError(
 ) {
   if (metadata) {
     console.error(`[${context}]`, metadata, error);
-    return;
+  } else {
+    console.error(`[${context}]`, error);
   }
 
-  console.error(`[${context}]`, error);
+  Sentry.withScope((scope) => {
+    scope.setTag("api_context", context);
+    scope.setFingerprint(["api", context]);
+
+    if (metadata) {
+      scope.setContext("metadata", metadata);
+    }
+
+    if (error instanceof Error) {
+      Sentry.captureException(error);
+      return;
+    }
+    scope.setContext("raw_error", { value: String(error) });
+    Sentry.captureMessage(`[${context}] ${String(error)}`, "error");
+  });
 }
 
 export function internalErrorResponse(
