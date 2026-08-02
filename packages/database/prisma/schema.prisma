@@ -304,6 +304,25 @@ model OnChainDonation {
   @@index([token])
 }
 
+model WebhookEvent {
+  id          String    @id @default(cuid())
+  provider    String
+  eventId     String
+  eventType   String
+  payload     Json
+  /// RECEIVED | PROCESSED | IGNORED | FAILED
+  status      String    @default("RECEIVED")
+  error       String?   @db.VarChar(1000)
+  donationId  String?
+  receivedAt  DateTime  @default(now())
+  processedAt DateTime?
+
+  @@unique([provider, eventId])
+  @@index([status, receivedAt])
+  @@index([donationId])
+  @@index([receivedAt])
+}
+
 model WallMessage {
   id        String   @id @default(cuid())
   message   String   @db.VarChar(100)
