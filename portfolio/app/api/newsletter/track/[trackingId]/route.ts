@@ -6,6 +6,8 @@
 //
 
 import { NextRequest, NextResponse } from "next/server";
+
+import { logApiError } from "@/lib/api-errors";
 import { prisma } from "@romulo/database";
 
 // 1×1 transparent GIF (43 bytes)
@@ -45,7 +47,7 @@ export async function GET(req: NextRequest, props: { params: Promise<{ trackingI
       }
     } catch (err) {
       // Silently ignore — tracking should never break delivery
-      console.error("[track pixel]", err);
+      logApiError("newsletter.track_pixel", err);
     }
   });
 

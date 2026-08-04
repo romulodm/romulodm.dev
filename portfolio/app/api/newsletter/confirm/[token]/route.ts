@@ -1,5 +1,6 @@
 ﻿import { NextRequest, NextResponse } from "next/server";
 import { confirmSubscription } from "@/lib/newsletter/newsletter.service";
+import { logApiError } from "@/lib/api-errors";
 import { getApiTranslator } from '@/lib/api-intl'
 
 export async function GET(req: NextRequest, props: { params: Promise<{ token: string }> }) {
@@ -25,7 +26,7 @@ export async function GET(req: NextRequest, props: { params: Promise<{ token: st
       message: t('newsletter.confirm.success'),
     });
   } catch (error) {
-    console.error("[confirm]", error);
+    logApiError("newsletter.confirm", error);
     return NextResponse.json({ error: t('newsletter.confirm.internal') }, { status: 500 });
   }
 }

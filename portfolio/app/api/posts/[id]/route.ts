@@ -8,6 +8,7 @@ import { isAdminAuthenticated } from "@/lib/auth-helpers";
 import {
   badRequestResponse,
   internalErrorResponse,
+  logApiError,
   notFoundResponse,
   unauthorizedResponse,
 } from "@/lib/api-errors";
@@ -205,7 +206,7 @@ export async function PATCH(
               },
             });
           } catch (error) {
-            console.error(`[translate] ${target.code} failed:`, error);
+            logApiError("posts.translate", error, { postId: params.id, targetLocale: target.code });
           }
         }),
       );

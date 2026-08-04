@@ -6,6 +6,7 @@ import { isAdminAuthenticated, getSession } from "@/lib/auth-helpers";
 import {
   badRequestResponse,
   internalErrorResponse,
+  logApiError,
   unauthorizedResponse,
 } from "@/lib/api-errors";
 import { getApiTranslator } from "@/lib/api-intl";
@@ -120,7 +121,7 @@ export async function POST(req: NextRequest) {
               excerpt: result.excerpt,
             });
           } catch (error) {
-            console.error(`Translation to ${target.code} failed:`, error);
+            logApiError("posts.translate", error, { targetLocale: target.code });
           }
         }),
       );

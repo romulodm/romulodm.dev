@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 
 import { getApiTranslator } from "@/lib/api-intl";
-import { rateLimitResponse } from "@/lib/api-errors";
+import { logApiError, rateLimitResponse } from "@/lib/api-errors";
 import { getRequestIp, rateLimit } from "@/lib/rate-limit";
 import { sendPasswordResetEmail } from "@/lib/queues/password.queue";
 
@@ -69,7 +69,7 @@ export async function POST(req: Request) {
 
     return genericResponse;
   } catch (error) {
-    console.error("[forgot-password]", error);
+    logApiError("forgot-password", error);
     return NextResponse.json({ message: t("auth.forgot.internal") }, { status: 500 });
   }
 }

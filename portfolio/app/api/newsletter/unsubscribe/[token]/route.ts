@@ -1,4 +1,5 @@
 ﻿import { NextRequest, NextResponse } from "next/server";
+import { logApiError } from "@/lib/api-errors";
 import { confirmUnsubscribe } from "@/lib/newsletter/newsletter.service";
 import { getApiTranslator } from '@/lib/api-intl'
 
@@ -28,7 +29,7 @@ export async function POST(req: NextRequest, props: { params: Promise<{ token: s
         });
     }
   } catch (error) {
-    console.error("[unsubscribe]", error);
+    logApiError("newsletter.unsubscribe", error);
     return NextResponse.json({ error: t('newsletter.unsubscribe.internal') }, { status: 500 });
   }
 }

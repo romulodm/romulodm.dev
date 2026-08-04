@@ -7,6 +7,7 @@ import { prisma } from "@romulo/database";
 import {
   conflictResponse,
   internalErrorResponse,
+  logApiError,
   rateLimitResponse,
   validationErrorResponse,
 } from "@/lib/api-errors";
@@ -92,7 +93,7 @@ export async function POST(req: NextRequest) {
         data: { userId: created.id },
       })
       .catch((err) =>
-        console.error("[register] newsletter link failed:", err),
+        logApiError("register.newsletter_link", err),
       );
 
     return NextResponse.json({ ok: true, userId: created.id }, { status: 201 });
