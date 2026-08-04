@@ -7,7 +7,7 @@ import {
 } from "@romulo/queues";
 
 import { createPostgresBackup } from "../lib/backup";
-import { logWorkerEvent } from "../lib/worker-observability";
+import { logWorkerError, logWorkerEvent } from "../lib/worker-observability";
 
 export function startBackupWorker(redis: Redis) {
     const worker = new Worker<BackupJob>(
@@ -32,10 +32,9 @@ export function startBackupWorker(redis: Redis) {
     );
 
     worker.on("failed", (job, err) => {
-        logWorkerEvent("error", "backup.failed", {
+        logWorkerError("backup.failed", err, {
             jobId: job?.id ?? null,
             attemptsMade: job?.attemptsMade ?? null,
-            error: err.message,
         });
     });
 

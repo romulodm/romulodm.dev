@@ -1,4 +1,5 @@
 import "./env";
+import "./lib/sentry";
 
 import {
   createQueue,
@@ -10,10 +11,13 @@ import {
 import { prisma } from "@romulo/database";
 import type { Worker } from "bullmq";
 
+import { sendWorkerAlert, sendWorkerAlertAsync } from "./lib/alerts";
 import { emailService } from "./lib/email/email.service";
 import { redis } from "./lib/redis";
+import { flushSentry } from "./lib/sentry";
 import {
   createFailureTracker,
+  logWorkerError,
   logWorkerEvent,
   recordQueueFailure,
   setLogRedis,
@@ -28,6 +32,10 @@ import { startSearchConsumer, reindexAll } from "./workers/search.worker";
 import { startMetricsWorker } from "./workers/metrics.worker";
 import { startBackupWorker } from "./workers/backup.worker";
 import { scheduleOnchainRetry } from "./workers/onchain.worker";
+import {
+  scheduleDonationsAudit,
+  scheduleDonationsReconcile,
+} from "./workers/donations.worker";
 
 // ── Monitoring queues ─────────────────────────────────────────────────────────
 // Used only for health monitoring (job counts, lag).
@@ -94,6 +102,8 @@ async function main() {
   await scheduleDailyStatus(redis);
   await scheduleViewsFlush(redis);
   await scheduleOnchainRetry(redis);
+  await scheduleDonationsReconcile(redis);
+  await scheduleDonationsAudit(redis);
 
   // ── Structured logging ────────────────────────────────────────────────────
   attachLogger(transactionalWorker, QUEUE_TRANSACTIONAL);
@@ -132,6 +142,9 @@ async function main() {
     redis.disconnect();
 
     logWorkerEvent("info", "worker.shutdown_complete");
+
+    await flushSentry();
+
     process.exit(0);
   }
 
@@ -153,36 +166,58 @@ function attachLogger(worker: Worker, queueName: string) {
 
   worker.on("failed", (job, err) => {
     recordQueueFailure(failureTracker, queueName, job?.id, err);
-    logWorkerEvent("error", "worker.job_failed", {
+    logWorkerError("worker.job_failed", err, {
       queue: queueName,
       jobId: job?.id ?? null,
       jobName: job?.name ?? null,
       attemptsMade: job?.attemptsMade ?? null,
-      failedReason: err.message,
-      errorType: err.name,
     });
+
+    const attempts = job?.opts?.attempts ?? 1;
+    if ((job?.attemptsMade ?? 0) >= attempts) {
+      sendWorkerAlertAsync({
+        event: "worker.job_failed",
+        error: err,
+        queue: queueName,
+        jobId: job?.id,
+      });
+    }
   });
 
   worker.on("error", (err) => {
-    logWorkerEvent("error", "worker.runtime_error", {
-      queue: queueName,
-      failedReason: err.message,
-      errorType: err.name,
-    });
+    logWorkerError("worker.runtime_error", err, { queue: queueName });
+    sendWorkerAlertAsync({ event: "worker.runtime_error", error: err, queue: queueName });
   });
 }
 
-// ── Heartbeat ─────────────────────────────────────────────────────────────────
+// ── Heartbeat
 // Emits a log line every 30s so uptime monitors detect silent hangs.
 setInterval(() => {
   logWorkerEvent("info", "worker.heartbeat");
 }, 30_000);
 
-// ── Bootstrap ─────────────────────────────────────────────────────────────────
+// ── Crash handlers
+process.on("uncaughtException", (err) => {
+  logWorkerError("worker.uncaught_exception", err);
+
+  void (async () => {
+    await sendWorkerAlert({ event: "worker.uncaught_exception", error: err });
+    await flushSentry();
+    process.exit(1);
+  })();
+});
+
+process.on("unhandledRejection", (reason) => {
+  logWorkerError("worker.unhandled_rejection", reason);
+});
+
+// ── Bootstrap
 main().catch((err) => {
-  logWorkerEvent("error", "worker.fatal_startup_error", {
-    failedReason: err instanceof Error ? err.message : String(err),
-    errorType: err instanceof Error ? err.name : "Error",
-  });
-  process.exit(1);
+  logWorkerError("worker.fatal_startup_error", err);
+
+  void (async () => {
+    await sendWorkerAlert({ event: "worker.fatal_startup_error", error: err });
+    await flushSentry();
+    process.exit(1);
+  })();
 });

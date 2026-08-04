@@ -9,6 +9,8 @@ import {
   QUEUE_TRANSACTIONAL,
 } from "@romulo/queues";
 
+import { addWorkerBreadcrumb, captureWorkerException } from "./sentry";
+
 export const WORKER_HEALTH_KEY = "worker:health:latest";
 
 // ── Log persistence ───────────────────────────────────────────────────────────
@@ -113,7 +115,12 @@ function getExpectedRepeatableJobs(queueName: string) {
   return [DAILY_STATUS_JOB_NAME, FLUSH_VIEWS_JOB_NAME];
 }
 
-export function logWorkerEvent(level: LogLevel, event: string, context: Record<string, unknown> = {}) {
+function emitWorkerEvent(
+  level: LogLevel,
+  event: string,
+  context: Record<string, unknown>,
+  options: { captureToSentry: boolean },
+) {
   const payload = {
     timestamp: new Date().toISOString(),
     service: "worker",
@@ -131,6 +138,16 @@ export function logWorkerEvent(level: LogLevel, event: string, context: Record<s
     console.log(line);
   }
 
+  // Todo evento vira breadcrumb: quando um erro for capturado, o Sentry mostra
+  // os ultimos eventos do worker como historico do que aconteceu antes.
+  addWorkerBreadcrumb(level === "warn" ? "warning" : level, event, context);
+
+  // Erro logado sem passar por logWorkerError (chamada legada) ainda chega ao
+  // Sentry — sem stack trace, mas chega.
+  if (level === "error" && options.captureToSentry) {
+    captureWorkerException(event, context.failedReason ?? context.error ?? event, context);
+  }
+
   // Fire-and-forget — nunca bloqueia o caller
   if (_redis) {
     _redis
@@ -141,6 +158,38 @@ export function logWorkerEvent(level: LogLevel, event: string, context: Record<s
       .exec()
       .catch(() => { }); // silencia erros de redis
   }
+
+  return payload;
+}
+
+export function logWorkerEvent(level: LogLevel, event: string, context: Record<string, unknown> = {}) {
+  return emitWorkerEvent(level, event, context, { captureToSentry: true });
+}
+
+/**
+ * Log de erro preservando o objeto Error original.
+ *
+ * Prefira esta funcao a `logWorkerEvent("error", ...)`: aqui o Sentry recebe o
+ * stack trace de verdade, enquanto pelo caminho antigo so chega a mensagem.
+ * O log em JSON sai identico ao formato ja usado (failedReason / errorType).
+ */
+export function logWorkerError(
+  event: string,
+  error: unknown,
+  context: Record<string, unknown> = {},
+) {
+  const payload = emitWorkerEvent(
+    "error",
+    event,
+    {
+      ...context,
+      failedReason: error instanceof Error ? error.message : String(error),
+      errorType: error instanceof Error ? error.name : typeof error,
+    },
+    { captureToSentry: false }, // capturamos abaixo, com o Error inteiro
+  );
+
+  captureWorkerException(event, error, context);
 
   return payload;
 }
@@ -199,29 +248,53 @@ export function startWorkerHealthMonitor(options: {
 }) {
   const intervalMs = options.intervalMs ?? Number(process.env.WORKER_HEALTH_CHECK_INTERVAL_MS ?? 60_000);
 
+  // O snapshot roda a cada 60s. Se enviassemos um evento ao Sentry a cada
+  // ciclo degradado, uma fila travada por uma hora geraria 60 eventos iguais —
+  // por isso so reportamos a TRANSICAO healthy -> degraded.
+  let previousStatus: WorkerHealthSnapshot["status"] | null = null;
+
   const runCheck = async () => {
     const snapshot = await captureWorkerHealthSnapshot(options.queues, options.redis, options.failureTracker);
 
-    logWorkerEvent(snapshot.status === "healthy" ? "info" : "error", "worker.health_snapshot", {
-      status: snapshot.status,
-      queues: snapshot.queues.map((queue) => ({
-        queue: queue.queue,
-        status: queue.status,
-        backlog: queue.backlog,
-        failed: queue.failed,
-        recentFailures: queue.recentFailures,
-        missingRepeatableJobs: queue.missingRepeatableJobs,
-      })),
-    });
+    const queueSummary = snapshot.queues.map((queue) => ({
+      queue: queue.queue,
+      status: queue.status,
+      backlog: queue.backlog,
+      failed: queue.failed,
+      recentFailures: queue.recentFailures,
+      missingRepeatableJobs: queue.missingRepeatableJobs,
+    }));
+
+    // Log mantido no formato original (nivel error quando degradado), mas sem
+    // capturar no Sentry aqui — quem reporta e o bloco de transicao abaixo.
+    emitWorkerEvent(
+      snapshot.status === "healthy" ? "info" : "error",
+      "worker.health_snapshot",
+      { status: snapshot.status, queues: queueSummary },
+      { captureToSentry: false },
+    );
+
+    if (snapshot.status === "degraded" && previousStatus !== "degraded") {
+      const degradedQueues = snapshot.queues
+        .filter((queue) => queue.status === "degraded")
+        .map((queue) => queue.queue)
+        .join(", ");
+
+      captureWorkerException(
+        "worker.health_degraded",
+        new Error(`Filas degradadas: ${degradedQueues || "desconhecida"}`),
+        { queues: queueSummary },
+      );
+    }
+
+    previousStatus = snapshot.status;
 
     return snapshot;
   };
 
   const timer = setInterval(() => {
     void runCheck().catch((error) => {
-      logWorkerEvent("error", "worker.health_snapshot_failed", {
-        error: error instanceof Error ? error.message : String(error),
-      });
+      logWorkerError("worker.health_snapshot_failed", error);
     });
   }, intervalMs);
   timer.unref?.();

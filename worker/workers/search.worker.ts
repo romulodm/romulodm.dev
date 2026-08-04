@@ -1,5 +1,5 @@
 import { prisma } from "@romulo/database";
-import { logWorkerEvent } from "../lib/worker-observability";
+import { logWorkerError, logWorkerEvent } from "../lib/worker-observability";
 import { redis } from "../lib/redis";
 
 const SEARCH_URL = process.env.SEARCH_GO_URL ?? "http://localhost:8080";
@@ -149,9 +149,7 @@ export function startSearchConsumer(): SearchConsumer {
                     logWorkerEvent("info", "search_consumer.removed", { postId: event.postId });
                 }
             } catch (err) {
-                logWorkerEvent("error", "search_consumer.error", {
-                    error: err instanceof Error ? err.message : String(err),
-                });
+                logWorkerError("search_consumer.error", err);
                 await new Promise((r) => setTimeout(r, 1_000));
             }
         }

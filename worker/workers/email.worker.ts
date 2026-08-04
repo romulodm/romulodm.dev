@@ -15,6 +15,7 @@ import {
 } from "@romulo/queues";
 
 import { emailService } from "../lib/email/email.service";
+import { logWorkerError } from "../lib/worker-observability";
 import {
   campaignTemplate,
   confirmationTemplate,
@@ -324,11 +325,17 @@ export async function processCampaignEmailJob(job: CampaignJobContext): Promise<
       }
     }
 
-    console.error(`[CampaignWorker] Failed for ${data.email}: ${message}`);
+    // O erro e relancado para o BullMQ decidir o retry; o log aqui garante o
+    // contexto da campanha (o handler global so ve o job).
+    logWorkerError("campaign.send_failed", error, {
+      campaignId: data.campaignId,
+      recipientId: data.recipientId,
+      finalAttempt: isFinalAttempt(job),
+    });
     throw error;
   } finally {
     await markCampaignCompleteIfDone(data.campaignId).catch((err) =>
-      console.error("[CampaignWorker] markCampaignCompleteIfDone error:", err),
+      logWorkerError("campaign.mark_complete_failed", err, { campaignId: data.campaignId }),
     );
   }
 }

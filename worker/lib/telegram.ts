@@ -3,7 +3,7 @@ import { prisma } from "@romulo/database";
 const BOT_URL = process.env.TELEGRAM_BOT_URL!;
 const BOT_SECRET = process.env.TELEGRAM_NOTIFY_SECRET!;
 
-// ── Tipos ─────────────────────────────────────────────────────────────────────
+// ── Tipos
 
 interface UmamiStats {
     visitors: { value: number };
@@ -11,7 +11,7 @@ interface UmamiStats {
     totaltime: { value: number };
 }
 
-// ── Umami Auth ────────────────────────────────────────────────────────────────
+// ── Umami Auth
 
 let cachedToken: { value: string; expiresAt: number } | null = null;
 
@@ -34,7 +34,7 @@ async function getUmamiToken(): Promise<string> {
     return token;
 }
 
-// ── Core ──────────────────────────────────────────────────────────────────────
+// ── Core
 
 async function notifyBot(payload: object): Promise<void> {
     const res = await fetch(`${BOT_URL}/notify`, {
@@ -52,7 +52,17 @@ async function notifyBot(payload: object): Promise<void> {
     }
 }
 
-// ── Handlers ──────────────────────────────────────────────────────────────────
+// ── Handlers
+
+export async function notifyWorkerAlert(alert: {
+    event: string;
+    message: string;
+    queue?: string;
+    jobId?: string;
+    environment?: string;
+}): Promise<void> {
+    await notifyBot({ type: "worker-alert", ...alert });
+}
 
 export async function notifyComment(comment: {
     id: string;

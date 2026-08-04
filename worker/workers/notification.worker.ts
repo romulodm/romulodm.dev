@@ -34,6 +34,8 @@ import {
 //import { notifyComment, sendDailyStatus } from "../lib/whatsapp";
 import { notifyComment, sendDailyStatus } from "../lib/telegram";
 import { flushViewsBuffer } from "./views.worker";
+import { retryPendingOnchain } from "./onchain.worker";
+import { auditDonations, reconcilePendingDonations } from "./donations.worker";
 
 // ── Worker factory ────────────────────────────────────────────────────────────
 
@@ -67,6 +69,26 @@ export function startNotificationWorker(redis: Redis) {
         // into Postgres in batches. Logic lives in views.worker.ts.
         case "flush-views":
           await flushViewsBuffer(redis);
+          break;
+
+        /*
+         * Este case estava faltando. `scheduleOnchainRetry` registra o job a
+         * cada 5 min desde que foi escrito, mas sem um case aqui ele caia no
+         * `default`, lancava "Unknown job type", esgotava as 3 tentativas e ia
+         * para a fila de falhas. Ou seja: a reconciliacao on-chain nunca rodou.
+         */
+        case "retry-onchain":
+          await retryPendingOnchain();
+          break;
+
+        // Reconciliacao PIX/Stripe — rede de seguranca para webhook perdido.
+        case "reconcile-donations":
+          await reconcilePendingDonations();
+          break;
+
+        // Conciliacao contabil do dia anterior, nos dois sentidos.
+        case "audit-donations":
+          await auditDonations();
           break;
 
         default:

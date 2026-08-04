@@ -17,6 +17,7 @@
     "@romulo/queues": "*",
     "@romulo/web3": "*",
     "@romulo/templates": "*",
+    "@sentry/node": "^10.68.0",
     "bullmq": "^5.71.0",
     "dockerode": "^4.0.10",
     "dotenv": "^16.0.0",
