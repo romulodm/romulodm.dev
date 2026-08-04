@@ -5,6 +5,11 @@ function readPositiveInt(name: string, fallback: number): number {
     return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
 }
 
+function readString(name: string, fallback: string): string {
+    const raw = process.env[name]?.trim();
+    return raw ? raw : fallback;
+}
+
 export const queueRuntimeConfig = {
     transactionalWorkerConcurrency: readPositiveInt("WORKER_TRANSACTIONAL_CONCURRENCY", 8),
     campaignWorkerConcurrency: readPositiveInt("WORKER_CAMPAIGN_CONCURRENCY", 12),
@@ -17,4 +22,12 @@ export const queueRuntimeConfig = {
     donationsReconcileIntervalMs: readPositiveInt("WORKER_DONATIONS_RECONCILE_INTERVAL_MS", 300_000),
     donationsReconcileBatchSize: readPositiveInt("WORKER_DONATIONS_RECONCILE_BATCH", 25),
     donationsReconcileWindowDays: readPositiveInt("WORKER_DONATIONS_RECONCILE_WINDOW_DAYS", 7),
+    /** Corta chamada pendurada ao provedor — sem isso um fetch travado segura o batch inteiro. */
+    donationsProviderTimeoutMs: readPositiveInt("WORKER_DONATIONS_PROVIDER_TIMEOUT_MS", 10_000),
+    /**
+     * Fuso do fechamento contabil. O container roda em UTC; sem isto o "dia
+     * anterior" da auditoria seria o dia UTC, que nao e o dia que o cron das
+     * 08:30 BRT pretende fechar.
+     */
+    donationsAuditTimezone: readString("WORKER_DONATIONS_AUDIT_TZ", "America/Sao_Paulo"),
 } as const;

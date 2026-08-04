@@ -4,3 +4,4 @@ export * from "./src/types";
 export * from "./src/options";
 export * from "./src/ids";
 export * from "./src/factory";
+export * from "./src/scheduling";
