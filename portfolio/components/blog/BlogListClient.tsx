@@ -21,6 +21,7 @@ interface Post {
   views: number;
   commentsCount: number;
   postTags: { tag: string }[];
+  author?: { username: string; image: string | null } | null;
 }
 
 interface Props {
