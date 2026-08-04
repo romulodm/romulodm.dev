@@ -1,7 +1,7 @@
 // app/api/admin/analytics/route.ts
-// Rota PRIVADA — retorna dados do GA4 para o dashboard admin.
 
 import { NextRequest, NextResponse } from 'next/server';
+import { logApiError } from '@/lib/api-errors';
 import { requireAdmin } from '@/lib/auth-helpers';
 import {
     getTopCountries,
@@ -35,7 +35,7 @@ export async function GET(req: NextRequest) {
             { headers: { 'Cache-Control': 'private, max-age=300' } }, // 5min — GA4 tem latencia de dados
         );
     } catch (err) {
-        console.error('[ga4] failed:', err);
+        logApiError('ga4', err);
         return NextResponse.json({ error: 'GA4 unavailable', detail: String(err) }, { status: 503 });
     }
 }
