@@ -68,6 +68,11 @@ export async function POST(req: NextRequest) {
       currency: "brl",
       automatic_payment_methods: { enabled: true },
       metadata: {
+        // Marcador lido pela auditoria contabil do worker
+        // (worker/workers/donations.worker.ts). `paymentIntents.list` devolve
+        // todo o trafego da conta, entao sem isto qualquer cobranca que nao
+        // seja doacao seria acusada de "liquidada sem contrapartida local".
+        kind: "donation",
         coffees: String(coffees),
         name: isPrivate ? "" : name ?? "",
         message: message ?? "",
