@@ -22,7 +22,7 @@ import {
     QUEUE_NOTIFICATIONS,
     RETRY_ONCHAIN_JOB_NAME,
     notificationJobOptions,
-    buildNotificationJobId,
+    registerRepeatable,
     queueRuntimeConfig,
     type NotificationJob,
 } from '@romulo/queues'
@@ -122,25 +122,15 @@ export async function scheduleOnchainRetry(redis: Redis): Promise<void> {
     })
 
     try {
-        const existing = await queue.getRepeatableJobs()
-        if (existing.some(j => j.name === RETRY_ONCHAIN_JOB_NAME)) {
-            console.log('[OnchainRetry] Repeatable job já registrado — skipping.')
-            return
-        }
-
-        await queue.add(
-            RETRY_ONCHAIN_JOB_NAME,
-            { type: 'retry-onchain' },
-            {
-                ...notificationJobOptions,
-                attempts: 3,
-                jobId: buildNotificationJobId({ type: 'retry-onchain' }),
-                repeat: { every: queueRuntimeConfig.onchainRetryIntervalMs },
-            },
-        )
+        const result = await registerRepeatable(queue, {
+            name: RETRY_ONCHAIN_JOB_NAME,
+            data: { type: 'retry-onchain' },
+            repeat: { every: queueRuntimeConfig.onchainRetryIntervalMs },
+            jobOptions: { ...notificationJobOptions, attempts: 3 },
+        })
 
         console.log(
-            `[OnchainRetry] Job registrado — intervalo: ${queueRuntimeConfig.onchainRetryIntervalMs} ms.`,
+            `[OnchainRetry] Job ${result.action} — intervalo: ${queueRuntimeConfig.onchainRetryIntervalMs} ms.`,
         )
     } finally {
         await queue.close()

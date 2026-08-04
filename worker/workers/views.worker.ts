@@ -27,7 +27,7 @@
 import { prisma } from "@romulo/database";
 import type { Redis } from "ioredis";
 import {
-    buildNotificationJobId,
+    registerRepeatable,
     createQueue,
     FLUSH_VIEWS_JOB_NAME,
     notificationJobOptions,
@@ -118,29 +118,15 @@ export async function scheduleViewsFlush(redis: Redis): Promise<void> {
     });
 
     try {
-        const repeatableJobs = await schedulingQueue.getRepeatableJobs();
-        const alreadyScheduled = repeatableJobs.some((job) => job.name === FLUSH_VIEWS_JOB_NAME);
-
-        if (alreadyScheduled) {
-            console.log("[ViewsFlush] Repeatable job already registered — skipping.");
-            return;
-        }
-
-        await schedulingQueue.add(
-            FLUSH_VIEWS_JOB_NAME,
-            { type: "flush-views" } as NotificationJob,
-            {
-                ...notificationJobOptions,
-                attempts: 1,
-                jobId: buildNotificationJobId({ type: "flush-views" }),
-                repeat: {
-                    every: viewsRuntimeConfig.viewsFlushIntervalMs,
-                },
-            },
-        );
+        const result = await registerRepeatable(schedulingQueue, {
+            name: FLUSH_VIEWS_JOB_NAME,
+            data: { type: "flush-views" } as NotificationJob,
+            repeat: { every: viewsRuntimeConfig.viewsFlushIntervalMs },
+            jobOptions: { ...notificationJobOptions, attempts: 1 },
+        });
 
         console.log(
-            `[ViewsFlush] Flush job registered — interval: ${viewsRuntimeConfig.viewsFlushIntervalMs} ms.`,
+            `[ViewsFlush] Flush job ${result.action} — interval: ${viewsRuntimeConfig.viewsFlushIntervalMs} ms.`,
         );
     } finally {
         // Always close the temporary queue client, whether scheduling succeeded or not

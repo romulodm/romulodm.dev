@@ -22,7 +22,7 @@ import { Worker } from "bullmq";
 import type { Redis } from "ioredis";
 
 import {
-  buildNotificationJobId,
+  registerRepeatable,
   createQueue,
   DAILY_STATUS_JOB_NAME,
   notificationJobOptions,
@@ -130,28 +130,21 @@ export async function scheduleDailyStatus(redis: Redis): Promise<void> {
     defaultJobOptions: notificationJobOptions,
   });
 
-  const repeatableJobs = await notificationQueue.getRepeatableJobs();
-  const alreadyScheduled = repeatableJobs.some((j) => j.name === DAILY_STATUS_JOB_NAME);
-
-  if (alreadyScheduled) {
-    console.log("[NotificationWorker] Daily-status cron already registered — skipping.");
-    await notificationQueue.close();
-    return;
-  }
-
-  await notificationQueue.add(
-    DAILY_STATUS_JOB_NAME,
-    { type: "daily-status" },
-    {
-      ...notificationJobOptions,
-      jobId: buildNotificationJobId({ type: "daily-status" }),
+  try {
+    const result = await registerRepeatable(notificationQueue, {
+      name: DAILY_STATUS_JOB_NAME,
+      data: { type: "daily-status" },
       repeat: {
         pattern: "0 8 * * *", // Every day at 08:00
         tz: "America/Sao_Paulo",
       },
-    },
-  );
+      jobOptions: notificationJobOptions,
+    });
 
-  await notificationQueue.close();
-  console.log("[NotificationWorker] Daily-status cron registered at 08:00 BRT.");
+    console.log(
+      `[NotificationWorker] Daily-status cron at 08:00 BRT — ${result.action}.`,
+    );
+  } finally {
+    await notificationQueue.close();
+  }
 }
