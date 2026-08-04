@@ -5,6 +5,7 @@ import { CommentCard } from "@/components/comments/CommentCard";
 import { CommentComposer } from "@/components/comments/CommentComposer";
 import { getCommentById } from "@/lib/comments";
 import type { Metadata } from "next";
+import { Footer } from "@/components/Footer";
 
 interface PageProps {
     params: Promise<{ id: string }>;
@@ -36,7 +37,7 @@ export default async function CommentPage({ params }: PageProps) {
         <div className="min-h-screen bg-background">
             <Navbar />
 
-            <main className="max-w-2xl mx-auto px-4 py-24">
+            <main className="max-w-2xl min-h-screen mx-auto px-4 py-24">
                 {/* Breadcrumb */}
                 <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-8 flex-wrap">
                     <Link href="/blog" className="hover:text-foreground transition-colors">
@@ -98,6 +99,8 @@ export default async function CommentPage({ params }: PageProps) {
                     </Link>
                 </div>
             </main>
+
+            <Footer />
         </div>
     );
 }

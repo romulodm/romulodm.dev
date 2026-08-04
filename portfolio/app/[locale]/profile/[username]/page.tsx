@@ -5,6 +5,7 @@ import Navbar from "@/components/navigation/Navbar";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@romulo/database";
+import { Footer } from "@/components/Footer";
 
 type Props = { params: Promise<{ username: string }> };
 
@@ -61,27 +62,31 @@ export default async function Profile(props: Props) {
     return (
         <main className="min-h-screen bg-background">
             <Navbar />
-            <ProfileClient
-                profile={user}
-                isAdmin={isAdmin}
-                isMe={isMe}
-                sessionId={sessionUserId ?? null}
-                wallMessages={wallMessages}
-                linkedDonations={linkedDonations}
-                newsletterSub={
-                    newsletterSub
-                        ? {
-                            isConfirmed: newsletterSub.isConfirmed,
-                            subscribedAt:
-                                newsletterSub.subscribedAt?.toISOString() ?? null,
-                            preferredLocale:
-                                (newsletterSub as any).preferredLocale ?? "en",
-                            unsubscribedAt:
-                                newsletterSub.unsubscribedAt?.toISOString() ?? null,
-                        }
-                        : null
-                }
-            />
+            <div className="min-h-screen max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+                <ProfileClient
+                    profile={user}
+                    isAdmin={isAdmin}
+                    isMe={isMe}
+                    sessionId={sessionUserId ?? null}
+                    wallMessages={wallMessages}
+                    linkedDonations={linkedDonations}
+                    newsletterSub={
+                        newsletterSub
+                            ? {
+                                isConfirmed: newsletterSub.isConfirmed,
+                                subscribedAt:
+                                    newsletterSub.subscribedAt?.toISOString() ?? null,
+                                preferredLocale:
+                                    (newsletterSub as any).preferredLocale ?? "en",
+                                unsubscribedAt:
+                                    newsletterSub.unsubscribedAt?.toISOString() ?? null,
+                            }
+                            : null
+                    }
+                />
+            </div>
+            <Footer />
         </main>
     );
 }
