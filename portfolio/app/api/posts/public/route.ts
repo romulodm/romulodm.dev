@@ -50,11 +50,11 @@ const getCachedPublicPosts = unstable_cache(
                 views: true,
                 commentsCount: true,
                 postTags: { select: { tag: true } },
+                author: { select: { username: true, image: true } },
                 translations: {
-                    where: { locale: { in: [locale, 'pt-BR'] } },
                     orderBy: { locale: 'asc' },
-                    take: 1,
                     select: {
+                        locale: true,
                         title: true,
                         excerpt: true,
                         summary: true,
@@ -67,9 +67,11 @@ const getCachedPublicPosts = unstable_cache(
         const sliced = hasMore ? rawPosts.slice(0, limit) : rawPosts;
 
         const items = sliced.flatMap(({ translations, ...post }) => {
-            const translation = translations[0];
+            const translation =
+                translations.find((t) => t.locale === locale) ?? translations[0];
             if (!translation) return [];
-            return [{ ...post, ...translation }];
+            const { locale: _translationLocale, ...content } = translation;
+            return [{ ...post, ...content }];
         });
 
         return {
