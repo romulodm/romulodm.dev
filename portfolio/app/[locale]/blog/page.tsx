@@ -26,6 +26,7 @@ const getCachedBlogIndexData = (locale: string) =>
             views: true,
             commentsCount: true,
             postTags: { select: { tag: true } },
+            author: { select: { username: true, image: true } },
             translations: {
               select: {
                 locale: true,
