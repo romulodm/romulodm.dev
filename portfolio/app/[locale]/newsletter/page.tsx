@@ -77,14 +77,14 @@ const getNewsletterPageData = (locale: string) =>
         { revalidate: 300 },
     )()
 
-// ── Metadata ─────────────────────────────────────────────────────────────────
+// ── Metadata
 
 export const metadata = {
     title: 'Newsletter — Romulo',
     description: 'Conteúdo sobre desenvolvimento web, TypeScript, e engenharia de software. Direto no seu e-mail.',
 }
 
-// ── Corner marker component ───────────────────────────────────────────────────
+// ── Corner marker component
 
 function Corner({ pos }: { pos: 'tl' | 'tr' | 'bl' | 'br' }) {
     const base = 'absolute w-5 h-5 pointer-events-none'
@@ -105,7 +105,7 @@ function CrossHair({ className = '' }: { className?: string }) {
     )
 }
 
-// ── Post card ────────────────────────────────────────────────────────────────
+// ── Post card
 
 type PostData = {
     id: string
@@ -208,7 +208,7 @@ export default async function NewsletterPage({
                         {/* Left */}
                         <div className="flex flex-col justify-center py-24 pr-0 md:pr-12 border-b md:border-b-0 md:border-r border-border">
                             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight tracking-tight text-foreground mb-5">
-                                Junte-se com <span className="text-secondary">
+                                Junte-se com <span>
                                     {subscriberCount.toLocaleString(locale)}
                                 </span>+ leitores inscritos
                             </h1>
