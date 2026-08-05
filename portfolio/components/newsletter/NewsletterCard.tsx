@@ -1,6 +1,7 @@
 ﻿'use client';
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import { CheckCircle2, Loader2 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
@@ -144,7 +145,16 @@ export default function NewsletterCard({ subscriberCount = 0 }: NewsletterCardPr
 
         <p className="text-sm mt-4 text-muted-foreground text-center">
           <span className="font-bold text-foreground">{t("privacy.prefix")} </span>
-          {t("privacy.suffix")}
+          {t.rich("privacy.suffix", {
+            link: (chunks) => (
+              <Link
+                href="/legal/privacy-policy"
+                className="underline underline-offset-4 hover:text-foreground transition-colors"
+              >
+                {chunks}
+              </Link>
+            ),
+          })}
         </p>
       </div>
     </section>
