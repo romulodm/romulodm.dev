@@ -146,20 +146,7 @@
     "sended-title": "Agradeço seu contato!",
     "sended-content": "Sua mensagem foi enviada com sucesso."
   },
-  "connect": {
-    "getInTouch": {
-      "titlePrefix": "Vamos",
-      "titleHighlight": "manter contato.",
-      "description": "Me manda mensagem sobre <b>qualquer coisa</b>: uma ideia de projeto, uma dúvida sobre algum post, ou só um oi. Costumo responder rápido."
-    },
-    "openSource": {
-      "titleHighlight": "Open source",
-      "joinThe": "e o lado",
-      "darkSide": "sombrio",
-      "boldSide": "iluminado",
-      "ofTheForce": "da força.",
-      "description": "Quase tudo que eu construo fica <b>público no GitHub</b>. Código aberto é a forma mais honesta de aprender: qualquer pessoa pode ler, discordar e melhorar."
-    },
+  "vision": {
     "software": {
       "titleHighlight": "Software",
       "titleRest": "que nasce da colaboração.",
@@ -206,10 +193,7 @@
       "genericError": "Algo deu errado no envio. Tenta de novo em alguns instantes?",
       "thanksShort": "Obrigado!",
       "thanksLong": "Obrigado por escrever!",
-      "thanksBody": "Respondo assim que possível.",
-      "surprise1": "Oi Romulo! Caí aqui por acaso e acabei lendo o site inteiro. Bom demais.",
-      "surprise2": "Tenho uma ideia de projeto que não sai da minha cabeça. Topa ouvir?",
-      "surprise3": "Vim pelo blog, fiquei pela engenharia. Vamos trocar uma ideia sobre isso?"
+      "thanksBody": "Respondo assim que possível."
     }
   },
   "hero": {
@@ -266,21 +250,23 @@
   "home": {
     "page-title": "Romulo de Moraes",
     "profile": {
-      "title": "Visão geral de",
-      "title-colored": "Perfil",
+      "title": "Quem está por trás do código.",
       "link-title": "Quer ver meu currículo?",
       "link-content": "Resumi minhas experiências e disponibilizei o download.",
-      "link-button": "Ver currículo online"
+      "link-button": "Ver currículo online",
+      "eyebrow": "Perfil",
+      "description": "Experiências, formação e o caminho que me trouxe até aqui — em ordem cronológica."
     },
     "projects": {
-      "title": "Alguns",
-      "title-colored": "Projetos",
+      "title": "Do rascunho ao deploy.",
       "code": "Código",
       "preview": "Acessar",
       "public": "repositórios públicos",
       "link-title": "Ficou interessado?",
       "link-content": "Você pode ver mais dos meus projetos e tentativas.",
-      "link-button": "Ver mais projetos"
+      "link-button": "Ver mais projetos",
+      "eyebrow": "Projetos",
+      "description": "Coisas que eu construí sozinho, em equipe e por pura curiosidade. Código aberto sempre que dá."
     },
     "vision": {
       "title": "Visão sobre",
@@ -298,6 +284,16 @@
       "title": "Trabalha com tudo.",
       "description": "Frontend, backend, bancos de dados, DevOps, blockchain, sistemas embarcados, gateways de pagamento, APIs e mais.",
       "highlight": "Sim."
+    },
+    "software": {
+      "eyebrow": "Visão",
+      "title": "Software que nasce da colaboração.",
+      "description": "As melhores decisões técnicas que eu tomei vieram de revisão de código e de conversa difícil, não de inspiração solitária."
+    },
+    "faq": {
+      "eyebrow": "Dúvidas",
+      "title": "Perguntas que sempre aparecem.",
+      "description": "Como eu trabalho, o que eu uso e a melhor forma de me chamar para um projeto."
     }
   },
   "profile": {
@@ -395,40 +391,6 @@
       "hint": "A dica é: é um ano 🤯 uau, dica incrível! Mais uma, esse ano aparece em uma mensagem aqui no terminal...",
       "wrong": "Esta verificação não levou nenhum tempo.",
       "reward": "Correto! Sua recompensa aqui: "
-    }
-  },
-  "vision": {
-    "link-title": "Quer saber mais?",
-    "link-content": "Você pode ver mais sobre o que eu penso no meu blog.",
-    "link-button": "Ver postagens",
-    "icons": {
-      "first-title": "Inovação",
-      "first-content": "Definindo as regras do amanhã.",
-      "second-title": "Comunidade",
-      "second-content": "Facilitando a vida das pessoas."
-    },
-    "frame": {
-      "one": "Design.",
-      "two": "Prototipar.",
-      "three": "Desenvolver.",
-      "four": "Aprimorar."
-    },
-    "productivity": {
-      "title": "Produtividade em sua melhor forma.",
-      "word-1": "Com ",
-      "bold-1": "qualidade ",
-      "word-2": "e ",
-      "bold-2": "sustentabilidade ",
-      "word-3": "no coração."
-    },
-    "development": {
-      "left": "Segurança",
-      "center": "Desenvolvimento colaborativo",
-      "right": "Flexibilidade"
-    },
-    "comment": {
-      "time": "2 horas atrás",
-      "content": "Não se esqueça da reunião, amigo!"
     }
   },
   "announcement": {
@@ -1433,6 +1395,12 @@
       "loadMore": "Carregar mais",
       "loadingMore": "Carregando..."
     },
+    "card": {
+      "published": "Publicado em {date}",
+      "readingTime": "{minutes} min de leitura",
+      "readMore": "Ler mais",
+      "authorProfile": "Ver perfil de @{username}"
+    },
     "carousel": {
       "previousSlide": "Slide anterior",
       "nextSlide": "Próximo slide"
@@ -1566,7 +1534,7 @@
     "submit": "Inscrever-se",
     "privacy": {
       "prefix": "Sem spam, nunca.",
-      "suffix": "Você pode conferir a política de privacidade aqui."
+      "suffix": "Você pode conferir a política de privacidade <link>aqui</link>."
     },
     "success": {
       "title": "Verifique seu e-mail!",
