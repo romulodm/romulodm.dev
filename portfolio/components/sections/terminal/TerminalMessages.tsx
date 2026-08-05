@@ -25,7 +25,7 @@ function useAvailableCommands(): CommandsObject {
         "- clear": t("commands.clear"),
         "- initial": t("commands.initial"),
         "- who": t("commands.who"),
-        "- whoami": t("commands.whoam"),
+        "- whoami": t("commands.whoami"),
         "- follow": t("commands.follow"),
         "- weather": "Clima atual em Rio Grande - RS",
         "- curl quote": "Citação estoica + reflexão",
@@ -384,7 +384,7 @@ export function SecretMessage(): JSX.Element {
                 </div>
                 <div className="flex flex-col text-gray-500 dark:text-neutral-400/90">
                     <p className="flex flex-row">
-                        {t('secret.how-fisrt')}
+                        {t('secret.how-first')}
                         <p className="strong font-bold text-red-500">secret --pass '{t('secret.how-try')}'</p>
                         {t('secret.how-second')}
                     </p>
