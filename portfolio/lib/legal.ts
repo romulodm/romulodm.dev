@@ -12,6 +12,7 @@ import rehypeSanitize from 'rehype-sanitize'
 import rehypeSlug from 'rehype-slug'
 import rehypeExternalLinks from 'rehype-external-links'
 import rehypeStringify from 'rehype-stringify'
+import { getLegalConfig, type LegalConfig } from '@/content/legal/config'
 
 export const LEGAL_DOCUMENTS = ['terms', 'privacy-policy'] as const
 export type LegalDocumentSlug = (typeof LEGAL_DOCUMENTS)[number]
@@ -55,6 +56,42 @@ async function readRaw(slug: LegalDocumentSlug, fileLocale: string) {
 /** Remove comentários HTML (blocos de personalização) antes de qualquer parsing. */
 function stripHtmlComments(markdown: string): string {
   return markdown.replace(/<!--[\s\S]*?-->/g, '')
+}
+
+const PLACEHOLDER = /\{\{([A-Z_]+)\}\}/g
+
+/**
+ * Troca os marcadores {{CHAVE}} pelos valores de content/legal/config.ts.
+ *
+ * Falha alto e cedo se alguma chave não existir ou estiver vazia: é melhor a
+ * página de /legal quebrar em desenvolvimento do que ir para produção com
+ * "{{OWNER}}" impresso no meio de um documento jurídico.
+ */
+function applyConfig(
+  markdown: string,
+  config: LegalConfig,
+  documentName: string,
+): string {
+  const missing = new Set<string>()
+
+  const result = markdown.replace(PLACEHOLDER, (match, key: string) => {
+    const value = config[key as keyof LegalConfig]
+    if (typeof value !== 'string' || value.trim() === '') {
+      missing.add(key)
+      return match
+    }
+    return value
+  })
+
+  if (missing.size > 0) {
+    throw new Error(
+      `[legal] ${documentName}: valores ausentes em content/legal/config.ts — ` +
+        `${[...missing].sort().join(', ')}. ` +
+        `Preencha essas chaves antes de publicar os documentos legais.`,
+    )
+  }
+
+  return result
 }
 
 function extractTitle(markdown: string): string {
@@ -117,7 +154,11 @@ export async function getLegalDocument(
     raw = await readRaw(slug, fileLocale)
   }
 
-  const clean = stripHtmlComments(raw)
+  const clean = applyConfig(
+    stripHtmlComments(raw),
+    getLegalConfig(locale),
+    `${slug}.${fileLocale}`,
+  )
 
   return {
     html: await toHtml(stripFrontMatterBlock(clean)),
