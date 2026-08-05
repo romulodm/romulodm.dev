@@ -34,7 +34,6 @@ interface FAQItemProps {
     /** Base para os ids de aria — precisa ser estavel entre servidor e cliente. */
     domId: string;
 }
-
 function FAQItem({ item, isOpen, onToggle, domId }: FAQItemProps) {
     const buttonId = `${domId}-button`;
     const panelId = `${domId}-panel`;
@@ -43,7 +42,7 @@ function FAQItem({ item, isOpen, onToggle, domId }: FAQItemProps) {
     return (
         <div
             className={cn(
-                "w-full overflow-hidden rounded-[5px] bg-neutral-200/90 backdrop-blur-sm dark:bg-neutral-900/80",
+                "w-full overflow-hidden rounded-sm bg-neutral-200/90 backdrop-blur-sm dark:bg-neutral-900/80",
                 "border border-border/50 transition-colors",
                 "hover:border-border/80",
             )}
@@ -159,15 +158,12 @@ export function FAQ({ allowMultiple = true }: { allowMultiple?: boolean }) {
     if (!Array.isArray(items) || items.length === 0) return null;
 
     return (
-        <AnimatedSection className="relative z-10 mx-auto max-w-[1320px]" delay={0.4}>
-            <section className="w-full px-3 pt-20 md:pt-32 lg:px-5">
-                <div className="mb-12 text-center">
-                    <h2 className="text-4xl font-semibold text-foreground md:text-5xl">
-                        {t("title")}
-                    </h2>
-                    <p className="mt-2 text-muted-foreground">{t("subtitle")}</p>
-                </div>
-
+        <AnimatedSection className="relative z-10 mx-auto" delay={0.4}>
+            {/*
+             * O titulo da secao vive em <SectionHeader> na page — aqui fica so
+             * o acordeao, para nao existirem dois <h2> concorrendo.
+             */}
+            <section className="w-full pt-12 md:pt-16">
                 <div className="mx-auto flex max-w-[900px] flex-col gap-4">
                     {items.map((item, index) => (
                         <FAQItem
