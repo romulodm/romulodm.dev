@@ -13,17 +13,13 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          # Alinhado com o Dockerfile (node:22) e com o ci.yml. Estava em 20,
+          # auditando um resolver de dependencias diferente do de producao.
+          node-version: 22
           cache: npm
       - run: npm ci
+      # O audit cobre o workspace inteiro (packages/*, portfolio, worker), que e
+      # o que o job `frontend-audit` removido tentava complementar apontando para
+      # uma pasta `frontend/` que nao existe no repositorio — ele falhava em toda
+      # execucao desde que o diretorio saiu.
       - run: npm audit --audit-level=high
-
-  frontend-audit:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      - run: npm --prefix frontend ci
-      - run: npm --prefix frontend audit --audit-level=high
