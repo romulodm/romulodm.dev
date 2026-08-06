@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { CheckCircle2, Loader2 } from "lucide-react";
+import { ArrowRight, CheckCircle2, Loader2 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -105,36 +105,33 @@ export default function NewsletterCard({ subscriberCount = 0 }: NewsletterCardPr
           )}
         </p>
 
-        <form
-          onSubmit={handleSubmit}
-          className="flex items-stretch gap-3 bg-card border border-border rounded-lg p-2 shadow-sm"
-        >
-          <div className="flex-1 min-w-0 pl-2">
-            <label className="text-xs font-semibold text-foreground">
-              {t("emailLabel")}
-            </label>
-            <Input
-              type="email"
-              placeholder={t("emailPlaceholder")}
-              value={email}
-              onChange={(event) => {
-                setEmail(event.target.value);
-                if (state === "error") setState("idle");
-              }}
-              disabled={state === "loading"}
-              className="border-0 p-0 h-auto text-sm bg-transparent shadow-none focus-visible:ring-0 text-muted-foreground placeholder:text-muted-foreground disabled:opacity-50"
-            />
-          </div>
+        <form onSubmit={handleSubmit} className="relative w-full">
+          <label htmlFor="newsletter-email" className="sr-only">
+            {t("emailLabel")}
+          </label>
+          <Input
+            id="newsletter-email"
+            type="email"
+            placeholder={t("emailPlaceholder")}
+            value={email}
+            onChange={(event) => {
+              setEmail(event.target.value);
+              if (state === "error") setState("idle");
+            }}
+            disabled={state === "loading"}
+            className="h-14 w-full rounded-sm border-border bg-card pl-6 pr-16 text-base text-foreground shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:border-primary focus-visible:ring-0 focus-visible:ring-offset-0 disabled:opacity-50"
+          />
           <Button
             type="submit"
-            size="lg"
-            className="rounded-lg self-center min-w-[110px]"
+            size="icon"
+            aria-label={t("submit")}
+            className="absolute right-2 top-1/2 h-10 w-10 -translate-y-1/2 rounded-sm transition-transform hover:scale-105 disabled:opacity-40"
             disabled={state === "loading" || !email}
           >
             {state === "loading" ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
+              <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
-              t("submit")
+              <ArrowRight className="h-5 w-5" />
             )}
           </Button>
         </form>
