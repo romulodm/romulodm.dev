@@ -1,0 +1,103 @@
+name: CI
+
+# Ate agora o deploy.yml disparava em push para main e ia direto para a VPS, sem
+# rodar build, lint ou teste. O unico gate era o health check — que roda depois
+# dos containers ja terem sido trocados, ou seja, avisa que quebrou em vez de
+# impedir.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  # Permite que o deploy.yml reutilize este workflow com `uses:` em vez de
+  # duplicar os passos de validacao.
+  workflow_call:
+
+concurrency:
+  # Push novo no mesmo branch cancela a execucao anterior: sem isso, uma sequencia
+  # de commits enfileira runs que ja nasceram obsoletos.
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Lint, typecheck, testes e build
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          # Mesma major do Dockerfile (node:22-bookworm-slim). Divergir aqui
+          # produz um CI que valida um runtime diferente do de producao.
+          node-version: 22
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      # O client do Prisma e gerado, nao versionado. Sem este passo, qualquer
+      # import de @romulo/database falha com "Cannot find module" e derruba
+      # typecheck, teste e build de uma vez.
+      #
+      # Compila os 4 pacotes internos, nao 2: o portfolio importa @romulo/templates
+      # e @romulo/web3 em rotas de newsletter, doacao e no admin de cripto. Deixar
+      # esses dois de fora esconderia erro de tipo neles ate o build da imagem.
+      - name: Gerar client do Prisma e compilar pacotes internos
+        run: npm run ci:packages
+
+      # `eslint .` cobre o repositorio inteiro — portfolio, worker e packages.
+      - name: Lint
+        run: npm run lint
+
+      # Cobre portfolio E worker. O worker importa: o Dockerfile dele roda
+      # `npx tsx index.ts`, que transpila sem checar tipo, e nunca executa o
+      # `tsc` do script de build. Sem este passo, erro de tipo no worker nao e
+      # pego em lugar nenhum — nem no CI, nem no build da imagem — e so aparece
+      # quebrando em producao.
+      - name: Typecheck (portfolio + worker)
+        run: npm run typecheck
+
+      - name: Testes unitarios
+        run: npm run test:unit
+
+      # O worker nao tem build de artefato no caminho de producao (roda via tsx),
+      # entao o `tsc` acima ja e a validacao dele. Aqui so o portfolio.
+      - name: Build do portfolio
+        run: npm run build:portfolio
+        env:
+          # O build precisa das NEXT_PUBLIC_* pelo mesmo motivo que a imagem
+          # precisa: o Next substitui essas referencias por valor literal ao
+          # compilar. Sem elas aqui, o CI validaria um bundle diferente do que
+          # vai para producao — e o proprio bug que este passo existe para pegar
+          # passaria despercebido.
+          #
+          # Valores publicos ficam inline; o que for sensivel vem de secrets.
+          NEXT_PUBLIC_SITE_URL: https://romulodm.dev
+          NEXT_PUBLIC_SITE_NAME: romulodm.dev
+          NEXT_PUBLIC_APP_URL: https://romulodm.dev
+          NEXT_PUBLIC_GA4_MEASUREMENT_ID: ${{ secrets.NEXT_PUBLIC_GA4_MEASUREMENT_ID }}
+          NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY }}
+          NEXT_PUBLIC_WALLET_ADDRESS: ${{ secrets.NEXT_PUBLIC_WALLET_ADDRESS }}
+          NEXT_PUBLIC_ENCRYPTION_PUBLIC_KEY: ${{ secrets.NEXT_PUBLIC_ENCRYPTION_PUBLIC_KEY }}
+          # Sem SENTRY_AUTH_TOKEN o build so pula o upload de source maps.
+          NEXT_PUBLIC_SENTRY_DSN: ${{ secrets.NEXT_PUBLIC_SENTRY_DSN }}
+          NEXT_PUBLIC_SENTRY_ENVIRONMENT: ci
+
+      # Rede de seguranca para o problema que originou este workflow: se o build
+      # rodar sem NEXT_PUBLIC_SITE_URL, lib/seo.ts cai no fallback localhost, o
+      # robots.ts passa a responder "Disallow: /" e o site sai do indice do
+      # Google sem nenhum sinal visivel.
+      - name: Garantir que o bundle nao ficou com localhost
+        run: |
+          if grep -rq "http://localhost:3000" portfolio/.next/server 2>/dev/null; then
+            echo "::error::Build gerou referencias a localhost — NEXT_PUBLIC_SITE_URL nao chegou ao build."
+            grep -rl "http://localhost:3000" portfolio/.next/server | head -20
+            exit 1
+          fi
+          echo "OK: nenhuma referencia a localhost no build."
