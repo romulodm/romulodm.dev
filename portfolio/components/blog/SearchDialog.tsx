@@ -1,16 +1,17 @@
 'use client'
 
-import { useEffect, useRef, useState, useTransition } from 'react'
-import { useRouter } from 'next/navigation'
-import { Search, X, Clock, Loader2 } from 'lucide-react'
-import { useLocale } from 'next-intl'
-import Image from 'next/image'
+import { useEffect, useRef, useState, useTransition } from 'react';
+import { useRouter } from 'next/navigation';
+import { Search, X, Clock, Loader2 } from 'lucide-react';
+import { useLocale } from 'next-intl';
+import Image from 'next/image';
 import {
     Dialog,
     DialogContent,
     DialogHeader,
     DialogTitle,
-} from '@/components/ui/dialog'
+} from '@/components/ui/dialog';
+import { Button } from "@/components/ui/button";
 
 interface SearchHit {
     slug: string
@@ -80,17 +81,14 @@ export function SearchDialog() {
     return (
         <>
             {/* Trigger */}
-            <button
+            <Button
+                variant="ghost"
+                size="icon"
                 onClick={() => setOpen(true)}
-                className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground
-                    border border-border rounded-lg hover:border-foreground/30 transition-colors"
+                className="hidden p-2.5 md:flex text-foreground hover:bg-gray-400/60 dark:hover:bg-neutral-800/50 hover:text-black dark:hover:text-foreground"
             >
-                <Search size={14} />
-                <span className="hidden sm:inline">Buscar</span>
-                <kbd className="hidden sm:inline text-xs bg-muted px-1.5 py-0.5 rounded">
-                    ⌘+K
-                </kbd>
-            </button>
+                <Search className="h-4 w-4" />
+            </Button>
 
             {/* Modal */}
             <Dialog open={open} onOpenChange={setOpen}>

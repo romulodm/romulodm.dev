@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from "react";
-import { BookOpen, FileText, Home, Languages, Moon, Sun } from "lucide-react";
+import { BookOpen, Rss, Home, Languages, Moon, Sun } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useSession } from "next-auth/react";
@@ -89,7 +89,7 @@ const Navbar = () => {
                             variant="ghost"
                             size="icon"
                             onClick={() => setLanguageModalOpen(true)}
-                            className="hidden p-2.5 md:flex text-foreground hover:bg-gray-200 dark:hover:bg-secondary hover:text-black dark:hover:text-foreground"
+                            className="hidden p-2.5 md:flex text-foreground hover:bg-gray-400/60 dark:hover:bg-neutral-800/50 hover:text-black dark:hover:text-foreground"
                         >
                             <Languages className="h-4 w-4" />
                         </Button>
@@ -98,7 +98,7 @@ const Navbar = () => {
                             variant="ghost"
                             size="icon"
                             onClick={toggleTheme}
-                            className="hidden p-2.5 md:flex text-foreground hover:bg-gray-200 dark:hover:bg-secondary hover:text-black dark:hover:text-foreground"
+                            className="hidden p-2.5 md:flex text-foreground hover:bg-gray-400/60 dark:hover:bg-neutral-800/50 hover:text-black dark:hover:text-foreground"
                         >
                             {
                                 <>
@@ -112,6 +112,15 @@ const Navbar = () => {
 
                                 </>
                             }
+                        </Button>
+
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => setLanguageModalOpen(true)}
+                            className="hidden p-2.5 md:flex text-foreground hover:bg-gray-400/60 dark:hover:bg-neutral-800/50 hover:text-black dark:hover:text-foreground"
+                        >
+                            <Rss className="h-4 w-4" />
                         </Button>
 
                         {data ? (
