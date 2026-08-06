@@ -69,7 +69,7 @@ const BlogCard = ({
 
             <a
                 href="#"
-                className="inline-flex items-center gap-1.5 text-primary text-sm font-semibold group transition-colors hover:text-primary/80"
+                className="inline-flex items-center gap-1.5 text-sm font-semibold group transition-colors text-purple-700 dark:text-purple-500/90 hover:text-purple-600 dark:hover:text-purple-500"
             >
                 Read more
                 <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />

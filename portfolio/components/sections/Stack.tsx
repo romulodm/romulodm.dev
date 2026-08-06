@@ -1,4 +1,8 @@
+import { useTranslations } from "next-intl"
+import { FiCpu } from "react-icons/fi"
+
 import BlogList from "@/components/sections/posts/BlogList"
+import SectionHeader from "@/components/sections/SectionHeader"
 
 type Logo = {
     name: string
@@ -245,6 +249,8 @@ function LogoTile({ logo }: { logo: Logo }) {
 // ─── Section ──────────────────────────────────────────────────────────────────
 
 export default function Stack() {
+    const t = useTranslations("home.showcase")
+
     return (
         <section className="relative -mt-16 flex flex-col items-center overflow-hidden pt-4 px-4 sm:px-6">
 
@@ -274,19 +280,21 @@ export default function Stack() {
                 </div>
             </div>
 
-            {/* Text content */}
-            <div className="relative mt-5 z-10 mx-auto max-w-xl text-center">
-                <p className="mx-auto mt-4 max-w-lg text-pretty text-base leading-relaxed text-neutral-500 dark:text-neutral-400 sm:text-lg">
-                    {"Frontend, backend, databases, DevOps, blockchain, embedded systems, payment gateways, APIs, and more. "}
-                    <strong className="font-semibold text-neutral-900 dark:text-neutral-100">Yes.</strong>
+            {/* O cabecalho e igual ao das outras secoes, linha inclusive — ela
+                cai por cima do arco, que ja esta esmaecido no fundo. */}
+            <div className="relative z-10 mx-auto mt-6 max-w-xl text-center">
+                <p className="mx-auto mt-3 max-w-lg text-pretty text-base leading-relaxed text-neutral-500 dark:text-neutral-400 sm:text-lg">
+                    {t("description")}
+
+                    <>
+                        {' '}
+                        <strong className="font-semibold text-neutral-900 dark:text-neutral-100">
+                            {t("highlight")}
+                        </strong>
+                    </>
+
                 </p>
-                <a
-                    href="#"
-                    className="mt-6 inline-flex items-center gap-1 text-base font-medium text-neutral-400 transition-colors hover:text-neutral-900 dark:hover:text-neutral-100"
-                >
-                    {"Explore my projects "}
-                    <span aria-hidden="true">&rarr;</span>
-                </a>
+
             </div>
 
             <BlogList />
