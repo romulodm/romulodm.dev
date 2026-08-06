@@ -1,0 +1,83 @@
+/* ==========================================================================
+   BENTO — marcador e controles do MapLibre (LocationTile)
+
+   O pin le `--primary` (mesmo token do resto do site) em vez de um hex fixo,
+   entao qualquer troca de paleta chega aqui de graca. Como `--primary` guarda
+   so os canais HSL ("18 90% 61%"), o `hsl()` fica do lado do consumo — mesmo
+   padrao que o Tailwind usa neste projeto.
+   ========================================================================== */
+
+.bento-map-pin {
+    position: relative;
+    width: 14px;
+    height: 14px;
+    border-radius: 999px;
+    background: hsl(var(--primary));
+    box-shadow: 0 0 0 3px hsl(var(--primary) / .25), 0 2px 6px rgba(0, 0, 0, .35);
+}
+
+.bento-map-pin::after {
+    content: "";
+    position: absolute;
+    inset: -6px;
+    border-radius: 999px;
+    border: 2px solid hsl(var(--primary) / .55);
+    animation: bento-pin-pulse 2.4s ease-out infinite;
+}
+
+@keyframes bento-pin-pulse {
+    0% {
+        transform: scale(.6);
+        opacity: .9;
+    }
+
+    100% {
+        transform: scale(1.9);
+        opacity: 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .bento-map-pin::after {
+        animation: none;
+    }
+}
+
+/* Controles do MapLibre um pouco mais discretos, sem esconder a atribuicao
+   (que a licenca do OSM/CARTO exige manter visivel). */
+.maplibregl-ctrl-group {
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .18);
+}
+
+.maplibregl-ctrl-attrib,
+.maplibregl-ctrl-attrib a {
+    font-size: 10px;
+}
+
+.maplibregl-ctrl-bottom-right .maplibregl-ctrl-attrib {
+    background: rgba(255, 255, 255, .7);
+}
+
+.dark .maplibregl-ctrl-bottom-right .maplibregl-ctrl-attrib {
+    background: rgba(0, 0, 0, .45);
+}
+
+.dark .maplibregl-ctrl-attrib a {
+    color: rgba(255, 255, 255, .7);
+}
+
+/* No escuro os botoes +/- vem brancos por padrao e estouram o contraste
+   contra o Dark Matter — aqui eles acompanham o card. */
+.dark .maplibregl-ctrl-group {
+    background: rgba(23, 23, 23, .92);
+}
+
+.dark .maplibregl-ctrl-group button+button {
+    border-top-color: rgba(255, 255, 255, .12);
+}
+
+.dark .maplibregl-ctrl-group button .maplibregl-ctrl-icon {
+    filter: invert(1);
+}

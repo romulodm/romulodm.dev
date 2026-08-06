@@ -9,7 +9,9 @@ export default function Bento() {
   const t = useTranslations('bento');
 
   return (
-    <section className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-4 py-16">
+    /* `max-w-[900px]` casa com o container do <FAQ />: o bento fecha a secao
+       logo abaixo do acordeao e precisa alinhar borda com borda. */
+    <section className="mx-auto flex w-full max-w-[900px] flex-col gap-4 pt-4">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         <BentoCard href="/wall" eyebrow={t('guestbook.eyebrow')} title={t('guestbook.title')} align="bottom">
           <GuestbookArt className="w-[15rem] text-neutral-500 dark:text-neutral-400" />

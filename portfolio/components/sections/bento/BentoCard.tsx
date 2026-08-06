@@ -42,7 +42,7 @@ export default function BentoCard({
 
   const card = (
     <div
-      className={`group relative flex h-full min-h-[17rem] flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white p-6 transition-colors duration-300 hover:border-neutral-300 dark:border-neutral-800 dark:bg-neutral-900/50 dark:hover:border-neutral-700 ${className}`}
+      className={`group relative flex h-full min-h-[17rem] flex-col overflow-hidden rounded-sm border border-border/50 hover:border-border bg-neutral-200/90 backdrop-blur-sm dark:bg-neutral-900/80 p-6 transition-colors duration-300  ${className}`}
     >
       {align === 'top' && header}
 
@@ -57,7 +57,7 @@ export default function BentoCard({
       {href && (
         <span
           aria-hidden
-          className="pointer-events-none absolute bottom-5 right-5 z-10 grid h-9 w-9 place-items-center rounded-full border border-neutral-200 bg-white/80 text-neutral-500 backdrop-blur transition-all duration-300 group-hover:translate-x-0.5 group-hover:border-neutral-300 group-hover:text-neutral-900 dark:border-neutral-800 dark:bg-neutral-900/80 dark:text-neutral-400 dark:group-hover:border-neutral-600 dark:group-hover:text-neutral-100"
+          className="pointer-events-none absolute bottom-5 right-5 z-10 grid h-9 w-9 place-items-center rounded-full border border-neutral-200 bg-white/80 text-neutral-500 backdrop-blur transition-all duration-300 group-hover:translate-x-0.5 group-hover:border-primary group-hover:text-primary dark:border-neutral-800 dark:bg-neutral-900/80 dark:text-neutral-400"
         >
           <ArrowRight size={16} />
         </span>

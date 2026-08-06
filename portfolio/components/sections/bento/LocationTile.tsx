@@ -4,30 +4,54 @@ import { useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useTheme } from 'next-themes';
 import { Globe2, MapPin } from 'lucide-react';
-import 'mapbox-gl/dist/mapbox-gl.css';
+import 'maplibre-gl/dist/maplibre-gl.css';
+import './Bento.css';
 import BentoCard from './BentoCard';
 
 /** Rio Grande, RS — Brasil. Troque aqui se mudar de base. */
 const BASE = { lon: -52.0986, lat: -32.035 };
 const ZOOM = 3.2;
 
+/**
+ * Basemaps da CARTO servidos como estilo vetorial MapLibre.
+ *
+ * Positron e Dark Matter sao os mesmos temas que a CARTO desenhou e que o
+ * Mapbox light-v11/dark-v11 imitam — a troca sai visualmente quase identica.
+ * Sao gratuitos e nao pedem token; a licenca so exige manter a atribuicao
+ * (OpenStreetMap + CARTO), que o proprio style.json ja injeta no controle.
+ */
 const STYLES = {
-  light: 'mapbox://styles/mapbox/light-v11',
-  dark: 'mapbox://styles/mapbox/dark-v11',
+  light: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
+  dark: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
 } as const;
 
 type Scheme = keyof typeof STYLES;
 
 /**
- * Mapa interativo com mapbox-gl.
+ * O AttributionControl compacto do MapLibre nasce ABERTO: na primeira medida
+ * ele marca o <details> com `open` e adiciona `maplibregl-compact-show`, o que
+ * deixa o balao "OpenStreetMap contributors" esticado por cima do mapa ate o
+ * primeiro clique. Como a lib so repete esse passo enquanto o container ainda
+ * nao tem a classe `maplibregl-compact`, tirar o estado aberto uma vez basta —
+ * resize e troca de estilo nao reabrem. O botao "i" continua la, entao a
+ * atribuicao exigida pela licenca segue acessivel.
+ */
+function collapseAttribution(root: HTMLElement | null) {
+  const attrib = root?.querySelector('.maplibregl-ctrl-attrib');
+  attrib?.classList.remove('maplibregl-compact-show');
+  attrib?.removeAttribute('open');
+}
+
+/**
+ * Mapa interativo com maplibre-gl.
  *
- * - a lib entra por `import()` dinamico, entao os ~230kb so baixam quando o
+ * - a lib entra por `import()` dinamico, entao os ~200kb so baixam quando o
  *   card monta no cliente — nao pesam no bundle inicial da home;
  * - `scrollZoom` fica desligado de proposito: rolar a pagina por cima do card
  *   nao pode virar zoom no mapa. Arrastar e os botoes +/- continuam valendo;
  * - a troca claro/escuro chama `setStyle`, o marcador sobrevive porque e um
  *   elemento DOM e nao faz parte do estilo;
- * - sem NEXT_PUBLIC_MAPBOX_TOKEN o card cai num fundo neutro com o pin.
+ * - se o CDN de tiles cair, o card degrada para um fundo neutro com o pin.
  */
 export default function LocationTile() {
   const t = useTranslations('bento.location');
@@ -38,43 +62,43 @@ export default function LocationTile() {
   const scheme: Scheme = resolvedTheme === 'light' ? 'light' : 'dark';
 
   const containerRef = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<import('mapbox-gl').Map | null>(null);
+  const mapRef = useRef<import('maplibre-gl').Map | null>(null);
   const [failed, setFailed] = useState(false);
-
-  const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
   // ---- cria o mapa uma unica vez -----------------------------------------
   useEffect(() => {
-    if (!mounted || !token || !containerRef.current || mapRef.current) return;
+    if (!mounted || !containerRef.current || mapRef.current) return;
 
     let cancelled = false;
 
     (async () => {
       try {
-        const mapboxgl = (await import('mapbox-gl')).default;
+        const maplibregl = (await import('maplibre-gl')).default;
         if (cancelled || !containerRef.current || mapRef.current) return;
 
-        mapboxgl.accessToken = token;
-
-        const map = new mapboxgl.Map({
+        const map = new maplibregl.Map({
           container: containerRef.current,
           style: STYLES[scheme],
           center: [BASE.lon, BASE.lat],
           zoom: ZOOM,
           scrollZoom: false,
-          attributionControl: true,
+          attributionControl: { compact: true },
         });
 
-        map.addControl(new mapboxgl.NavigationControl({ showCompass: false }), 'top-right');
+        map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
 
         const pin = document.createElement('div');
         pin.className = 'bento-map-pin';
-        new mapboxgl.Marker({ element: pin, anchor: 'center' })
+        new maplibregl.Marker({ element: pin, anchor: 'center' })
           .setLngLat([BASE.lon, BASE.lat])
           .addTo(map);
 
         // o card so ganha altura depois do layout — garante o enquadramento
-        map.on('load', () => map.resize());
+        map.on('load', () => {
+          map.resize();
+          collapseAttribution(containerRef.current);
+        });
+        map.on('error', () => setFailed(true));
 
         mapRef.current = map;
       } catch {
@@ -90,14 +114,14 @@ export default function LocationTile() {
     // o estilo inicial usa o tema do primeiro render; trocas depois disso sao
     // tratadas no efeito abaixo
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mounted, token]);
+  }, [mounted]);
 
   // ---- acompanha a troca de tema -----------------------------------------
   useEffect(() => {
     mapRef.current?.setStyle(STYLES[scheme]);
   }, [scheme]);
 
-  const showMap = Boolean(token) && mounted && !failed;
+  const showMap = mounted && !failed;
 
   return (
     <BentoCard
@@ -107,17 +131,17 @@ export default function LocationTile() {
       contentClassName="-mx-6 -mt-6 mb-5 items-stretch justify-stretch"
     >
       <div className="relative h-[13rem] w-full overflow-hidden bg-neutral-100 dark:bg-neutral-800/60">
-        {showMap ? (
-          <div ref={containerRef} className="h-full w-full" />
-        ) : (
+        <div ref={containerRef} className={showMap ? 'h-full w-full' : 'hidden'} />
+
+        {!showMap && (
           <div className="grid h-full w-full place-items-center bg-[radial-gradient(circle_at_50%_40%,hsl(var(--muted)),transparent_70%)]">
-            <MapPin className="text-rose-500" size={28} />
+            <MapPin className="text-primary" size={28} />
           </div>
         )}
 
         {/* chips flutuando por cima do mapa */}
         <span className="pointer-events-none absolute bottom-3 left-3 z-10 inline-flex items-center gap-1.5 rounded-full bg-white/90 px-3 py-1 text-xs font-medium text-neutral-700 shadow-sm backdrop-blur dark:bg-neutral-900/85 dark:text-neutral-200">
-          <MapPin size={13} className="text-rose-500" />
+          <MapPin size={13} className="text-primary" />
           {t('base')}
         </span>
 
