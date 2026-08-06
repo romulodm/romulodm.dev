@@ -1,22 +1,148 @@
 name: Deploy to production
 
+# Antes: push em main -> SSH na VPS -> git pull -> docker compose up --build.
+# O build acontecia na VPS, competindo por CPU e RAM com o site que estava no ar,
+# sem artefato versionado (logo, sem rollback) e deixando a maquina em estado
+# inconsistente quando falhava.
+#
+# Agora: o CI valida, a imagem e construida no runner e publicada no GHCR com tag
+# do SHA, e a VPS so faz pull. Rollback vira apontar para a tag anterior.
+
 on:
+  # ATENCAO: push em main publica direto em PRODUCAO.
+  # Enquanto voce estiver validando o fluxo em homologacao, comente estas duas
+  # linhas — assim o unico caminho para o ar e o botao manual abaixo, e um merge
+  # distraido nao vira deploy.
   push:
     branches: [main]
-  workflow_dispatch: # allows manual runs from the GitHub UI
+  workflow_dispatch:
+    inputs:
+      target:
+        description: 'Para onde publicar'
+        required: true
+        default: homolog
+        type: choice
+        options:
+          - homolog
+          - production
+
+concurrency:
+  # Dois deploys simultaneos na mesma VPS se atropelam. Aqui nao cancelamos o que
+  # ja esta rodando — um deploy interrompido no meio deixa containers pela metade.
+  group: deploy-${{ inputs.target || 'production' }}
+  cancel-in-progress: false
+
+env:
+  REGISTRY: ghcr.io
+  APP_IMAGE: ghcr.io/${{ github.repository_owner }}/romulodm-app
+  WORKER_IMAGE: ghcr.io/${{ github.repository_owner }}/romulodm-worker
+  # Push em main vai para producao; disparo manual usa o alvo escolhido.
+  TARGET: ${{ inputs.target || 'production' }}
 
 jobs:
-  deploy:
-    name: Build & Deploy
+  # ── 1. Reaproveita a validacao do ci.yml ────────────────────────────────────
+  # O ci.yml ja roda em push para main. Este job espera por ele em vez de
+  # duplicar os passos, para nao pagar o custo duas vezes.
+  validate:
+    uses: ./.github/workflows/ci.yml
+    secrets: inherit
+
+  # ── 2. Build das imagens e push para o GHCR ─────────────────────────────────
+  build-images:
+    name: Build e push das imagens
+    needs: validate
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      packages: write # necessario para publicar no GHCR
 
     steps:
-      # ── 1. Checkout ───────────────────────────────────────────
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      # ── 2. Connect and deploy to VPS ──────────────────────────
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Login no GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          # Token automatico da Action — nao precisa criar secret nenhum.
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build e push da app
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: portfolio/Dockerfile
+          push: true
+          # Tag pelo SHA e o que torna rollback possivel; latest e conveniencia
+          # para quem sobe a stack na mao.
+          tags: |
+            ${{ env.APP_IMAGE }}:${{ github.sha }}
+            ${{ env.APP_IMAGE }}:latest
+          # O Dockerfile compila 4 pacotes internos antes do Next. Sem cache,
+          # todo push reconstroi tudo do zero.
+          cache-from: type=gha,scope=app
+          cache-to: type=gha,mode=max,scope=app
+          build-args: |
+            NEXT_PUBLIC_SITE_URL=${{ secrets.NEXT_PUBLIC_SITE_URL }}
+            NEXT_PUBLIC_SITE_NAME=${{ secrets.NEXT_PUBLIC_SITE_NAME }}
+            NEXT_PUBLIC_SITE_DESCRIPTION=${{ secrets.NEXT_PUBLIC_SITE_DESCRIPTION }}
+            NEXT_PUBLIC_APP_NAME=${{ secrets.NEXT_PUBLIC_APP_NAME }}
+            NEXT_PUBLIC_APP_URL=${{ secrets.NEXT_PUBLIC_APP_URL }}
+            NEXT_PUBLIC_GA4_MEASUREMENT_ID=${{ secrets.NEXT_PUBLIC_GA4_MEASUREMENT_ID }}
+            NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=${{ secrets.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY }}
+            NEXT_PUBLIC_WALLET_ADDRESS=${{ secrets.NEXT_PUBLIC_WALLET_ADDRESS }}
+            NEXT_PUBLIC_ENCRYPTION_PUBLIC_KEY=${{ secrets.NEXT_PUBLIC_ENCRYPTION_PUBLIC_KEY }}
+            NEXT_PUBLIC_SENTRY_DSN=${{ secrets.NEXT_PUBLIC_SENTRY_DSN }}
+            NEXT_PUBLIC_SENTRY_ENVIRONMENT=production
+            NEXT_PUBLIC_SENTRY_RELEASE=${{ github.sha }}
+            NEXT_PUBLIC_SENTRY_TRACES_SAMPLE_RATE=${{ secrets.NEXT_PUBLIC_SENTRY_TRACES_SAMPLE_RATE }}
+            SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
+            SENTRY_ORG=${{ secrets.SENTRY_ORG }}
+            SENTRY_PROJECT=${{ secrets.SENTRY_PROJECT }}
+
+      # O worker nao declara ARG nenhum e roda `npx tsx index.ts`: sem
+      # NEXT_PUBLIC_* para inlinar, logo sem build-args.
+      - name: Build e push do worker
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: worker/Dockerfile
+          push: true
+          tags: |
+            ${{ env.WORKER_IMAGE }}:${{ github.sha }}
+            ${{ env.WORKER_IMAGE }}:latest
+          cache-from: type=gha,scope=worker
+          cache-to: type=gha,mode=max,scope=worker
+
+  # ── 3. Deploy: a VPS so puxa a imagem ───────────────────────────────────────
+  deploy:
+    name: Deploy (${{ inputs.target || 'production' }})
+    needs: build-images
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      packages: read # sem isto o token autentica no GHCR mas nao consegue ler
+
+    steps:
+      # A imagem e a MESMA nos dois alvos — SITE_URL e lida em runtime, nao
+      # inlinada no build. Muda so qual container sobe e com que ambiente.
+      - name: Definir alvo
+        id: target
+        run: |
+          if [ "${TARGET}" = "homolog" ]; then
+            echo "url=https://homolog.romulodm.dev" >> "$GITHUB_OUTPUT"
+            echo "services=app-homolog"             >> "$GITHUB_OUTPUT"
+            echo "files=-f docker-compose.prod.yml -f docker-compose.homolog.yml" >> "$GITHUB_OUTPUT"
+          else
+            echo "url=https://romulodm.dev" >> "$GITHUB_OUTPUT"
+            echo "services=app worker"      >> "$GITHUB_OUTPUT"
+            echo "files=-f docker-compose.prod.yml" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1
         with:
@@ -24,39 +150,63 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.VPS_SSH_PORT || 22 }}
-          script_stop: true  # stops on first error
+          script_stop: true
+          envs: APP_TAG,GHCR_TOKEN,GHCR_USER,COMPOSE_FILES,SERVICES,TARGET
           script: |
             set -e
 
-            echo "📦 Updating code..."
             cd ~/app
+
+            # O repositorio ainda e necessario: compose, nginx.conf e cron vem
+            # dele. So o build do codigo saiu da VPS.
+            echo "Atualizando repositorio..."
             git pull origin main
 
-            echo "🔑 Updating .env..."
-            # Rebuilds .env from secrets stored on the VPS
-            # (file lives at ~/app/.env, outside Git)
-            # To update a variable, do it manually via SSH
-            # or use the "Sync .env" step below
+            echo "Autenticando no GHCR..."
+            echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
 
-            echo "🐳 Rebuilding changed services..."
-            docker compose -f docker-compose.prod.yml pull --quiet
-            docker compose -f docker-compose.prod.yml up -d --build \
-              --no-deps \
-              app worker
+            # APP_TAG e HOMOLOG_TAG entram no compose como ${...:-latest}. Fixar
+            # o SHA garante que a VPS suba exatamente a imagem que este run
+            # construiu, e nao um `latest` que outro run pode ter movido no meio
+            # do caminho.
+            export APP_TAG HOMOLOG_TAG="$APP_TAG"
 
-            echo "🧹 Cleaning up old images..."
+            echo "Alvo: $TARGET — servicos: $SERVICES — tag: $APP_TAG"
+
+            docker compose $COMPOSE_FILES pull $SERVICES
+            docker compose $COMPOSE_FILES up -d --no-deps $SERVICES
+
+            echo "Limpando imagens antigas..."
             docker image prune -f
 
-            echo "✅ Deploy complete!"
+            docker logout ghcr.io
+        env:
+          APP_TAG: ${{ github.sha }}
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GHCR_USER: ${{ github.actor }}
+          COMPOSE_FILES: ${{ steps.target.outputs.files }}
+          SERVICES: ${{ steps.target.outputs.services }}
+          TARGET: ${{ env.TARGET }}
 
-      # ── 3. Health check after deploy ──────────────────────────
+      # O health check antigo usava `sleep 10` fixo e ja considerava sucesso ou
+      # falha na primeira tentativa. O tempo de subida varia, entao um retry com
+      # limite reflete melhor a realidade sem mascarar falha de verdade.
       - name: Health check
+        env:
+          TARGET_URL: ${{ steps.target.outputs.url }}
         run: |
-          echo "Waiting for app to start..."
-          sleep 10
-          STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://romulodm.dev/health)
-          if [ "$STATUS" != "200" ]; then
-            echo "❌ Health check failed! Status: $STATUS"
-            exit 1
-          fi
-          echo "✅ App responding with status $STATUS"
+          echo "Aguardando $TARGET_URL responder..."
+          for i in $(seq 1 20); do
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$TARGET_URL/health" || echo "000")
+            if [ "$STATUS" = "200" ]; then
+              echo "OK: app respondeu 200 apos ${i} tentativa(s)."
+              exit 0
+            fi
+            echo "  tentativa ${i}/20 — status ${STATUS}, aguardando 5s..."
+            sleep 5
+          done
+
+          echo "::error::Health check falhou apos 20 tentativas (100s)."
+          echo "Rollback: na VPS, rode"
+          echo "  APP_TAG=<sha-anterior> docker compose -f docker-compose.prod.yml up -d --no-deps app"
+          exit 1
