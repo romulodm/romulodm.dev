@@ -11,6 +11,7 @@ import { Mail, MapPin } from 'lucide-react'
 import { ContactModal } from './modals/ContactModal'
 import { GitHubStarsButton } from './GitHubStarsButton'
 import { LattesIcon } from './icons/LattesIcon'
+import { Link } from '@/i18n/navigation'
 
 export function Footer() {
     const t = useTranslations('footer')
@@ -78,9 +79,9 @@ export function Footer() {
 
                     {/* Logo */}
                     <div className="flex items-start col-span-2 md:col-span-3 lg:col-span-1">
-                        <a href="/" className="flex items-center gap-2.5 no-underline">
+                        <Link href="/" className="flex items-center gap-2.5 no-underline">
                             <Logo size={55} />
-                        </a>
+                        </Link>
                     </div>
 
                     <FooterCol title={t('nav.resources.title')}>
