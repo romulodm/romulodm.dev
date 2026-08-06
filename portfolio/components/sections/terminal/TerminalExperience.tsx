@@ -28,7 +28,7 @@ export default function TerminalExperience({
     useEffect(() => { setMounted(true) }, [])
 
     return (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 px-2">
             <div className="font-mono text-sm">
                 <div className="text-gray-500 dark:text-neutral-400/90">
                     Powershell 3.9.22

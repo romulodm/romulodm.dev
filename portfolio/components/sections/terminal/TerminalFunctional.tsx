@@ -54,7 +54,7 @@ export default function TerminalFunctional({
     }
 
     return (
-        <div className="flex flex-col" onClick={() => inputRef.current?.focus()}>
+        <div className="flex flex-col px-2" onClick={() => inputRef.current?.focus()}>
             {componentsToShow.map((Component, index) => (
                 <Component key={index} />
             ))}
