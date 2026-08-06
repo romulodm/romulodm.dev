@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "tsx watch index.ts",
     "build": "tsc",
+    "typecheck": "tsc --noEmit",
     "start": "node dist/index.js",
     "test:unit": "vitest run --config ../vitest.config.ts --dir .",
     "test:integration": "vitest run --config ../vitest.config.integration.ts --dir ."
