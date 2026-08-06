@@ -14,6 +14,13 @@ import Providers from "../providers";
 import { CookieBanner } from "@/components/CookieBanner";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 import { ToastProvider } from "@/components/ToastProvider";
+import {
+  AUTHOR_NAME,
+  DEFAULT_OG_IMAGE,
+  SITE_DESCRIPTION,
+  SITE_NAME,
+  SITE_URL,
+} from "@/lib/seo";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const jetbrains = JetBrains_Mono({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--font-jetbrains" });
@@ -25,9 +32,44 @@ export function generateStaticParams() {
 }
 
 export const metadata: Metadata = {
-  title: process.env.NEXT_PUBLIC_SITE_NAME || "Portfolio & Blog",
-  description: process.env.NEXT_PUBLIC_SITE_DESCRIPTION || "Portfolio e Blog de desenvolvimento",
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
+  // `template` faz cada pagina virar "Blog | romulodm.dev" sem repetir o sufixo
+  // em todo generateMetadata.
+  title: {
+    default: SITE_NAME,
+    template: `%s | ${SITE_NAME}`,
+  },
+  description: SITE_DESCRIPTION,
+  metadataBase: new URL(SITE_URL),
+  applicationName: SITE_NAME,
+  authors: [{ name: AUTHOR_NAME, url: SITE_URL }],
+  creator: AUTHOR_NAME,
+  publisher: AUTHOR_NAME,
+  // Fallback de Open Graph: paginas que nao chamam buildPageMetadata ainda
+  // saem com preview em vez de link cru.
+  openGraph: {
+    type: "website",
+    siteName: SITE_NAME,
+    title: SITE_NAME,
+    description: SITE_DESCRIPTION,
+    images: [{ url: DEFAULT_OG_IMAGE, width: 1200, height: 630, alt: SITE_NAME }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_NAME,
+    description: SITE_DESCRIPTION,
+    images: [DEFAULT_OG_IMAGE],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
   icons: {
     icon: [
       { url: "/favicon.svg", type: "image/svg+xml" },
@@ -52,6 +94,14 @@ export default async function RootLayout({
   return (
     <html lang={locale} suppressHydrationWarning>
       <head>
+        {/* Descoberta automatica do feed: leitores de RSS e a extensao do
+            navegador procuram exatamente por esta tag. */}
+        <link
+          rel="alternate"
+          type="application/rss+xml"
+          title={`${SITE_NAME} — RSS`}
+          href={`/${locale}/feed.xml`}
+        />
         <GoogleAnalytics measurementId={process.env.NEXT_PUBLIC_GA4_MEASUREMENT_ID!} />
       </head>
       <body className={`${inter.variable} ${jetbrains.variable} ${lobster.variable} font-sans`}>

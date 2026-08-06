@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { getLegalDocument, getLegalHeadings } from '@/lib/legal'
+import { buildPageMetadata } from '@/lib/seo'
 import { LegalPage } from '@/components/legal/LegalPage'
 
 interface PageProps {
@@ -20,23 +21,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { locale } = await params
   const { title } = await getLegalDocument('terms', locale)
 
-  return {
+  return buildPageMetadata({
+    locale,
+    path: 'legal/terms',
     title,
     description: DESCRIPTION[locale] ?? DESCRIPTION.en,
-    alternates: {
-      canonical: `/${locale}/legal/terms`,
-      languages: {
-        'pt-BR': '/pt/legal/terms',
-        'en-US': '/en/legal/terms',
-        'es-ES': '/es/legal/terms',
-      },
-    },
-    openGraph: {
-      title,
-      description: DESCRIPTION[locale] ?? DESCRIPTION.en,
-      type: 'article',
-    },
-  }
+    type: 'article',
+  })
 }
 
 export default async function TermsPage({ params }: PageProps) {

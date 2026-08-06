@@ -1,13 +1,26 @@
 import { prisma } from '@romulo/database'
 import { Metadata } from 'next'
+import { getTranslations } from 'next-intl/server'
 import { DonationWidget } from '@/components/support/DonationWidget'
 import { SupportersSidebar } from '@/components/support/SupportSidebar'
 import Navbar from '@/components/navigation/Navbar'
 import { Footer } from '@/components/Footer'
+import { buildPageMetadata } from '@/lib/seo'
 
-export const metadata: Metadata = {
-    title: 'Apoie o blog',
-    description: 'Me pague um café e ajude a manter o blog no ar!',
+export async function generateMetadata({
+    params,
+}: {
+    params: Promise<{ locale: string }>
+}): Promise<Metadata> {
+    const { locale } = await params
+    const t = await getTranslations({ locale, namespace: 'seo.support' })
+
+    return buildPageMetadata({
+        locale,
+        path: 'support',
+        title: t('title'),
+        description: t('description'),
+    })
 }
 
 async function getStats() {

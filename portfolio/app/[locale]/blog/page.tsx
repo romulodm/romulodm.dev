@@ -5,6 +5,9 @@ import Navbar from '@/components/navigation/Navbar'
 import { Footer } from '@/components/Footer'
 import { BlogCarrousel } from '@/components/blog/BlogCarrousel'
 import { SUPPORTED_LOCALES, type LocaleCode } from '@/lib/locales'
+import type { Metadata } from 'next'
+import { getTranslations } from 'next-intl/server'
+import { buildPageMetadata } from '@/lib/seo'
 
 const BLOG_INDEX_REVALIDATE_SECONDS = 300
 
@@ -65,9 +68,20 @@ const getCachedBlogIndexData = (locale: string) =>
     { revalidate: BLOG_INDEX_REVALIDATE_SECONDS },
   )()
 
-export const metadata = {
-  title: 'Blog - Posts recentes',
-  description: 'Artigos sobre desenvolvimento web, JavaScript, TypeScript e muito mais.',
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: LocaleCode }>
+}): Promise<Metadata> {
+  const { locale } = await params
+  const t = await getTranslations({ locale, namespace: 'seo.blog' })
+
+  return buildPageMetadata({
+    locale,
+    path: 'blog',
+    title: t('title'),
+    description: t('description'),
+  })
 }
 
 export default async function BlogPage({

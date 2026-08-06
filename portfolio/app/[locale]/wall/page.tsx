@@ -4,10 +4,25 @@ import { prisma } from "@romulo/database";
 import { WallClient } from "@/components/wall/WallClient";
 import { Footer } from "@/components/Footer";
 import Navbar from "@/components/navigation/Navbar";
+import type { Metadata } from 'next'
+import { getTranslations } from 'next-intl/server'
+import { buildPageMetadata } from '@/lib/seo'
 
-export const metadata = {
-  title: "Guestbook | Leave Your Mark",
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>
+}): Promise<Metadata> {
+  const { locale } = await params
+  const t = await getTranslations({ locale, namespace: 'seo.wall' })
+
+  return buildPageMetadata({
+    locale,
+    path: 'wall',
+    title: t('title'),
+    description: t('description'),
+  })
+}
 
 export default async function WallPage() {
   const session = await getServerSession(authOptions);

@@ -1,14 +1,19 @@
 // app/[locale]/newsletter/page.tsx
+import type { Metadata } from 'next'
 import { prisma } from '@romulo/database'
 import { unstable_cache } from 'next/cache'
 import Link from 'next/link'
-import { Eye, Heart, MessageSquare, Clock, ArrowRight, Users, Mail, TrendingUp, BookOpen } from 'lucide-react'
+import { Eye, Heart, Clock, ArrowRight, TrendingUp } from 'lucide-react'
 import Navbar from '@/components/navigation/Navbar'
 import { Footer } from '@/components/Footer'
 import { SUPPORTED_LOCALES, type LocaleCode } from '@/lib/locales'
 import { formatCount } from '@/lib/format-number'
-import { formatDistanceToNow } from '@/lib/utils'
+import { buildPageMetadata } from '@/lib/seo'
 import { NewsletterSubscribeForm } from './NewsletterSubscribeForm'
+
+interface PageProps {
+    params: Promise<{ locale: LocaleCode }>
+}
 
 // ── Data fetching ────────────────────────────────────────────────────────────
 
@@ -78,10 +83,29 @@ const getNewsletterPageData = (locale: string) =>
     )()
 
 // ── Metadata
+const META: Record<string, { title: string; description: string }> = {
+    pt: {
+        title: 'Newsletter',
+        description:
+            'Conteúdo sobre desenvolvimento web, TypeScript e engenharia de software. Direto no seu e-mail.',
+    },
+    en: {
+        title: 'Newsletter',
+        description:
+            'Writing on web development, TypeScript and software engineering. Straight to your inbox.',
+    },
+}
 
-export const metadata = {
-    title: 'Newsletter — Romulo',
-    description: 'Conteúdo sobre desenvolvimento web, TypeScript, e engenharia de software. Direto no seu e-mail.',
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+    const { locale } = await params
+    const copy = META[locale] ?? META.pt
+
+    return buildPageMetadata({
+        locale,
+        path: 'newsletter',
+        title: copy.title,
+        description: copy.description,
+    })
 }
 
 // ── Corner marker component
