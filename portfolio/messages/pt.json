@@ -1667,5 +1667,48 @@
     "loadMore": "Carregar mais",
     "commentingOn": "Comentando em",
     "viewComment": "Ver comentário ->"
+  },
+  "seo": {
+    "home": {
+      "title": "Romulo de Moraes — Engenheiro de Software",
+      "description": "Portfolio e blog de Romulo de Moraes. Projetos, artigos e anotações sobre engenharia de software, backend e infraestrutura."
+    },
+    "blog": {
+      "title": "Blog",
+      "description": "Artigos sobre desenvolvimento de software, arquitetura, infraestrutura e as coisas que aprendo construindo produtos."
+    },
+    "resume": {
+      "title": "Currículo",
+      "description": "Experiência profissional, formação e stack técnica de Romulo de Moraes."
+    },
+    "wall": {
+      "title": "Mural",
+      "description": "Deixe uma mensagem no mural e veja o que outras pessoas escreveram."
+    },
+    "support": {
+      "title": "Apoie o blog",
+      "description": "Me pague um café e ajude a manter o blog no ar. Doações via PIX, cartão ou cripto."
+    },
+    "status": {
+      "title": "Status",
+      "description": "Métricas públicas e saúde dos serviços que mantêm o site no ar."
+    },
+    "feed": {
+      "title": "Feed RSS",
+      "description": "Assine o feed RSS para receber os novos posts do blog."
+    }
+  },
+  "error": {
+    "title": "Algo quebrou por aqui.",
+    "description": "O erro foi registrado e eu vou dar uma olhada. Você pode tentar de novo ou voltar para o início.",
+    "retry": "Tentar novamente",
+    "home": "Voltar ao início",
+    "digest": "Código do erro"
+  },
+  "notFound": {
+    "title": "Página não encontrada.",
+    "description": "O link pode estar quebrado ou a página pode ter sido movida.",
+    "home": "Voltar ao início",
+    "blog": "Ir para o blog"
   }
 }

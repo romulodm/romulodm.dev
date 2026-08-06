@@ -1,0 +1,268 @@
+import type { Metadata } from 'next'
+
+import { routing } from '@/i18n/routing'
+
+/**
+ * Fonte unica de verdade para tudo que depende da URL publica do site.
+ *
+ * O `metadataBase` do layout ja usa NEXT_PUBLIC_SITE_URL, mas sitemap, robots,
+ * RSS e JSON-LD precisam de URL absoluta em string — e o Next nao aplica
+ * `metadataBase` fora do objeto Metadata. Centralizar aqui evita que cada
+ * arquivo invente seu proprio fallback e o site acabe anunciando localhost em
+ * producao.
+ */
+
+/**
+ * `SITE_URL` (sem o prefixo NEXT_PUBLIC_) e lida em RUNTIME, e essa distincao e
+ * o que permite a mesma imagem servir producao e homologacao.
+ *
+ * Variavel NEXT_PUBLIC_* e substituida por valor literal durante o build: uma
+ * imagem construida com NEXT_PUBLIC_SITE_URL=https://homolog.romulodm.dev carrega
+ * esse endereco para sempre e precisaria ser reconstruida para virar producao —
+ * ou seja, o artefato validado em homologacao nao seria o mesmo que vai ao ar.
+ *
+ * Este modulo e importado somente por server components (paginas, layout,
+ * sitemap, robots, feed), entao nao precisa do prefixo publico e pode ler o
+ * ambiente do container em tempo de execucao. Trocar de dominio vira trocar uma
+ * variavel no .env e reiniciar, sem rebuild.
+ *
+ * NEXT_PUBLIC_SITE_URL segue aceita como fallback para nao quebrar quem ainda a
+ * define.
+ */
+export const SITE_URL = (
+  process.env.SITE_URL ||
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  'http://localhost:3000'
+).replace(/\/+$/, '')
+
+/**
+ * Falha silenciosa e o risco real aqui: sem SITE_URL definida em producao, o
+ * fallback e localhost, o robots.ts responde `Disallow: /` — o site inteiro sai
+ * do indice — enquanto canonical, hreflang, sitemap e RSS anunciam URLs de
+ * localhost. Tudo continua de pe, so que invisivel para busca.
+ */
+if (process.env.NODE_ENV === 'production' && SITE_URL.includes('localhost')) {
+  console.error(
+    '\n[seo] SITE_URL nao definida em producao.\n' +
+      `      Usando o fallback "${SITE_URL}".\n` +
+      '      Consequencia: robots.txt vira "Disallow: /" e o site nao sera\n' +
+      '      indexado; canonical/hreflang/sitemap/RSS vao apontar para localhost.\n',
+  )
+}
+
+export const SITE_NAME = process.env.NEXT_PUBLIC_SITE_NAME || 'romulodm.dev'
+
+export const SITE_DESCRIPTION =
+  process.env.NEXT_PUBLIC_SITE_DESCRIPTION ||
+  'Portfolio e blog sobre desenvolvimento de software.'
+
+/**
+ * Fonte: data/resume/{pt,en}.ts, que e o registro autoritativo do nome no repo.
+ * Nao invente variacao aqui — JSON-LD, RSS e Open Graph todos derivam disto.
+ */
+export const AUTHOR_NAME = 'Romulo de Moraes'
+
+export const DEFAULT_OG_IMAGE = '/default.png'
+
+export type Locale = (typeof routing.locales)[number]
+
+/** Junta um path relativo com a origem publica. Aceita URL absoluta e devolve como esta. */
+export function absoluteUrl(path = '/'): string {
+  if (/^https?:\/\//i.test(path)) return path
+  return `${SITE_URL}${path.startsWith('/') ? path : `/${path}`}`
+}
+
+/**
+ * Monta o mapa de `alternates.languages` para uma rota sem prefixo de locale.
+ * `localePrefix` e "always", entao toda rota publica existe como /pt/... e /en/...
+ */
+export function localeAlternates(pathWithoutLocale = ''): Record<string, string> {
+  const suffix = pathWithoutLocale.replace(/^\/+/, '')
+  return Object.fromEntries(
+    routing.locales.map((locale) => [
+      locale,
+      absoluteUrl(suffix ? `/${locale}/${suffix}` : `/${locale}`),
+    ]),
+  )
+}
+
+type PageMetadataInput = {
+  locale: string
+  /** Caminho sem o prefixo de locale, ex.: 'blog' ou 'blog/meu-post'. */
+  path?: string
+  title: string
+  description?: string
+  image?: string | null
+  type?: 'website' | 'article' | 'profile'
+  publishedTime?: Date | string | null
+  modifiedTime?: Date | string | null
+  tags?: string[]
+  noIndex?: boolean
+}
+
+function toIso(value: Date | string | null | undefined): string | undefined {
+  if (!value) return undefined
+  const date = value instanceof Date ? value : new Date(value)
+  return Number.isNaN(date.getTime()) ? undefined : date.toISOString()
+}
+
+/**
+ * Gera Metadata completo (canonical + hreflang + Open Graph + Twitter Card).
+ *
+ * Sem isso o Next emite apenas <title> e <meta description>: o link
+ * compartilhado no LinkedIn/X/WhatsApp sai sem preview nenhum.
+ */
+export function buildPageMetadata({
+  locale,
+  path = '',
+  title,
+  description,
+  image,
+  type = 'website',
+  publishedTime,
+  modifiedTime,
+  tags,
+  noIndex = false,
+}: PageMetadataInput): Metadata {
+  const cleanPath = path.replace(/^\/+/, '')
+  const canonical = absoluteUrl(cleanPath ? `/${locale}/${cleanPath}` : `/${locale}`)
+  const ogImage = absoluteUrl(image || DEFAULT_OG_IMAGE)
+  const resolvedDescription = description || SITE_DESCRIPTION
+
+  return {
+    title,
+    description: resolvedDescription,
+    alternates: {
+      canonical,
+      languages: localeAlternates(cleanPath),
+      types: {
+        'application/rss+xml': absoluteUrl(`/${locale}/feed.xml`),
+      },
+    },
+    ...(noIndex ? { robots: { index: false, follow: false } } : {}),
+    openGraph: {
+      type: type === 'profile' ? 'profile' : type,
+      siteName: SITE_NAME,
+      locale: locale === 'pt' ? 'pt_BR' : 'en_US',
+      url: canonical,
+      title,
+      description: resolvedDescription,
+      images: [{ url: ogImage, width: 1200, height: 630, alt: title }],
+      ...(type === 'article'
+        ? {
+            publishedTime: toIso(publishedTime),
+            modifiedTime: toIso(modifiedTime),
+            authors: [AUTHOR_NAME],
+            tags,
+          }
+        : {}),
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description: resolvedDescription,
+      images: [ogImage],
+    },
+  }
+}
+
+// ── JSON-LD ──────────────────────────────────────────────────────────────────
+// Dados estruturados sao o que faz o Google mostrar autor, data e breadcrumb no
+// resultado de busca em vez de so titulo e snippet.
+
+export function personJsonLd(locale: string) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: AUTHOR_NAME,
+    alternateName: 'romulodm',
+    url: absoluteUrl(`/${locale}`),
+    image: absoluteUrl(DEFAULT_OG_IMAGE),
+    // Estava fixo em ingles nos dois locales; o JSON-LD declara inLanguage por
+    // pagina, entao o cargo precisa acompanhar.
+    jobTitle: locale === 'pt' ? 'Engenheiro de Software' : 'Software Engineer',
+    description: SITE_DESCRIPTION,
+    sameAs: [
+      'https://github.com/romulodm',
+      'https://www.linkedin.com/in/romulodm',
+    ],
+  }
+}
+
+export function websiteJsonLd(locale: string) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: SITE_NAME,
+    url: absoluteUrl(`/${locale}`),
+    description: SITE_DESCRIPTION,
+    inLanguage: locale === 'pt' ? 'pt-BR' : 'en-US',
+    author: { '@type': 'Person', name: AUTHOR_NAME },
+  }
+}
+
+type BlogPostingInput = {
+  locale: string
+  slug: string
+  title: string
+  description?: string | null
+  image?: string | null
+  publishedAt?: Date | string | null
+  updatedAt?: Date | string | null
+  authorName?: string | null
+  tags?: string[]
+  wordCount?: number
+}
+
+export function blogPostingJsonLd({
+  locale,
+  slug,
+  title,
+  description,
+  image,
+  publishedAt,
+  updatedAt,
+  authorName,
+  tags,
+  wordCount,
+}: BlogPostingInput) {
+  const url = absoluteUrl(`/${locale}/blog/${slug}`)
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    mainEntityOfPage: { '@type': 'WebPage', '@id': url },
+    url,
+    headline: title.slice(0, 110), // limite recomendado pelo Google
+    description: description || undefined,
+    image: [absoluteUrl(image || DEFAULT_OG_IMAGE)],
+    datePublished: toIso(publishedAt),
+    dateModified: toIso(updatedAt) ?? toIso(publishedAt),
+    inLanguage: locale === 'pt' ? 'pt-BR' : 'en-US',
+    author: {
+      '@type': 'Person',
+      name: authorName || AUTHOR_NAME,
+      url: absoluteUrl(`/${locale}`),
+    },
+    publisher: {
+      '@type': 'Person',
+      name: AUTHOR_NAME,
+      url: absoluteUrl(`/${locale}`),
+    },
+    keywords: tags?.length ? tags.join(', ') : undefined,
+    wordCount,
+  }
+}
+
+export function breadcrumbJsonLd(items: Array<{ name: string; path: string }>) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: items.map((item, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: item.name,
+      item: absoluteUrl(item.path),
+    })),
+  }
+}

@@ -1667,5 +1667,48 @@
     "loadMore": "Load more",
     "commentingOn": "Commenting on",
     "viewComment": "View comment ->"
+  },
+  "seo": {
+    "home": {
+      "title": "Romulo de Moraes — Software Engineer",
+      "description": "Romulo de Moraes' portfolio and blog. Projects, articles and notes on software engineering, backend and infrastructure."
+    },
+    "blog": {
+      "title": "Blog",
+      "description": "Articles on software development, architecture, infrastructure and the things I learn building products."
+    },
+    "resume": {
+      "title": "Resume",
+      "description": "Professional experience, education and tech stack of Romulo de Moraes."
+    },
+    "wall": {
+      "title": "Wall",
+      "description": "Leave a message on the wall and see what other people wrote."
+    },
+    "support": {
+      "title": "Support the blog",
+      "description": "Buy me a coffee and help keep the blog online. Donations via PIX, card or crypto."
+    },
+    "status": {
+      "title": "Status",
+      "description": "Public metrics and health of the services keeping this site online."
+    },
+    "feed": {
+      "title": "RSS feed",
+      "description": "Subscribe to the RSS feed to get new blog posts."
+    }
+  },
+  "error": {
+    "title": "Something broke here.",
+    "description": "The error was logged and I will look into it. You can try again or head back home.",
+    "retry": "Try again",
+    "home": "Back home",
+    "digest": "Error code"
+  },
+  "notFound": {
+    "title": "Page not found.",
+    "description": "The link may be broken or the page may have been moved.",
+    "home": "Back home",
+    "blog": "Go to the blog"
   }
 }
