@@ -1,12 +1,12 @@
 import { FiGithub, FiAlertCircle } from "react-icons/fi";
-import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
 
 import ProjectCard from "./ProjectCard";
 import { getMainProjects } from "./data";
 import { getGitHubContributions } from "./github-contributions";
 
 export default async function Projects() {
-    const t = useTranslations("home");
+    const t = await getTranslations("home");
 
     const [projectsResult, contributionResult] = await Promise.allSettled([
         getMainProjects(),
