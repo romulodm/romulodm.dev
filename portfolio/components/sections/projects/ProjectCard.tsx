@@ -16,7 +16,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
     const t = useTranslations("home");
 
     return (
-        <div className="flex px-4 flex-col border rounded-lg dark:border-neutral-800 dark:bg-neutral-900">
+        <div className="flex px-4 flex-col border rounded-lg border-border dark:bg-neutral-900/60">
             <div className="flex mt-4 items-center gap-2">
                 <div className="flex items-center p-3 border rounded-md border-neutral-200 text-neutral-700 dark:border-neutral-600 dark:text-white dark:bg-neutral-800">
                     <FiGithub />
