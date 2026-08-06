@@ -1,44 +1,479 @@
-:root {
-    --grid-color: #e5e7eb;
-    --dashed: rgb(155, 155, 155);
-    --grid-mask: radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 100%);
+/* ==========================================================================
+   VISION — tokens e primitivos visuais da secao.
+   Tudo aqui e consumido por Vision.tsx, Software.tsx, Reach.tsx e ui.tsx.
+   Escopo: qualquer coisa dentro de `.vs-scope`.
+   ========================================================================== */
+
+.vs-scope {
+    /* --- escalas de cor (identicas nos dois esquemas) --- */
+    --vs-primary-100: #5A7CE2;
+    --vs-primary-200: #ADDBFF;
+    --vs-primary-500: #096BDE;
+    --vs-primary-600: #054DA7;
+    --vs-primary-800: #072859;
+    --vs-primary-900: #00153C;
+
+    --vs-neutral-50: #F7F7F8;
+    --vs-neutral-100: #EBEBEF;
+    --vs-neutral-200: #D8D8DF;
+    --vs-neutral-300: #B9B9C6;
+    --vs-neutral-400: #8F8FA3;
+    --vs-neutral-500: #73738C;
+    --vs-neutral-600: #5A5A72;
+    --vs-neutral-700: #434356;
+    --vs-neutral-800: #25252D;
+    --vs-neutral-900: #131318;
+
+    --vs-danger-200: #FFC7C5;
+    --vs-danger-300: #FF9192;
+    --vs-danger-400: #FA5255;
+    --vs-danger-500: #00C74D;
+    --vs-danger-600: #A10E25;
+    --vs-danger-900: #39000D;
+
+    --vs-success-300: #4CC76E;
+    --vs-success-500: #1A7D36;
+    --vs-success-600: #0F5D26;
+    --vs-success-700: #034318;
+
+    --vs-warning-50: #FFF8C5;
+    --vs-warning-200: #EAC54F;
+    --vs-warning-800: #4D2D00;
+    --vs-warning-900: #3B2300;
+
+    --vs-info-400: #A374F9;
+
+    --vs-common-white: #FFF;
+    --vs-common-black: #09090D;
+
+    /* canal rgb usado no box-shadow com alpha do botao solido */
+    --vs-success-channel: 26 125 54;
+
+    --vs-radius-sm: 8px;
+    --vs-radius-md: 12px;
+
+    --vs-fontSize-xs: 0.75rem;
+    --vs-fontSize-sm: 0.875rem;
+    --vs-fontSize-md: 1rem;
+    --vs-fontSize-lg: 1.125rem;
+    --vs-fontSize-xl: 1.25rem;
+    --vs-fontSize-xl4: 2.25rem;
+    --vs-fontSize-xl5: 3rem;
+
+    /* --- esquema claro (default) --- */
+    --vs-text-primary: var(--vs-neutral-800);
+    --vs-text-secondary: var(--vs-neutral-600);
+    --vs-text-tertiary: var(--vs-neutral-500);
+    --vs-background-body: var(--vs-neutral-50);
+    --vs-background-surface: var(--vs-common-white);
+    --vs-divider: rgba(115 115 140 / 0.28);
+    --vs-focusVisible: var(--vs-primary-500);
+
+    --vs-primary-softBg: var(--vs-primary-100);
+    --vs-primary-softColor: var(--vs-primary-600);
+    --vs-primary-softHoverBg: var(--vs-primary-200);
+
+    --vs-neutral-plainColor: var(--vs-neutral-800);
+    --vs-neutral-plainHoverBg: var(--vs-neutral-100);
+    --vs-neutral-outlinedBorder: var(--vs-neutral-200);
+    --vs-neutral-outlinedColor: var(--vs-neutral-800);
+    --vs-neutral-outlinedHoverBg: var(--vs-neutral-100);
+    --vs-neutral-outlinedHoverBorder: var(--vs-neutral-300);
+    --vs-neutral-softBg: var(--vs-neutral-100);
+    --vs-neutral-softColor: var(--vs-neutral-800);
+
+    --vs-danger-plainColor: var(--vs-danger-600);
+    --vs-danger-solidBg: var(--vs-danger-500);
+
+    --vs-success-plainColor: var(--vs-success-600);
+    --vs-success-solidBg: var(--vs-success-500);
+    --vs-success-solidHoverBg: var(--vs-success-600);
+
+    --vs-warning-softBg: var(--vs-warning-50);
+    --vs-warning-softColor: var(--vs-warning-800);
+
+    --vs-shadowChannel: 187 187 187;
+    --vs-shadow-sm: 0 0 #000,
+        0.3px 0.8px 1.1px rgba(var(--vs-shadowChannel) / 0.11),
+        0.5px 1.3px 1.8px -0.6px rgba(var(--vs-shadowChannel) / 0.18),
+        1.1px 2.7px 3.8px -1.2px rgba(var(--vs-shadowChannel) / 0.26);
+
+    color: var(--vs-text-primary);
 }
 
-.dark {
-    --grid-color: #252527;
-    --dashed: rgb(95, 92, 92);
-    /* Mesmo mask que o tema claro — garante o blur lateral consistente */
-    --grid-mask: radial-gradient(ellipse 80% 80% at 50% 50%, black 10%, transparent 100%);
+/* --- esquema escuro --- */
+.dark .vs-scope {
+    --vs-text-primary: var(--vs-neutral-100);
+    --vs-text-secondary: var(--vs-neutral-300);
+    --vs-text-tertiary: var(--vs-neutral-400);
+    --vs-background-body: var(--vs-common-black);
+    --vs-background-surface: var(--vs-neutral-900);
+    --vs-divider: rgba(115 115 140 / 0.24);
+
+    --vs-primary-softBg: var(--vs-primary-900);
+    --vs-primary-softColor: var(--vs-primary-200);
+    --vs-primary-softHoverBg: var(--vs-primary-800);
+
+    --vs-neutral-plainColor: var(--vs-neutral-200);
+    --vs-neutral-plainHoverBg: var(--vs-neutral-800);
+    --vs-neutral-outlinedBorder: var(--vs-neutral-800);
+    --vs-neutral-outlinedColor: var(--vs-neutral-200);
+    --vs-neutral-outlinedHoverBg: var(--vs-neutral-800);
+    --vs-neutral-outlinedHoverBorder: var(--vs-neutral-700);
+    --vs-neutral-softBg: var(--vs-neutral-800);
+    --vs-neutral-softColor: var(--vs-neutral-200);
+
+    --vs-danger-plainColor: var(--vs-danger-300);
+    --vs-danger-solidBg: var(--vs-danger-600);
+
+    --vs-success-plainColor: var(--vs-success-300);
+    --vs-success-solidBg: var(--vs-success-600);
+    --vs-success-solidHoverBg: var(--vs-success-700);
+
+    --vs-warning-softBg: var(--vs-warning-900);
+    --vs-warning-softColor: var(--vs-warning-200);
+
+    --vs-shadowChannel: 0 0 0;
 }
 
-#card .flex {
+/* ------------------------------ tipografia ------------------------------- */
+.vs-h1,
+.vs-h2 {
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+    color: var(--vs-text-primary);
+}
+
+.vs-h1 {
+    font-size: var(--vs-fontSize-xl5);
+}
+
+.vs-h2 {
+    font-size: var(--vs-fontSize-xl4);
+}
+
+.vs-h5 {
+    font-size: var(--vs-fontSize-xl);
+    font-weight: 500;
+    line-height: 1.5;
+    color: var(--vs-text-primary);
+}
+
+.vs-h6 {
+    font-size: var(--vs-fontSize-lg);
+    font-weight: 500;
+    line-height: 1.5;
+    color: var(--vs-text-primary);
+}
+
+.vs-body1 {
+    font-size: var(--vs-fontSize-md);
+    line-height: 1.5;
+    color: var(--vs-text-primary);
+}
+
+.vs-body2 {
+    font-size: var(--vs-fontSize-sm);
+    line-height: 1.5;
+    color: var(--vs-text-secondary);
+}
+
+.vs-body3 {
+    font-size: var(--vs-fontSize-xs);
+    line-height: 1.5;
+    color: var(--vs-text-tertiary);
+}
+
+.vs-t-primary {
+    color: var(--vs-text-primary);
+}
+
+.vs-t-secondary {
+    color: var(--vs-text-secondary);
+}
+
+.vs-t-tertiary {
+    color: var(--vs-text-tertiary);
+}
+
+.vs-c-danger {
+    color: var(--vs-danger-plainColor);
+}
+
+.vs-c-success {
+    color: var(--vs-success-plainColor);
+}
+
+/* ------------------------------ Card ------------------------------------- */
+.vs-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem 1rem;
+    padding: 1rem;
+    border-radius: var(--vs-radius-md);
+    box-shadow: var(--vs-shadow-sm);
+    background-color: var(--vs-background-surface);
+    font-size: var(--vs-fontSize-md);
+}
+
+.vs-card--outlined {
+    border: 1px solid var(--vs-neutral-outlinedBorder);
+    color: var(--vs-neutral-outlinedColor);
+}
+
+/* ------------------------------ Button ----------------------------------- */
+.vs-btn {
+    -webkit-tap-highlight-color: transparent;
+    border-radius: var(--vs-radius-sm);
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    text-decoration: none;
+    font-family: inherit;
+    font-weight: 600;
+    line-height: 1;
+    min-height: 2.5rem;
+    font-size: var(--vs-fontSize-sm);
+    padding: 0.25rem 1rem;
+    gap: 0.5rem;
+    transition: color .2s, background-color .2s, border-color .2s;
+}
+
+.vs-btn--outlined.vs-color-neutral {
+    border: 1px solid var(--vs-neutral-outlinedBorder);
+    color: var(--vs-neutral-outlinedColor);
+}
+
+.vs-btn--soft.vs-color-primary {
+    background-color: var(--vs-primary-softBg);
+    color: var(--vs-primary-softColor);
+}
+
+.vs-btn--solid.vs-color-success {
+    background-color: var(--vs-success-solidBg);
+    color: #fff;
+    box-shadow: 0 8px 20px -6px rgba(var(--vs-success-channel) / 0.45);
+}
+
+@media (hover: hover) {
+    .vs-btn--outlined.vs-color-neutral:hover {
+        background-color: var(--vs-neutral-outlinedHoverBg);
+        border-color: var(--vs-neutral-outlinedHoverBorder);
+    }
+
+    .vs-btn--soft.vs-color-primary:hover {
+        background-color: var(--vs-primary-softHoverBg);
+    }
+
+    .vs-btn--solid.vs-color-success:hover {
+        background-color: var(--vs-success-solidHoverBg);
+    }
+}
+
+.vs-btn[disabled] {
+    cursor: default;
+    opacity: 0.6;
+}
+
+@keyframes vs-spin {
+    to {
+        rotate: 360deg;
+    }
+}
+
+/* ------------------------------ Chip ------------------------------------- */
+.vs-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    min-height: 1.5rem;
+    max-width: max-content;
+    padding-inline: 0.5rem;
+    border-radius: 0.2rem;
+    font-size: var(--vs-fontSize-xs);
+    font-weight: 500;
+    white-space: nowrap;
+    text-decoration: none;
+}
+
+.vs-chip--solid.vs-color-danger {
+    background-color: var(--vs-danger-500);
+    color: #fff;
+}
+
+.vs-chip--solid.vs-color-success {
+    background-color: var(--vs-success-solidBg);
+    color: #fff;
+}
+
+/* ------------------------------ Avatar ----------------------------------- */
+.vs-avatar {
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 1rem;
     display: flex;
     align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    line-height: 1;
+    border-radius: 50%;
+    user-select: none;
+    font-weight: 500;
 }
 
-.dashed-line {
+.vs-avatar--sm {
+    width: 2rem;
+    height: 2rem;
+    font-size: 0.875rem;
+}
+
+.vs-avatar--lg {
+    width: 3rem;
+    height: 3rem;
+    font-size: 1.125rem;
+}
+
+.vs-avatar--soft.vs-color-neutral {
+    background-color: var(--vs-neutral-softBg);
+    color: var(--vs-neutral-softColor);
+}
+
+.vs-avatar--solid.vs-color-danger {
+    background-color: var(--vs-danger-solidBg);
+    color: #fff;
+}
+
+.vs-avatar--solid.vs-color-info {
+    background-color: var(--vs-info-400);
+    color: #fff;
+}
+
+/* --------------------------- Input / Textarea ---------------------------- */
+.vs-input {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 2.25rem;
+    padding-inline: 0.75rem;
+    border-radius: var(--vs-radius-sm);
+    font-size: var(--vs-fontSize-md);
+    background-color: transparent;
+    color: var(--vs-neutral-plainColor);
+    cursor: text;
+    transition: background-color .2s, border-color .2s;
+}
+
+.vs-textarea {
+    align-items: flex-start;
+    padding-block: 0.5rem;
+    min-height: auto;
+}
+
+.vs-input:hover {
+    background-color: var(--vs-neutral-plainHoverBg);
+}
+
+.vs-input:focus-within {
+    outline: 2px solid var(--vs-focusVisible);
+    outline-offset: 2px;
+}
+
+.vs-input>input,
+.vs-input>textarea {
+    flex: 1 1 auto;
+    min-width: 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    font: inherit;
+    color: inherit;
+    resize: none;
+}
+
+.vs-input>input::placeholder,
+.vs-input>textarea::placeholder {
+    opacity: 0.64;
+    color: inherit;
+}
+
+.vs-input-decorator {
+    display: inline-flex;
+    align-items: center;
+    color: var(--vs-text-tertiary);
+}
+
+/* -------------------------------- Alert ---------------------------------- */
+.vs-alert {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    border-radius: var(--vs-radius-sm);
+    font-size: var(--vs-fontSize-sm);
+}
+
+.vs-alert--warning {
+    background-color: var(--vs-warning-softBg);
+    color: var(--vs-warning-softColor);
+}
+
+/* ------------------------- grade pontilhada do board --------------------- */
+.vs-grid {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    background-image:
+        linear-gradient(var(--vs-divider) 1px, transparent 1px),
+        linear-gradient(90deg, var(--vs-divider) 1px, transparent 1px);
+    background-size: 37px 37px, 37px 37px;
+    -webkit-mask-image: radial-gradient(circle, black 0%, transparent 80%);
+    mask-image: radial-gradient(circle, black 0%, transparent 80%);
+}
+
+/* ------------- badge "N novos commits" ligado por linha tracejada --------- */
+.vs-commits {
     position: absolute;
     top: 50%;
-    left: 100%;
-    width: 2rem;
-    height: 0;
-    border-top: 2px dashed var(--dashed);
+    left: calc(100% + 1px);
     transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    width: max-content;
 }
 
-/* ─── Grid de fundo ─────────────────────────────────────────────────────────── */
-.grid-background {
-    background-image:
-        linear-gradient(var(--grid-color) 1px, transparent 1px),
-        linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
-    background-size: 37px 37px;
-    /* Usa a variável CSS para que dark/light apliquem o mesmo efeito de desfoque lateral */
-    mask-image: var(--grid-mask);
-    -webkit-mask-image: var(--grid-mask);
+.vs-commits::before {
+    content: "";
+    width: 2rem;
+    border-top: 2px dashed var(--vs-neutral-outlinedBorder);
 }
 
-/* Tema escuro: cor de fundo sólida por baixo do grid */
-[data-theme="dark"] .grid-background {
-    background-color: #09090b;
-    /* zinc-950 — combina com neutral-900/950 do resto do site */
+.vs-commits--mobile {
+    top: calc(100% + 1.5rem);
+    left: 1rem;
+    transform: none;
+}
+
+.vs-commits--mobile::before {
+    width: 1.5rem;
+    height: 1.5rem;
+    border-top: none;
+    border-bottom: 2px dashed var(--vs-neutral-outlinedBorder);
+    border-left: 2px dashed var(--vs-neutral-outlinedBorder);
+    border-radius: 0 0 0 0.75rem;
+    align-self: flex-start;
+    margin-top: -1.5rem;
+}
+
+/* -------------------------- cursor colaborativo -------------------------- */
+.vs-cursor-arrow svg {
+    fill: color-mix(in srgb, var(--vs-danger-500), var(--vs-background-body) 40%);
+    stroke: var(--vs-danger-500);
 }

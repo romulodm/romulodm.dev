@@ -2,39 +2,35 @@
 
 import './Vision.css';
 
-import { useMemo, useState } from 'react';
-import { Parallax } from 'react-scroll-parallax';
-import Cursor from './Cursor';
-import Container from './Container';
+import { useTranslations } from 'next-intl';
+import { TbHeartHandshake } from 'react-icons/tb';
+
+import SectionHeader from '../SectionHeader';
+import Software from './Software';
 
 export default function Vision() {
-  const animationDelay = 0.2;
-
-  const [scrollingProgress, setScrollingProgress] = useState(0);
-
-  const animationStep = useMemo(
-    () =>
-      Math.min(
-        Math.round(
-          Math.max(0, scrollingProgress - animationDelay) *
-          (6 / (1 - animationDelay)),
-        ),
-        6,
-      ),
-    [scrollingProgress],
-  );
+  const t = useTranslations('home.software');
 
   return (
-    <div className="w-full flex flex-col mt-4 justify-center">
-      <Parallax
-        shouldAlwaysCompleteAnimation
-        onProgressChange={(progress) => setScrollingProgress(progress)}
-      >
-        <div className="container-grid">
-          <Cursor step={animationStep} />
-          <Container step={animationStep} />
-        </div>
-      </Parallax>
-    </div>
+    <section className="vs-scope w-full overflow-hidden pb-10">
+      {/*
+       * `items-center` aqui NAO pode existir: o <Software /> e uma arvore de
+       * elementos posicionados em porcentagem dentro de um board com largura
+       * relativa. Centralizar os itens faz o container encolher para o tamanho
+       * do conteudo e todo o board colapsa junto. A centralizacao acontece com
+       * `mx-auto` no proprio bloco, que continua ocupando 100% da faixa.
+       */}
+      <div className="mx-auto w-full max-w-[1200px] px-5">
+        <SectionHeader
+          accent="vision"
+          icon={<TbHeartHandshake />}
+          eyebrow={t('eyebrow')}
+          title={t('title')}
+          description={t('description')}
+        />
+
+        <Software />
+      </div>
+    </section>
   );
 }

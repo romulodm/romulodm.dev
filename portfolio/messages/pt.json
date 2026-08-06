@@ -493,6 +493,22 @@
       }
     ]
   },
+  "bento": {
+    "guestbook": {
+      "eyebrow": "Mural",
+      "title": "Deixe um recado no mural."
+    },
+    "location": {
+      "eyebrow": "Onde estou",
+      "title": "Rio Grande, RS — atendendo de qualquer lugar.",
+      "base": "Rio Grande, RS",
+      "global": "Remoto"
+    },
+    "newsletter": {
+      "eyebrow": "Newsletter",
+      "title": "Receba os posts novos por e-mail."
+    }
+  },
   "blogPost": {
     "notFoundTitle": "Post não encontrado",
     "videoTitle": "Vídeo do post",
