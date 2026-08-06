@@ -42,15 +42,13 @@ function FAQItem({ item, isOpen, onToggle, domId }: FAQItemProps) {
     return (
         <div
             className={cn(
-                "w-full overflow-hidden rounded-sm bg-neutral-200/90 backdrop-blur-sm dark:bg-neutral-900/80",
-                "border border-border/50 transition-colors",
-                "hover:border-border/80",
+                "group w-full overflow-hidden rounded-sm bg-neutral-200/90 backdrop-blur-sm dark:bg-neutral-900/80",
+                "border transition-colors duration-300",
+                isOpen
+                    ? "border-border"
+                    : "border-border/50 hover:border-border",
             )}
         >
-            {/*
-             * Botao de verdade, nao div com onClick: a versao anterior nao era
-             * alcancavel por teclado e nao anunciava estado para leitor de tela.
-             */}
             <button
                 type="button"
                 id={buttonId}
@@ -65,30 +63,14 @@ function FAQItem({ item, isOpen, onToggle, domId }: FAQItemProps) {
                 <ChevronDown
                     aria-hidden
                     className={cn(
-                        "h-6 w-6 shrink-0 text-muted-foreground transition-transform duration-500 ease-out",
-                        isOpen ? "rotate-180" : "rotate-0",
+                        "h-6 w-6 shrink-0 transition-[transform,color] duration-500 ease-out",
+                        isOpen
+                            ? "rotate-180 text-primary"
+                            : "rotate-0 text-muted-foreground group-hover:text-primary",
                     )}
                 />
             </button>
 
-            {/*
-             * Abertura por `grid-template-rows: 0fr -> 1fr`.
-             *
-             * A alternativa comum, `max-height: 0 -> valor grande`, tem um
-             * defeito visivel ao fechar: o navegador interpola ate o teto
-             * arbitrario (digamos 1000px), mas o conteudo tem ~150px. Os
-             * primeiros ~85% da transicao acontecem fora da tela e o painel
-             * parece travar antes de sumir de uma vez.
-             *
-             * Com `fr` o alvo e a altura real do conteudo, entao a duracao vale
-             * inteira nos dois sentidos e nao ha numero magico para manter.
-             * Exige o filho com `overflow-hidden` para recortar durante o
-             * colapso.
-             *
-             * `invisible` tira o link interno da ordem de tabulacao com o painel
-             * fechado — o atributo `hidden` faria isso tambem, mas aplica
-             * `display: none` e cancelaria a transicao.
-             */}
             <div
                 id={panelId}
                 role="region"
@@ -159,10 +141,6 @@ export function FAQ({ allowMultiple = true }: { allowMultiple?: boolean }) {
 
     return (
         <AnimatedSection className="relative z-10 mx-auto" delay={0.4}>
-            {/*
-             * O titulo da secao vive em <SectionHeader> na page — aqui fica so
-             * o acordeao, para nao existirem dois <h2> concorrendo.
-             */}
             <section className="w-full pt-12 md:pt-16">
                 <div className="mx-auto flex max-w-[900px] flex-col gap-4">
                     {items.map((item, index) => (
