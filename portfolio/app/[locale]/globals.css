@@ -112,6 +112,29 @@
   /* #f9305b */
   --contact: 346 93% 58%;
   --contact-background: 0 93% 94%;
+
+  /* Accent que espelha o --primary do tema, para secoes que devem usar a cor
+     da marca em vez de uma cor propria. Fica derivado de --primary de
+     proposito: mudar a paleta em um lugar so continua valendo. */
+  --primary-color: hsl(var(--primary));
+  --primary-color-rgb: 245, 120, 66;
+  /* #f57842 */
+  --primary-background: 18 90% 94%;
+
+  --getintouch-color: #F57842;
+  --getintouch-color-rgb: 245, 166, 35;
+  --getintouch: 38 92% 55%;
+  --getintouch-background: 38 92% 92%;
+
+  --opensource-color: #10B981;
+  --opensource-color-rgb: 16, 185, 129;
+  --opensource: 160 84% 39%;
+  --opensource-background: 160 84% 93%;
+
+  --software-color: #EF4444;
+  --software-color-rgb: 239, 68, 68;
+  --software: 0 84% 60%;
+  --software-background: 0 90% 94%;
 }
 
 .dark {
@@ -145,7 +168,9 @@
   --input: 240 20% 20%;
   --ring: 225 70% 60%;
 
-  --radius: 0.75rem;
+  /* --radius mora so no :root: geometria nao muda com o tema, senao todo
+     componente derivado dele (rounded-sm/md/lg) fica com raio diferente no
+     claro e no escuro. Se um dia o raio global mudar, mude la. */
 
   /* Gradientes */
   --lottery-gradient-from: 225 70% 60%;
@@ -190,6 +215,26 @@
   /* #f9305b */
   --contact: 346 93% 58%;
   --contact-background: 344 47% 31%;
+
+  --primary-color: hsl(var(--primary));
+  --primary-color-rgb: 245, 120, 66;
+  /* #f57842 */
+  --primary-background: 18 46% 25%;
+
+  --getintouch-color: #F5A623;
+  --getintouch-color-rgb: 245, 166, 35;
+  --getintouch: 38 92% 55%;
+  --getintouch-background: 38 46% 25%;
+
+  --opensource-color: #10B981;
+  --opensource-color-rgb: 16, 185, 129;
+  --opensource: 160 84% 39%;
+  --opensource-background: 160 40% 22%;
+
+  --software-color: #EF4444;
+  --software-color-rgb: 239, 68, 68;
+  --software: 0 84% 60%;
+  --software-background: 0 45% 28%;
 }
 
 
@@ -219,45 +264,8 @@
   }
 }
 
-#resume-line {
-  background: linear-gradient(to bottom, transparent, rgba(var(--resume-color-rgb), 1));
-}
-
-#resume-icon {
-  background-color: var(--resume-background);
-  outline: 2px solid var(--resume-color);
-  box-shadow: 0 0 40px 5px rgba(var(--resume-color-rgb), .9);
-}
-
-#projects-line {
-  background: linear-gradient(to bottom, transparent, rgba(var(--projects-color-rgb), 1));
-}
-
-#projects-icon {
-  background-color: var(--projects-background);
-  outline: 2px solid var(--projects-color);
-  box-shadow: 0 0 40px 5px rgba(var(--projects-color-rgb), .9);
-}
-
-#vision-line {
-  background: linear-gradient(to bottom, transparent, rgba(var(--vision-color-rgb), 1));
-}
-
-#vision-icon {
-  background-color: var(--vision-background);
-  outline: 2px solid var(--vision-color);
-  box-shadow: 0 0 40px 5px rgba(var(--vision-color-rgb), .9);
-}
-
-#contact-line {
-  background: linear-gradient(to bottom, transparent, rgba(var(--contact-color-rgb), 1));
-}
-
-#contact-icon {
-  background-color: var(--contact-background);
-  outline: 2px solid var(--contact-color);
-  box-shadow: 0 0 40px 5px rgba(var(--contact-color-rgb), .8);
-}
+/* As linhas/icones das secoes da home sao gerados por <SectionHeader />, que
+   monta o gradiente e o halo a partir de `--<accent>-color`. */
 
 .cursor {
   animation: blink 1s infinite;
