@@ -4,7 +4,7 @@ import './Contact.css';
 
 import React from 'react';
 import { AiFillInstagram } from 'react-icons/ai';
-import { FaDiscord, FaGithub, FaLinkedin, FaTwitch } from 'react-icons/fa';
+import { FaGithub, FaLinkedin, FaTwitch } from 'react-icons/fa';
 import { SiOnlyfans } from 'react-icons/si';
 import Tooltip from '@mui/material/Tooltip';
 import { styled } from '@mui/material/styles';

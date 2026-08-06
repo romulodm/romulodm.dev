@@ -1,6 +1,6 @@
 'use client'
 
-import { Menu, Moon, Sun, Languages } from "lucide-react";
+import { Menu, Moon, Rss, Sun, Languages } from "lucide-react";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -11,6 +11,7 @@ import {
 import Link from "next/link";
 import { navItems } from "./Navbar";
 import { useTheme } from "next-themes";
+import { useLocale } from "next-intl";
 
 interface MobileMenuProps {
     onOpenLanguageModal: () => void;
@@ -18,6 +19,7 @@ interface MobileMenuProps {
 
 export function MobileMenu({ onOpenLanguageModal }: MobileMenuProps) {
     const { setTheme } = useTheme();
+    const locale = useLocale();
 
     function toggleTheme() {
         const isDark = document.documentElement.classList.contains('dark');
@@ -56,6 +58,19 @@ export function MobileMenu({ onOpenLanguageModal }: MobileMenuProps) {
                 <DropdownMenuItem onClick={onOpenLanguageModal} className="flex items-center gap-2 cursor-pointer">
                     <Languages className="h-4 w-4" />
                     Idioma
+                </DropdownMenuItem>
+
+                {/* O botao de RSS do desktop fica escondido no mobile (md:flex),
+                    entao o feed precisa de uma entrada propria aqui. */}
+                <DropdownMenuItem asChild className="flex items-center gap-2 cursor-pointer">
+                    <a
+                        href={`/${locale}/feed.xml`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        <Rss className="h-4 w-4" />
+                        RSS
+                    </a>
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>

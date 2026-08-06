@@ -1,7 +1,7 @@
 ﻿// src/components/support/CryptoView.tsx
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import {
     Info, ExternalLink, Wallet, Loader2,
     CheckCircle2, X, AlertCircle,

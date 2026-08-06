@@ -2,7 +2,7 @@
 
 import { useCallback } from 'react';
 import { useTranslations } from 'next-intl';
-import { Cookie, X } from 'lucide-react';
+import { Cookie } from 'lucide-react';
 import {
   Dialog,
   DialogContent,

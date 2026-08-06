@@ -3,7 +3,6 @@
 import Image from "next/image";
 import { signOut } from "next-auth/react";
 import { useTranslations } from "next-intl";
-import { getIntlLocaleCode } from "@/lib/locales";
 import BanButton from "@/components/BanButton";
 import type { Profile } from "./types";
 

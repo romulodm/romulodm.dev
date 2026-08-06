@@ -1,8 +1,13 @@
 import Link from 'next/link'
-import { useTranslations } from 'next-intl';
+import type { Metadata } from 'next';
+import { useLocale, useTranslations } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
 
 import { FaArrowRightLong } from 'react-icons/fa6';
 import { FiCode, FiHelpCircle, FiUser } from 'react-icons/fi';
+
+import { JsonLd } from '@/components/seo/JsonLd';
+import { buildPageMetadata, personJsonLd, websiteJsonLd } from '@/lib/seo';
 
 import Navbar from '@/components/navigation/Navbar';
 import Hero from '@/components/sections/Hero';
@@ -17,11 +22,33 @@ import { FAQ } from '@/components/FAQ';
 import Bento from '@/components/sections/bento/Bento';
 import { Footer } from '@/components/Footer';
 
+type HomeProps = {
+  params: Promise<{ locale: string }>
+}
+
+export async function generateMetadata({ params }: HomeProps): Promise<Metadata> {
+  const { locale } = await params
+  const t = await getTranslations({ locale, namespace: 'seo.home' })
+
+  return buildPageMetadata({
+    locale,
+    path: '',
+    title: t('title'),
+    description: t('description'),
+    type: 'profile',
+  })
+}
+
 export default function Home() {
   const t = useTranslations();
+  const locale = useLocale();
 
   return (
     <main className="min-h-screen default-scroll bg-background">
+      {/* Dados estruturados: e o que faz o Google exibir nome, cargo e links
+          sociais no painel lateral em vez de so o titulo da pagina. */}
+      <JsonLd data={personJsonLd(locale)} />
+      <JsonLd data={websiteJsonLd(locale)} />
       <Navbar />
       <Hero />
       <About />

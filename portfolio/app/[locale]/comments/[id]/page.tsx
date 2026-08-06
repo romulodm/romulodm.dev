@@ -2,7 +2,6 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import Navbar from "@/components/navigation/Navbar";
 import { CommentCard } from "@/components/comments/CommentCard";
-import { CommentComposer } from "@/components/comments/CommentComposer";
 import { getCommentById } from "@/lib/comments";
 import type { Metadata } from "next";
 import { Footer } from "@/components/Footer";

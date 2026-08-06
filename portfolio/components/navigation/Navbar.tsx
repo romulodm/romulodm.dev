@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { BookOpen, Rss, Home, Languages, Moon, Sun } from "lucide-react";
 import Link from "next/link";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useSession } from "next-auth/react";
 import { AuthModal } from "../auth/AuthModal";
 import { Button } from "@/components/ui/button";
@@ -21,6 +21,7 @@ export const navItems = [
 
 const Navbar = () => {
     const t = useTranslations();
+    const locale = useLocale();
     const [scrolled, setScrolled] = useState(false);
     const [mobileOpen, setMobileOpen] = useState(false);
     const [open, setOpen] = useState(false);
@@ -114,13 +115,24 @@ const Navbar = () => {
                             }
                         </Button>
 
+                        {/* Este botao chamava setLanguageModalOpen — abria o modal
+                            de idioma em vez do feed. Agora aponta para o RSS do
+                            locale atual. */}
                         <Button
+                            asChild
                             variant="ghost"
                             size="icon"
-                            onClick={() => setLanguageModalOpen(true)}
                             className="hidden p-2.5 md:flex text-foreground hover:bg-gray-400/60 dark:hover:bg-neutral-800/50 hover:text-black dark:hover:text-foreground"
                         >
-                            <Rss className="h-4 w-4" />
+                            <a
+                                href={`/${locale}/feed.xml`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                title={t('seo.feed.title')}
+                                aria-label={t('seo.feed.title')}
+                            >
+                                <Rss className="h-4 w-4" />
+                            </a>
                         </Button>
 
                         {data ? (

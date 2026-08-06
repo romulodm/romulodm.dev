@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { Cookie, ShieldCheck } from 'lucide-react';
+import { Cookie } from 'lucide-react';
 import { CookiePolicyModal } from './modals/CookiePolicyModal';
 
 const CONSENT_COOKIE_NAME = 'cookie_consent';

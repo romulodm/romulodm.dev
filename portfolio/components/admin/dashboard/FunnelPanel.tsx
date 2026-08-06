@@ -4,7 +4,7 @@
 import { Filter, Eye, Heart, MessageSquare } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import { Panel } from './primitives';
-import { fmtCompact, fmtNumber, fmtPercent } from './format';
+import { fmtNumber, fmtPercent } from './format';
 import type { DashboardData } from './types';
 
 /** Referências de mercado para blogs técnicos — contexto, não veredito. */

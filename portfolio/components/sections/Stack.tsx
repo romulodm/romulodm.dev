@@ -1,8 +1,6 @@
 import { useTranslations } from "next-intl"
-import { FiCpu } from "react-icons/fi"
 
 import BlogList from "@/components/sections/posts/BlogList"
-import SectionHeader from "@/components/sections/SectionHeader"
 
 type Logo = {
     name: string

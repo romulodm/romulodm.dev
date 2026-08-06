@@ -1,6 +1,5 @@
 'use client'
 
-import { Github } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { FaGithub } from 'react-icons/fa'
 

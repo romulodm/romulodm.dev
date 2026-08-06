@@ -102,7 +102,7 @@ export function MarkdownEditor({ value, onChange, onSubmit, onCancel, autoFocus 
           if (event.key === 'Escape' && onCancel) { event.preventDefault(); onCancel(); }
         }} />
       ) : (
-        <div className="prose prose-sm min-h-24 max-w-none px-3 py-2.5 dark:prose-invert prose-p:my-1 prose-headings:mb-1 prose-headings:mt-3 prose-code:rounded prose-code:bg-accent prose-code:px-1 prose-code:text-xs prose-code:before:content-none prose-code:after:content-none prose-blockquote:border-l-2 prose-blockquote:border-border prose-blockquote:pl-3 prose-blockquote:text-muted-foreground prose-blockquote:not-italic prose-ul:my-1 prose-ol:my-1 prose-li:my-0" dangerouslySetInnerHTML={{ __html: previewHtml || `<span class=\"text-muted-foreground text-sm italic\">${t('nothingToPreview')}</span>` }} />
+        <div className="prose prose-sm min-h-24 max-w-none px-3 py-2.5 dark:prose-invert prose-p:my-1 prose-headings:mb-1 prose-headings:mt-3 prose-code:rounded prose-code:bg-accent prose-code:px-1 prose-code:text-xs prose-code:before:content-none prose-code:after:content-none prose-blockquote:border-l-2 prose-blockquote:border-border prose-blockquote:pl-3 prose-blockquote:text-muted-foreground prose-blockquote:not-italic prose-ul:my-1 prose-ol:my-1 prose-li:my-0" dangerouslySetInnerHTML={{ __html: previewHtml || `<span class="text-muted-foreground text-sm italic">${t('nothingToPreview')}</span>` }} />
       )}
 
       <div className="flex items-center justify-between border-t border-border bg-gray-300/30 px-3 py-2 dark:bg-neutral-800/50">
