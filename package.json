@@ -1,6 +1,10 @@
 {
   "name": "romulodm",
   "private": true,
+  "//overrides.next": "@sentry/nextjs, next-auth, next-intl e nextjs-toploader declaram next como peerDependency e ficam hoisted na raiz. Sem o override, o npm instala um next na raiz para satisfazer esses peers e OUTRO dentro de portfolio/ para satisfazer a versao declarada la. As duas copias produzem tipos distintos com o mesmo nome, e o typecheck quebra com 'NextRequest is not assignable to NextRequest'. Manter o override alinhado com portfolio/package.json ao subir a versao.",
+  "//overrides.typescript": "Mesmo mecanismo do next: typescript-eslint tem peer 'typescript >=4.8.4 <6.1.0', e sem override o npm hoista o 6.x na raiz enquanto portfolio e worker ficam com 5.x aninhado. Os pacotes em packages/* nao declaram typescript, entao herdam o da raiz — e no 6.x o 'moduleResolution: Node' vira erro de deprecacao. Fixar em 5.x mantem uma copia so. Migrar para o 6 e um projeto a parte: exige trocar a resolucao de modulos dos tsconfigs e revalidar os tipos do repositorio inteiro.",
+  "//overrides.uuid": "GHSA-w5hq-g745-h8pq. O dockerode 4.x depende de uuid 10 e o `npm audit fix --force` resolveria subindo dockerode para 5.x, um major. Sobe-se o uuid direto: o dockerode so chama uuid.v4() (lib/session.js), e a falha e em v3/v5/v6 quando o argumento `buf` e passado — caminho que ele nao usa. Assim a correcao entra sem major de dockerode.",
+  "//overrides.nodemailer": "GHSA-p6gq-j5cr-w38f. Major (8 -> 9). Usado em um unico arquivo, worker/lib/email/providers/smtp.provider.ts, e so com API estavel: createTransport, sendMail e verify. O next-auth aparece no audit por depender de nodemailer, mas os providers configurados sao Google, GitHub e Credentials — o provider de Email, unico que usaria nodemailer, nao esta ligado. Verificar apos atualizar: o import de tipo profundo 'nodemailer/lib/smtp-pool/index.js' pode ter mudado de caminho na v9.",
   "workspaces": [
     "packages/*",
     "portfolio",
@@ -20,9 +24,10 @@
     "build:worker": "npm --prefix worker run build",
     "ci:packages": "npm run build:database && npm run build:queues && npm run build:templates && npm run build:web3",
     "ci:portfolio": "npm run lint && npm run typecheck && npm run build:portfolio",
+    "_comment:ci": "`npm run ci` deve ser identico ao .github/workflows/ci.yml. Se divergirem, o script perde a razao de existir. ci:worker ficou de fora de propósito: `build:worker` emite dist/ que a imagem nunca usa (o Dockerfile roda `npx tsx index.ts`), e `typecheck` ja cobre o worker via tsc --noEmit.",
     "ci:worker": "npm run build:worker",
-    "ci:phase1": "npm run ci:packages && npm run ci:worker && npm run lint && npm run typecheck",
-    "ci": "npm run ci:phase1 && npm run build:portfolio",
+    "ci:phase1": "npm run ci:packages && npm run lint && npm run typecheck",
+    "ci": "npm run ci:phase1 && npm run test:unit && npm run build:portfolio",
     "test:unit": "vitest run --config vitest.config.ts",
     "test:integration": "vitest run --config vitest.config.integration.ts",
     "test:e2e": "npm --prefix portfolio run test:e2e",
@@ -51,8 +56,11 @@
   "overrides": {
     "picomatch": "^4.0.2",
     "yaml": "^2.8.3",
-    "nodemailer": "^8.0.5",
-    "basic-ftp": "^5.2.2"
+    "nodemailer": "^9.0.4",
+    "basic-ftp": "^5.2.2",
+    "next": "^16.3.0",
+    "typescript": "^5.9.3",
+    "uuid": "^11.1.1"
   },
   "dependencies": {
     "@aws-sdk/s3-request-presigner": "^3.1032.0"
