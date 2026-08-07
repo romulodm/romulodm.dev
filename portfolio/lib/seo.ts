@@ -2,51 +2,17 @@ import type { Metadata } from 'next'
 
 import { routing } from '@/i18n/routing'
 
-/**
- * Fonte unica de verdade para tudo que depende da URL publica do site.
- *
- * O `metadataBase` do layout ja usa NEXT_PUBLIC_SITE_URL, mas sitemap, robots,
- * RSS e JSON-LD precisam de URL absoluta em string — e o Next nao aplica
- * `metadataBase` fora do objeto Metadata. Centralizar aqui evita que cada
- * arquivo invente seu proprio fallback e o site acabe anunciando localhost em
- * producao.
- */
-
-/**
- * `SITE_URL` (sem o prefixo NEXT_PUBLIC_) e lida em RUNTIME, e essa distincao e
- * o que permite a mesma imagem servir producao e homologacao.
- *
- * Variavel NEXT_PUBLIC_* e substituida por valor literal durante o build: uma
- * imagem construida com NEXT_PUBLIC_SITE_URL=https://homolog.romulodm.dev carrega
- * esse endereco para sempre e precisaria ser reconstruida para virar producao —
- * ou seja, o artefato validado em homologacao nao seria o mesmo que vai ao ar.
- *
- * Este modulo e importado somente por server components (paginas, layout,
- * sitemap, robots, feed), entao nao precisa do prefixo publico e pode ler o
- * ambiente do container em tempo de execucao. Trocar de dominio vira trocar uma
- * variavel no .env e reiniciar, sem rebuild.
- *
- * NEXT_PUBLIC_SITE_URL segue aceita como fallback para nao quebrar quem ainda a
- * define.
- */
 export const SITE_URL = (
   process.env.SITE_URL ||
   process.env.NEXT_PUBLIC_SITE_URL ||
   'http://localhost:3000'
 ).replace(/\/+$/, '')
 
-/**
- * Falha silenciosa e o risco real aqui: sem SITE_URL definida em producao, o
- * fallback e localhost, o robots.ts responde `Disallow: /` — o site inteiro sai
- * do indice — enquanto canonical, hreflang, sitemap e RSS anunciam URLs de
- * localhost. Tudo continua de pe, so que invisivel para busca.
- */
 if (process.env.NODE_ENV === 'production' && SITE_URL.includes('localhost')) {
-  console.error(
-    '\n[seo] SITE_URL nao definida em producao.\n' +
-      `      Usando o fallback "${SITE_URL}".\n` +
-      '      Consequencia: robots.txt vira "Disallow: /" e o site nao sera\n' +
-      '      indexado; canonical/hreflang/sitemap/RSS vao apontar para localhost.\n',
+  console.warn(
+    `[seo] SITE_URL ausente — usando "${SITE_URL}". ` +
+    'Em producao isso gera robots.txt "Disallow: /" e URLs de localhost. ' +
+    '(esperado em build local)',
   )
 }
 
@@ -150,11 +116,11 @@ export function buildPageMetadata({
       images: [{ url: ogImage, width: 1200, height: 630, alt: title }],
       ...(type === 'article'
         ? {
-            publishedTime: toIso(publishedTime),
-            modifiedTime: toIso(modifiedTime),
-            authors: [AUTHOR_NAME],
-            tags,
-          }
+          publishedTime: toIso(publishedTime),
+          modifiedTime: toIso(modifiedTime),
+          authors: [AUTHOR_NAME],
+          tags,
+        }
         : {}),
     },
     twitter: {
