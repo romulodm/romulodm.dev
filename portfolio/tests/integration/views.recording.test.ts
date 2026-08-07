@@ -3,7 +3,9 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 vi.mock("server-only", () => ({}));
 
 import { prisma } from "@romulo/database";
-import { createRedisConnection, VIEWS_BUFFER_KEY } from "@romulo/queues";
+import { VIEWS_BUFFER_KEY } from "@romulo/queues";
+// A conexao saiu do pacote de filas para portfolio/lib/redis.ts.
+import { getRedis } from "@/lib/redis";
 import {
   cleanupIntegrationFixtures,
   createPublishedPost,
@@ -13,17 +15,13 @@ import { recordPostViewByIdentifier } from "../../lib/views";
 import { flushViewsBuffer } from "../../../worker/workers/views.worker";
 
 async function cleanupRedis() {
-  const redis = createRedisConnection();
-
-  await redis.connect().catch(() => undefined);
+  const redis = getRedis();
   await redis.del(VIEWS_BUFFER_KEY);
 
   const cooldownKeys = await redis.keys("view:cooldown:*");
   if (cooldownKeys.length > 0) {
     await redis.del(...cooldownKeys);
   }
-
-  await redis.quit().catch(() => undefined);
 }
 
 describe("canonical view recording integration", () => {
@@ -33,8 +31,7 @@ describe("canonical view recording integration", () => {
   });
 
   it("buffers through the shared redis key and persists via the worker flush path", async () => {
-    const redis = createRedisConnection();
-    await redis.connect();
+    const redis = getRedis();
 
     const author = await createTestUser();
     const post = await createPublishedPost(author.id);

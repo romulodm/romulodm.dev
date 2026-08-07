@@ -56,7 +56,7 @@ describe("PUT /api/comments/[id]/vote", () => {
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ value: 1 }),
       }) as any,
-      { params: { id: comment.id } },
+      { params: Promise.resolve({ id: comment.id }) },
     );
 
     const payload = await response.json();
@@ -92,7 +92,7 @@ describe("PUT /api/comments/[id]/vote", () => {
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ value: 1 }),
       }) as any,
-      { params: { id: "comment-id" } },
+      { params: Promise.resolve({ id: "comment-id" }) },
     );
 
     expect(response.status).toBe(401);
@@ -115,7 +115,7 @@ describe("PUT /api/comments/[id]/vote", () => {
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ value: 2 }),
       }) as any,
-      { params: { id: comment.id } },
+      { params: Promise.resolve({ id: comment.id }) },
     );
 
     expect(response.status).toBe(400);
