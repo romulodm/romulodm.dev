@@ -2,13 +2,14 @@ import { afterEach, describe, expect, it } from "vitest";
 
 import { prisma } from "@romulo/database";
 import {
-  createRedisConnection,
   createQueue,
   FLUSH_VIEWS_JOB_NAME,
   QUEUE_NOTIFICATIONS,
   VIEWS_BUFFER_KEY,
   type NotificationJob,
 } from "@romulo/queues";
+// A conexao saiu do pacote de filas: o worker usa o singleton de lib/redis.
+import { redis } from "../../lib/redis";
 import {
   cleanupIntegrationFixtures,
   createPublishedPost,
@@ -18,17 +19,11 @@ import { flushViewsBuffer, scheduleViewsFlush } from "../../workers/views.worker
 
 describe("views worker integration", () => {
   afterEach(async () => {
-    const redis = createRedisConnection();
-
-    await redis.connect().catch(() => undefined);
     await redis.del(VIEWS_BUFFER_KEY);
-    await redis.quit().catch(() => undefined);
     await cleanupIntegrationFixtures();
   });
 
   it("flushes buffered views from redis into postgres", async () => {
-    const redis = createRedisConnection();
-    await redis.connect();
 
     const author = await createTestUser();
     const post = await createPublishedPost(author.id);
@@ -48,8 +43,6 @@ describe("views worker integration", () => {
   });
 
   it("registers the repeatable flush job in BullMQ", async () => {
-    const redis = createRedisConnection();
-    await redis.connect();
     const queue = createQueue<NotificationJob>(QUEUE_NOTIFICATIONS, redis);
 
     await scheduleViewsFlush(redis);
