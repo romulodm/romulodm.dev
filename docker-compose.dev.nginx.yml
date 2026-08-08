@@ -19,23 +19,6 @@ services:
     networks:
       - romulodm-network
 
-  umami-db:
-    image: postgres:16-alpine
-    container_name: romulodm-umami-db
-    env_file:
-      - .env
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: ${UMAMI_POSTGRES_USER}
-      POSTGRES_PASSWORD: ${UMAMI_POSTGRES_PASSWORD}
-      POSTGRES_DB: ${UMAMI_DB}
-    ports:
-      - "5433:5432"
-    volumes:
-      - umami_postgres_data:/var/lib/postgresql/data
-    networks:
-      - romulodm-network
-
   mailcatcher:
     image: sj26/mailcatcher
     container_name: mailcatcher
@@ -92,25 +75,6 @@ services:
     networks:
       - romulodm-network
     restart: "no"
-
-  umami:
-    image: ghcr.io/umami-software/umami:postgresql-latest
-    container_name: romulodm-umami
-    env_file:
-      - .env
-    ports:
-      - '${UMAMI_PORT}:3000'
-    environment:
-      DATABASE_URL: postgresql://${UMAMI_POSTGRES_USER}:${UMAMI_POSTGRES_PASSWORD}@umami-db:5432/${UMAMI_DB}
-      APP_SECRET: ${APP_SECRET}
-      DEBUG: umami:*
-      REDIS_URL: redis://redis:6379
-    depends_on:
-      - umami-db
-      - redis
-    restart: unless-stopped
-    networks:
-      - romulodm-network
 
   waha:
     image: devlikeapro/waha
@@ -193,7 +157,6 @@ services:
 
 volumes:
   postgres_data:
-  umami_postgres_data:
   minio_data:
   redis_data:
 
