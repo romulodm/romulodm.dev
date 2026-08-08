@@ -100,6 +100,23 @@ services:
     networks:
       - romulodm-network
 
+  search-go:
+    build:
+      context: ./search
+      dockerfile: Dockerfile
+    container_name: romulodm-search
+    restart: unless-stopped
+    environment:
+      PORT: 8080
+      SNAPSHOT_PATH: /data/documents.json
+      SEARCH_INTERNAL_SECRET: ${SEARCH_INTERNAL_SECRET:-}
+    ports:
+      - "8080:8080"
+    volumes:
+      - search_data:/data
+    networks:
+      - romulodm-network
+
   app:
     build:
       context: .
@@ -121,6 +138,7 @@ volumes:
   postgres_data:
   minio_data:
   redis_data:
+  search_data:
 
 networks:
   romulodm-network:
