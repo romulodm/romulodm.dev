@@ -88,7 +88,7 @@ services:
 
   worker:
     build:
-      context: .            
+      context: .
       dockerfile: worker/Dockerfile
     container_name: romulodm-worker
     env_file:
