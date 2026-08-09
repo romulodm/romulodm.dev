@@ -1,10 +1,6 @@
 {
   "name": "romulodm",
   "private": true,
-  "//overrides.next": "@sentry/nextjs, next-auth, next-intl e nextjs-toploader declaram next como peerDependency e ficam hoisted na raiz. Sem o override, o npm instala um next na raiz para satisfazer esses peers e OUTRO dentro de portfolio/ para satisfazer a versao declarada la. As duas copias produzem tipos distintos com o mesmo nome, e o typecheck quebra com 'NextRequest is not assignable to NextRequest'. Manter o override alinhado com portfolio/package.json ao subir a versao.",
-  "//overrides.typescript": "Mesmo mecanismo do next: typescript-eslint tem peer 'typescript >=4.8.4 <6.1.0', e sem override o npm hoista o 6.x na raiz enquanto portfolio e worker ficam com 5.x aninhado. Os pacotes em packages/* nao declaram typescript, entao herdam o da raiz — e no 6.x o 'moduleResolution: Node' vira erro de deprecacao. Fixar em 5.x mantem uma copia so. Migrar para o 6 e um projeto a parte: exige trocar a resolucao de modulos dos tsconfigs e revalidar os tipos do repositorio inteiro.",
-  "//overrides.uuid": "GHSA-w5hq-g745-h8pq. O dockerode 4.x depende de uuid 10 e o `npm audit fix --force` resolveria subindo dockerode para 5.x, um major. Sobe-se o uuid direto: o dockerode so chama uuid.v4() (lib/session.js), e a falha e em v3/v5/v6 quando o argumento `buf` e passado — caminho que ele nao usa. Assim a correcao entra sem major de dockerode.",
-  "//overrides.nodemailer": "GHSA-p6gq-j5cr-w38f. Major (8 -> 9). Usado em um unico arquivo, worker/lib/email/providers/smtp.provider.ts, e so com API estavel: createTransport, sendMail e verify. O next-auth aparece no audit por depender de nodemailer, mas os providers configurados sao Google, GitHub e Credentials — o provider de Email, unico que usaria nodemailer, nao esta ligado. Verificar apos atualizar: o import de tipo profundo 'nodemailer/lib/smtp-pool/index.js' pode ter mudado de caminho na v9.",
   "workspaces": [
     "packages/*",
     "portfolio",
