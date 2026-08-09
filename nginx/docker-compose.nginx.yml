@@ -41,41 +41,6 @@ services:
     networks:
       - romulodm-network
 
-  # ── Ajustes nos serviços existentes ───────────────────────
-  #
-  # REMOVA ou comente os `ports` dos serviços abaixo.
-  # Eles continuam acessíveis internamente pela rede Docker,
-  # mas nenhuma porta fica exposta no host de produção.
-  #
-  # postgres:
-  #   ports:           ← REMOVER em produção
-  #     - "5432:5432"
-  #
-  # umami-db:
-  #   ports:           ← REMOVER em produção
-  #     - "5433:5432"
-  #
-  # minio:
-  #   ports:
-  #     - "9000:9000"  ← REMOVER em produção (nginx faz o proxy)
-  #     - "9001:9001"  ← REMOVER em produção (console só via túnel SSH)
-  #
-  # redis:
-  #   ports:           ← REMOVER em produção
-  #     - "6379:6379"
-  #
-  # mailcatcher:
-  #   ports:           ← REMOVER em produção
-  #     - "..."
-  #
-  # waha:
-  #   ports:           ← REMOVER em produção
-  #     - "3002:3000"
-  #
-  # umami:
-  #   ports:           ← REMOVER em produção (ou expor só via nginx)
-  #     - "..."
-
 volumes:
   certbot_www:
   certbot_certs:
