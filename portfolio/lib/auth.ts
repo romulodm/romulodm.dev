@@ -6,7 +6,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { prisma } from "@romulo/database";
 import { headers } from "next/headers";
-import { rateLimit } from "./rate-limit";
+import { getRequestIp, rateLimit } from "./rate-limit";
 import { generateUniqueUsername } from "./username";
 
 type OAuthProvider = "GOOGLE" | "GITHUB";
@@ -123,12 +123,14 @@ export const authOptions: NextAuthOptions = {
         if (!email || !password) return null;
 
         const headersList = await headers();
-        const ip =
-          headersList.get("x-forwarded-for")?.split(",")[0]?.trim() ??
-          headersList.get("x-real-ip") ??
-          "unknown";
+        const ip = getRequestIp(headersList);
 
-        const limited = await rateLimit(`nextauth:credentials:${ip}:${email}`, 10, 60);
+        const limited = await rateLimit(
+          `nextauth:credentials:${ip}:${email}`,
+          10,
+          60,
+          "closed",
+        );
         if (limited) throw new Error("RateLimited");
 
         const user = await prisma.user.findUnique({
