@@ -1,62 +1,40 @@
-// apps/web/src/lib/views.ts
 "use server";
 
-import { getRedis } from "@/lib/redis";
-import { VIEWS_BUFFER_KEY } from "@romulo/queues";
+import { registerPostView } from "@/lib/views-internal";
 
-const VIEW_DEDUPE_TTL_SECONDS = 30 * 60;
-
-type ViewRecordResult = {
-    counted: boolean;
-    reason?: "cooldown";
-};
-
-async function incrementBufferedView(postId: string): Promise<ViewRecordResult> {
-    const result = await getRedis().hincrby(VIEWS_BUFFER_KEY, postId, 1);
-    console.log("[recordPostView] Redis hincrby result:", result);
-
-    return { counted: true };
-}
-
-export async function recordPostViewWithCookie(postId: string): Promise<ViewRecordResult> {
-    const { cookies } = await import("next/headers");
-    const jar = await cookies();
-    const cookieKey = `viewed:${postId}`;
-
-    if (jar.has(cookieKey)) {
-        return { counted: false, reason: "cooldown" };
-    }
-
-    jar.set(cookieKey, "1", {
-        maxAge: VIEW_DEDUPE_TTL_SECONDS,
-        httpOnly: true,
-        sameSite: "strict",
-        path: "/",
-    });
-
-    return incrementBufferedView(postId);
-}
-
-export async function recordPostViewByIdentifier(
-    postId: string,
-    identifier: string,
-): Promise<ViewRecordResult> {
-    const cooldownKey = `view:cooldown:${postId}:${identifier}`;
-    const wasSet = await getRedis().set(cooldownKey, "1", "EX", VIEW_DEDUPE_TTL_SECONDS, "NX");
-
-    if (wasSet !== "OK") {
-        return { counted: false, reason: "cooldown" };
-    }
-
-    return incrementBufferedView(postId);
-}
-
+/**
+ * Public entry point of the post view counter.
+ *
+ * SECURITY NOTE — READ THIS BEFORE ADDING AN EXPORT TO THIS FILE.
+ *
+ * Every export of a `"use server"` module is compiled into a public HTTP
+ * endpoint. Next.js verifies the request Origin, but nothing prevents a
+ * hostile client from calling that endpoint directly with whatever arguments
+ * it likes. Assume every parameter of every function below is
+ * attacker-controlled, and only export functions that stay safe under that
+ * assumption.
+ *
+ * This module used to export `recordPostViewByIdentifier(postId, identifier)`.
+ * Because the caller chose the dedupe identifier, anyone could send a fresh
+ * random string on every request and thereby (a) count the same view an
+ * unlimited number of times and (b) create an unbounded number of Redis keys,
+ * bypassing the validation the HTTP route performed. The actual logic now
+ * lives in `lib/views-internal.ts`, which is deliberately *not* a
+ * `"use server"` module and is therefore only reachable from server code.
+ *
+ * `postId` is the only accepted argument and is validated inside
+ * `registerPostView`. The visitor identity is resolved server-side (session
+ * user id, or a server-issued signed cookie) and can never be supplied by the
+ * caller.
+ */
 export async function recordPostView(postId: string): Promise<void> {
-    try {
-        console.log("[recordPostView] postId:", postId);
-        const result = await recordPostViewWithCookie(postId);
-        console.log("[recordPostView] counted:", result.counted);
-    } catch (err) {
-        console.error("[recordPostView] error:", err);
-    }
+  try {
+    await registerPostView(postId);
+  } catch (error) {
+    // A view counter must never break page rendering, and the client has no
+    // legitimate use for the failure reason, so failures are logged and
+    // swallowed. Keep the log free of the visitor id and the client IP: see
+    // the note about key names in `views-internal.ts`.
+    console.error("[recordPostView]", error);
+  }
 }
