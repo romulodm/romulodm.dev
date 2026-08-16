@@ -41,7 +41,7 @@ export function Dropdown({ user, onOpenLanguageModal }: DropdownProps) {
                         <div className="md:hidden p-2 text-foreground hover:bg-gray-200 dark:hover:bg-secondary hover:text-black dark:hover:text-foreground rounded">
                             <Menu className="h-5 w-5" />
                         </div>
-                        <div className="hidden md:flex px-4">
+                        <div className="hidden md:flex pl-4">
                             <Image
                                 src={user.image ?? "/default.png"}
                                 alt={user?.username ?? "User"}
