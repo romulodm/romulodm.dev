@@ -1,28 +1,47 @@
-.apoiase-card {
+.apoiase-scene {
+  --emoji: #fdda5f;
+  --emoji-shade: #fd9744;
+  --emoji-line: #eda93f;
+
+  --sign-bg: hsl(var(--card));
+  --sign-shadow: 0 12px 28px -14px rgb(0 0 0 / 0.3);
+  --sign-shadow-lift: 0 18px 34px -14px rgb(0 0 0 / 0.35);
+
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
-  background: #fff;
-  overflow: hidden;
+  width: 100%;
+  padding: 1.5rem 1rem 2.25rem;
 }
+
+.dark .apoiase-scene {
+  --sign-bg: hsl(0 0% 13%);
+  --sign-shadow: 0 12px 28px -14px rgb(0 0 0 / 0.7);
+  --sign-shadow-lift: 0 18px 34px -14px rgb(0 0 0 / 0.8);
+}
+
+/* --------------------------------------------------------------- cabeca -- */
 
 .apoiase-face-wrapper {
   position: relative;
-  width: 100px;
-  height: 100px;
+  width: 84px;
+  height: 84px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* enfia a base da cabeca atras da placa (sem cobrir a boca) */
+  margin-bottom: -18px;
   will-change: transform;
 }
 
 .apoiase-face {
-  width: 70%;
-  height: 70%;
-  background: #fdda5f;
-  /* verde */
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: var(--emoji);
   border-radius: 50%;
-  box-shadow: inset 2px -4px 18px #fd9744;
-  /* sombra mais escura */
+  box-shadow: inset 2px -4px 18px var(--emoji-shade);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -40,14 +59,14 @@
 
 .apoiase-eyes {
   display: flex;
-  gap: 1.25rem;
-  margin-bottom: 0.5rem;
+  gap: 1.15rem;
+  margin-bottom: 0.45rem;
 }
 
 .apoiase-eye {
   position: relative;
-  width: 10px;
-  height: 10px;
+  width: 9px;
+  height: 9px;
   background: #2a2927;
   border-radius: 50%;
   box-shadow: inset 1px 2px 4px #121110;
@@ -55,8 +74,8 @@
 }
 
 .apoiase-eye.surprised {
-  width: 12px;
-  height: 12px;
+  width: 11px;
+  height: 11px;
   box-shadow: 0 0 0 4px #fff, inset 1px 2px 4px #121110;
 }
 
@@ -86,51 +105,156 @@
 }
 
 .apoiase-mouth.happy {
-  width: 16px;
+  width: 15px;
   height: 8px;
   border-radius: 0 0 1rem 1rem;
 }
 
-.apoiase-content {
+/* ------------------------------------------------------- placa + membros -- */
+
+.apoiase-stage {
+  position: relative;
+  width: min(400px, 100%);
+}
+
+.apoiase-sign {
+  position: relative;
+  z-index: 2;
+  padding: 2rem 1.5rem 1.5rem;
+  border-radius: 1.125rem;
+  background: var(--sign-bg);
+  box-shadow: var(--sign-shadow);
   text-align: center;
-  padding: 0 0.5rem;
+  transform-origin: 50% 0%;
+  transition:
+    transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.35s ease;
 }
 
-.apoiase-title {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: #2a2927;
-  margin: 0 0 0.75rem;
+.apoiase-scene[data-face='surprised'] .apoiase-sign {
+  transform: translateY(-3px) rotate(-0.45deg);
 }
 
-.apoiase-description {
-  font-size: 0.95rem;
-  color: #666;
-  margin: 0 0 1.5rem;
-  line-height: 1.5;
+.apoiase-scene[data-face='happy'] .apoiase-sign {
+  transform: translateY(-6px) rotate(0.7deg);
+  box-shadow: var(--sign-shadow-lift);
 }
 
-.apoiase-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.75rem 2rem;
-  color: #fff;
-  font-size: 1rem;
-  font-weight: 600;
-  border: none;
-  border-radius: 2rem;
-  cursor: pointer;
-  text-decoration: none;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  box-shadow: 0 4px 16px rgba(115, 238, 90, 0.3);
+/* maos: filhas da placa, entao giram junto com ela */
+.apoiase-hand {
+  position: absolute;
+  top: -13px;
+  z-index: 3;
+  display: block;
+  width: 42px;
+  height: 30px;
+  color: var(--emoji);
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-.apoiase-button:hover {
-  transform: scale(1.05);
-  box-shadow: 0 6px 24px rgba(124, 238, 90, 0.4);
+.apoiase-hand svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
 }
 
-.apoiase-button:active {
-  transform: scale(0.98);
+.apoiase-hand .palm {
+  fill: currentColor;
+}
+
+.apoiase-hand .finger {
+  fill: currentColor;
+  stroke: var(--emoji-line);
+  stroke-width: 1;
+}
+
+.apoiase-hand.left {
+  left: 24%;
+}
+
+.apoiase-hand.right {
+  right: 24%;
+  transform: scaleX(-1);
+}
+
+/* aperta a placa quando surpreso, levanta um pouco quando feliz */
+.apoiase-scene[data-face='surprised'] .apoiase-hand.left {
+  transform: translateY(-2px);
+}
+
+.apoiase-scene[data-face='surprised'] .apoiase-hand.right {
+  transform: scaleX(-1) translateY(-2px);
+}
+
+.apoiase-scene[data-face='happy'] .apoiase-hand.left {
+  transform: translateY(-4px) rotate(-7deg);
+}
+
+.apoiase-scene[data-face='happy'] .apoiase-hand.right {
+  transform: scaleX(-1) translateY(-4px) rotate(-7deg);
+}
+
+/* pes: atras da placa, aparecendo por baixo */
+.apoiase-feet {
+  position: absolute;
+  z-index: 0;
+  bottom: -13px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 34px;
+}
+
+.apoiase-foot {
+  width: 44px;
+  height: 24px;
+  border-radius: 3px 3px 13px 13px;
+  background: var(--emoji);
+  box-shadow: inset 0 -7px 10px -2px var(--emoji-shade);
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.apoiase-scene[data-face='happy'] .apoiase-foot {
+  transform: translateY(3px);
+}
+
+/* ------------------------------------------------------------ conteudo --- */
+
+.apoiase-content {
+  position: relative;
+  z-index: 1;
+}
+
+@media (max-width: 420px) {
+  .apoiase-hand.left {
+    left: 18%;
+  }
+
+  .apoiase-hand.right {
+    right: 18%;
+  }
+
+  .apoiase-feet {
+    gap: 26px;
+  }
+
+  .apoiase-foot {
+    width: 38px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .apoiase-sign,
+  .apoiase-foot,
+  .apoiase-face-wrapper,
+  .apoiase-face-inner {
+    transition: none !important;
+    transform: none !important;
+  }
+
+  .apoiase-hand {
+    transition: none !important;
+  }
 }
