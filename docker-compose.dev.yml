@@ -1,9 +1,9 @@
-name: 'romulodm.dev'
+name: 'dev-romulodm.dev'
 
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: romulodm-db
+    container_name: dev-romulodm-db
     env_file:
       - .env
     restart: unless-stopped
@@ -16,7 +16,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
-      - romulodm-network
+      - dev-romulodm-network
 
   mailcatcher:
     image: sj26/mailcatcher
@@ -30,11 +30,11 @@ services:
       - '${SMTP_PORT}:1025'
       - '${HTTP_PORT}:1080'
     networks:
-    - romulodm-network
+    - dev-romulodm-network
 
   minio:
     image: minio/minio:latest
-    container_name: romulodm-minio
+    container_name: dev-romulodm-minio
     env_file:
       - .env
     restart: unless-stopped
@@ -48,7 +48,7 @@ services:
     volumes:
       - minio_data:/data
     networks:
-      - romulodm-network
+      - dev-romulodm-network
     healthcheck:
       test: ["CMD", "mc", "ready", "local"]
       interval: 5s
@@ -58,7 +58,7 @@ services:
 
   minio-init:
     image: minio/mc:latest
-    container_name: romulodm-minio-init
+    container_name: dev-romulodm-minio-init
     env_file:
       - .env
     depends_on:
@@ -72,25 +72,25 @@ services:
         echo '✅ Bucket $${MINIO_BUCKET_NAME} pronto.'
       "
     networks:
-      - romulodm-network
+      - dev-romulodm-network
     restart: "no"
 
   redis:
     image: redis:7-alpine
-    container_name: romulodm-redis
+    container_name: dev-romulodm-redis
     restart: always
     ports:
       - "6379:6379"
     volumes:
       - redis_data:/data
     networks:
-      - romulodm-network
+      - dev-romulodm-network
 
   worker:
     build:
       context: .
       dockerfile: worker/Dockerfile
-    container_name: romulodm-worker
+    container_name: dev-romulodm-worker
     env_file:
       - .env
     restart: unless-stopped
@@ -98,13 +98,13 @@ services:
       - postgres
       - redis
     networks:
-      - romulodm-network
+      - dev-romulodm-network
 
   search-go:
     build:
       context: ./search
       dockerfile: Dockerfile
-    container_name: romulodm-search
+    container_name: dev-romulodm-search
     restart: unless-stopped
     environment:
       PORT: 8080
@@ -115,13 +115,13 @@ services:
     volumes:
       - search_data:/data
     networks:
-      - romulodm-network
+      - dev-romulodm-network
 
   app:
     build:
       context: .
       dockerfile: portfolio/Dockerfile
-    container_name: romulodm-app
+    container_name: dev-romulodm-app
     env_file:
       - .env
     restart: unless-stopped
@@ -132,7 +132,7 @@ services:
       - minio
       - redis
     networks:
-      - romulodm-network
+      - dev-romulodm-network
 
 volumes:
   postgres_data:
@@ -141,5 +141,5 @@ volumes:
   search_data:
 
 networks:
-  romulodm-network:
+  dev-romulodm-network:
     driver: bridge
