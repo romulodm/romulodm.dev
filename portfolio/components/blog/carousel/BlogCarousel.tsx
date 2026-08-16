@@ -5,8 +5,8 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import useEmblaCarousel from 'embla-carousel-react';
 import { useTranslations } from 'next-intl';
 
-import NewsletterCard from '../newsletter/NewsletterCard';
-import ApoiaseCard from '../support/ApoiaseCard';
+import NewsletterCard from './NewsletterCard';
+import ApoiaseCard from './ApoiaseCard';
 
 const SLIDE_COUNT = 2;
 const AUTOPLAY_INTERVAL = 5000;
