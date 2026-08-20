@@ -1,6 +1,4 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
-
-vi.mock("server-only", () => ({}));
+import { afterEach, describe, expect, it } from "vitest";
 
 import { VIEWS_BUFFER_KEY } from "@romulo/queues";
 // A conexao saiu do pacote de filas para portfolio/lib/redis.ts.
