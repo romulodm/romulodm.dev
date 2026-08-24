@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState, useEffect, useCallback } from 'react';
+import { Suspense, useRef, useState, useEffect, useCallback, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { useGLTF, Environment, Lightformer } from '@react-three/drei';
 import * as THREE from 'three';
@@ -19,27 +19,33 @@ function getTodayFormatted(): string {
 }
 
 interface StaticCardMeshProps {
-    cardTextureUrl?: string;
+    cardTexture?: HTMLCanvasElement | null;
     rotateY: number;
+    onReady?: () => void;
 }
 
-function StaticCardMesh({ cardTextureUrl, rotateY }: StaticCardMeshProps) {
+function StaticCardMesh({ cardTexture, rotateY, onReady }: StaticCardMeshProps) {
     const { nodes, materials } = useGLTF('/card.glb') as any;
     const groupRef = useRef<THREE.Group>(null);
     const targetY = useRef(0);
     const currentY = useRef(0);
 
-    const [customTexture, setCustomTexture] = useState<THREE.Texture | null>(null);
+    const customTexture = useMemo(() => {
+        if (!cardTexture) return null;
+        const tex = new THREE.CanvasTexture(cardTexture);
+        tex.flipY = false;
+        tex.colorSpace = THREE.SRGBColorSpace;
+        return tex;
+    }, [cardTexture]);
 
+    useEffect(() => () => customTexture?.dispose(), [customTexture]);
+
+    // This only mounts once the GLB has resolved.
     useEffect(() => {
-        if (!cardTextureUrl) return;
-        const loader = new THREE.TextureLoader();
-        loader.load(cardTextureUrl, (tex) => {
-            tex.flipY = false;
-            tex.colorSpace = THREE.SRGBColorSpace;
-            setCustomTexture(tex);
-        });
-    }, [cardTextureUrl]);
+        if (!onReady) return;
+        const frame = requestAnimationFrame(() => onReady());
+        return () => cancelAnimationFrame(frame);
+    }, [onReady]);
 
     useEffect(() => {
         targetY.current = (rotateY * Math.PI) / 180;
@@ -57,7 +63,7 @@ function StaticCardMesh({ cardTextureUrl, rotateY }: StaticCardMeshProps) {
         <group ref={groupRef} scale={2} position={[0, -1.2, -0.05]}>
             <mesh geometry={nodes.card.geometry}>
                 <meshPhysicalMaterial
-                    map={cardTextureUrl && customTexture ? customTexture : materials.base.map}
+                    map={customTexture ?? materials.base.map}
                     map-anisotropy={16}
                     clearcoat={1}
                     clearcoatRoughness={0.15}
@@ -72,10 +78,11 @@ function StaticCardMesh({ cardTextureUrl, rotateY }: StaticCardMeshProps) {
 }
 
 interface StaticCardSceneProps {
-    cardTextureUrl?: string;
+    cardTexture?: HTMLCanvasElement | null;
+    onReady?: () => void;
 }
 
-function StaticCardScene({ cardTextureUrl }: StaticCardSceneProps) {
+function StaticCardScene({ cardTexture, onReady }: StaticCardSceneProps) {
     const [rotateY, setRotateY] = useState(0);
     const dragging = useRef(false);
     const lastX = useRef(0);
@@ -116,7 +123,7 @@ function StaticCardScene({ cardTextureUrl }: StaticCardSceneProps) {
                 onCreated={({ gl }) => gl.setClearColor(new THREE.Color(0x000000), 0)}
             >
                 <ambientLight intensity={Math.PI} />
-                <StaticCardMesh cardTextureUrl={cardTextureUrl} rotateY={rotateY} />
+                <StaticCardMesh cardTexture={cardTexture} rotateY={rotateY} onReady={onReady} />
                 <Environment blur={0.75}>
                     <Lightformer intensity={2} color="white" position={[0, -1, 5]} rotation={[0, 0, Math.PI / 3]} scale={[100, 0.1, 1]} />
                     <Lightformer intensity={3} color="white" position={[-1, -1, 1]} rotation={[0, 0, Math.PI / 3]} scale={[100, 0.1, 1]} />
@@ -128,25 +135,28 @@ function StaticCardScene({ cardTextureUrl }: StaticCardSceneProps) {
     );
 }
 
+/** Safety net: never sit on the skeleton if the GLB fails to resolve. */
+const REVEAL_TIMEOUT_MS = 4000;
+
 export default function StaticCardDisplay() {
-    const [cardTextureUrl, setCardTextureUrl] = useState<string | undefined>(undefined);
+    const [cardTexture, setCardTexture] = useState<HTMLCanvasElement | null>(null);
     const [isReady, setIsReady] = useState(false);
     const cardTemplateRef = useRef<CardTemplateRef>(null);
     const today = getTodayFormatted();
 
-    const handleTextureReady = useCallback((dataUrl: string) => {
-        setCardTextureUrl(dataUrl);
+    const handleTextureReady = useCallback((canvas: HTMLCanvasElement) => {
+        setCardTexture(canvas);
+    }, []);
+
+    const handleSceneReady = useCallback(() => {
         setIsReady(true);
     }, []);
 
     useEffect(() => {
-        const timer = setTimeout(async () => {
-            if (cardTemplateRef.current) {
-                await cardTemplateRef.current.captureTexture();
-            }
-        }, 150);
+        if (isReady) return;
+        const timer = setTimeout(() => setIsReady(true), REVEAL_TIMEOUT_MS);
         return () => clearTimeout(timer);
-    }, []);
+    }, [isReady]);
 
     return (
         <>
@@ -170,7 +180,12 @@ export default function StaticCardDisplay() {
 
                 {/* Actual 3D content with fade-in */}
                 <div className={`transition-opacity duration-500 ${isReady ? 'opacity-100' : 'opacity-0'}`}>
-                    {isReady && <StaticCardScene cardTextureUrl={cardTextureUrl} />}
+                    {cardTexture && (
+                        // Local boundary: <Canvas> suspends on the GLB.
+                        <Suspense fallback={null}>
+                            <StaticCardScene cardTexture={cardTexture} onReady={handleSceneReady} />
+                        </Suspense>
+                    )}
                 </div>
             </div>
         </>

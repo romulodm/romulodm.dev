@@ -1,6 +1,5 @@
- 
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Canvas, extend, useFrame } from '@react-three/fiber';
 import { useGLTF, useTexture, Environment, Lightformer } from '@react-three/drei';
 import {
@@ -23,8 +22,9 @@ const cardGLB = '/card.glb';
 
 extend({ MeshLineGeometry, MeshLineMaterial });
 
-// Pre-load the GLB model to reduce initial loading time
+// Warm both suspending assets as early as the module is evaluated
 useGLTF.preload(cardGLB);
+useTexture.preload(lanyardTexture);
 
 interface LanyardProps {
     position?: [number, number, number];
@@ -32,8 +32,11 @@ interface LanyardProps {
     fov?: number;
     transparent?: boolean;
     containerClassName?: string;
-    cardTextureUrl?: string;
+    /** Canvas produced by CardTemplate — uploaded straight to the GPU. */
+    cardTexture?: HTMLCanvasElement | null;
     canvasRef?: React.Ref<HTMLCanvasElement>;
+    /** Fires on the first frame after the GLB and strap texture are resolved. */
+    onReady?: () => void;
 }
 
 export default function Lanyard({
@@ -42,8 +45,9 @@ export default function Lanyard({
     fov = 20,
     transparent = true,
     containerClassName,
-    cardTextureUrl,
-    canvasRef
+    cardTexture,
+    canvasRef,
+    onReady
 }: LanyardProps) {
     const [isMobile, setIsMobile] = useState<boolean>(() => typeof window !== 'undefined' && window.innerWidth < 768);
 
@@ -65,7 +69,7 @@ export default function Lanyard({
             >
                 <ambientLight intensity={Math.PI} />
                 <Physics gravity={gravity} timeStep={isMobile ? 1 / 30 : 1 / 60}>
-                    <Band isMobile={isMobile} cardTextureUrl={cardTextureUrl} />
+                    <Band isMobile={isMobile} cardTexture={cardTexture} onReady={onReady} />
                 </Physics>
                 <Environment blur={0.75}>
                     <Lightformer
@@ -106,10 +110,11 @@ interface BandProps {
     maxSpeed?: number;
     minSpeed?: number;
     isMobile?: boolean;
-    cardTextureUrl?: string;
+    cardTexture?: HTMLCanvasElement | null;
+    onReady?: () => void;
 }
 
-function Band({ maxSpeed = 50, minSpeed = 0, isMobile = false, cardTextureUrl }: BandProps) {
+function Band({ maxSpeed = 50, minSpeed = 0, isMobile = false, cardTexture, onReady }: BandProps) {
     // Using "any" for refs since the exact types depend on Rapier's internals
     const band = useRef<any>(null);
     const fixed = useRef<any>(null);
@@ -134,28 +139,25 @@ function Band({ maxSpeed = 50, minSpeed = 0, isMobile = false, cardTextureUrl }:
     const { nodes, materials } = useGLTF(cardGLB) as any;
     const texture = useTexture(lanyardTexture) as THREE.Texture;
 
-    // Load custom card texture if provided - use state to handle async loading
-    const [customCardTexture, setCustomCardTexture] = useState<THREE.Texture | null>(null);
+    // The card texture is a live canvas: no encode/decode round trip, it goes
+    // straight to the GPU on the frame it is handed over.
+    const customCardTexture = useMemo(() => {
+        if (!cardTexture) return null;
+        const tex = new THREE.CanvasTexture(cardTexture);
+        tex.flipY = false;
+        tex.colorSpace = THREE.SRGBColorSpace;
+        return tex;
+    }, [cardTexture]);
 
+    useEffect(() => () => customCardTexture?.dispose(), [customCardTexture]);
+
+    // Band only mounts once the GLB and the strap texture have resolved.
     useEffect(() => {
-        if (!cardTextureUrl) {
-            setCustomCardTexture(null);
-            return;
-        }
+        if (!onReady) return;
+        const frame = requestAnimationFrame(() => onReady());
+        return () => cancelAnimationFrame(frame);
+    }, [onReady]);
 
-        const loader = new THREE.TextureLoader();
-        loader.load(cardTextureUrl, (loadedTexture) => {
-            loadedTexture.flipY = false;
-            loadedTexture.colorSpace = THREE.SRGBColorSpace;
-            setCustomCardTexture(loadedTexture);
-        });
-
-        return () => {
-            if (customCardTexture) {
-                customCardTexture.dispose();
-            }
-        };
-    }, [cardTextureUrl]);
     const [curve] = useState(
         () =>
             new THREE.CatmullRomCurve3([new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()])
@@ -251,7 +253,7 @@ function Band({ maxSpeed = 50, minSpeed = 0, isMobile = false, cardTextureUrl }:
                     >
                         <mesh geometry={nodes.card.geometry}>
                             <meshPhysicalMaterial
-                                map={cardTextureUrl && customCardTexture ? customCardTexture : materials.base.map}
+                                map={customCardTexture ?? materials.base.map}
                                 map-anisotropy={16}
                                 clearcoat={isMobile ? 0 : 1}
                                 clearcoatRoughness={0.15}
