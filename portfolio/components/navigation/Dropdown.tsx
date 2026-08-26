@@ -1,4 +1,4 @@
-import { Languages, LogOut, Menu, Moon, Sun, User } from "lucide-react";
+import { Languages, LogOut, Menu, User } from "lucide-react";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -12,7 +12,7 @@ import Link from "next/link";
 import { signOut } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { navItems } from "./Navbar";
-import { useTheme } from "next-themes";
+import { ThemeMenuItems } from "./ThemeMenuItems";
 
 interface DropdownProps {
     user: {
@@ -25,13 +25,7 @@ interface DropdownProps {
 
 export function Dropdown({ user, onOpenLanguageModal }: DropdownProps) {
     const t = useTranslations('navigation.modal');
-
-    const { setTheme } = useTheme();
-
-    function toggleTheme() {
-        const isDark = document.documentElement.classList.contains('dark');
-        setTheme(isDark ? 'light' : 'dark');
-    }
+    const tNav = useTranslations('navigation');
 
     return (
         <>
@@ -94,18 +88,13 @@ export function Dropdown({ user, onOpenLanguageModal }: DropdownProps) {
 
                         <DropdownMenuSeparator />
 
-                        <DropdownMenuItem onClick={toggleTheme} className="flex items-center gap-2 cursor-pointer">
-                            <span className="dark:hidden flex items-center gap-2">
-                                <Sun className="h-4 w-4" /> Tema
-                            </span>
-                            <span className="hidden dark:flex items-center gap-2">
-                                <Moon className="h-4 w-4" /> Tema
-                            </span>
-                        </DropdownMenuItem>
+                        <ThemeMenuItems />
+
+                        <DropdownMenuSeparator />
 
                         <DropdownMenuItem onClick={onOpenLanguageModal} className="flex items-center gap-2 cursor-pointer">
                             <Languages className="h-4 w-4" />
-                            Idioma
+                            {tNav("language")}
                         </DropdownMenuItem>
                     </div>
 
