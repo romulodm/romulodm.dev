@@ -158,26 +158,33 @@ function DialogContent({ className, children }: DialogContentProps) {
   return (
     <DialogPortal>
       <DialogOverlay onClick={() => onOpenChange(false)} />
+      {/* Wrapper de centralizacao: evita -translate-*-1/2, que cai em meio pixel
+          quando a largura/altura do painel e impar e borra o conteudo. */}
       <div
-        role="dialog"
-        aria-modal="true"
-        className={cn(
-          "fixed left-1/2 top-1/2 z-50 grid w-full max-w-lg -translate-x-1/2 -translate-y-1/2",
-          "gap-4 border bg-background p-6 shadow-lg sm:rounded-lg",
-          "animate-in fade-in-0 zoom-in-95 slide-in-from-left-1/2 slide-in-from-top-[48%] duration-200",
-          className,
-        )}
-        onClick={(event) => event.stopPropagation()}
+        className="fixed inset-0 z-50 flex items-center justify-center"
+        onClick={() => onOpenChange(false)}
       >
-        {children}
-        <button
-          type="button"
-          onClick={() => onOpenChange(false)}
-          className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none"
-          aria-label={t("close")}
+        <div
+          role="dialog"
+          aria-modal="true"
+          className={cn(
+            "relative grid w-full max-w-lg",
+            "gap-4 border bg-background p-6 shadow-lg sm:rounded-lg",
+            "animate-in fade-in-0 zoom-in-95 duration-200",
+            className,
+          )}
+          onClick={(event) => event.stopPropagation()}
         >
-          <X className="h-4 w-4" />
-        </button>
+          {children}
+          <button
+            type="button"
+            onClick={() => onOpenChange(false)}
+            className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none"
+            aria-label={t("close")}
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
       </div>
     </DialogPortal>
   );
