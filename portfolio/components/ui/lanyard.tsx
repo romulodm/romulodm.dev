@@ -1,3 +1,4 @@
+ 
 'use client';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Canvas, extend, useFrame } from '@react-three/fiber';
@@ -274,6 +275,8 @@ function Band({ maxSpeed = 50, minSpeed = 0, isMobile = false, cardTexture, onRe
                     resolution={isMobile ? [1000, 2000] : [1000, 1000]}
                     useMap
                     map={texture}
+                    // Coupled to /lanyard.png's width: a 1459px tile repeated 4x
+                    // covers the strap. Change one and the mark stretches.
                     repeat={[-4, 1]}
                     lineWidth={0.6}
                 />
