@@ -2,8 +2,8 @@
 
 import { useEffect, useRef, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { Search, X, Clock, Loader2 } from 'lucide-react';
-import { useLocale } from 'next-intl';
+import { Search, Eraser, Clock, Loader2 } from 'lucide-react';
+import { useLocale, useTranslations } from 'next-intl';
 import Image from 'next/image';
 import {
     Dialog,
@@ -12,6 +12,7 @@ import {
     DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from "@/components/ui/button";
+import { IconTooltip } from "@/components/navigation/IconTooltip";
 
 interface SearchHit {
     slug: string
@@ -32,6 +33,7 @@ export function SearchDialog() {
     const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
     const router = useRouter()
     const locale = useLocale()
+    const t = useTranslations('navigation')
 
     // Atalho Cmd/Ctrl + K
     useEffect(() => {
@@ -81,14 +83,17 @@ export function SearchDialog() {
     return (
         <>
             {/* Trigger */}
-            <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setOpen(true)}
-                className="hidden p-2.5 md:flex text-foreground hover:bg-gray-400/60 dark:hover:bg-neutral-800/50 hover:text-black dark:hover:text-foreground"
-            >
-                <Search className="h-4 w-4" />
-            </Button>
+            <IconTooltip label={t('tooltip.search')}>
+                <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setOpen(true)}
+                    aria-label={t('tooltip.search')}
+                    className="hidden p-2.5 md:flex text-foreground hover:bg-gray-400/60 dark:hover:bg-neutral-800/50 hover:text-black dark:hover:text-foreground"
+                >
+                    <Search className="h-4 w-4" />
+                </Button>
+            </IconTooltip>
 
             {/* Modal */}
             <Dialog open={open} onOpenChange={setOpen}>
@@ -124,10 +129,12 @@ export function SearchDialog() {
                         <div className="flex items-center gap-2 mr-7 shrink-0">
                             {query && (
                                 <button
+                                    type="button"
                                     onClick={() => setQuery('')}
+                                    aria-label="Limpar busca"
                                     className="text-muted-foreground hover:text-foreground transition-colors"
                                 >
-                                    <X size={16} />
+                                    <Eraser size={16} />
                                 </button>
                             )}
                             <kbd className="text-xs text-muted-foreground bg-muted px-1.5 py-0.5 rounded border border-border">
