@@ -1,30 +1,47 @@
 name: CI
 
-# Ate agora o deploy.yml disparava em push para main e ia direto para a VPS, sem
-# rodar build, lint ou teste. O unico gate era o health check — que roda depois
-# dos containers ja terem sido trocados, ou seja, avisa que quebrou em vez de
-# impedir.
+# Validation gate for the monorepo: lint, typecheck, unit tests and a production
+# build of the Next.js app.
+#
+# It exists because deploy.yml used to trigger on push to main and go straight
+# to the VPS with no build, lint or test in between. The only gate was the
+# health check, which runs *after* the containers have already been swapped —
+# it reports that something broke instead of preventing it.
 
 on:
   pull_request:
   push:
     branches: [main]
-  # Permite que o deploy.yml reutilize este workflow com `uses:` em vez de
-  # duplicar os passos de validacao.
+  # Lets deploy.yml reuse this workflow with `uses:` instead of duplicating
+  # every validation step.
   workflow_call:
 
 concurrency:
-  # Push novo no mesmo branch cancela a execucao anterior: sem isso, uma sequencia
-  # de commits enfileira runs que ja nasceram obsoletos.
-  group: ci-${{ github.ref }}
-  cancel-in-progress: true
+  # A new push on the same branch cancels the previous run: without this, a
+  # burst of commits queues up runs that were already obsolete when they started.
+  #
+  # `github.workflow` is part of the group key because this workflow runs in two
+  # ways: from its own push trigger, and called by deploy.yml via `uses:`. On a
+  # push to main both happen — and since the `github` context inside a reusable
+  # workflow is always the CALLER's, `github.ref` is refs/heads/main in both
+  # cases. Without `github.workflow` the two would land in the same group with
+  # cancel-in-progress and kill each other: either the main CI run shows up
+  # cancelled, or deploy's `validate` job dies and the deploy silently never
+  # happens. Here the value is "CI" for the standalone run and "Deploy" for the
+  # called one, so they are distinct groups.
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  # Cancelling only makes sense for pull requests, which was the original intent:
+  # iterating on the same branch queues up stale runs. On a push to main the run
+  # feeds a deploy — aborting it halfway leaves the pipeline in an ambiguous
+  # state, which is exactly why deploy.yml declares `cancel-in-progress: false`.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
   contents: read
 
 jobs:
   validate:
-    name: Lint, typecheck, testes e build
+    name: Lint, typecheck, tests and build
     runs-on: ubuntu-latest
     timeout-minutes: 25
 
@@ -33,51 +50,61 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          # Mesma major do Dockerfile (node:22-bookworm-slim). Divergir aqui
-          # produz um CI que valida um runtime diferente do de producao.
+          # Same major version as the Dockerfile (node:22-bookworm-slim).
+          # Diverging here produces a CI run that validates a different runtime
+          # from the one production actually uses.
           node-version: 22
           cache: npm
 
-      - name: Instalar dependencias
+      - name: Install dependencies
         run: npm ci
 
-      # O client do Prisma e gerado, nao versionado. Sem este passo, qualquer
-      # import de @romulo/database falha com "Cannot find module" e derruba
-      # typecheck, teste e build de uma vez.
+      # The Prisma client is generated, not committed. Without this step any
+      # import of @romulo/database fails with "Cannot find module" and takes
+      # down typecheck, tests and build at once.
       #
-      # Compila os 4 pacotes internos, nao 2: o portfolio importa @romulo/templates
-      # e @romulo/web3 em rotas de newsletter, doacao e no admin de cripto. Deixar
-      # esses dois de fora esconderia erro de tipo neles ate o build da imagem.
-      - name: Gerar client do Prisma e compilar pacotes internos
+      # It compiles all four internal packages, not two: the portfolio imports
+      # @romulo/templates and @romulo/web3 in the newsletter, donation and
+      # crypto admin routes. Leaving those out would hide type errors in them
+      # until the Docker image build.
+      - name: Generate Prisma client and build internal packages
         run: npm run ci:packages
 
-      # `eslint .` cobre o repositorio inteiro — portfolio, worker e packages.
+      # `eslint .` covers the whole repository — portfolio, worker and packages.
       - name: Lint
         run: npm run lint
 
-      # Cobre portfolio E worker. O worker importa: o Dockerfile dele roda
-      # `npx tsx index.ts`, que transpila sem checar tipo, e nunca executa o
-      # `tsc` do script de build. Sem este passo, erro de tipo no worker nao e
-      # pego em lugar nenhum — nem no CI, nem no build da imagem — e so aparece
-      # quebrando em producao.
+      # Covers the portfolio AND the worker. The worker matters here: its
+      # Dockerfile runs `npx tsx index.ts`, which transpiles without type
+      # checking and never executes the `tsc` in its build script. Without this
+      # step a type error in the worker is caught nowhere — not in CI, not in
+      # the image build — and only shows up by breaking in production.
       - name: Typecheck (portfolio + worker)
         run: npm run typecheck
 
-      - name: Testes unitarios
+      - name: Unit tests
         run: npm run test:unit
 
-      # O worker nao tem build de artefato no caminho de producao (roda via tsx),
-      # entao o `tsc` acima ja e a validacao dele. Aqui so o portfolio.
-      - name: Build do portfolio
+      # The worker has no build artifact on the production path (it runs through
+      # tsx), so the `tsc` above is its validation. Only the portfolio is built
+      # here.
+      - name: Build the portfolio
         run: npm run build:portfolio
         env:
-          # O build precisa das NEXT_PUBLIC_* pelo mesmo motivo que a imagem
-          # precisa: o Next substitui essas referencias por valor literal ao
-          # compilar. Sem elas aqui, o CI validaria um bundle diferente do que
-          # vai para producao — e o proprio bug que este passo existe para pegar
-          # passaria despercebido.
+          # The build needs the NEXT_PUBLIC_* variables for the same reason the
+          # image does: Next.js replaces those references with literal values at
+          # compile time. Without them, CI would validate a bundle different
+          # from the one shipped — and the very bug this step exists to catch
+          # would slip through.
           #
-          # Valores publicos ficam inline; o que for sensivel vem de secrets.
+          # Keep this list in sync with the `build-args` of the app image in
+          # deploy.yml. Public values are inlined; anything sensitive comes from
+          # a secret.
+          #
+          # Note: this job has no `environment:`, so `secrets.*` resolve at the
+          # repository level only. Secrets defined solely inside the `staging` /
+          # `production` environments arrive here empty. That is fine — the goal
+          # is to prove the build compiles, not to reproduce production values.
           NEXT_PUBLIC_SITE_URL: https://romulodm.dev
           NEXT_PUBLIC_SITE_NAME: romulodm.dev
           NEXT_PUBLIC_APP_URL: https://romulodm.dev
@@ -85,19 +112,57 @@ jobs:
           NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY }}
           NEXT_PUBLIC_WALLET_ADDRESS: ${{ secrets.NEXT_PUBLIC_WALLET_ADDRESS }}
           NEXT_PUBLIC_ENCRYPTION_PUBLIC_KEY: ${{ secrets.NEXT_PUBLIC_ENCRYPTION_PUBLIC_KEY }}
-          # Sem SENTRY_AUTH_TOKEN o build so pula o upload de source maps.
+          # Chave de teste da Cloudflare: o build so precisa de um valor
+          # nao-vazio, e depender de um secret real deixaria o CI quebrar
+          # sozinho se alguem rotacionasse a chave.
+          NEXT_PUBLIC_TURNSTILE_SITE_KEY: 1x00000000000000000000AA
+          # No SENTRY_AUTH_TOKEN here, so the build simply skips the source map
+          # upload.
           NEXT_PUBLIC_SENTRY_DSN: ${{ secrets.NEXT_PUBLIC_SENTRY_DSN }}
           NEXT_PUBLIC_SENTRY_ENVIRONMENT: ci
 
-      # Rede de seguranca para o problema que originou este workflow: se o build
-      # rodar sem NEXT_PUBLIC_SITE_URL, lib/seo.ts cai no fallback localhost, o
-      # robots.ts passa a responder "Disallow: /" e o site sai do indice do
-      # Google sem nenhum sinal visivel.
-      - name: Garantir que o bundle nao ficou com localhost
+      # Safety net for the problem that motivated this workflow: if the build
+      # runs without NEXT_PUBLIC_SITE_URL, lib/seo.ts falls back to localhost,
+      # robots.ts starts answering "Disallow: /", and the site drops out of
+      # Google's index with no visible signal.
+      #
+      # Only the server bundle is scanned: third-party chunks under .next/static
+      # occasionally ship a literal localhost URL of their own, which would make
+      # this check flaky for no benefit.
+      - name: Assert the bundle has no localhost references
         run: |
           if grep -rq "http://localhost:3000" portfolio/.next/server 2>/dev/null; then
-            echo "::error::Build gerou referencias a localhost — NEXT_PUBLIC_SITE_URL nao chegou ao build."
+            echo "::error::Build produced localhost references — NEXT_PUBLIC_SITE_URL did not reach the build."
             grep -rl "http://localhost:3000" portfolio/.next/server | head -20
             exit 1
           fi
-          echo "OK: nenhuma referencia a localhost no build."
+          echo "OK: no localhost references in the build output."
+
+      # The check above did not catch robots.txt: it came out as "Disallow: /",
+      # which contains no "localhost" string. robots.ts reads
+      # ROBOTS_ALLOW_INDEXING and SITE_URL at request time; if Next.js
+      # prerenders it, the frozen value is the build-time one (indexing blocked)
+      # and setting the variable in the container no longer helps. So the
+      # invariant is not "the content is correct" but "this route must not have
+      # been prerendered".
+      #
+      # sitemap.xml has the same invariant for two reasons: it reads SITE_URL at
+      # request time (same failure as robots, except it writes localhost URLs
+      # into the index) and it queries Postgres, which does not exist during the
+      # build. If it gets prerendered, either the build breaks or a sitemap ships
+      # with static routes only and the wrong host — both silently.
+      - name: Assert robots.txt and sitemap.xml were not prerendered
+        run: |
+          failed=0
+          for route in robots.txt:app/robots.ts sitemap.xml:app/sitemap.ts; do
+            file="${route%%:*}"
+            source="${route##*:}"
+            if [ -f "portfolio/.next/server/app/${file}.body" ]; then
+              echo "::error::${file} was prerendered at build time. Captured content:"
+              cat "portfolio/.next/server/app/${file}.body"
+              echo "Add 'export const dynamic = force-dynamic' to portfolio/${source}."
+              failed=1
+            fi
+          done
+          [ "$failed" -eq 0 ] || exit 1
+          echo "OK: robots.txt and sitemap.xml are dynamic, evaluated per request."
