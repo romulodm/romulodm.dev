@@ -168,12 +168,17 @@ services:
         nginx -g 'daemon off;'
       "
     volumes:
-      - ./nginx/conf.d/app.dev.conf:/etc/nginx/templates/app.dev.conf:ro
+      # Fica em nginx/templates/, fora de conf.d/, porque não é config válida
+      # até o envsubst rodar. Enquanto morava em conf.d/ ele casava com o
+      # `include conf.d/*.conf` do nginx.conf e derrubava o nginx em produção
+      # com `[emerg] invalid port in upstream "romulodm-app:${NEXT_PORT}"`.
+      - ./nginx/templates/app.dev.conf:/etc/nginx/templates/app.dev.conf:ro
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      # Montado individualmente, não a conf.d inteira: o `include
-      # conf.d/*.conf` do nginx.conf pegaria app.conf e homolog.conf junto, e
-      # o nginx não sobe sem os certificados que eles referenciam.
-      # A extensão .inc é o que mantém este arquivo fora daquele glob.
+      # Montado individualmente, e não a conf.d inteira, por dois motivos:
+      # o entrypoint precisa ESCREVER o default.conf gerado ali dentro (um
+      # mount `:ro` da pasta impediria), e dev não deve carregar o
+      # security-headers.inc, que depende do $robots_tag definido só quando há
+      # TLS. A extensão .inc mantém o arquivo fora do `include conf.d/*.conf`.
       - ./nginx/conf.d/proxy-params.inc:/etc/nginx/conf.d/proxy-params.inc:ro
     depends_on:
       - app
