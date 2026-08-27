@@ -1,25 +1,65 @@
 name: Security Review
 
+# Audits the installed dependency tree against the npm advisory database.
+#
+# Split in two on purpose:
+#
+#   - Runtime dependencies BLOCK. Anything that ships inside the Docker image is
+#     reachable by a request in production, so a high-severity advisory there
+#     has to stop the pipeline.
+#
+#   - The full tree, dev dependencies included, is REPORTED but does not block.
+#     Build tooling never reaches the server, and advisories against transitive
+#     dev packages land constantly and out of the repository's control — letting
+#     them fail main teaches everyone to ignore a red run, which is worse than
+#     the advisory itself.
+#
+# This complements dependency-review.yml, which only looks at what a pull
+# request adds. This one re-evaluates the whole tree on every run, so a package
+# that was clean when it was added but has an advisory published against it
+# later is still caught.
+
 on:
   pull_request:
   push:
     branches:
       - main
+  # Advisories are published against code that has not changed, so a purely
+  # event-driven scan goes stale on a quiet week.
+  schedule:
+    - cron: '0 6 * * 1' # Mondays, 06:00 UTC (03:00 in America/Sao_Paulo)
+
+concurrency:
+  group: security-review-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
 
 jobs:
   npm-audit:
+    name: npm audit
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
-          # Alinhado com o Dockerfile (node:22) e com o ci.yml. Estava em 20,
-          # auditando um resolver de dependencias diferente do de producao.
+          # Same major version as the Dockerfile, so the audited tree is the
+          # tree that actually gets installed in the image.
           node-version: 22
           cache: npm
-      - run: npm ci
-      # O audit cobre o workspace inteiro (packages/*, portfolio, worker), que e
-      # o que o job `frontend-audit` removido tentava complementar apontando para
-      # uma pasta `frontend/` que nao existe no repositorio — ele falhava em toda
-      # execucao desde que o diretorio saiu.
-      - run: npm audit --audit-level=high
+
+      # `npm ci` rather than `npm audit` on its own: auditing without an install
+      # resolves the manifest instead of the lockfile, which can report
+      # versions that are never installed.
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Audit runtime dependencies (blocking)
+        run: npm audit --audit-level=high --omit=dev
+
+      - name: Audit the full tree, dev dependencies included (informational)
+        continue-on-error: true
+        run: npm audit --audit-level=high

@@ -1,13 +1,34 @@
 name: Dependency Review
 
+# Blocks a pull request that introduces a dependency with a known high-severity
+# advisory, or one whose licence is incompatible. It only inspects the diff
+# between the base branch and the head of the PR, so it says nothing about
+# vulnerabilities that already exist on main — that is security-review.yml's job.
+#
+# Requires the repository's Dependency Graph to be enabled (Settings ->
+# Security -> Dependency graph). On a private repository it additionally
+# requires GitHub Advanced Security; without either the action fails with a
+# 403 rather than passing silently.
+
 on:
   pull_request:
 
+concurrency:
+  group: dependency-review-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
 jobs:
   dependency-review:
+    name: Review new dependencies
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/dependency-review-action@v4
         with:
+          # `high` and above fails the check; moderate and low are reported in
+          # the job summary without blocking the merge.
           fail-on-severity: high

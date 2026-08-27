@@ -1,5 +1,14 @@
 name: Static Security
 
+# CodeQL: static taint analysis over the source, looking for injection, path
+# traversal, unsafe deserialisation and similar classes of bug. Findings show up
+# under the repository's Security -> Code scanning tab.
+#
+# Two languages are analysed because the stack has two: the TypeScript
+# monorepo (portfolio, worker, packages) and the Go search service under
+# ./search. Analysing only the first would leave the service that parses
+# user-supplied search queries unscanned.
+
 on:
   push:
     branches:
@@ -7,29 +16,69 @@ on:
   pull_request:
     branches:
       - main
+  # CodeQL's query packs are updated independently of this repository, so a
+  # scheduled run finds bugs in code that has not changed since the last push.
+  schedule:
+    - cron: '30 6 * * 1' # Mondays, 06:30 UTC (03:30 in America/Sao_Paulo)
+
+concurrency:
+  group: codeql-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   codeql:
+    name: CodeQL (${{ matrix.language }})
     runs-on: ubuntu-latest
+    timeout-minutes: 45
+
     permissions:
-      actions: read
-      contents: read
+      # Required to upload the SARIF results to the Code scanning tab.
       security-events: write
+      contents: read
+      actions: read
+
     strategy:
+      # One language failing should not hide the other language's findings.
       fail-fast: false
       matrix:
-        language:
-          - javascript-typescript
+        include:
+          # `none` means CodeQL extracts straight from the source. JavaScript
+          # and TypeScript need no compilation, so installing node_modules and
+          # building the internal packages first only added minutes to every
+          # run — CodeQL excludes node_modules from analysis anyway.
+          - language: javascript-typescript
+            build-mode: none
+          # Go does need to compile: the extractor observes the build to resolve
+          # types across packages. `manual` rather than `autobuild` because
+          # go.mod lives in ./search, not at the repository root, which is where
+          # autobuild looks first.
+          - language: go
+            build-mode: manual
+
     steps:
       - uses: actions/checkout@v4
+
       - uses: github/codeql-action/init@v3
         with:
           languages: ${{ matrix.language }}
-      - uses: actions/setup-node@v4
+          build-mode: ${{ matrix.build-mode }}
+
+      - name: Set up Go
+        if: matrix.language == 'go'
+        uses: actions/setup-go@v5
         with:
-          # Alinhado com o Dockerfile (node:22), ci.yml e security-review.yml.
-          node-version: 22
-          cache: npm
-      - run: npm ci
-      - run: npm run ci:packages
+          # Matches the `go` directive in search/go.mod and the builder image in
+          # search/Dockerfile.
+          go-version: '1.22'
+          cache-dependency-path: search/go.sum
+
+      # Has to sit between init and analyze: the extractor is only recording
+      # during that window.
+      - name: Build the search service
+        if: matrix.language == 'go'
+        working-directory: ./search
+        run: go build ./...
+
       - uses: github/codeql-action/analyze@v3
+        with:
+          category: /language:${{ matrix.language }}
