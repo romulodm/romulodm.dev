@@ -83,6 +83,10 @@ const config: Config = {
           "0%, 100%": { opacity: "1" },
           "50%": { opacity: "0" },
         },
+        "stack-marquee": {
+          from: { transform: "translateX(0)" },
+          to: { transform: "translateX(-50%)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -90,6 +94,8 @@ const config: Config = {
         "progress": "progress 5s linear",
         "carousel-progress": "carousel-progress 5s linear forwards",
         "blink": "blink 1s step-end infinite",
+        "stack-marquee":
+          "stack-marquee var(--marquee-duration, 40s) linear infinite",
       },
       typography: {
         DEFAULT: {
