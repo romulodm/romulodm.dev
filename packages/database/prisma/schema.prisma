@@ -372,3 +372,42 @@ enum DonationStatus {
   FAILED
   EXPIRED
 }
+
+model ContactMessage {
+  id        String        @id @default(cuid())
+  name      String        @db.VarChar(80)
+  email     String        @db.VarChar(160)
+  topic     ContactTopic
+  message   String        @db.VarChar(2000)
+  status    ContactStatus @default(RECEIVED)
+  locale    String        @db.VarChar(5)
+  /// sha256(APP_SECRET + IP). Guardamos o hash e nao o IP: o rate limit vive
+  /// no Redis com chave efemera, e o que sobra de util aqui e so responder
+  /// "essas mensagens vieram todas do mesmo lugar?".
+  ipHash    String        @db.VarChar(64)
+  userAgent String?       @db.VarChar(300)
+  createdAt DateTime      @default(now())
+  readAt    DateTime?
+  repliedAt DateTime?
+  closedAt  DateTime?
+
+  @@index([status, createdAt])
+  @@index([createdAt])
+  @@index([ipHash, createdAt])
+}
+
+enum ContactTopic {
+  FULL_TIME
+  FREELANCE
+  SAYING_HI
+  BUG_REPORT
+  OTHER
+}
+
+enum ContactStatus {
+  RECEIVED
+  READ
+  REPLIED
+  CLOSED
+  SPAM
+}
