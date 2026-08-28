@@ -144,7 +144,21 @@
     "form-text": "What's on your mind?",
     "form-button": "Send",
     "sended-title": "Thank you for reaching out!",
-    "sended-content": "Your message has been sent successfully."
+    "sended-content": "Your message has been sent successfully.",
+    "topic-FULL_TIME": "Full-time role",
+    "topic-FREELANCE": "Freelance project",
+    "topic-SAYING_HI": "Just saying hi",
+    "topic-BUG_REPORT": "Bug report",
+    "topic-OTHER": "Other",
+    "error-generic": "I couldn't send your message. Please try again in a moment.",
+    "form-topic-placeholder": "Select a topic",
+    "trigger-bug": "Report a bug",
+    "bug-title": "Found something broken?",
+    "bug-subtitle": "Tell me what happened and what you expected instead.",
+    "trigger-suggestion": "Send a suggestion",
+    "suggestion-title": "Got a suggestion?",
+    "suggestion-subtitle": "Ideas for the site, for a post, or for anything around here.",
+    "privacy-notice": "Your details are used only to answer this message. They never become a mailing list and are never sold. Details in the <link>privacy policy</link>."
   },
   "vision": {
     "software": {
@@ -302,6 +316,18 @@
     "link-button": "View online resume"
   },
   "navigation": {
+    "login": "Sign in",
+    "tooltip": {
+      "search": "Search posts",
+      "language": "Change language",
+      "theme": "Change theme",
+      "rss": "RSS feed"
+    },
+    "themeOptions": {
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System"
+    },
     "home": "Home",
     "resume": "Resume",
     "settings": "Settings",
@@ -500,7 +526,7 @@
     },
     "location": {
       "eyebrow": "Where I am",
-      "title": "Rio Grande, Brazil — working from anywhere.",
+      "title": "Rio Grande, Brazil. Working from anywhere.",
       "base": "Rio Grande, BR",
       "global": "Remote"
     },
@@ -648,7 +674,8 @@
     "apoiase": {
       "title": "Support this project",
       "description": "Your contribution makes all the difference!",
-      "button": "Support"
+      "button": "Support",
+      "easterEgg": "give the sign back :("
     }
   },
   "api": {
@@ -774,6 +801,16 @@
       "suspiciousComments": {
         "notFound": "Suspicious comment not found."
       }
+    },
+    "contact": {
+      "nameRequired": "Please enter your name.",
+      "nameTooLong": "Name is too long (max. 80 characters).",
+      "topicInvalid": "Pick a valid topic.",
+      "messageRequired": "Please write a message.",
+      "messageTooShort": "The message needs at least 10 characters.",
+      "messageTooLong": "Message is too long (max. 2000 characters).",
+      "rateLimited": "Too many messages in a short time. Please try again later.",
+      "captchaFailed": "I couldn't confirm you're not a robot. Reload the page and try again."
     }
   },
   "admin": {
@@ -800,7 +837,8 @@
         "system": "System",
         "search": "Search engine",
         "backups": "Backups",
-        "blog": "Blog"
+        "blog": "Blog",
+        "contact": "Contact"
       }
     },
     "dashboard": {
@@ -1383,6 +1421,50 @@
         "cancel": "Cancel",
         "confirm": "Confirm ban",
         "banning": "Banning..."
+      }
+    },
+    "contact": {
+      "title": "Contact messages",
+      "description": "Everything that came through the site's form.",
+      "unreadCount": "{count} unread",
+      "searchPlaceholder": "Search by name, email or text…",
+      "loading": "Loading…",
+      "empty": "No messages here.",
+      "openMessage": "Open",
+      "markAs": "Mark as",
+      "delete": "Delete",
+      "filters": {
+        "status": "Filter by status",
+        "topic": "Filter by topic",
+        "allStatuses": "All statuses",
+        "allTopics": "All topics"
+      },
+      "status": {
+        "RECEIVED": "Received",
+        "READ": "Read",
+        "REPLIED": "Replied",
+        "CLOSED": "Closed",
+        "SPAM": "Spam"
+      },
+      "topic": {
+        "FULL_TIME": "Full-time role",
+        "FREELANCE": "Freelance project",
+        "SAYING_HI": "Just saying hi",
+        "BUG_REPORT": "Bug report",
+        "OTHER": "Other"
+      },
+      "table": {
+        "from": "From",
+        "topic": "Topic",
+        "message": "Message",
+        "status": "Status",
+        "received": "Received",
+        "actions": "Actions"
+      },
+      "pagination": {
+        "showing": "Showing {from}–{to} of {total}",
+        "previous": "Previous",
+        "next": "Next"
       }
     }
   },
