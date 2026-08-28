@@ -80,7 +80,7 @@ export function Footer() {
                     {/* Logo */}
                     <div className="flex items-start col-span-2 md:col-span-3 lg:col-span-1">
                         <Link href="/" className="flex items-center gap-2.5 no-underline">
-                            <Logo size={55} />
+                            <Logo size={55} className="text-primary" />
                         </Link>
                     </div>
 
