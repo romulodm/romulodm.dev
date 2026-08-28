@@ -51,7 +51,15 @@ export type NotificationJob =
     | { type: "flush-views" }
     | { type: "retry-onchain" }
     | { type: "reconcile-donations" }
-    | { type: "audit-donations" };
+    | { type: "audit-donations" }
+    | {
+        type: "contact";
+        id: string;
+        name: string;
+        topic: string;
+        preview: string;
+    }
+    | { type: "contact-flood"; max: number; windowMinutes: number };
 
 export type BackupJob =
     | { type: "create-backup"; requestedBy: string };

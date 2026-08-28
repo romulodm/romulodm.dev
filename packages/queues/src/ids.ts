@@ -53,6 +53,22 @@ export function buildNotificationJobId(job: NotificationJob): string {
             return `notification:${RECONCILE_DONATIONS_JOB_NAME}`;
         case "audit-donations":
             return `notification:${AUDIT_DONATIONS_JOB_NAME}`;
+        // O id da mensagem da idempotencia de graca: um retry do enqueue nao
+        // vira uma segunda notificacao no Telegram.
+        case "contact":
+            return `notification:contact:${job.id}`;
+        /*
+         * Timestamp no id, mesma logica de `buildBackupJobId`. A tentacao aqui
+         * era usar uma chave fixa por janela e deixar o BullMQ deduplicar, mas
+         * isso quebraria o alerta: `notificationJobOptions` guarda os jobs
+         * concluidos (`count: 1_000`) e os falhos por 7 dias, entao um jobId
+         * repetido seria silenciosamente descartado no proximo pico.
+         *
+         * Quem garante "um aviso por hora" e o `SET NX EX` em alertFloodOnce,
+         * na rota. Aqui o id so precisa ser unico.
+         */
+        case "contact-flood":
+            return `notification:contact-flood:${Date.now()}`;
         default:
             return `notification:${stableHash([JSON.stringify(job)])}`;
     }
