@@ -75,6 +75,57 @@ export async function getDailyStats(
     }
 }
 
+/**
+ * Offset do fuso, em minutos, na instante dado.
+ *
+ * Existe porque `new Date("2026-08-28T00:00:00")` (sem sufixo) e interpretado
+ * no fuso do PROCESSO, e o container do worker roda em UTC — nao ha TZ no
+ * compose nem no Dockerfile. Como `yesterdayDate` responde em America/Sao_Paulo,
+ * a data ia para o GA4 no fuso certo e para o Prisma tres horas deslocada: as
+ * contagens do "dia" pegavam das 21h da vespera as 21h do dia.
+ */
+function tzOffsetMinutes(at: Date, timeZone: string): number {
+    const parts = new Intl.DateTimeFormat("en-US", {
+        timeZone,
+        hour12: false,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+    }).formatToParts(at);
+
+    const get = (type: Intl.DateTimeFormatPartTypes) =>
+        Number(parts.find((part) => part.type === type)?.value ?? 0);
+
+    const asUTC = Date.UTC(
+        get("year"),
+        get("month") - 1,
+        get("day"),
+        get("hour") % 24,
+        get("minute"),
+        get("second"),
+    );
+
+    return (asUTC - (at.getTime() - at.getMilliseconds())) / 60_000;
+}
+
+/**
+ * Intervalo `[start, end)` que cobre um dia YYYY-MM-DD no fuso informado.
+ * Use com `{ gte: start, lt: end }` no Prisma — nunca um `gte` sozinho, que
+ * deixa a janela aberta ate agora.
+ */
+export function dayRange(
+    date: string,
+    timeZone = process.env.TZ || "America/Sao_Paulo",
+): { start: Date; end: Date } {
+    const midnightUtc = new Date(`${date}T00:00:00Z`);
+    const start = new Date(midnightUtc.getTime() - tzOffsetMinutes(midnightUtc, timeZone) * 60_000);
+
+    return { start, end: new Date(start.getTime() + 24 * 60 * 60 * 1000) };
+}
+
 /** Data de ontem no formato YYYY-MM-DD, no fuso configurado (default America/Sao_Paulo). */
 export function yesterdayDate(timeZone = process.env.TZ || "America/Sao_Paulo"): string {
     const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000);
