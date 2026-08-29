@@ -12,6 +12,7 @@ import {
 import { getApiTranslator } from "@/lib/api-intl";
 import { getOtherLocales } from "@/lib/locales";
 import { slugify, uniqueSlug } from "@/lib/markdown";
+import { syncPostToSearch } from "@/lib/search-sync";
 import { translatePost } from "@/lib/translate";
 
 export async function GET(request: NextRequest) {
@@ -150,6 +151,9 @@ export async function POST(req: NextRequest) {
         postTags: true,
       },
     });
+
+    // Nao indexa se nasceu como rascunho — a propria funcao decide pelo status.
+    await syncPostToSearch(post.id);
 
     return NextResponse.json(post, { status: 201 });
   } catch (error) {
