@@ -1430,6 +1430,8 @@
       "searchPlaceholder": "Buscar por nome, e-mail ou texto…",
       "loading": "Carregando…",
       "empty": "Nenhuma mensagem por aqui.",
+      "linkMissing": "Essa mensagem não existe mais — o link aponta para algo que foi apagado.",
+      "dismiss": "Fechar aviso",
       "openMessage": "Abrir",
       "markAs": "Marcar como",
       "delete": "Apagar",

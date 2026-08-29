@@ -1430,6 +1430,8 @@
       "searchPlaceholder": "Search by name, email or text…",
       "loading": "Loading…",
       "empty": "No messages here.",
+      "linkMissing": "That message no longer exists — the link points to something that was deleted.",
+      "dismiss": "Dismiss",
       "openMessage": "Open",
       "markAs": "Mark as",
       "delete": "Delete",
