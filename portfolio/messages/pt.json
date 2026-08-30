@@ -1,9 +1,4 @@
 {
-  "404": {
-    "error": "erro",
-    "title": "Algo deu errado.",
-    "button": "Tentar novamente"
-  },
   "ResumePDFButton": {
     "view": "Visualizar",
     "download": "Baixar"
@@ -32,7 +27,6 @@
       "emailPlaceholder": "E-mail",
       "passwordPlaceholder": "Senha",
       "submit": "Entrar",
-      "invalidCredentials": "E-mail ou senha incorretos.",
       "forgotPassword": "Esqueceu sua senha?",
       "noAccount": "Não tem conta?",
       "createNow": "Criar agora"
@@ -56,16 +50,6 @@
       "rememberedPassword": "Lembrou a senha?",
       "didntForgetPassword": "Não esqueceu sua senha?",
       "login": "Entrar"
-    },
-    "reset": {
-      "description": "Escolha sua nova senha.",
-      "passwordPlaceholder": "Nova senha",
-      "confirmPasswordPlaceholder": "Confirmar nova senha",
-      "submit": "Salvar nova senha",
-      "genericError": "Não foi possível redefinir sua senha.",
-      "successTitle": "Senha redefinida!",
-      "successDescription": "Sua senha foi atualizada com sucesso.",
-      "goToLogin": "Ir para o login"
     },
     "validation": {
       "emailInvalid": "E-mail inválido.",
@@ -104,39 +88,7 @@
       "success": "Mensagem postada!"
     }
   },
-  "blog": {
-    "page-title": "Blog - Romulo de Moraes",
-    "title": "As opiniões expressas aqui são reflexões pessoais que dizem respeito à minha visão sobre tecnologia e outros assuntos; sinta-se à vontade para interagir, compartilhar suas ideias e enviar sugestões.",
-    "card-button": "Leia mais",
-    "filter": {
-      "search": "Buscar postagem",
-      "random": "Postagem aleatória",
-      "filter": "Filtrar postagens",
-      "filter-all": "Todas"
-    },
-    "newsletter": {
-      "title": "Quer receber as novas postagens?",
-      "content": "Se inscreva em nossa newsletter.",
-      "btn": "Inscreva-se",
-      "privacy": "Política de privacidade"
-    },
-    "about-portfolio": {
-      "title": "Quer saber como esse site foi construído?",
-      "content": "Veja a publicação que fiz sobre o código e a arquitetura construída.",
-      "btn": "Ver postagem"
-    },
-    "suggestions": {
-      "title": "Quer sugerir algum tema?",
-      "content": "Mande uma sugestão sobre algum assunto da área.",
-      "btn": "Enviar sugestão",
-      "privacy": "Política de privacidade"
-    },
-    "not-found-title": "Bem, isso não deveria acontecer...",
-    "not-found-content": "Não encontrei nenhuma postagem que corresponda aos seus critérios de pesquisa. Tente pesquisar por títulos ou temas...",
-    "metadata-description": "Artigos sobre desenvolvimento web, JavaScript, TypeScript e muito mais."
-  },
   "contact": {
-    "text": "Sinta-se livre para me contatar caso haja alguma questão ou sugestão. Estou aberto para ideias e oportunidades.",
     "modal-title": "Vamos conversar",
     "modal-subtitle": "Me conte sobre sua ideia, dúvida ou oportunidade.",
     "form-email": "Seu email",
@@ -152,18 +104,12 @@
     "topic-OTHER": "Outro",
     "error-generic": "Não consegui enviar sua mensagem. Tente de novo em instantes.",
     "form-topic-placeholder": "Selecione um assunto",
-    "trigger-bug": "Reportar um bug",
-    "bug-title": "Achou um problema?",
-    "bug-subtitle": "Conte o que aconteceu e o que você esperava que acontecesse.",
-    "trigger-suggestion": "Enviar uma sugestão",
-    "suggestion-title": "Tem uma sugestão?",
-    "suggestion-subtitle": "Ideias para o site, para um post, ou para qualquer coisa por aqui.",
-    "privacy-notice": "Uso suas informações só para responder esta mensagem. Elas não viram lista de e-mail e nunca são vendidas. Detalhes na <link>política de privacidade</link>."
+    "privacy-notice": "Uso suas informações só para responder esta mensagem. Elas não viram lista de e-mail e nunca são vendidas. Detalhes na <link>política de privacidade</link>.",
+    "verify-error": "Não consegui confirmar automaticamente que você não é um robô. Recarrega a página e tenta de novo?"
   },
   "vision": {
     "software": {
       "titleHighlight": "Software",
-      "titleRest": "que nasce da colaboração.",
       "description": "As melhores decisões técnicas que eu tomei vieram de <b>revisão de código</b> e de conversa difícil, não de inspiração solitária.",
       "cursorName": "Romulo",
       "frameOne": "Design.",
@@ -195,74 +141,21 @@
       "observabilityBody": "Medir antes de confiar."
     },
     "lastConnect": {
-      "bubble": "Vamos trocar uma ideia?",
       "titlePrefix": "Vamos",
       "titleHighlight": "nos conectar.",
       "formEmail": "Seu e-mail",
       "formName": "Seu nome",
       "formMessage": "Escreva sua mensagem...",
-      "surpriseButton": "Me surpreenda",
       "submitButton": "Enviar mensagem",
       "sentButton": "Mensagem enviada",
       "genericError": "Algo deu errado no envio. Tenta de novo em alguns instantes?",
       "thanksShort": "Obrigado!",
       "thanksLong": "Obrigado por escrever!",
-      "thanksBody": "Respondo assim que possível."
-    }
-  },
-  "hero": {
-    "greeting-1": "Bom dia",
-    "greeting-2": "Boa tarde",
-    "greeting-3": "Boa noite",
-    "greeting-4": "Boa noite",
-    "visitor-1": "visitante!",
-    "visitor-2": "querido(a)!",
-    "visitor-3": "dev :)",
-    "visitor-4": "pessoa.",
-    "visitor-5": "visitante :)",
-    "visitor-6": "amigo(a).",
-    "content": "Me chamo Romulo de Moraes, decidi criar este site para mostrar um pouco de quem eu sou, o que eu fiz, o que aprendi e o que planejo alcançar sendo um desenvolvedor full-stack e estudante.",
-    "star-title": "Dê uma estrela",
-    "star-content": "Acesse o repositório desse site.",
-    "resume-title": "Acesse o currículo",
-    "resume-content": "Dinâmico, interativo e atualizado.",
-    "view-more": "Ver mais"
-  },
-  "about": {
-    "eyebrow": "Sobre nós",
-    "headline": "Com a missão de empoderar times remotos",
-    "subheadline": "Aliquet nec orci mattis amet quisque ullamcorper neque, nibh sem. At arcu, sit dui mi, nibh dui, diam eget aliquam. Quisque id at vitae feugiat egestas.",
-    "missionTitle": "Nossa missão",
-    "missionParagraph1": "Faucibus commodo massa rhoncus, volutpat. Dignissim sed eget risus enim. Mattis mauris semper sed amet vitae sed turpis id. Id dolor praesent donec est. Odio penatibus risus viverra tellus varius sit neque erat velit. Faucibus commodo massa rhoncus, volutpat. Dignissim sed eget risus enim. Mattis mauris semper sed amet vitae sed turpis id.",
-    "missionParagraph2": "Et vitae blandit facilisi magna lacus commodo. Vitae sapien duis odio id et. Id blandit molestie auctor fermentum dignissim. Lacus diam tincidunt ac cursus in vel. Mauris varius vulputate et ultrices hac adipiscing egestas. Iaculis convallis ac tempor et ut. Ac lorem vel integer orci.",
-    "theNumbers": "Os números",
-    "stats": {
-      "raised": "Captado",
-      "companies": "Empresas",
-      "deals": "Negócios fechados",
-      "leads": "Leads gerados",
-      "yearsCoding": "Anos programando",
-      "usersImpacted": "Usuários impactados",
-      "projectsShipped": "Projetos entregues",
-      "articlesPublished": "Artigos publicados"
-    },
-    "command": "romulo.exe --about",
-    "location": "Rio Grande, RS - Brasil",
-    "availability": "Aberto a oportunidades",
-    "buttons": {
-      "projects": "Ver projetos",
-      "contact": "Contato"
-    },
-    "images": {
-      "whiteboardAlt": "Sessão de whiteboard em equipe",
-      "collaborationAlt": "Colaboração em equipe",
-      "memberAlt": "Membro da equipe",
-      "workspaceAlt": "Espaço de coworking",
-      "extraAlt": "Foto adicional da equipe"
+      "thanksBody": "Respondo assim que possível.",
+      "verifyError": "Não consegui confirmar automaticamente que você não é um robô. Recarrega a página e tenta de novo?"
     }
   },
   "home": {
-    "page-title": "Romulo de Moraes",
     "profile": {
       "title": "Quem está por trás do código.",
       "link-title": "Quer ver meu currículo?",
@@ -276,22 +169,17 @@
       "code": "Código",
       "preview": "Acessar",
       "public": "repositórios públicos",
-      "link-title": "Ficou interessado?",
-      "link-content": "Você pode ver mais dos meus projetos e tentativas.",
-      "link-button": "Ver mais projetos",
       "eyebrow": "Projetos",
       "description": "Coisas que eu construí sozinho, em equipe e por pura curiosidade. Código aberto sempre que dá."
     },
     "vision": {
       "title": "Visão sobre",
-      "title-colored": "Software",
       "link-title": "Quer saber mais?",
       "link-content": "Você pode ver mais sobre o que eu penso no meu blog.",
       "link-button": "Ver postagens"
     },
     "contact": {
-      "title": "Entre em",
-      "title-colored": "Contato"
+      "title": "Entre em"
     },
     "showcase": {
       "eyebrow": "Tecnologias",
@@ -310,11 +198,6 @@
       "description": "Como eu trabalho, o que eu uso e a melhor forma de me chamar para um projeto."
     }
   },
-  "profile": {
-    "link-title": "Quer ver meu currículo?",
-    "link-content": "Resumi minhas experiências e disponibilizei o download.",
-    "link-button": "Ver currículo online"
-  },
   "navigation": {
     "login": "Entrar",
     "tooltip": {
@@ -329,30 +212,11 @@
       "system": "Sistema"
     },
     "home": "Início",
-    "resume": "Currículo",
-    "settings": "Configurações",
     "theme": "Tema",
     "language": "Idioma",
-    "user": "Usuário",
     "modal": {
       "profile": "Perfil",
       "logout": "Sair"
-    }
-  },
-  "post": {
-    "comment-title": "Deixe um comentário",
-    "comment-placeholder": "Escreva seu comentário aqui...",
-    "comment-button": "Postar comentário",
-    "comments-empty": "Ainda não há comentários."
-  },
-  "resume": {
-    "page-title": "Currículo online - Romulo de Moraes",
-    "linkedin": "Perfil do LinkedIn",
-    "github": "Perfil do GitHub",
-    "titles": {
-      "xp": "Experiências",
-      "education": "Educação",
-      "lang": "Idiomas"
     }
   },
   "terminal": {
@@ -419,9 +283,6 @@
       "reward": "Correto! Sua recompensa aqui: "
     }
   },
-  "announcement": {
-    "content": "Olá, esse portfólio ainda está em desenvolvimento, ok? 🤠"
-  },
   "footer": {
     "cta": {
       "title": "Tem um projeto em mente?",
@@ -431,8 +292,7 @@
     "newsletter": {
       "title": "Fique por dentro",
       "subtitle": "Receba novidades sobre posts, projetos e ideias diretamente no seu e-mail.",
-      "placeholder": "Insira seu e-mail",
-      "subscribe": "Inscrever-se"
+      "placeholder": "Insira seu e-mail"
     },
     "nav": {
       "resources": {
@@ -451,16 +311,14 @@
         "links": {
           "about": "Sobre",
           "login": "Entrar",
-          "logout": "Sair",
-          "privacy": "Política de privacidade"
+          "logout": "Sair"
         }
       },
       "legal": {
         "title": "Legal",
         "links": {
           "privacy": "Política de privacidade",
-          "terms": "Termos de serviço",
-          "notices": "Avisos legais"
+          "terms": "Termos de serviço"
         }
       },
       "about": {
@@ -535,70 +393,6 @@
       "title": "Receba os posts novos por e-mail."
     }
   },
-  "blogPost": {
-    "notFoundTitle": "Post não encontrado",
-    "videoTitle": "Vídeo do post",
-    "published": "Publicado {time}",
-    "readingTime": "{minutes} min de leitura",
-    "originallyPublishedAt": "Publicado originalmente em:"
-  },
-  "commentsPage": {
-    "metadataNotFound": "Comentário não encontrado",
-    "metadataTitle": "Comentário de @{username} em \"{postTitle}\"",
-    "comment": "Comentário",
-    "replyingTo": "Respondendo a @{username}",
-    "backToPost": "Ir para \"{title}\""
-  },
-  "newsletterFlow": {
-    "confirm": {
-      "loadingTitle": "Confirmando...",
-      "successTitle": "Tudo certo!",
-      "errorTitle": "Ops! Algo deu errado",
-      "successDefaultMessage": "Inscrição confirmada!",
-      "errorDefaultMessage": "Erro ao confirmar inscrição.",
-      "networkError": "Erro de conexão. Tente novamente mais tarde.",
-      "successListTitle": "A partir de agora você vai receber:",
-      "successItems": {
-        "posts": "Novos posts assim que publicados",
-        "exclusive": "Dicas e conteúdos exclusivos",
-        "updates": "Novidades e projetos"
-      },
-      "errorListTitle": "Possíveis causas:",
-      "errorItems": {
-        "expired": "O link expirou (válido por 24h)",
-        "alreadyConfirmed": "Este e-mail já foi confirmado",
-        "incorrect": "O link está incorreto"
-      },
-      "backHome": "Ir para o início",
-      "persistentProblem": "Problema persistindo?",
-      "subscribeAgain": "Inscreva-se novamente"
-    },
-    "unsubscribe": {
-      "confirmTitle": "Cancelar inscrição?",
-      "loadingTitle": "Processando...",
-      "successTitle": "Inscrição cancelada",
-      "errorTitle": "Ops! Algo deu errado",
-      "successDefaultMessage": "Inscrição cancelada com sucesso.",
-      "errorDefaultMessage": "Erro ao cancelar inscrição.",
-      "networkError": "Erro de conexão. Tente novamente.",
-      "description": "Você não receberá mais novos posts e atualizações por e-mail. Pode se inscrever novamente a qualquer momento.",
-      "confirmButton": "Sim, cancelar inscrição",
-      "stayButton": "Não, quero continuar",
-      "farewellTitle": "Sentiremos sua falta!",
-      "farewellDescription": "Você pode se inscrever novamente a qualquer momento.",
-      "backHome": "Ir para o início"
-    }
-  },
-  "newsletterForm": {
-    "title": "Receba novos posts no seu email",
-    "subtitle": "Inscreva-se na newsletter e seja notificado quando novos artigos forem publicados",
-    "placeholder": "seu@email.com",
-    "subscribe": "Inscrever",
-    "subscribing": "Inscrevendo...",
-    "successDefault": "Obrigado por se inscrever!",
-    "errorDefault": "Algo deu errado. Tente novamente.",
-    "networkError": "Erro ao se inscrever. Tente novamente."
-  },
   "support": {
     "metadata": {
       "title": "Apoie o blog",
@@ -619,8 +413,7 @@
       "genericError": "Algo deu errado. Tente novamente.",
       "methods": {
         "pix": "PIX",
-        "card": "Cartão",
-        "eth": "ETH"
+        "card": "Cartão"
       }
     },
     "pix": {
@@ -635,13 +428,7 @@
       "expired": "Este QR code expirou. Feche e gere uma nova cobrança."
     },
     "crypto": {
-      "back": "Voltar",
-      "wallet": "Carteira:",
-      "waiting": "Aguardando MetaMask...",
-      "send": "Enviar via MetaMask",
       "genericError": "Erro ao processar ETH.",
-      "verifyError": "Erro ao verificar transação.",
-      "missingWallet": "MetaMask não encontrada. Instale em metamask.io",
       "coffees": "{count} café(s)"
     },
     "stripe": {
@@ -674,143 +461,7 @@
     "apoiase": {
       "title": "Apoie este projeto",
       "description": "Sua contribuição faz toda a diferença!",
-      "button": "Apoiar",
-      "easterEgg": "devolve a placa :("
-    }
-  },
-  "api": {
-    "common": {
-      "invalidRequest": "Dados da requisição inválidos.",
-      "invalidBody": "Corpo da requisição inválido.",
-      "unauthorized": "Autenticação necessária.",
-      "forbidden": "Acesso negado.",
-      "notFound": "Recurso não encontrado.",
-      "conflict": "Não foi possível concluir a solicitação.",
-      "rateLimited": "Muitas tentativas. Tente novamente em alguns instantes.",
-      "internalError": "Erro interno.",
-      "internalRetry": "Erro interno. Tente novamente.",
-      "emailRequired": "E-mail é obrigatório.",
-      "emailInvalid": "E-mail inválido."
-    },
-    "auth": {
-      "forgot": {
-        "rateLimited": "Muitas tentativas. Tente novamente em 10 minutos.",
-        "success": "Se esse e-mail estiver cadastrado, você receberá um link em breve.",
-        "internal": "Erro interno."
-      },
-      "register": {
-        "rateLimited": "Muitas tentativas de cadastro. Tente novamente mais tarde.",
-        "conflict": "Não foi possível concluir o cadastro com os dados informados.",
-        "conflictRetry": "Não foi possível concluir o cadastro. Tente novamente.",
-        "passwordRequired": "Senha é obrigatória.",
-        "passwordMin": "A senha deve ter pelo menos 8 caracteres.",
-        "passwordMax": "A senha deve ter no máximo 128 caracteres."
-      }
-    },
-    "comments": {
-      "postIdRequired": "postId é obrigatório.",
-      "empty": "Comentário não pode estar vazio.",
-      "tooLong": "Comentário muito longo (máx. 2000 caracteres).",
-      "rateLimited": "Muitos comentários em pouco tempo. Aguarde um momento.",
-      "cannotComment": "Você não pode comentar.",
-      "postNotFound": "Post não encontrado.",
-      "parentNotFound": "Comentário pai não encontrado.",
-      "commentNotFound": "Comentário não encontrado.",
-      "invalidVote": "Valor de voto inválido."
-    },
-    "newsletter": {
-      "subscribe": {
-        "rateLimited": "Muitas tentativas. Tente novamente em alguns minutos.",
-        "success": "Verifique seu e-mail para confirmar a inscrição.",
-        "internal": "Erro interno. Tente novamente."
-      },
-      "confirm": {
-        "missingToken": "Token ausente.",
-        "invalidToken": "Token inválido ou expirado. Solicite uma nova inscrição.",
-        "success": "Inscrição confirmada com sucesso! Bem-vindo(a).",
-        "internal": "Erro interno."
-      },
-      "unsubscribe": {
-        "missingToken": "Token ausente.",
-        "invalidToken": "Token inválido.",
-        "success": "Você foi removido da newsletter com sucesso.",
-        "internal": "Erro interno."
-      },
-      "requestUnsubscribe": {
-        "rateLimited": "Muitas tentativas. Tente novamente em alguns minutos.",
-        "success": "Verifique seu e-mail para confirmar o pedido de cancelamento.",
-        "internal": "Erro interno. Tente novamente."
-      }
-    },
-    "donations": {
-      "eth": {
-        "invalidTransaction": "Transação inválida."
-      },
-      "pix": {
-        "notAvailableInProduction": "Não disponível em produção.",
-        "missingDonationId": "donationId ausente.",
-        "chargeDescription": "{count}x café para o blog",
-        "internal": "Não foi possível criar a cobrança PIX. Tente novamente.",
-        "checkFailed": "Não foi possível verificar o pagamento. Tentando novamente...",
-        "expired": "Este QR code expirou. Gere uma nova cobrança."
-      },
-      "stripe": {
-        "missingSignature": "Assinatura ausente.",
-        "invalidSignature": "Assinatura inválida.",
-        "internal": "Não foi possível criar a intenção de pagamento Stripe. Tente novamente."
-      },
-      "invalidCoffeeCount": "Quantidade de cafés inválida."
-    },
-    "posts": {
-      "noPosts": "Nenhum post encontrado.",
-      "notFound": "Post não encontrado.",
-      "internalError": "Erro interno do servidor.",
-      "missingRequiredFields": "Campos obrigatórios ausentes.",
-      "invalidBody": "Corpo inválido.",
-      "identifierRequired": "Identificador obrigatório.",
-      "queueOnly": "O flush de views agora roda exclusivamente pelo caminho de fila com worker."
-    },
-    "uploads": {
-      "missingFields": "Campos obrigatórios ausentes: filename, contentType, kind.",
-      "invalidKind": "Tipo inválido. Deve ser \"cover\" ou \"inline\".",
-      "invalidContentType": "Tipo de arquivo não suportado.",
-      "fileTooLarge": "O arquivo é grande demais.",
-      "internal": "Não foi possível preparar o upload. Tente novamente."
-    },
-    "admin": {
-      "newsletterCampaigns": {
-        "subjectRequired": "Assunto é obrigatório.",
-        "postIdRequired": "postId é obrigatório para campanhas baseadas em post.",
-        "postNotFound": "Post não encontrado.",
-        "postMustBePublished": "Só é possível criar campanhas para posts publicados.",
-        "missingPortugueseTranslation": "O post precisa ter tradução em português primeiro.",
-        "customContentRequired": "Conteúdo é obrigatório para campanhas personalizadas.",
-        "readArticle": "Ler artigo ->",
-        "notFound": "Campanha não encontrada.",
-        "draftOnlyEdit": "Apenas campanhas em rascunho podem ser editadas.",
-        "invalidPost": "Post inválido ou não publicado.",
-        "cannotDeleteSending": "Não é possível excluir uma campanha em envio.",
-        "deleted": "Campanha excluída.",
-        "draftOnlySend": "Apenas campanhas em rascunho podem ser enviadas.",
-        "invalidScheduledAt": "scheduledAt inválido.",
-        "futureScheduledAt": "scheduledAt deve ser uma data futura.",
-        "scheduled": "Campanha agendada com sucesso.",
-        "queued": "Campanha enfileirada para envio.",
-        "dispatchFailed": "Falha ao despachar campanha."
-      },
-      "suspiciousComments": {
-        "notFound": "Comentário suspeito não encontrado."
-      }
-    },
-    "contact": {
-      "nameRequired": "Informe seu nome.",
-      "nameTooLong": "Nome muito longo (máx. 80 caracteres).",
-      "topicInvalid": "Escolha um assunto válido.",
-      "messageRequired": "Escreva uma mensagem.",
-      "messageTooShort": "A mensagem precisa ter pelo menos 10 caracteres.",
-      "messageTooLong": "Mensagem muito longa (máx. 2000 caracteres).",
-      "rateLimited": "Muitas mensagens em pouco tempo. Tente novamente mais tarde.",
-      "captchaFailed": "Não consegui confirmar que você não é um robô. Recarregue a página e tente de novo."
+      "button": "Apoiar"
     }
   },
   "admin": {
@@ -1104,7 +755,6 @@
       "description": "Gerencie usuários que não podem comentar.",
       "loading": "Carregando...",
       "empty": "Nenhum usuário banido.",
-      "bannedAt": "Banido em {date}",
       "unban": "Desbanir",
       "searchPlaceholder": "Buscar por usuário ou e-mail",
       "viewReason": "Ver motivo",
@@ -1306,8 +956,6 @@
       "template": {
         "previewLabel": "Preview do template",
         "hideHtml": "Ocultar",
-        "showHtml": "Ver HTML",
-        "readArticle": "Ler artigo ->",
         "showPreview": "Ver prévia"
       },
       "subject": {
@@ -1498,8 +1146,7 @@
     "card": {
       "published": "Publicado em {date}",
       "readingTime": "{minutes} min de leitura",
-      "readMore": "Ler mais",
-      "authorProfile": "Ver perfil de @{username}"
+      "readMore": "Ler mais"
     },
     "carousel": {
       "previousSlide": "Slide anterior",
@@ -1601,21 +1248,6 @@
       }
     }
   },
-  "footerNewsletter": {
-    "title": "Fique por dentro",
-    "description": "Receba novidades sobre posts, projetos e ideias diretamente no seu e-mail.",
-    "placeholder": "Insira seu e-mail",
-    "submit": "Inscrever-se",
-    "submitting": "Enviando...",
-    "success": {
-      "title": "Verifique seu e-mail!",
-      "description": "Enviamos um link de confirmação para você."
-    },
-    "errors": {
-      "generic": "Algo deu errado.",
-      "connection": "Erro de conexão. Tente novamente."
-    }
-  },
   "common": {
     "dialog": {
       "close": "Fechar"
@@ -1644,23 +1276,6 @@
     "errors": {
       "generic": "Algo deu errado. Tente novamente.",
       "connection": "Erro de conexão. Tente novamente."
-    }
-  },
-  "unsubscribeModal": {
-    "trigger": "Cancelar inscrição",
-    "title": "Cancelar inscrição na newsletter",
-    "description": "Digite seu e-mail para receber um link de confirmação.",
-    "emailLabel": "E-mail",
-    "emailPlaceholder": "seu@email.com",
-    "cancel": "Cancelar",
-    "submit": "Enviar confirmação",
-    "close": "Fechar",
-    "success": {
-      "message": "E-mail de confirmação enviado com sucesso! Verifique sua caixa de entrada e clique no link para concluir o cancelamento."
-    },
-    "errors": {
-      "generic": "Não foi possível processar sua solicitação.",
-      "connection": "Erro de conexão. Tente novamente mais tarde."
     }
   },
   "cookieBanner": {
@@ -1701,37 +1316,6 @@
         "manage": {
           "title": "5. Como gerenciar cookies",
           "body": "A maioria dos navegadores permite controlar cookies pelas configurações de preferências. Limitar os cookies pode piorar sua experiência de navegação e impedir que o site lembre configurações personalizadas."
-        }
-      }
-    },
-    "terms": {
-      "title": "Termos e Condições",
-      "updatedAt": "Última atualização: Fevereiro 2026",
-      "close": "Fechar",
-      "sections": {
-        "network": {
-          "title": "Importante - Verifique a rede",
-          "body": "Antes de comprar um bilhete, verifique se a loteria está executando na mesma rede da sua carteira. Compras feitas na rede errada não são reembolsáveis e não são de responsabilidade da plataforma."
-        },
-        "service": {
-          "title": "1. Natureza do serviço",
-          "body": "Esta plataforma é uma loteria descentralizada operando na blockchain, pensada para oferecer transparência e justiça em todos os sorteios. Atualmente, o serviço encontra-se em período de teste na rede Sepolia."
-        },
-        "testing": {
-          "title": "2. Período de teste",
-          "body": "Durante o período de validação, todas as transações utilizam tokens de teste (Sepolia ETH) que não possuem valor econômico real. Nenhum valor monetário verdadeiro está envolvido nesta fase."
-        },
-        "fairness": {
-          "title": "3. Justiça e transparência",
-          "body": "Todos os sorteios são realizados de forma transparente na blockchain. Os resultados podem ser verificados por qualquer pessoa através do contrato inteligente. A plataforma utiliza fontes de aleatoriedade verificáveis para garantir a justiça dos sorteios."
-        },
-        "userResponsibility": {
-          "title": "4. Responsabilidade do utilizador",
-          "body": "O utilizador é responsável por garantir que está conectado à rede correta antes de realizar qualquer transação. A plataforma não se responsabiliza por perdas decorrentes de erros do utilizador, incluindo envio de fundos para endereços incorretos."
-        },
-        "changes": {
-          "title": "5. Modificações dos termos",
-          "body": "A plataforma reserva-se o direito de modificar estes termos a qualquer momento. As alterações serão comunicadas pela plataforma. O uso continuado do serviço após as alterações constitui aceitação dos novos termos."
         }
       }
     }

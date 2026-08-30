@@ -1,9 +1,4 @@
 {
-  "404": {
-    "error": "error",
-    "title": "Something went wrong.",
-    "button": "Try again"
-  },
   "ResumePDFButton": {
     "view": "View",
     "download": "Download"
@@ -32,7 +27,6 @@
       "emailPlaceholder": "Email",
       "passwordPlaceholder": "Password",
       "submit": "Sign in",
-      "invalidCredentials": "Incorrect email or password.",
       "forgotPassword": "Forgot your password?",
       "noAccount": "Don?t have an account?",
       "createNow": "Create now"
@@ -56,16 +50,6 @@
       "rememberedPassword": "Remembered your password?",
       "didntForgetPassword": "Didn?t forget your password?",
       "login": "Sign in"
-    },
-    "reset": {
-      "description": "Choose your new password.",
-      "passwordPlaceholder": "New password",
-      "confirmPasswordPlaceholder": "Confirm new password",
-      "submit": "Save new password",
-      "genericError": "Could not reset your password.",
-      "successTitle": "Password reset!",
-      "successDescription": "Your password has been updated successfully.",
-      "goToLogin": "Go to sign in"
     },
     "validation": {
       "emailInvalid": "Invalid email.",
@@ -104,39 +88,7 @@
       "success": "Message posted!"
     }
   },
-  "blog": {
-    "page-title": "Blog - Romulo de Moraes",
-    "title": "The opinions expressed here are personal reflections regarding my views on technology and other subjects; feel free to interact, share your ideas and send suggestions.",
-    "card-button": "Read more",
-    "filter": {
-      "search": "Search post",
-      "random": "Random post",
-      "filter": "Filter posts",
-      "filter-all": "All"
-    },
-    "newsletter": {
-      "title": "Want to receive new posts?",
-      "content": "Subscribe to our newsletter.",
-      "btn": "Subscribe",
-      "privacy": "Privacy policy"
-    },
-    "about-portfolio": {
-      "title": "Want to know how this site was built?",
-      "content": "Check out the post I wrote about the code and architecture behind it.",
-      "btn": "View post"
-    },
-    "suggestions": {
-      "title": "Want to suggest a topic?",
-      "content": "Send a suggestion about something in the field.",
-      "btn": "Send suggestion",
-      "privacy": "Privacy policy"
-    },
-    "not-found-title": "Well, this shouldn't have happened...",
-    "not-found-content": "I couldn't find any post matching your search criteria. Try searching by titles or topics...",
-    "metadata-description": "Articles about web development, JavaScript, TypeScript, and much more."
-  },
   "contact": {
-    "text": "Feel free to contact me if you have any questions or suggestions. I'm open to ideas and opportunities.",
     "modal-title": "Let's talk",
     "modal-subtitle": "Tell me about your idea, question, or opportunity.",
     "form-email": "Your email",
@@ -152,18 +104,12 @@
     "topic-OTHER": "Other",
     "error-generic": "I couldn't send your message. Please try again in a moment.",
     "form-topic-placeholder": "Select a topic",
-    "trigger-bug": "Report a bug",
-    "bug-title": "Found something broken?",
-    "bug-subtitle": "Tell me what happened and what you expected instead.",
-    "trigger-suggestion": "Send a suggestion",
-    "suggestion-title": "Got a suggestion?",
-    "suggestion-subtitle": "Ideas for the site, for a post, or for anything around here.",
-    "privacy-notice": "Your details are used only to answer this message. They never become a mailing list and are never sold. Details in the <link>privacy policy</link>."
+    "privacy-notice": "Your details are used only to answer this message. They never become a mailing list and are never sold. Details in the <link>privacy policy</link>.",
+    "verify-error": "I couldn't automatically confirm you're not a robot. Reload the page and try again?"
   },
   "vision": {
     "software": {
       "titleHighlight": "Software",
-      "titleRest": "born from collaboration.",
       "description": "The best technical decisions I've made came out of <b>code review</b> and hard conversations, not solitary inspiration.",
       "cursorName": "Romulo",
       "frameOne": "Design.",
@@ -195,74 +141,21 @@
       "observabilityBody": "Measure before you trust."
     },
     "lastConnect": {
-      "bubble": "Want to chat?",
       "titlePrefix": "Let's",
       "titleHighlight": "connect.",
       "formEmail": "Your email",
       "formName": "Your name",
       "formMessage": "Write your message...",
-      "surpriseButton": "Surprise me",
       "submitButton": "Send message",
       "sentButton": "Message sent",
       "genericError": "Something went wrong while sending. Mind trying again in a moment?",
       "thanksShort": "Thank you!",
       "thanksLong": "Thanks for reaching out!",
-      "thanksBody": "I'll get back to you as soon as I can."
-    }
-  },
-  "hero": {
-    "greeting-1": "Good morning",
-    "greeting-2": "Good afternoon",
-    "greeting-3": "Good evening",
-    "greeting-4": "Good night",
-    "visitor-1": "visitor!",
-    "visitor-2": "dear!",
-    "visitor-3": "dev :)",
-    "visitor-4": "person.",
-    "visitor-5": "visitor :)",
-    "visitor-6": "friend.",
-    "content": "My name is Romulo de Moraes, I decided to create this site to show a little of who I am, what I've done, what I've learned and what I plan to achieve as a full-stack developer and student.",
-    "star-title": "Give a star",
-    "star-content": "Access this site's repository.",
-    "resume-title": "View my resume",
-    "resume-content": "Dynamic, interactive and up to date.",
-    "view-more": "View more"
-  },
-  "about": {
-    "eyebrow": "About us",
-    "headline": "On a mission to empower remote teams",
-    "subheadline": "Aliquet nec orci mattis amet quisque ullamcorper neque, nibh sem. At arcu, sit dui mi, nibh dui, diam eget aliquam. Quisque id at vitae feugiat egestas.",
-    "missionTitle": "Our mission",
-    "missionParagraph1": "Faucibus commodo massa rhoncus, volutpat. Dignissim sed eget risus enim. Mattis mauris semper sed amet vitae sed turpis id. Id dolor praesent donec est. Odio penatibus risus viverra tellus varius sit neque erat velit. Faucibus commodo massa rhoncus, volutpat. Dignissim sed eget risus enim. Mattis mauris semper sed amet vitae sed turpis id.",
-    "missionParagraph2": "Et vitae blandit facilisi magna lacus commodo. Vitae sapien duis odio id et. Id blandit molestie auctor fermentum dignissim. Lacus diam tincidunt ac cursus in vel. Mauris varius vulputate et ultrices hac adipiscing egestas. Iaculis convallis ac tempor et ut. Ac lorem vel integer orci.",
-    "theNumbers": "The numbers",
-    "stats": {
-      "raised": "Raised",
-      "companies": "Companies",
-      "deals": "Deals Closed",
-      "leads": "Leads Generated",
-      "yearsCoding": "Years coding",
-      "usersImpacted": "Users impacted",
-      "projectsShipped": "Projects shipped",
-      "articlesPublished": "Articles published"
-    },
-    "command": "romulo.exe --about",
-    "location": "Rio Grande, RS - Brazil",
-    "availability": "Open to opportunities",
-    "buttons": {
-      "projects": "View projects",
-      "contact": "Contact"
-    },
-    "images": {
-      "whiteboardAlt": "Team whiteboard session",
-      "collaborationAlt": "Team collaboration",
-      "memberAlt": "Team member",
-      "workspaceAlt": "Coworking space",
-      "extraAlt": "Additional team photo"
+      "thanksBody": "I'll get back to you as soon as I can.",
+      "verifyError": "I couldn't automatically confirm you're not a robot. Reload the page and try again?"
     }
   },
   "home": {
-    "page-title": "Romulo de Moraes",
     "profile": {
       "title": "Who is behind the code.",
       "link-title": "Want to see my resume?",
@@ -276,22 +169,17 @@
       "code": "Code",
       "preview": "Visit",
       "public": "public repositories",
-      "link-title": "Interested?",
-      "link-content": "You can see more of my projects and experiments.",
-      "link-button": "See more projects",
       "eyebrow": "Projects",
       "description": "Things I built alone, with a team and out of pure curiosity. Open source whenever possible."
     },
     "vision": {
       "title": "Vision on",
-      "title-colored": "Software",
       "link-title": "Want to know more?",
       "link-content": "You can read more about what I think on my blog.",
       "link-button": "View posts"
     },
     "contact": {
-      "title": "Get in",
-      "title-colored": "Touch"
+      "title": "Get in"
     },
     "showcase": {
       "eyebrow": "Technologies",
@@ -310,11 +198,6 @@
       "description": "How I work, what I use and the best way to bring me into a project."
     }
   },
-  "profile": {
-    "link-title": "Want to see my resume?",
-    "link-content": "I summarized my experiences and made it available for download.",
-    "link-button": "View online resume"
-  },
   "navigation": {
     "login": "Sign in",
     "tooltip": {
@@ -329,30 +212,11 @@
       "system": "System"
     },
     "home": "Home",
-    "resume": "Resume",
-    "settings": "Settings",
     "theme": "Theme",
     "language": "Language",
-    "user": "User",
     "modal": {
       "profile": "Profile",
       "logout": "Logout"
-    }
-  },
-  "post": {
-    "comment-title": "Leave a comment",
-    "comment-placeholder": "Write your comment here...",
-    "comment-button": "Post comment",
-    "comments-empty": "No comments yet."
-  },
-  "resume": {
-    "page-title": "Online Resume - Romulo de Moraes",
-    "linkedin": "LinkedIn Profile",
-    "github": "GitHub Profile",
-    "titles": {
-      "xp": "Experience",
-      "education": "Education",
-      "lang": "Languages"
     }
   },
   "terminal": {
@@ -419,9 +283,6 @@
       "reward": "Correct! Your reward here: "
     }
   },
-  "announcement": {
-    "content": "Hey, this portfolio is still under development, ok? 🤠"
-  },
   "footer": {
     "cta": {
       "title": "Have a project in mind?",
@@ -431,8 +292,7 @@
     "newsletter": {
       "title": "Stay Updated",
       "subtitle": "Get notified about new posts, projects, and ideas straight to your inbox.",
-      "placeholder": "Enter your email",
-      "subscribe": "Subscribe"
+      "placeholder": "Enter your email"
     },
     "nav": {
       "resources": {
@@ -451,16 +311,14 @@
         "links": {
           "about": "About",
           "login": "Sign in",
-          "logout": "Sign out",
-          "privacy": "Privacy policy"
+          "logout": "Sign out"
         }
       },
       "legal": {
         "title": "Legal",
         "links": {
           "privacy": "Privacy policy",
-          "terms": "Terms of service",
-          "notices": "Legal notices"
+          "terms": "Terms of service"
         }
       },
       "about": {
@@ -535,70 +393,6 @@
       "title": "Get new posts by email."
     }
   },
-  "blogPost": {
-    "notFoundTitle": "Post not found",
-    "videoTitle": "Post video",
-    "published": "Published {time}",
-    "readingTime": "{minutes} min read",
-    "originallyPublishedAt": "Originally published at:"
-  },
-  "commentsPage": {
-    "metadataNotFound": "Comment not found",
-    "metadataTitle": "Comment by @{username} on \"{postTitle}\"",
-    "comment": "Comment",
-    "replyingTo": "Replying to @{username}",
-    "backToPost": "Go to \"{title}\""
-  },
-  "newsletterFlow": {
-    "confirm": {
-      "loadingTitle": "Confirming...",
-      "successTitle": "All set!",
-      "errorTitle": "Oops! Something went wrong",
-      "successDefaultMessage": "Subscription confirmed!",
-      "errorDefaultMessage": "Could not confirm subscription.",
-      "networkError": "Connection error. Please try again later.",
-      "successListTitle": "From now on you?ll receive:",
-      "successItems": {
-        "posts": "New posts as soon as they are published",
-        "exclusive": "Tips and exclusive content",
-        "updates": "News and projects"
-      },
-      "errorListTitle": "Possible causes:",
-      "errorItems": {
-        "expired": "The link expired (valid for 24h)",
-        "alreadyConfirmed": "This email was already confirmed",
-        "incorrect": "The link is incorrect"
-      },
-      "backHome": "Go home",
-      "persistentProblem": "Still having trouble?",
-      "subscribeAgain": "Subscribe again"
-    },
-    "unsubscribe": {
-      "confirmTitle": "Unsubscribe?",
-      "loadingTitle": "Processing...",
-      "successTitle": "Subscription canceled",
-      "errorTitle": "Oops! Something went wrong",
-      "successDefaultMessage": "Subscription canceled successfully.",
-      "errorDefaultMessage": "Could not cancel subscription.",
-      "networkError": "Connection error. Please try again.",
-      "description": "You will no longer receive new posts and updates by email. You can subscribe again at any time.",
-      "confirmButton": "Yes, unsubscribe",
-      "stayButton": "No, keep me subscribed",
-      "farewellTitle": "We?ll miss you!",
-      "farewellDescription": "You can subscribe again at any time.",
-      "backHome": "Go home"
-    }
-  },
-  "newsletterForm": {
-    "title": "Receive new posts in your email",
-    "subtitle": "Subscribe to the newsletter and get notified when new articles are published",
-    "placeholder": "you@email.com",
-    "subscribe": "Subscribe",
-    "subscribing": "Subscribing...",
-    "successDefault": "Thanks for subscribing!",
-    "errorDefault": "Something went wrong. Please try again.",
-    "networkError": "Could not subscribe. Please try again."
-  },
   "support": {
     "metadata": {
       "title": "Support the blog",
@@ -619,8 +413,7 @@
       "genericError": "Something went wrong. Please try again.",
       "methods": {
         "pix": "PIX",
-        "card": "Card",
-        "eth": "ETH"
+        "card": "Card"
       }
     },
     "pix": {
@@ -635,13 +428,7 @@
       "expired": "This QR code has expired. Close and generate a new charge."
     },
     "crypto": {
-      "back": "Back",
-      "wallet": "Wallet:",
-      "waiting": "Waiting for MetaMask...",
-      "send": "Send with MetaMask",
       "genericError": "Error processing ETH.",
-      "verifyError": "Could not verify transaction.",
-      "missingWallet": "MetaMask not found. Install it at metamask.io",
       "coffees": "{count} coffee(s)"
     },
     "stripe": {
@@ -674,143 +461,7 @@
     "apoiase": {
       "title": "Support this project",
       "description": "Your contribution makes all the difference!",
-      "button": "Support",
-      "easterEgg": "give the sign back :("
-    }
-  },
-  "api": {
-    "common": {
-      "invalidRequest": "Invalid request data.",
-      "invalidBody": "Invalid request body.",
-      "unauthorized": "Authentication required.",
-      "forbidden": "Access denied.",
-      "notFound": "Resource not found.",
-      "conflict": "Could not complete the request.",
-      "rateLimited": "Too many attempts. Please try again later.",
-      "internalError": "Internal error.",
-      "internalRetry": "Internal error. Please try again.",
-      "emailRequired": "Email is required.",
-      "emailInvalid": "Invalid email address."
-    },
-    "auth": {
-      "forgot": {
-        "rateLimited": "Too many attempts. Please try again in 10 minutes.",
-        "success": "If this email is registered, you will receive a link shortly.",
-        "internal": "Internal error."
-      },
-      "register": {
-        "rateLimited": "Too many sign-up attempts. Please try again later.",
-        "conflict": "Could not complete sign-up with the provided data.",
-        "conflictRetry": "Could not complete sign-up. Please try again.",
-        "passwordRequired": "Password is required.",
-        "passwordMin": "Password must be at least 8 characters.",
-        "passwordMax": "Password must be at most 128 characters."
-      }
-    },
-    "comments": {
-      "postIdRequired": "postId is required.",
-      "empty": "Comment cannot be empty.",
-      "tooLong": "Comment is too long (max. 2000 characters).",
-      "rateLimited": "Too many comments in a short time. Please wait a moment.",
-      "cannotComment": "You cannot comment.",
-      "postNotFound": "Post not found.",
-      "parentNotFound": "Parent comment not found.",
-      "commentNotFound": "Comment not found.",
-      "invalidVote": "Invalid vote value."
-    },
-    "newsletter": {
-      "subscribe": {
-        "rateLimited": "Too many attempts. Please try again in a few minutes.",
-        "success": "Check your email to confirm your subscription.",
-        "internal": "Internal error. Please try again."
-      },
-      "confirm": {
-        "missingToken": "Missing token.",
-        "invalidToken": "Invalid or expired token. Please request a new subscription.",
-        "success": "Subscription confirmed successfully! Welcome.",
-        "internal": "Internal error."
-      },
-      "unsubscribe": {
-        "missingToken": "Missing token.",
-        "invalidToken": "Invalid token.",
-        "success": "You have been removed from the newsletter successfully.",
-        "internal": "Internal error."
-      },
-      "requestUnsubscribe": {
-        "rateLimited": "Too many attempts. Please try again in a few minutes.",
-        "success": "Check your email to confirm the unsubscribe request.",
-        "internal": "Internal error. Please try again."
-      }
-    },
-    "donations": {
-      "eth": {
-        "invalidTransaction": "Invalid transaction."
-      },
-      "pix": {
-        "notAvailableInProduction": "Not available in production.",
-        "missingDonationId": "Missing donationId.",
-        "chargeDescription": "{count}x coffee for the blog",
-        "internal": "Could not create the PIX charge. Please try again.",
-        "checkFailed": "Could not verify the payment. Retrying...",
-        "expired": "This QR code has expired. Please generate a new charge."
-      },
-      "stripe": {
-        "missingSignature": "Missing signature.",
-        "invalidSignature": "Invalid signature.",
-        "internal": "Could not create the Stripe payment intent. Please try again."
-      },
-      "invalidCoffeeCount": "Invalid coffee amount."
-    },
-    "posts": {
-      "noPosts": "No posts.",
-      "notFound": "Post not found.",
-      "internalError": "Internal server error.",
-      "missingRequiredFields": "Missing required fields.",
-      "invalidBody": "Invalid body.",
-      "identifierRequired": "Identifier is required.",
-      "queueOnly": "View flushing now runs exclusively through the worker-backed queue path."
-    },
-    "uploads": {
-      "missingFields": "Missing required fields: filename, contentType, kind.",
-      "invalidKind": "Invalid kind. It must be \"cover\" or \"inline\".",
-      "invalidContentType": "Unsupported file type.",
-      "fileTooLarge": "File is too large.",
-      "internal": "Could not prepare the upload. Please try again."
-    },
-    "admin": {
-      "newsletterCampaigns": {
-        "subjectRequired": "Subject is required.",
-        "postIdRequired": "postId is required for post-based campaigns.",
-        "postNotFound": "Post not found.",
-        "postMustBePublished": "You can only create campaigns for published posts.",
-        "missingPortugueseTranslation": "The post needs a Portuguese translation first.",
-        "customContentRequired": "Content is required for custom campaigns.",
-        "readArticle": "Read article ->",
-        "notFound": "Campaign not found.",
-        "draftOnlyEdit": "Only draft campaigns can be edited.",
-        "invalidPost": "Invalid or unpublished post.",
-        "cannotDeleteSending": "You cannot delete a campaign that is being sent.",
-        "deleted": "Campaign deleted.",
-        "draftOnlySend": "Only draft campaigns can be sent.",
-        "invalidScheduledAt": "Invalid scheduledAt value.",
-        "futureScheduledAt": "scheduledAt must be a future date.",
-        "scheduled": "Campaign scheduled successfully.",
-        "queued": "Campaign queued for sending.",
-        "dispatchFailed": "Failed to dispatch campaign."
-      },
-      "suspiciousComments": {
-        "notFound": "Suspicious comment not found."
-      }
-    },
-    "contact": {
-      "nameRequired": "Please enter your name.",
-      "nameTooLong": "Name is too long (max. 80 characters).",
-      "topicInvalid": "Pick a valid topic.",
-      "messageRequired": "Please write a message.",
-      "messageTooShort": "The message needs at least 10 characters.",
-      "messageTooLong": "Message is too long (max. 2000 characters).",
-      "rateLimited": "Too many messages in a short time. Please try again later.",
-      "captchaFailed": "I couldn't confirm you're not a robot. Reload the page and try again."
+      "button": "Support"
     }
   },
   "admin": {
@@ -1104,7 +755,6 @@
       "description": "Manage users who cannot comment.",
       "loading": "Loading...",
       "empty": "No banned users.",
-      "bannedAt": "Banned on {date}",
       "unban": "Unban",
       "searchPlaceholder": "Search by username or email",
       "viewReason": "View reason",
@@ -1306,8 +956,6 @@
       "template": {
         "previewLabel": "Template preview",
         "hideHtml": "Hide",
-        "showHtml": "View HTML",
-        "readArticle": "Read article ->",
         "showPreview": "Show preview"
       },
       "subject": {
@@ -1498,8 +1146,7 @@
     "card": {
       "published": "Published at {date}",
       "readingTime": "{minutes} min read",
-      "readMore": "Read more",
-      "authorProfile": "View @{username}'s profile"
+      "readMore": "Read more"
     },
     "carousel": {
       "previousSlide": "Previous slide",
@@ -1601,21 +1248,6 @@
       }
     }
   },
-  "footerNewsletter": {
-    "title": "Stay in the loop",
-    "description": "Get updates about posts, projects, and ideas straight to your inbox.",
-    "placeholder": "Enter your email",
-    "submit": "Subscribe",
-    "submitting": "Sending...",
-    "success": {
-      "title": "Check your email!",
-      "description": "We sent you a confirmation link."
-    },
-    "errors": {
-      "generic": "Something went wrong.",
-      "connection": "Connection error. Please try again."
-    }
-  },
   "common": {
     "dialog": {
       "close": "Close"
@@ -1644,23 +1276,6 @@
     "errors": {
       "generic": "Something went wrong. Please try again.",
       "connection": "Connection error. Please try again."
-    }
-  },
-  "unsubscribeModal": {
-    "trigger": "Unsubscribe",
-    "title": "Unsubscribe from the newsletter",
-    "description": "Enter your email to receive a confirmation link.",
-    "emailLabel": "Email",
-    "emailPlaceholder": "your@email.com",
-    "cancel": "Cancel",
-    "submit": "Send confirmation",
-    "close": "Close",
-    "success": {
-      "message": "Confirmation email sent successfully! Check your inbox and click the link to finish unsubscribing."
-    },
-    "errors": {
-      "generic": "Could not process your request.",
-      "connection": "Connection error. Please try again later."
     }
   },
   "cookieBanner": {
@@ -1701,37 +1316,6 @@
         "manage": {
           "title": "5. How to manage cookies",
           "body": "Most browsers allow you to control cookies through preference settings. Limiting cookies may affect your browsing experience and prevent the website from remembering personalized settings."
-        }
-      }
-    },
-    "terms": {
-      "title": "Terms and Conditions",
-      "updatedAt": "Last updated: February 2026",
-      "close": "Close",
-      "sections": {
-        "network": {
-          "title": "Important - Check the network",
-          "body": "Before buying a ticket, make sure the lottery is running on the same network as your wallet. Purchases made on the wrong network are not refundable and are not the platform's responsibility."
-        },
-        "service": {
-          "title": "1. Nature of the service",
-          "body": "This platform is a decentralized lottery operating on the blockchain, designed to provide transparency and fairness in every drawing. The service is currently in a testing period on the Sepolia network."
-        },
-        "testing": {
-          "title": "2. Testing period",
-          "body": "During validation, all transactions use test tokens (Sepolia ETH) that have no real economic value. No real monetary value is involved during this phase."
-        },
-        "fairness": {
-          "title": "3. Fairness and transparency",
-          "body": "All drawings are performed transparently on the blockchain. Results can be verified by anyone through the smart contract. The platform uses verifiable randomness sources to keep drawings fair."
-        },
-        "userResponsibility": {
-          "title": "4. User responsibility",
-          "body": "Users are responsible for ensuring they are connected to the correct network before making any transaction. The platform is not responsible for losses caused by user mistakes, including sending funds to incorrect addresses."
-        },
-        "changes": {
-          "title": "5. Changes to the terms",
-          "body": "The platform reserves the right to modify these terms at any time. Changes will be communicated through the platform. Continued use of the service after changes means acceptance of the updated terms."
         }
       }
     }
