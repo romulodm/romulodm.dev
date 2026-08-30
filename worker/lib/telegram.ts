@@ -110,6 +110,14 @@ export async function notifyContactFlood(flood: {
  * e mostrava uma data que nao era a dos numeros.
  */
 export async function sendDailyStatus(): Promise<void> {
+    await notifyBot(await buildDailyStatus());
+}
+
+/**
+ * Monta o payload sem enviar — o que permite conferir os numeros em
+ * desenvolvimento sem gastar uma mensagem no chat. Ver `scripts/ga4-check.ts`.
+ */
+export async function buildDailyStatus(): Promise<Record<string, unknown>> {
     const date = yesterdayDate();
     const stats = await getDailyStats(date);
 
@@ -137,7 +145,7 @@ export async function sendDailyStatus(): Promise<void> {
         prisma.post.aggregate({ _sum: { views: true } }),
     ]);
 
-    await notifyBot({
+    return {
         type: "daily-status",
         date,
         totalSubscribers,
@@ -161,5 +169,5 @@ export async function sendDailyStatus(): Promise<void> {
         avgTimeSec: stats.avgSessionDuration,
         likes,
         comments,
-    });
+    };
 }
