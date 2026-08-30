@@ -9,6 +9,8 @@
   "scripts": {
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
+    "ga4:check": "npm --prefix worker run ga4:check",
+    "ga4:payload": "npm --prefix worker run ga4:payload",
     "typecheck": "npm run typecheck:portfolio && npm run typecheck:worker",
     "typecheck:portfolio": "npm --prefix portfolio run typecheck",
     "typecheck:worker": "npm --prefix worker run typecheck",
