@@ -5,7 +5,7 @@ export const SUPPORTED_LOCALES = [
   { code: 'es', label: 'Español', flag: '🇪🇸', shortLabel: 'ES' },
 ] as const
 
-export const LOCALE_FORMAT_MAP = {
+const LOCALE_FORMAT_MAP = {
   pt: 'pt-BR',
   en: 'en-US',
   es: 'es-ES',

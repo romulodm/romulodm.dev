@@ -14,7 +14,7 @@ import rehypeExternalLinks from 'rehype-external-links'
 import rehypeStringify from 'rehype-stringify'
 import { getLegalConfig, type LegalConfig } from '@/content/legal/config'
 
-export const LEGAL_DOCUMENTS = ['terms', 'privacy-policy'] as const
+const LEGAL_DOCUMENTS = ['terms', 'privacy-policy'] as const
 export type LegalDocumentSlug = (typeof LEGAL_DOCUMENTS)[number]
 
 /** Mapeia o locale da rota para o sufixo do arquivo Markdown. */
@@ -28,7 +28,7 @@ const FALLBACK_FILE_LOCALE = 'en-US'
 
 const LEGAL_DIR = path.join(process.cwd(), 'content', 'legal')
 
-export interface LegalDocument {
+interface LegalDocument {
   /** HTML sanitizado, pronto para injeção. */
   html: string
   /** Título extraído do primeiro `# ` do arquivo. */

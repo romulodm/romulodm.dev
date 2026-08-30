@@ -1,16 +1,16 @@
 // lib/sentry.ts
 
-export const SENTRY_DSN = process.env.NEXT_PUBLIC_SENTRY_DSN ?? "";
+const SENTRY_DSN = process.env.NEXT_PUBLIC_SENTRY_DSN ?? "";
 
 /** true quando ha DSN configurado. Fora isso, todo o SDK e no-op. */
 export const sentryEnabled = SENTRY_DSN.length > 0;
 
 /** Ambiente logico reportado ao Sentry (dev / production / preview). */
-export const sentryEnvironment =
+const sentryEnvironment =
   process.env.NEXT_PUBLIC_SENTRY_ENVIRONMENT ?? process.env.NODE_ENV ?? "development";
 
 /** Release — preenchido no build via SENTRY_RELEASE (ver Dockerfile). */
-export const sentryRelease = process.env.NEXT_PUBLIC_SENTRY_RELEASE || undefined;
+const sentryRelease = process.env.NEXT_PUBLIC_SENTRY_RELEASE || undefined;
 
 function parseRate(value: string | undefined, fallback: number) {
   const parsed = Number(value);
@@ -27,7 +27,7 @@ export const tracesSampleRate = parseRate(
  * Erros de rede/abort do browser e ruido de extensao. Nao sao bugs da
  * aplicacao e so consomem a cota do plano free.
  */
-export const ignoredErrors = [
+const ignoredErrors = [
   "AbortError",
   "Failed to fetch",
   "NetworkError when attempting to fetch resource",

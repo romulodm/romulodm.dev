@@ -26,7 +26,7 @@ type Entry<T> = { data: T; at: number };
 const memory = new Map<string, Entry<unknown>>();
 const inflight = new Map<string, Promise<unknown>>();
 
-export type CachedOptions<T> = {
+type CachedOptions<T> = {
   key: string;
   /** Idade máxima, em segundos, para servir sem recalcular. */
   ttlSeconds: number;
@@ -39,7 +39,7 @@ export type CachedOptions<T> = {
   ttlForResult?: (data: T) => number;
 };
 
-export type CachedResult<T> = {
+type CachedResult<T> = {
   data: T;
   /** Momento em que o valor foi de fato calculado. */
   computedAt: number;

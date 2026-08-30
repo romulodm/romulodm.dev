@@ -4,7 +4,7 @@ import { authOptions } from "./auth";
 
 // ── Tipos ────────────────────────────────────────────────────────────────────
 
-export type RouteAuthResult =
+type RouteAuthResult =
     | {
         ok: true;
         session: Session;

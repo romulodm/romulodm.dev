@@ -22,7 +22,7 @@ import { getRedis } from "@/lib/redis";
  * - "closed" → block. Use on auth and payments, where being unable to count
  *              is reason enough to refuse.
  */
-export type RateLimitFailMode = "open" | "closed";
+type RateLimitFailMode = "open" | "closed";
 
 /**
  * A rate limit check is infrastructure: it must never cost more than the work

@@ -6,7 +6,7 @@ function internalAuthHeaders(): HeadersInit {
     return secret ? { Authorization: `Bearer ${secret}` } : {}
 }
 
-export interface GoSearchHit {
+interface GoSearchHit {
     slug: string
     title: string
     summary: string

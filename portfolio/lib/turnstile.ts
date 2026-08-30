@@ -27,7 +27,7 @@ const VERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
  */
 const VERIFY_TIMEOUT_MS = 5000;
 
-export type TurnstileVerdict =
+type TurnstileVerdict =
   | { ok: true }
   | { ok: false; reason: string };
 

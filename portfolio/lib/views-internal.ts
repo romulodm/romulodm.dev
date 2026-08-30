@@ -45,7 +45,7 @@ const VIEW_IP_WINDOW_SECONDS = 60;
 const POST_IDS_KEY = "posts:published:ids";
 const POST_IDS_TTL_SECONDS = 300;
 
-export type ViewRecordResult = {
+type ViewRecordResult = {
   counted: boolean;
   reason?: "cooldown" | "rate_limited" | "invalid_post";
 };
@@ -55,7 +55,7 @@ export type ViewRecordResult = {
  * lowercase alphanumerics. Rejecting anything else here means garbage input
  * never reaches Redis or Postgres.
  */
-export function isValidPostId(postId: unknown): postId is string {
+function isValidPostId(postId: unknown): postId is string {
   return typeof postId === "string" && /^c[a-z0-9]{20,30}$/.test(postId);
 }
 
