@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "tsx watch index.ts",
+    "ga4:check": "tsx scripts/ga4-check.ts",
+    "ga4:payload": "tsx scripts/ga4-check.ts --payload",
     "build": "tsc",
     "typecheck": "tsc --noEmit",
     "start": "node dist/index.js",

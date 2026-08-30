@@ -34,6 +34,44 @@ function getClient(): BetaAnalyticsDataClient {
 }
 
 /**
+ * Igual a `getDailyStats`, mas PROPAGA o erro.
+ *
+ * Existe porque o `catch` logo abaixo é indistinguível: "não configurado",
+ * "credencial errada", "service account sem acesso" e "o dia teve zero acesso
+ * mesmo" saem todos como os mesmos zeros. Isso é o comportamento certo em
+ * produção — analytics não pode derrubar a notificação diária — e é exatamente
+ * o que impede diagnosticar qualquer coisa. Quem quiser saber o motivo chama
+ * esta versão; ver `scripts/ga4-check.ts`.
+ */
+export async function fetchDailyStats(
+    startDate: string,
+    endDate: string = startDate,
+): Promise<DailyStats> {
+    const propertyId = process.env.GA4_PROPERTY_ID;
+    if (!propertyId) throw new Error("GA4_PROPERTY_ID não configurado");
+
+    const [response] = await getClient().runReport({
+        property: `properties/${propertyId}`,
+        metrics: [
+            { name: "activeUsers" },
+            { name: "screenPageViews" },
+            { name: "sessions" },
+            { name: "averageSessionDuration" },
+        ],
+        dateRanges: [{ startDate, endDate }],
+    });
+
+    const m = response.rows?.[0]?.metricValues ?? [];
+
+    return {
+        visitors: Number(m[0]?.value ?? 0),
+        pageviews: Number(m[1]?.value ?? 0),
+        sessions: Number(m[2]?.value ?? 0),
+        avgSessionDuration: Math.round(Number(m[3]?.value ?? 0)),
+    };
+}
+
+/**
  * Totais de um dia específico (YYYY-MM-DD) ou de um intervalo.
  * Retorna zeros se o GA4 não estiver configurado — as notificações não devem
  * quebrar por causa de analytics.
