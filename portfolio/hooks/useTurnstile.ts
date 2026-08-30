@@ -111,6 +111,12 @@ export interface UseTurnstileResult {
   token: string;
   /** `true` quando dá para enviar — ou quando o Turnstile não está configurado. */
   ready: boolean;
+  /**
+   * `true` quando o desafio falhou ou expirou sem token novo. O botão de
+   * envio continua desabilitado (`ready` é `false`), mas sem isto a pessoa
+   * não tinha como saber que não era só demora — parecia um botão quebrado.
+   */
+  error: boolean;
   /** Passe para o `onLoad` do <Script>. Idempotente. */
   render: () => void;
   /** Chame em TODO caminho de erro do submit. Ver comentário abaixo. */
@@ -131,6 +137,13 @@ export function useTurnstile(
   const hostRef = useRef<HTMLDivElement>(null);
   const widgetIdRef = useRef<string | null>(null);
   const [token, setToken] = useState('');
+  /**
+   * `true` quando o desafio falhou ou expirou. Sem isto o botão de envio
+   * ficava desabilitado para sempre sem nenhuma pista — `error-callback` e
+   * `expired-callback` só zeravam o token, silenciosamente. Quem consome o
+   * hook decide como mostrar isto (ex.: sugerir recarregar a página).
+   */
+  const [hasError, setHasError] = useState(false);
   /*
    * Com `appearance: 'interaction-only'` a caixa nasce escondida e só aparece
    * se a Cloudflare precisar de um clique. Nos outros modos ela já nasce
@@ -173,12 +186,21 @@ export function useTurnstile(
       appearance,
       language: TURNSTILE_LANGUAGE[locale] ?? 'auto',
       ...(action ? { action } : {}),
-      callback: (value) => setToken(value),
+      callback: (value) => {
+        setToken(value);
+        setHasError(false);
+      },
       // O token vale 5 minutos. Se a pessoa abriu o formulário e voltou depois,
       // limpar o estado força um desafio novo — melhor que um submit que
       // falharia com `timeout-or-duplicate` sem explicação.
-      'expired-callback': () => setToken(''),
-      'error-callback': () => setToken(''),
+      'expired-callback': () => {
+        setToken('');
+        setHasError(true);
+      },
+      'error-callback': () => {
+        setToken('');
+        setHasError(true);
+      },
       // Estes dois são a fonte da verdade sobre a caixa estar ocupando espaço.
       // A alternativa seria medir a altura do container com um ResizeObserver,
       // mas isso é adivinhar como a Cloudflare esconde o widget — detalhe que
@@ -218,6 +240,7 @@ export function useTurnstile(
    */
   const reset = useCallback(() => {
     setToken('');
+    setHasError(false);
     if (widgetIdRef.current !== null) window.turnstile?.reset(widgetIdRef.current);
   }, []);
 
@@ -225,6 +248,7 @@ export function useTurnstile(
     hostRef,
     token,
     visible,
+    error: hasError,
     // Sem site key configurada o widget nunca renderiza e nenhum token aparece.
     // Nesse caso não bloqueamos o botão: quem decide é o servidor, que vai
     // recusar — travar o botão só esconderia o problema de configuração.
