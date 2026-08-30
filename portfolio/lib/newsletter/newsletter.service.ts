@@ -336,21 +336,3 @@ export async function dispatchCampaign(campaignId: string, scheduledAt?: Date) {
 
   return { dispatched: recipients.length };
 }
-
-// ── Campaign completion ───────────────────────────────────────────────────────
-
-export async function markCampaignCompleteIfDone(campaignId: string) {
-  const campaign = await prisma.campaign.findUnique({
-    where: { id: campaignId },
-    select: { id: true, status: true, totalRecipients: true, sentCount: true, failedCount: true },
-  });
-  if (!campaign || campaign.status !== "SENDING") return;
-
-  const done = campaign.sentCount + campaign.failedCount;
-  if (done >= campaign.totalRecipients) {
-    await prisma.campaign.update({
-      where: { id: campaignId },
-      data: { status: "SENT", sentAt: new Date() },
-    });
-  }
-}

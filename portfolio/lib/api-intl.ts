@@ -84,7 +84,3 @@ export async function getApiTranslator(request: Request, namespace: string = "ap
     namespace,
   });
 }
-
-export function isSupportedApiLocale(locale: string): locale is SupportedApiLocale {
-  return SUPPORTED_API_LOCALES.includes(locale as SupportedApiLocale);
-}

@@ -84,5 +84,3 @@ export function createContactSchema(t: Translator) {
     turnstileToken: z.string().min(10).max(2048),
   });
 }
-
-export type ContactInput = z.infer<ReturnType<typeof createContactSchema>>;
