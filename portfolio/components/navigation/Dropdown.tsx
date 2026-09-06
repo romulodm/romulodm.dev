@@ -12,6 +12,7 @@ import Link from "next/link";
 import { signOut } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { navItems } from "./Navbar";
+import { moreItems } from "./moreItems";
 import { ThemeMenuItems } from "./ThemeMenuItems";
 
 interface DropdownProps {
@@ -80,6 +81,22 @@ export function Dropdown({ user, onOpenLanguageModal }: DropdownProps) {
                         {navItems.map((item) => (
                             <DropdownMenuItem key={item.href} asChild>
                                 <Link href={item.href} className="flex items-center gap-2 text-sm">
+                                    {item.icon}
+                                    {item.label}
+                                </Link>
+                            </DropdownMenuItem>
+                        ))}
+
+                        {/* Os links do "More" — o painel do desktop nao aparece no mobile
+                            (hidden md:block em NavMore), entao eles entram achatados aqui. */}
+                        {moreItems.map((item) => (
+                            <DropdownMenuItem key={item.href} asChild>
+                                <Link
+                                    href={item.href}
+                                    target={item.external ? "_blank" : undefined}
+                                    rel={item.external ? "noopener noreferrer" : undefined}
+                                    className="flex items-center gap-2 text-sm"
+                                >
                                     {item.icon}
                                     {item.label}
                                 </Link>
