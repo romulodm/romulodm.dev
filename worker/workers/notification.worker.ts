@@ -19,6 +19,9 @@
  *   "retry-onchain"        — Retries pending on-chain donations.
  *   "reconcile-donations"  — Safety net for a PIX/Stripe webhook that never arrived.
  *   "audit-donations"      — Previous day's two-way settlement check.
+ *   "retry-transactional-email" — Retries transactional email jobs still failed after
+ *                            the BullMQ retry burst. Repeatable, via
+ *                            `scheduleTransactionalEmailSweep` (email.worker.ts).
  *
  * Like the other workers, nothing is instantiated at module level.
  * Call `startNotificationWorker(redis)` and `scheduleDailyStatus(redis)`
@@ -47,6 +50,7 @@ import {
 import { flushViewsBuffer } from "./views.worker";
 import { retryPendingOnchain } from "./onchain.worker";
 import { auditDonations, reconcilePendingDonations } from "./donations.worker";
+import { sweepFailedTransactionalEmails } from "./email.worker";
 
 // ── Worker factory ────────────────────────────────────────────────────────────
 
@@ -100,6 +104,13 @@ export function startNotificationWorker(redis: Redis) {
         // Conciliacao contabil do dia anterior, nos dois sentidos.
         case "audit-donations":
           await auditDonations();
+          break;
+
+        // Rede de seguranca do email transacional: tenta de novo os jobs que
+        // ja esgotaram os 3 retries do BullMQ mas ainda estao dentro da
+        // janela do sweep. Ver sweepFailedTransactionalEmails em email.worker.ts.
+        case "retry-transactional-email":
+          await sweepFailedTransactionalEmails(redis);
           break;
 
         // Mensagem nova no formulario de contato. A mensagem ja esta no
