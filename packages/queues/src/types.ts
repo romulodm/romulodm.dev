@@ -59,7 +59,8 @@ export type NotificationJob =
         topic: string;
         preview: string;
     }
-    | { type: "contact-flood"; max: number; windowMinutes: number };
+    | { type: "contact-flood"; max: number; windowMinutes: number }
+    | { type: "retry-transactional-email" };
 
 export type BackupJob =
     | { type: "create-backup"; requestedBy: string };

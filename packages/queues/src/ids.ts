@@ -5,6 +5,7 @@ import {
     RETRY_ONCHAIN_JOB_NAME,
     RECONCILE_DONATIONS_JOB_NAME,
     AUDIT_DONATIONS_JOB_NAME,
+    RETRY_TRANSACTIONAL_EMAIL_JOB_NAME,
 } from "./constants";
 import type {
     TransactionalEmailJob,
@@ -51,6 +52,8 @@ export function buildNotificationJobId(job: NotificationJob): string {
             return `notification:${RETRY_ONCHAIN_JOB_NAME}`;
         case "reconcile-donations":
             return `notification:${RECONCILE_DONATIONS_JOB_NAME}`;
+        case "retry-transactional-email":
+            return `notification:${RETRY_TRANSACTIONAL_EMAIL_JOB_NAME}`;
         case "audit-donations":
             return `notification:${AUDIT_DONATIONS_JOB_NAME}`;
         // O id da mensagem da idempotencia de graca: um retry do enqueue nao
