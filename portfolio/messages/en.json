@@ -1,4 +1,23 @@
 {
+  "api": {
+    "common": {
+      "emailRequired": "Enter your email.",
+      "emailInvalid": "That email doesn't look valid.",
+      "invalidBody": "I couldn't read the data you sent.",
+      "invalidRequest": "Check the fields and try again.",
+      "internalError": "Something broke on my end. Try again in a moment.",
+      "rateLimited": "Too many tries in a row. Give it a minute before trying again.",
+      "unauthorized": "You need to sign in to do that.",
+      "forbidden": "You don't have access to this.",
+      "notFound": "I couldn't find that."
+    },
+    "contact": {
+      "rateLimited": "You've already sent a few messages. Try again later.",
+      "captchaFailed": "I couldn't send your message. Try again in a moment.",
+      "nameRequired": "Write your name.",
+      "messageTooShort": "Write a bit more in your message."
+    }
+  },
   "ResumePDFButton": {
     "view": "View",
     "download": "Download"
@@ -104,8 +123,7 @@
     "topic-OTHER": "Other",
     "error-generic": "I couldn't send your message. Please try again in a moment.",
     "form-topic-placeholder": "Select a topic",
-    "privacy-notice": "Your details are used only to answer this message. They never become a mailing list and are never sold. Details in the <link>privacy policy</link>.",
-    "verify-error": "I couldn't automatically confirm you're not a robot. Reload the page and try again?"
+    "privacy-notice": "Your details are used only to answer this message. They never become a mailing list and are never sold. Details in the <link>privacy policy</link>."
   },
   "vision": {
     "software": {
@@ -151,8 +169,7 @@
       "genericError": "Something went wrong while sending. Mind trying again in a moment?",
       "thanksShort": "Thank you!",
       "thanksLong": "Thanks for reaching out!",
-      "thanksBody": "I'll get back to you as soon as I can.",
-      "verifyError": "I couldn't automatically confirm you're not a robot. Reload the page and try again?"
+      "thanksBody": "I'll get back to you as soon as I can."
     }
   },
   "home": {
@@ -170,7 +187,8 @@
       "preview": "Visit",
       "public": "public repositories",
       "eyebrow": "Projects",
-      "description": "Things I built alone, with a team and out of pure curiosity. Open source whenever possible."
+      "description": "Things I built alone, with a team and out of pure curiosity. Open source whenever possible.",
+      "downloadsWeek": "/week"
     },
     "vision": {
       "title": "Vision on",

@@ -1,4 +1,23 @@
 {
+  "api": {
+    "common": {
+      "emailRequired": "Informe seu e-mail.",
+      "emailInvalid": "Esse e-mail não parece válido.",
+      "invalidBody": "Não consegui ler os dados enviados.",
+      "invalidRequest": "Confere os campos e tenta de novo.",
+      "internalError": "Algo quebrou do meu lado. Tenta de novo em instantes.",
+      "rateLimited": "Muitas tentativas seguidas. Espera um pouco antes de tentar de novo.",
+      "unauthorized": "Você precisa entrar para fazer isso.",
+      "forbidden": "Você não tem acesso a isso.",
+      "notFound": "Não encontrei isso."
+    },
+    "contact": {
+      "rateLimited": "Você já mandou algumas mensagens agora há pouco. Tenta de novo mais tarde.",
+      "captchaFailed": "Não consegui enviar sua mensagem. Tenta de novo em instantes.",
+      "nameRequired": "Escreve seu nome.",
+      "messageTooShort": "Escreve um pouco mais na mensagem."
+    }
+  },
   "ResumePDFButton": {
     "view": "Visualizar",
     "download": "Baixar"
@@ -104,8 +123,7 @@
     "topic-OTHER": "Outro",
     "error-generic": "Não consegui enviar sua mensagem. Tente de novo em instantes.",
     "form-topic-placeholder": "Selecione um assunto",
-    "privacy-notice": "Uso suas informações só para responder esta mensagem. Elas não viram lista de e-mail e nunca são vendidas. Detalhes na <link>política de privacidade</link>.",
-    "verify-error": "Não consegui confirmar automaticamente que você não é um robô. Recarrega a página e tenta de novo?"
+    "privacy-notice": "Uso suas informações só para responder esta mensagem. Elas não viram lista de e-mail e nunca são vendidas. Detalhes na <link>política de privacidade</link>."
   },
   "vision": {
     "software": {
@@ -151,8 +169,7 @@
       "genericError": "Algo deu errado no envio. Tenta de novo em alguns instantes?",
       "thanksShort": "Obrigado!",
       "thanksLong": "Obrigado por escrever!",
-      "thanksBody": "Respondo assim que possível.",
-      "verifyError": "Não consegui confirmar automaticamente que você não é um robô. Recarrega a página e tenta de novo?"
+      "thanksBody": "Respondo assim que possível."
     }
   },
   "home": {
@@ -170,7 +187,8 @@
       "preview": "Acessar",
       "public": "repositórios públicos",
       "eyebrow": "Projetos",
-      "description": "Coisas que eu construí sozinho, em equipe e por pura curiosidade. Código aberto sempre que dá."
+      "description": "Coisas que eu construí sozinho, em equipe e por pura curiosidade. Código aberto sempre que dá.",
+      "downloadsWeek": "/semana"
     },
     "vision": {
       "title": "Visão sobre",
