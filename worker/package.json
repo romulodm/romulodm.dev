@@ -26,15 +26,14 @@
     "dockerode": "^4.0.10",
     "dotenv": "^16.0.0",
     "ioredis": "^5.0.0",
-    "nodemailer": "^8.0.5",
+    "nodemailer": "^10.0.9",
     "stripe": "^21.0.1",
     "systeminformation": "^5.31.5",
     "viem": "^2.55.11"
   },
   "devDependencies": {
     "@types/dockerode": "^3.3.38",
-    "@types/node": "^20.0.0",
-    "@types/nodemailer": "^6.4.0",
+    "@types/node": "^22.0.0",
     "prisma": "^5.0.0",
     "tsx": "^4.0.0",
     "typescript": "^5.0.0"
