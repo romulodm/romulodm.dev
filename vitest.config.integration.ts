@@ -1,6 +1,6 @@
 import { defineConfig } from "vitest/config";
 
-import { vitestAlias, workspaceRoot } from "./testing/vitest.shared";
+import { vitestAlias, workspaceRoot } from "./testing/vitest.shared.ts";
 
 export default defineConfig({
   resolve: {
