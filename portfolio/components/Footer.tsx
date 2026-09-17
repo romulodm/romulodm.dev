@@ -23,7 +23,16 @@ export function Footer() {
         <footer
             className="relative z-[5] overflow-hidden pt-10 px-4 sm:px-5 mt-10"
             style={{
-                backgroundColor: '#5A7CE2',
+                backgroundColor: '#8E757B',
+                backgroundImage: `
+                    radial-gradient(140% 75% at 50% 122%, #B08F93 0%, rgba(176, 143, 147, 0) 58%),
+                    linear-gradient(180deg in oklab,
+                        #2B3239 0%,
+                        #333940 34%,
+                        #4A474C 56%,
+                        #6E5F65 76%,
+                        #8E757B 100%)
+                `,
                 borderRadius: '56px 56px 0 0',
                 fontFamily: "'DM Sans', sans-serif",
             }}
