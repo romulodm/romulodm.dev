@@ -111,12 +111,6 @@ export interface UseTurnstileResult {
   token: string;
   /** `true` quando dá para enviar — ou quando o Turnstile não está configurado. */
   ready: boolean;
-  /**
-   * `true` quando o desafio falhou ou expirou sem token novo. O botão de
-   * envio continua desabilitado (`ready` é `false`), mas sem isto a pessoa
-   * não tinha como saber que não era só demora — parecia um botão quebrado.
-   */
-  error: boolean;
   /** Passe para o `onLoad` do <Script>. Idempotente. */
   render: () => void;
   /** Chame em TODO caminho de erro do submit. Ver comentário abaixo. */
@@ -138,12 +132,17 @@ export function useTurnstile(
   const widgetIdRef = useRef<string | null>(null);
   const [token, setToken] = useState('');
   /**
-   * `true` quando o desafio falhou ou expirou. Sem isto o botão de envio
-   * ficava desabilitado para sempre sem nenhuma pista — `error-callback` e
-   * `expired-callback` só zeravam o token, silenciosamente. Quem consome o
-   * hook decide como mostrar isto (ex.: sugerir recarregar a página).
+   * `true` quando o desafio falhou (rede fora, domínio de fora da lista da
+   * sitekey, extensão bloqueando o iframe) ou o token expirou.
+   *
+   * **Isto nunca vira mensagem na tela.** Não há nada que o visitante possa
+   * fazer com essa informação, e um aviso sobre "confirmar que você não é um
+   * robô" surgindo sozinho num formulário ainda em branco assusta mais do que
+   * o problema que descreve. O único efeito é liberar o botão (ver `ready`):
+   * a pessoa envia, o servidor recusa sem token — `/api/contact` falha closed
+   * — e aí sim aparece um erro, genérico, depois de uma ação dela.
    */
-  const [hasError, setHasError] = useState(false);
+  const [failed, setFailed] = useState(false);
   /*
    * Com `appearance: 'interaction-only'` a caixa nasce escondida e só aparece
    * se a Cloudflare precisar de um clique. Nos outros modos ela já nasce
@@ -188,18 +187,18 @@ export function useTurnstile(
       ...(action ? { action } : {}),
       callback: (value) => {
         setToken(value);
-        setHasError(false);
+        setFailed(false);
       },
       // O token vale 5 minutos. Se a pessoa abriu o formulário e voltou depois,
       // limpar o estado força um desafio novo — melhor que um submit que
       // falharia com `timeout-or-duplicate` sem explicação.
       'expired-callback': () => {
         setToken('');
-        setHasError(true);
+        setFailed(true);
       },
       'error-callback': () => {
         setToken('');
-        setHasError(true);
+        setFailed(true);
       },
       // Estes dois são a fonte da verdade sobre a caixa estar ocupando espaço.
       // A alternativa seria medir a altura do container com um ResizeObserver,
@@ -229,6 +228,9 @@ export function useTurnstile(
       // O widget novo nasce escondido; sem zerar isto, uma troca de tema feita
       // com a caixa aberta deixaria a margem sobrando.
       setVisible(appearance !== 'interaction-only');
+      // O widget novo começa do zero; carregar a falha do anterior manteria o
+      // botão liberado sem motivo.
+      setFailed(false);
     };
   }, [render, appearance]);
 
@@ -240,7 +242,18 @@ export function useTurnstile(
    */
   const reset = useCallback(() => {
     setToken('');
-    setHasError(false);
+    /*
+     * `failed` NÃO é limpo aqui, de propósito.
+     *
+     * Os dois formulários chamam `reset()` no caminho de erro do submit. Se o
+     * reset zerasse `failed`, `ready` voltaria a depender só do token — que
+     * acabou de ser zerado — e o botão morreria logo depois da primeira
+     * tentativa, exatamente na hora em que a pessoa quer tentar de novo.
+     *
+     * Quem limpa `failed` é o `callback`, quando a Cloudflare devolve um token
+     * novo. Se o desafio continuar falhando, ele fica `true` e o botão segue
+     * liberado — o servidor recusa, que é onde a decisão pertence.
+     */
     if (widgetIdRef.current !== null) window.turnstile?.reset(widgetIdRef.current);
   }, []);
 
@@ -248,11 +261,13 @@ export function useTurnstile(
     hostRef,
     token,
     visible,
-    error: hasError,
     // Sem site key configurada o widget nunca renderiza e nenhum token aparece.
     // Nesse caso não bloqueamos o botão: quem decide é o servidor, que vai
     // recusar — travar o botão só esconderia o problema de configuração.
-    ready: !SITE_KEY || token !== '',
+    //
+    // `failed` segue a mesma regra. Um botão que nunca destrava é pior que um
+    // envio recusado: o envio recusado a pessoa entende e pode repetir.
+    ready: !SITE_KEY || failed || token !== '',
     render,
     reset,
     scriptSrc: TURNSTILE_SCRIPT_SRC,
