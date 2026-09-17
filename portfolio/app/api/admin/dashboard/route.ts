@@ -3,6 +3,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { prisma } from '@romulo/database';
+import { AVATAR_SELECT } from '@/lib/avatar';
 import { requireAdmin } from '@/lib/auth-helpers';
 
 export const dynamic = 'force-dynamic';
@@ -259,7 +260,7 @@ export async function GET(req: NextRequest) {
             take: 8,
             select: {
                 id: true, bodyMd: true, score: true, createdAt: true, editedAt: true,
-                author: { select: { id: true, username: true, image: true, banned: true } },
+                author: { select: { id: true, banned: true, ...AVATAR_SELECT } },
                 post: {
                     select: {
                         slug: true,
