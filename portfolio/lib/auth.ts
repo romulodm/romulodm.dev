@@ -6,6 +6,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { prisma } from "@romulo/database";
 import { headers } from "next/headers";
+import { AVATAR_SELECT, DEFAULT_AVATAR_STYLE, generateAvatarSeed } from "./avatar";
 import { getRequestIp, rateLimit } from "./rate-limit";
 import { generateUniqueUsername } from "./username";
 
@@ -62,6 +63,13 @@ async function handleOAuthSignIn(user: any, account: any, provider: OAuthProvide
         username,
         image: user.image ?? null,
         emailVerified: true,
+        // Todo usuario OAuth ja nasce com um seedicon pronto, mesmo sem pedir:
+        // assim o modal do perfil tem algo para mostrar na primeira abertura.
+        // Mas `avatarSource` fica em PROVIDER quando existe foto, para ninguem
+        // trocar de cara sozinho ao criar a conta.
+        avatarSeed: generateAvatarSeed(),
+        avatarStyle: DEFAULT_AVATAR_STYLE,
+        avatarSource: user.image ? "PROVIDER" : "SEEDICON",
       },
       select: { id: true, admin: true, username: true },
     });
@@ -138,12 +146,11 @@ export const authOptions: NextAuthOptions = {
           select: {
             id: true,
             email: true,
-            username: true,
-            image: true,
             admin: true,
             provider: true,
             password: true,
             banned: true,
+            ...AVATAR_SELECT,
           },
         });
 
@@ -164,6 +171,9 @@ export const authOptions: NextAuthOptions = {
           provider: user.provider,
           admin: user.admin,
           username: user.username,
+          avatarSeed: user.avatarSeed,
+          avatarStyle: user.avatarStyle,
+          avatarSource: user.avatarSource,
         };
       },
     }),
@@ -178,24 +188,50 @@ export const authOptions: NextAuthOptions = {
       return true;
     },
 
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger }) {
       if (user) {
         token.id = user.id;
         token.provider = (user as any).provider;
         token.admin = (user as any).admin;
         token.username = (user as any).username ?? null;
+        token.avatarSeed = (user as any).avatarSeed ?? null;
+        token.avatarStyle = (user as any).avatarStyle ?? null;
+        token.avatarSource = (user as any).avatarSource ?? null;
       }
 
-      if (token.email && (!token.id || !token.provider)) {
+      // Recarrega do banco em tres situacoes:
+      //
+      //  - token sem id/provider — o caso que ja existia aqui;
+      //  - token emitido antes do avatar existir, sem avatarSeed. Como este
+      //    callback roda a cada leitura de sessao, o backfill acontece antes de
+      //    qualquer cliente ver uma sessao incompleta;
+      //  - trigger "update", que o cliente dispara via useSession().update()
+      //    depois de salvar o avatar. E isto que faz a navbar trocar de imagem
+      //    sem recarregar a pagina.
+      //
+      // De proposito NAO lemos o payload de update(): ele vem do cliente, e
+      // confiar nele deixaria qualquer um escrever seed e estilo arbitrarios no
+      // proprio token — divergindo do banco. A fonte da verdade e sempre o
+      // banco, e update() serve so como sinal de "va reler".
+      const staleToken = !token.id || !token.provider || !token.avatarSeed;
+
+      if (token.email && (trigger === "update" || staleToken)) {
         const dbUser = await prisma.user.findUnique({
           where: { email: token.email },
-          select: { id: true, provider: true, admin: true, username: true },
+          select: { id: true, provider: true, admin: true, ...AVATAR_SELECT },
         });
         if (dbUser) {
           token.id = dbUser.id;
           token.provider = dbUser.provider;
           token.admin = dbUser.admin;
           token.username = dbUser.username;
+          // `picture` e o nome que o NextAuth usa no token para o que vira
+          // session.user.image. Ressincronizado junto para o caso da foto do
+          // provider ter mudado no banco.
+          token.picture = dbUser.image;
+          token.avatarSeed = dbUser.avatarSeed;
+          token.avatarStyle = dbUser.avatarStyle;
+          token.avatarSource = dbUser.avatarSource;
         }
       }
 
@@ -208,6 +244,9 @@ export const authOptions: NextAuthOptions = {
         (session.user as any).provider = token.provider as any;
         (session.user as any).admin = Boolean(token.admin);
         (session.user as any).username = (token.username as string) ?? null;
+        (session.user as any).avatarSeed = (token.avatarSeed as string) ?? null;
+        (session.user as any).avatarStyle = (token.avatarStyle as string) ?? null;
+        (session.user as any).avatarSource = (token.avatarSource as string) ?? null;
       }
       return session;
     },
