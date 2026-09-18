@@ -43,7 +43,7 @@ ARG NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=""
 ARG NEXT_PUBLIC_WALLET_ADDRESS=""
 ARG NEXT_PUBLIC_ENCRYPTION_PUBLIC_KEY=""
 
-ARG NEXT_PUBLIC_URL_EMAIL=""
+ARG NEXT_PUBLIC_TURNSTILE_SITE_KEY=""
 ARG NEXT_PUBLIC_TERMINAL_SECRET_PASSWORD=""
 ARG NEXT_PUBLIC_TERMINAL_SECRET_REWARD=""
 
@@ -56,7 +56,7 @@ ENV NEXT_PUBLIC_GA4_MEASUREMENT_ID=$NEXT_PUBLIC_GA4_MEASUREMENT_ID
 ENV NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=$NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
 ENV NEXT_PUBLIC_WALLET_ADDRESS=$NEXT_PUBLIC_WALLET_ADDRESS
 ENV NEXT_PUBLIC_ENCRYPTION_PUBLIC_KEY=$NEXT_PUBLIC_ENCRYPTION_PUBLIC_KEY
-ENV NEXT_PUBLIC_URL_EMAIL=$NEXT_PUBLIC_URL_EMAIL
+ENV NEXT_PUBLIC_TURNSTILE_SITE_KEY=$NEXT_PUBLIC_TURNSTILE_SITE_KEY
 ENV NEXT_PUBLIC_TERMINAL_SECRET_PASSWORD=$NEXT_PUBLIC_TERMINAL_SECRET_PASSWORD
 ENV NEXT_PUBLIC_TERMINAL_SECRET_REWARD=$NEXT_PUBLIC_TERMINAL_SECRET_REWARD
 
@@ -97,6 +97,32 @@ RUN npm run build:web3
 RUN --mount=type=secret,id=sentry_auth_token,required=false \
     SENTRY_AUTH_TOKEN="$(cat /run/secrets/sentry_auth_token 2>/dev/null || true)" \
     npm run build:portfolio
+
+# ── migrator ──────────────────────────────────────────────────────────────────
+# Imagem separada, so para rodar `prisma migrate deploy` antes de a app subir.
+#
+# POR QUE NAO REAPROVEITAR A IMAGEM DA APP:
+# o `runner` abaixo copia apenas os engines do Prisma (.prisma e @prisma), nao
+# a CLI nem a pasta de migrations. Rodar migration a partir dele falharia com
+# "prisma: not found" — e uma imagem de producao nao deve mesmo carregar a CLI.
+#
+# Ela e versionada pelo mesmo SHA das outras. Assim a migration que roda e
+# exatamente a que veio com aquele commit, e o rollback de tag leva o schema
+# junto em vez de deixar o banco a frente do codigo.
+FROM base AS migrator
+WORKDIR /app
+
+# A CLI `prisma` e devDependency de packages/database, e o `npm ci` do estagio
+# `deps` nao usa --omit=dev — logo ela existe no node_modules do builder.
+COPY --from=builder /app/node_modules      ./node_modules
+COPY --from=builder /app/packages/database ./packages/database
+
+WORKDIR /app/packages/database
+
+# `migrate deploy` (e nao `migrate dev`): aplica migrations pendentes, nunca
+# gera nem apaga nada, e falha se encontrar drift. E o unico modo seguro para
+# rodar sem supervisao.
+CMD ["npx", "prisma", "migrate", "deploy"]
 
 # ── runner ────────────────────────────────────────────────────────────────────
 FROM base AS runner

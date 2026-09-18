@@ -35,3 +35,5 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# worker do maplibre, copiado de node_modules pelo predev/prebuild
+/public/maplibre/
