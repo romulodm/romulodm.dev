@@ -31,14 +31,24 @@ export const EN_INFOS = {
   },
   education: [
     {
+      school: 'Universidade Federal do Rio Grande - FURG',
+      url: 'https://www.furg.br',
+      icon: furg,
+      location: 'Rio Grande, Brazil',
+      degree: 'Master’s Degree',
+      major: 'Computer Engineering (PPGComp)',
+      start: 'April 2026',
+      end: 'Present',
+    },
+    {
       school: 'Federal University of Rio Grande - FURG',
       url: 'https://www.furg.br',
       icon: furg,
       location: 'Rio Grande, Brazil',
-      degree: 'Undergraduate',
+      degree: 'Bachelor’s Degree',
       major: 'Information Systems',
       start: 'April 2022',
-      end: 'Present',
+      end: 'March 2026',
     },
   ],
   experience: [

@@ -38,6 +38,24 @@ export default function TerminalExperience({
                         root@romulodm:~$&nbsp;
                     </div>
                     <div className="whitespace-nowrap font-semibold dark:text-white/80">
+                        {`romulo.exe --${t("education")}`}
+                    </div>
+                </div>
+                <div className="text-gray-500 dark:text-neutral-400/90">
+                    {t("loading-education-title")}
+                    <br />
+                    {t("loading-education")} {mounted ? loadingTime : null} ms.
+                </div>
+            </div>
+
+            <EducationList education={data.education} />
+
+            <div className="font-mono text-sm">
+                <div className="flex flex-nowrap gap-1">
+                    <div className="text-blue-600 font-semibold dark:text-sky-400">
+                        root@romulodm:~$&nbsp;
+                    </div>
+                    <div className="whitespace-nowrap font-semibold dark:text-white/80">
                         {`romulo.exe --${t("xp")}`}
                     </div>
                 </div>
@@ -53,25 +71,6 @@ export default function TerminalExperience({
                 <ExperienceList experiences={data.experience} />
             </div>
 
-            <div className="font-mono text-sm">
-                <div className="flex flex-nowrap gap-1">
-                    <div className="text-blue-600 font-semibold dark:text-sky-400">
-                        root@romulodm:~$&nbsp;
-                    </div>
-                    <div className="whitespace-nowrap font-semibold dark:text-white/80">
-                        {`romulo.exe --${t("education")}`}
-                    </div>
-                </div>
-                <div className="text-gray-500 dark:text-neutral-400/90">
-                    {t("loading-education-title")}
-                    <br />
-                    {t("loading-education")} {mounted ? loadingTime : null} ms.
-                </div>
-            </div>
-
-            <div className="pb-4">
-                <EducationList education={data.education} />
-            </div>
         </div>
     )
 }
