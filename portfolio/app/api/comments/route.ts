@@ -15,6 +15,7 @@ import {
     parseJsonBodyWithMessages,
     sanitizeMultilineText,
 } from "@/lib/api-validation";
+import { AVATAR_SELECT } from "@/lib/avatar";
 import { enqueueNotification } from '@/lib/queues/notification.queue';
 import { moderate } from '@/lib/moderation';
 import { getRequestIp, rateLimit } from '@/lib/rate-limit';
@@ -157,7 +158,7 @@ export async function POST(request: NextRequest) {
             const created = await tx.comment.create({
                 data: { postId, parentId, authorId: auth.user.id, bodyMd },
                 include: {
-                    author: { select: { id: true, username: true, image: true } },
+                    author: { select: { id: true, ...AVATAR_SELECT } },
                 },
             });
             await tx.post.update({
