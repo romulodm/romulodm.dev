@@ -81,3 +81,64 @@
 .dark .maplibregl-ctrl-group button .maplibregl-ctrl-icon {
     filter: invert(1);
 }
+
+.bento-rise {
+    --late: calc(var(--rise-delay, 0ms) + var(--rise-dur, 280ms));
+
+    transition-property: transform, stroke, border-color, background-color;
+    transition-duration: var(--rise-dur, 280ms), 200ms, 200ms, 200ms;
+    transition-timing-function: cubic-bezier(.33, 1.2, .58, 1), ease-out, ease-out, ease-out;
+    transition-delay: 0ms;
+}
+
+.group:hover .bento-rise,
+.group:focus-visible .bento-rise {
+    transform: var(--rise-to, translateY(-0.45rem));
+    transition-duration: var(--rise-dur, 280ms), var(--late), var(--late), var(--late);
+    transition-delay: var(--rise-delay, 0ms), 0ms, 0ms, 0ms;
+}
+
+.bento-late-color {
+    transition-property: stroke, border-color, background-color;
+    transition-duration: 200ms;
+    transition-timing-function: ease-out;
+    transition-delay: 0ms;
+}
+
+.group:hover .bento-late-color,
+.group:focus-visible .bento-late-color {
+    transition-duration: var(--late, 280ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .bento-rise {
+        transition-property: stroke, border-color, background-color;
+        transition-duration: 200ms;
+    }
+
+    .group:hover .bento-rise,
+    .group:focus-visible .bento-rise {
+        transform: none;
+        transition-duration: 200ms;
+        transition-delay: 0ms;
+    }
+
+    .group:hover .bento-late-color,
+    .group:focus-visible .bento-late-color {
+        transition-duration: 200ms;
+    }
+}
+
+.bento-dots {
+    background-image: radial-gradient(hsl(0 0% 0% / .14) 1px, transparent 1px);
+    background-size: 14px 14px;
+    background-position: -1px -1px;
+
+    -webkit-mask-image: radial-gradient(ellipse 58% 40% at 50% 38%, #000 22%, transparent 100%);
+    mask-image: radial-gradient(ellipse 58% 40% at 50% 38%, #000 22%, transparent 100%);
+}
+
+.dark .bento-dots {
+    background-image: radial-gradient(hsl(0 0% 100% / .16) 1px, transparent 1px);
+}
