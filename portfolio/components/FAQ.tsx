@@ -1,18 +1,20 @@
 'use client';
 
 import { useId, useState } from "react";
-import { ChevronDown } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { cn } from "@/lib/utils";
 import { Link } from "@/i18n/navigation";
 import { AnimatedSection } from "./AnimatedSection";
+import { ContactTrigger } from "./modals/ContactTrigger";
 
 /**
- * Acordeao de perguntas frequentes.
+ * Secao de perguntas frequentes: cabecalho fixo a esquerda e lista numerada a
+ * direita (empilha no mobile).
  *
  * As perguntas vivem em `messages/{locale}.json` sob `faq.items`, lidas com
- * `t.raw` — `t()` formata mensagem e nao devolve array.
+ * `t.raw` — `t()` formata mensagem e nao devolve array. O cabecalho vem de
+ * `home.faq` (eyebrow, title, description).
  *
  * Cada item pode ter um `cta` + `href` opcionais. Isso existe para nao precisar
  * de HTML dentro da traducao: link como dado, e nao como marcacao, evita
@@ -29,46 +31,71 @@ interface FAQItemData {
 
 interface FAQItemProps {
     item: FAQItemData;
+    number: string;
     isOpen: boolean;
     onToggle: () => void;
     /** Base para os ids de aria — precisa ser estavel entre servidor e cliente. */
     domId: string;
 }
-function FAQItem({ item, isOpen, onToggle, domId }: FAQItemProps) {
+
+/**
+ * Sinal de "+" que vira "−". Ao abrir, as duas barras giram em sentido
+ * horario: a horizontal da meia volta (180°) e a vertical um quarto (90°),
+ * terminando as duas deitadas uma sobre a outra. Ao fechar, a transicao
+ * volta pelo mesmo caminho (anti-horario) e o "+" se reconstroi.
+ */
+function PlusMinus({ isOpen }: { isOpen: boolean }) {
+    const bar =
+        "absolute bg-current transition-transform duration-300 ease-out";
+
+    return (
+        <span aria-hidden className="relative h-4 w-4 justify-self-end">
+            <span
+                className={cn(
+                    bar,
+                    "left-0 top-[7px] h-0.5 w-4",
+                    isOpen ? "rotate-180" : "rotate-0",
+                )}
+            />
+            <span
+                className={cn(
+                    bar,
+                    "left-[7px] top-0 h-4 w-0.5",
+                    isOpen ? "rotate-90" : "rotate-0",
+                )}
+            />
+        </span>
+    );
+}
+
+function FAQItem({ item, number, isOpen, onToggle, domId }: FAQItemProps) {
     const buttonId = `${domId}-button`;
     const panelId = `${domId}-panel`;
     const isExternal = Boolean(item.href && /^https?:\/\//.test(item.href));
+    const ctaClassName =
+        "text-sm font-medium text-primary transition-opacity hover:opacity-80";
 
     return (
-        <div
-            className={cn(
-                "group w-full overflow-hidden rounded-sm bg-neutral-200/90 backdrop-blur-sm dark:bg-neutral-900/80",
-                "border transition-colors duration-300",
-                isOpen
-                    ? "border-border"
-                    : "border-border/50 hover:border-border",
-            )}
-        >
+        <div className="flex flex-col border-b border-border">
             <button
                 type="button"
                 id={buttonId}
                 aria-expanded={isOpen}
                 aria-controls={panelId}
                 onClick={onToggle}
-                className="flex w-full items-center justify-between gap-5 px-5 py-[18px] pr-4 text-left"
+                className={cn(
+                    "grid w-full grid-cols-[32px_minmax(0,1fr)_24px] items-center gap-4 py-5 text-left sm:grid-cols-[40px_minmax(0,1fr)_24px] lg:py-[22px]",
+                    "text-foreground transition-colors hover:text-primary",
+                    "rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60",
+                )}
             >
-                <span className="flex-1 text-base font-medium leading-6 text-foreground">
+                <span className="text-xs font-medium tabular-nums tracking-[0.04em] text-muted-foreground">
+                    {number}
+                </span>
+                <span className="text-lg font-semibold leading-snug tracking-tight lg:text-xl">
                     {item.q}
                 </span>
-                <ChevronDown
-                    aria-hidden
-                    className={cn(
-                        "h-6 w-6 shrink-0 transition-[transform,color] duration-500 ease-out",
-                        isOpen
-                            ? "rotate-180 text-primary"
-                            : "rotate-0 text-muted-foreground group-hover:text-primary",
-                    )}
-                />
+                <PlusMinus isOpen={isOpen} />
             </button>
 
             <div
@@ -83,10 +110,10 @@ function FAQItem({ item, isOpen, onToggle, domId }: FAQItemProps) {
                 )}
             >
                 <div className="overflow-hidden">
-                    <hr className="mx-5 mb-2 border-border/50" />
-
-                    <div className="px-5 pb-[18px] pt-2">
-                        <p className="text-sm leading-6 text-muted-foreground">{item.a}</p>
+                    <div className="pb-6 sm:pl-14 sm:pr-10 lg:pb-[26px]">
+                        <p className="text-pretty text-base leading-[1.65] text-muted-foreground">
+                            {item.a}
+                        </p>
 
                         {item.cta && item.href && (
                             <p className="mt-3">
@@ -95,15 +122,12 @@ function FAQItem({ item, isOpen, onToggle, domId }: FAQItemProps) {
                                         href={item.href}
                                         target="_blank"
                                         rel="noreferrer"
-                                        className="text-sm font-medium text-primary transition-opacity hover:opacity-80"
+                                        className={ctaClassName}
                                     >
                                         {item.cta} →
                                     </a>
                                 ) : (
-                                    <Link
-                                        href={item.href}
-                                        className="text-sm font-medium text-primary transition-opacity hover:opacity-80"
-                                    >
+                                    <Link href={item.href} className={ctaClassName}>
                                         {item.cta} →
                                     </Link>
                                 )}
@@ -116,13 +140,15 @@ function FAQItem({ item, isOpen, onToggle, domId }: FAQItemProps) {
     );
 }
 
-export function FAQ({ allowMultiple = true }: { allowMultiple?: boolean }) {
+export function FAQ({ allowMultiple = false }: { allowMultiple?: boolean }) {
     const t = useTranslations("faq");
+    const tHeader = useTranslations("home.faq");
     const domId = useId();
 
     const items = t.raw("items") as FAQItemData[];
 
-    const [open, setOpen] = useState<Set<number>>(new Set());
+    // O primeiro item comeca aberto: mostra de cara que a lista expande.
+    const [open, setOpen] = useState<Set<number>>(() => new Set([0]));
 
     const toggle = (index: number) => {
         setOpen((previous) => {
@@ -140,20 +166,46 @@ export function FAQ({ allowMultiple = true }: { allowMultiple?: boolean }) {
     if (!Array.isArray(items) || items.length === 0) return null;
 
     return (
-        <AnimatedSection className="relative z-10 mx-auto" delay={0.4}>
-            <section className="w-full pt-12 md:pt-16">
-                <div className="mx-auto flex max-w-[900px] flex-col gap-4">
+        <AnimatedSection className="relative z-10 w-full" delay={0.2}>
+            <div className="grid w-full grid-cols-1 gap-10 lg:grid-cols-[minmax(0,380px)_minmax(0,1fr)] lg:gap-20">
+                <header className="flex flex-col gap-4 self-start lg:sticky lg:top-24">
+                    <p
+                        className="text-sm font-semibold uppercase tracking-widest"
+                        style={{ color: "var(--primary-color)" }}
+                    >
+                        {tHeader("eyebrow")}
+                    </p>
+                    <h2 className="text-balance text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100 sm:text-4xl lg:text-5xl lg:leading-[1.05]">
+                        {tHeader("title")}
+                    </h2>
+                    <p className="max-w-[360px] text-pretty text-base leading-relaxed text-neutral-500 dark:text-neutral-400">
+                        {tHeader("description")}{" "}
+                        {tHeader.rich("contact", {
+                            link: (chunks) => (
+                                <ContactTrigger
+                                    topic="OTHER"
+                                    className="font-medium text-primary underline decoration-primary/40 underline-offset-[3px] transition-colors hover:decoration-current"
+                                >
+                                    {chunks}
+                                </ContactTrigger>
+                            ),
+                        })}
+                    </p>
+                </header>
+
+                <div className="flex flex-col border-t border-border lg:border-t-0">
                     {items.map((item, index) => (
                         <FAQItem
                             key={item.q}
                             item={item}
+                            number={String(index + 1).padStart(2, "0")}
                             domId={`${domId}-${index}`}
                             isOpen={open.has(index)}
                             onToggle={() => toggle(index)}
                         />
                     ))}
                 </div>
-            </section>
+            </div>
         </AnimatedSection>
     );
 }
