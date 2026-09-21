@@ -45,7 +45,7 @@ load_dotenv()
 
 TELEGRAM_TOKEN = os.environ["TELEGRAM_BOT_TOKEN"]
 TELEGRAM_CHAT = os.environ["TELEGRAM_CHAT_ID"]
-NOTIFY_SECRET = os.environ["NOTIFY_SECRET"]  # segredo compartilhado com o worker/CI
+NOTIFY_SECRET = os.environ["TELEGRAM_NOTIFY_SECRET"]  # segredo compartilhado com o worker/CI
 
 # Opcional: usado só para montar links clicáveis. Sem isso as mensagens
 # continuam funcionando, só sem o atalho para o painel.
