@@ -28,6 +28,18 @@ const STYLES = {
 type Scheme = keyof typeof STYLES;
 
 /**
+ * Worker de parsing de tiles, publicado por `scripts/copy-maplibre-worker.mjs`.
+ *
+ * Sem este ponteiro o mapa sobe vazio sob o Turbopack: a v6 monta a URL do
+ * worker concatenando o nome do arquivo em runtime, o bundler nao consegue
+ * rastrear isso e resolve para o modulo errado; o Next responde 404 em
+ * `text/html` e o Worker recusa por MIME. O canvas, os controles e o marcador
+ * aparecem normalmente, mas nenhum tile e parseado — nem a style.json chega a
+ * ser buscada. O cabecalho daquele script explica o mecanismo por inteiro.
+ */
+const WORKER_URL = '/maplibre/maplibre-gl-worker.mjs';
+
+/**
  * O AttributionControl compacto do MapLibre nasce ABERTO: na primeira medida
  * ele marca o <details> com `open` e adiciona `maplibregl-compact-show`, o que
  * deixa o balao "OpenStreetMap contributors" esticado por cima do mapa ate o
@@ -65,6 +77,17 @@ export default function LocationTile() {
   const mapRef = useRef<import('maplibre-gl').Map | null>(null);
   const [failed, setFailed] = useState(false);
 
+  /**
+   * A criacao do mapa espera um `import()`, e o next-themes resolve o tema em
+   * paralelo. Quem entra no claro costuma trocar de esquema DURANTE essa
+   * espera: o efeito de tema roda com `mapRef.current` ainda null e nao faz
+   * nada, e o efeito de criacao usaria o `scheme` congelado no closure — o
+   * mapa nasceria escuro dentro do site claro. O ref carrega sempre o valor
+   * atual, que e lido so depois do await.
+   */
+  const schemeRef = useRef<Scheme>(scheme);
+  schemeRef.current = scheme;
+
   // ---- cria o mapa uma unica vez -----------------------------------------
   useEffect(() => {
     if (!mounted || !containerRef.current || mapRef.current) return;
@@ -73,12 +96,19 @@ export default function LocationTile() {
 
     (async () => {
       try {
-        const maplibregl = (await import('maplibre-gl')).default;
+        // maplibre-gl 6 e ESM puro e nao expoe mais default export: o
+        // `.default` daqui era o default sintetico que o esModuleInterop
+        // fabricava para o build CJS da v5, e na v6 vem `undefined`.
+        const maplibregl = await import('maplibre-gl');
         if (cancelled || !containerRef.current || mapRef.current) return;
+
+        // Precisa vir antes do primeiro `new Map`: e na criacao do pool de
+        // workers que a lib le esta config, e ela so consulta a URL uma vez.
+        maplibregl.setWorkerUrl(WORKER_URL);
 
         const map = new maplibregl.Map({
           container: containerRef.current,
-          style: STYLES[scheme],
+          style: STYLES[schemeRef.current],
           center: [BASE.lon, BASE.lat],
           zoom: ZOOM,
           scrollZoom: false,
@@ -94,11 +124,24 @@ export default function LocationTile() {
           .addTo(map);
 
         // o card so ganha altura depois do layout — garante o enquadramento
+        let loaded = false;
         map.on('load', () => {
+          loaded = true;
           map.resize();
           collapseAttribution(containerRef.current);
         });
-        map.on('error', () => setFailed(true));
+
+        /**
+         * Antes do `load`, um erro significa estilo fora do ar ou worker que
+         * nao subiu: nao ha mapa nenhum para mostrar e o fallback e a resposta
+         * certa. Depois do `load` os erros sao de tile solto — um 5xx do CDN,
+         * a rede piscando — e trocar o mapa inteiro por um pin deixaria o card
+         * pior do que o buraco de um tile faltando, ainda por cima de forma
+         * permanente, ja que `failed` nunca volta.
+         */
+        map.on('error', () => {
+          if (!loaded) setFailed(true);
+        });
 
         mapRef.current = map;
       } catch {
@@ -111,8 +154,8 @@ export default function LocationTile() {
       mapRef.current?.remove();
       mapRef.current = null;
     };
-    // o estilo inicial usa o tema do primeiro render; trocas depois disso sao
-    // tratadas no efeito abaixo
+    // o estilo inicial sai do `schemeRef` (lido apos o await); trocas depois
+    // disso sao tratadas no efeito abaixo
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mounted]);
 
