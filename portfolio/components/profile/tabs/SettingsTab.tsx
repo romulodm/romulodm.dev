@@ -2,11 +2,15 @@
 
 import { useState, useTransition } from "react";
 import { Check, Github, Linkedin, Loader2 } from "lucide-react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "@/i18n/navigation";
 import { updateProfileSettings } from "@/app/[locale]/profile/[username]/actions";
 import type { Profile } from "../types";
 
 export function SettingsTab({ profile }: { profile: Profile }) {
     const [isPending, startTransition] = useTransition();
+    const router = useRouter();
+    const { update: refreshSession } = useSession();
 
     // Profile fields
     const [username, setUsername] = useState(profile.username);
@@ -39,11 +43,27 @@ export function SettingsTab({ profile }: { profile: Profile }) {
                     githubUrl: githubUrl || null,
                     linkedinUrl: linkedinUrl || null,
                 });
-                if ("error" in result && result.error === "username_taken") {
-                    setProfileStatus("username_taken");
+                // Checar so `"error" in result` (e nao o valor junto) para o TS
+                // estreitar o union e liberar `result.username` abaixo.
+                if ("error" in result) {
+                    setProfileStatus(
+                        result.error === "username_taken" ? "username_taken" : "error",
+                    );
+                    return;
+                }
+
+                setProfileStatus("ok");
+                setTimeout(() => setProfileStatus("idle"), 2500);
+
+                if (result.username !== profile.username) {
+                    // O token do NextAuth carrega o username do login: sem o
+                    // update() o dropdown do navbar continua apontando para
+                    // /profile/<antigo>. E a URL atual ainda e a antiga, que
+                    // vira 404 assim que o cache do perfil e invalidado.
+                    await refreshSession();
+                    router.replace(`/profile/${result.username}`);
                 } else {
-                    setProfileStatus("ok");
-                    setTimeout(() => setProfileStatus("idle"), 2500);
+                    router.refresh();
                 }
             } catch {
                 setProfileStatus("error");
