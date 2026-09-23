@@ -13,6 +13,26 @@ import { GitHubStarsButton } from './GitHubStarsButton'
 import { LattesIcon } from './icons/LattesIcon'
 import { Link } from '@/i18n/navigation'
 
+const FOOTER_SKY_DARK = `
+    radial-gradient(140% 75% at 50% 122%, #B08F93 0%, rgba(176, 143, 147, 0) 58%),
+    linear-gradient(180deg in oklab,
+        #2B3239 0%,
+        #333940 34%,
+        #4A474C 56%,
+        #6E5F65 76%,
+        #8E757B 100%)
+`
+
+const FOOTER_SKY_LIGHT = `
+    radial-gradient(140% 75% at 50% 122%, #E8B4AA 0%, rgba(232, 180, 170, 0) 58%),
+    linear-gradient(180deg in oklab,
+        #D6DEE4 0%,
+        #DCE1E5 34%,
+        #E0D6D8 56%,
+        #E2C2BE 76%,
+        #E2AAA0 100%)
+`
+
 export function Footer() {
     const t = useTranslations('footer')
     const currentYear = new Date().getFullYear()
@@ -23,20 +43,13 @@ export function Footer() {
         <footer
             className="relative z-[5] overflow-hidden pt-10 px-4 sm:px-5 mt-10"
             style={{
-                backgroundColor: '#8E757B',
-                backgroundImage: `
-                    radial-gradient(140% 75% at 50% 122%, #B08F93 0%, rgba(176, 143, 147, 0) 58%),
-                    linear-gradient(180deg in oklab,
-                        #2B3239 0%,
-                        #333940 34%,
-                        #4A474C 56%,
-                        #6E5F65 76%,
-                        #8E757B 100%)
-                `,
                 borderRadius: '56px 56px 0 0',
                 fontFamily: "'DM Sans', sans-serif",
             }}
         >
+            {/* Ceu do footer: mesma paleta do HeroPowder (claro/escuro) */}
+            <div aria-hidden className="absolute inset-0 dark:hidden" style={{ background: FOOTER_SKY_LIGHT }} />
+            <div aria-hidden className="absolute inset-0 hidden dark:block" style={{ background: FOOTER_SKY_DARK }} />
             <div
                 className="absolute inset-0"
                 style={{
@@ -51,7 +64,7 @@ export function Footer() {
             {/* ── CTA ── */}
             <div className="relative z-[2] text-center max-w-[740px] mx-auto mb-10 px-4">
                 <h2
-                    className="font-extrabold text-white leading-[1.06] tracking-tight mb-5"
+                    className="font-extrabold text-neutral-900 dark:text-white leading-[1.06] tracking-tight mb-5"
                     style={{
                         fontSize: 'clamp(2rem, 5.5vw, 4.2rem)',
                         letterSpacing: '-0.025em',
@@ -71,7 +84,7 @@ export function Footer() {
                     </span>
                 </button>
 
-                <p className="mt-[18px] text-sm sm:text-base text-white font-semibold opacity-80">
+                <p className="mt-[18px] text-sm sm:text-base text-neutral-900 dark:text-white font-semibold opacity-80">
                     {t('cta.disclaimer')}
                 </p>
             </div>
