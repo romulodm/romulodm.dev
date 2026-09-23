@@ -16,6 +16,13 @@
       "captchaFailed": "Não consegui enviar sua mensagem. Tenta de novo em instantes.",
       "nameRequired": "Escreve seu nome.",
       "messageTooShort": "Escreve um pouco mais na mensagem."
+    },
+    "newsletter": {
+      "subscribe": {
+        "success": "Inscrição recebida. Confira seu e-mail para confirmar.",
+        "rateLimited": "Muitas tentativas de inscrição seguidas. Espera alguns minutos e tenta de novo.",
+        "internal": "Não consegui registrar sua inscrição agora. Tenta de novo em instantes."
+      }
     }
   },
   "ResumePDFButton": {
@@ -41,6 +48,10 @@
     },
     "github": {
       "continue": "Continuar com GitHub"
+    },
+    "password": {
+      "signIn": "Entrar com senha",
+      "signUp": "Cadastrar com senha"
     },
     "login": {
       "emailPlaceholder": "E-mail",
@@ -100,8 +111,34 @@
   },
   "wall": {
     "compose": {
-      "composing": "Digitando…",
+      "title": "Deixe sua marca no mural",
+      "cta": "Escrever recado"
+    },
+    "publish": {
+      "step": "Etapa {current} de {total}",
+      "writeTitle": "Deixe seu recado",
+      "writeDescription": "Até 100 caracteres. No próximo passo você escolhe o visual do card.",
       "placeholder": "Escreva algo legal…",
+      "continue": "Continuar",
+      "styleTitle": "Escolha o visual",
+      "styleDescription": "A arte é gerada automaticamente a partir do seu texto e do seu ID de usuário: o mesmo recado sempre gera o mesmo card. Você escolhe o estilo e se prefere claro ou escuro; as cores vêm da mensagem. Mudou o texto? Volte e o card se refaz.",
+      "toneLabel": "Tom",
+      "styleLabel": "Estilo",
+      "tones": {
+        "dark": "Escuro",
+        "light": "Claro"
+      },
+      "styles": {
+        "mesh": "Mesh",
+        "rays": "Raios",
+        "truchet": "Truchet",
+        "terrain": "Relevo",
+        "lifehash": "LifeHash"
+      },
+      "now": "Agora",
+      "back": "Voltar",
+      "publish": "Publicar",
+      "publishing": "Publicando…",
       "alreadyPosted": "Você já deixou uma mensagem!",
       "error": "Algo deu errado. Tente novamente.",
       "success": "Mensagem postada!"
@@ -140,6 +177,7 @@
       "commentAuthor": "Manager",
       "commentTime": "2 horas atrás",
       "commentBody": "Não se esqueça da reunião, amigo!",
+      "walletCommentBody": "Não confie, verifique (e compre crypto).",
       "ctaSecurity": "Segurança",
       "ctaCollaborative": "Desenvolvimento colaborativo",
       "ctaFlexibility": "Flexibilidade",
@@ -159,8 +197,7 @@
       "observabilityBody": "Medir antes de confiar."
     },
     "lastConnect": {
-      "titlePrefix": "Vamos",
-      "titleHighlight": "nos conectar.",
+      "title": "Vamos nos conectar.",
       "formEmail": "Seu e-mail",
       "formName": "Seu nome",
       "formMessage": "Escreva sua mensagem...",
@@ -169,10 +206,25 @@
       "genericError": "Algo deu errado no envio. Tenta de novo em alguns instantes?",
       "thanksShort": "Obrigado!",
       "thanksLong": "Obrigado por escrever!",
-      "thanksBody": "Respondo assim que possível."
+      "thanksBody": "Respondo assim que possível.",
+      "statusTimezone": "Rio Grande · UTC−3",
+      "statusWorkHours": "horário comercial por aqui",
+      "statusOffHours": "fora do expediente por aqui",
+      "statusLateNight": "madrugada por aqui, talvez eu demore a responder",
+      "responseLabel": "Resposta média",
+      "responseValue": "~1 dia",
+      "responseNote": "responderei o mais rápido possível",
+      "uplinkReady": "pronto pra transmitir sua mensagem"
     }
   },
   "home": {
+    "hero": {
+      "greeting": "Olá,",
+      "greetingMorning": "Bom dia, visitante!",
+      "greetingAfternoon": "Boa tarde, visitante!",
+      "greetingEvening": "Boa noite, visitante!",
+      "intro": "Me chamo Romulo de Moraes, decidi criar este site para mostrar um pouco de quem eu sou, o que eu fiz, o que aprendi e o que planejo alcançar sendo um desenvolvedor full-stack e estudante."
+    },
     "profile": {
       "title": "Quem está por trás do código.",
       "link-title": "Quer ver meu currículo?",
@@ -189,6 +241,65 @@
       "eyebrow": "Projetos",
       "description": "Coisas que eu construí sozinho, em equipe e por pura curiosidade. Código aberto sempre que dá.",
       "downloadsWeek": "/semana"
+    },
+    "built": {
+      "eyebrow": "O que eu construí",
+      "headline": "Até aqui, eu",
+      "items": [
+        "publiquei o seedicon.",
+        "classifiquei GPS agrícola.",
+        "migrei a API pro FastAPI.",
+        "escrevi loteria on-chain.",
+        "montei um xadrez em Go.",
+        "reescrevi o Pac-Man.",
+        "levei um Best Paper.",
+        "dei um minicurso de Git.",
+        "construí este site."
+      ],
+      "lede": {
+        "before": "Nada disso nasceu pronto:",
+        "highlight": "cada um começou como um arquivo vazio",
+        "after": "e um problema que eu ainda não sabia resolver. Código aberto sempre que dá."
+      },
+      "cards": [
+        {
+          "label": "Trabalhando",
+          "title": "Desenvolvedor",
+          "subtitle": "Agrifence · Rio Grande"
+        },
+        {
+          "label": "Construindo",
+          "title": "seedicon",
+          "subtitle": "Avatares SVG determinísticos"
+        },
+        {
+          "label": "Escrevendo",
+          "title": "Blog de engenharia",
+          "subtitle": "Decisões, erros e infra"
+        }
+      ],
+      "presence": {
+        "statusLabel": "Status",
+        "statusFree": "Disponível",
+        "statusFreeHint": "sem status definido",
+        "statusUntil": "até {time}, definido no Telegram",
+        "musicLabel": "Ouvindo",
+        "musicLastLabel": "Última música ouvida",
+        "commitEmptyHint": "nada público nos últimos dias",
+        "commitEmpty": "Sem commit recente",
+        "musicEmptyHint": "o Spotify está quieto",
+        "musicEmpty": "Nada tocando",
+        "commitLabel": "Último commit",
+        "commitsLabel": "Commits · {days} dias",
+        "commitsHint": "públicos e privados",
+        "visitorsLabel": "No site agora",
+        "visitorsUnit": "{count, plural, one {pessoa} other {pessoas}}",
+        "visitorsHint": "incluindo você"
+      },
+      "reach": {
+        "label": "Fale comigo",
+        "button": "Começar uma conversa"
+      }
     },
     "vision": {
       "title": "Visão sobre",
@@ -211,9 +322,40 @@
       "description": "As melhores decisões técnicas que eu tomei vieram de revisão de código e de conversa difícil, não de inspiração solitária."
     },
     "faq": {
-      "eyebrow": "Dúvidas",
+      "eyebrow": "FAQ",
       "title": "Perguntas que sempre aparecem.",
-      "description": "Como eu trabalho, o que eu uso e a melhor forma de me chamar para um projeto."
+      "description": "Como eu trabalho, o que eu uso e a melhor forma de me chamar para um projeto.",
+      "contact": "Algo que não ficou muito claro? Mande uma <link>mensagem</link>."
+    },
+    "about": {
+      "eyebrow": "Sobre",
+      "headline": "Até aqui, eu trabalhei em",
+      "builds": [
+        "telemetria para tratores.",
+        "IoT para tratamento de água.",
+        "monitoramento de esteiras.",
+        "um app de saúde feminina.",
+        "poupança premiada.",
+        "loterias on-chain.",
+        "um pacote npm.",
+        "soluções sob medida."
+      ],
+      "lede": "Desenvolvedor na Agrifence e mestrando em Engenharia de Computação na FURG. No dia a dia, transformo o GPS bruto de máquinas agrícolas em informação que o produtor consegue usar; no resto do tempo, pesquiso smart contracts e sistemas distribuídos, principalmente como tornar a aleatoriedade de uma blockchain pública justa o bastante para sustentar uma loteria.",
+      "whyTitle": "Por que este site existe",
+      "whyProblems": "Este blog é onde escrevo sobre o problema por trás do código: as suposições que pareciam óbvias até a produção provar o contrário, o que é preciso para sortear um vencedor de forma justa em uma blockchain pública e os atalhos cujo custo só apareceu meses depois.",
+      "whyProjects": "É também onde ficam os projetos que ainda não construí. Alguns vão virar posts, outros vão virar repositórios, outros vão continuar sendo ideias, mas todos serão públicos.",
+      "location": "Rio Grande, RS - Brasil",
+      "available": "Aberto a oportunidades",
+      "viewProjects": "Ver projetos",
+      "github": "GitHub",
+      "contact": "Contato",
+      "statsTitle": "Em números",
+      "stats": {
+        "years": "Anos programando",
+        "users": "Usuários impactados",
+        "projects": "Projetos entregues",
+        "articles": "Artigo publicado"
+      }
     }
   },
   "navigation": {
@@ -309,8 +451,7 @@
     },
     "newsletter": {
       "title": "Fique por dentro",
-      "subtitle": "Receba novidades sobre posts, projetos e ideias diretamente no seu e-mail.",
-      "placeholder": "Insira seu e-mail"
+      "subtitle": "Receba novidades sobre posts, projetos e ideias diretamente no seu e-mail."
     },
     "nav": {
       "resources": {
@@ -1279,28 +1420,32 @@
       "prefix": "Aprovado por",
       "suffix": "{count, plural, one {inscrito} other {inscritos}}."
     },
-    "emailLabel": "E-mail",
-    "emailPlaceholder": "seu@email.com",
-    "submit": "Inscrever-se",
     "privacy": {
       "prefix": "Sem spam, nunca.",
       "suffix": "Você pode conferir a política de privacidade <link>aqui</link>."
-    },
+    }
+  },
+  "newsletterForm": {
+    "emailLabel": "E-mail",
+    "emailPlaceholder": "seu@email.com",
+    "submit": "Inscrever-se",
     "success": {
       "title": "Verifique seu e-mail!",
-      "description": "Enviamos um link de confirmação para ativar sua inscrição.",
-      "useAnotherEmail": "Usar outro e-mail"
+      "description": "Enviamos um link de confirmação para ativar sua inscrição."
+    },
+    "error": {
+      "title": "Não consegui concluir sua inscrição"
     },
     "errors": {
       "generic": "Algo deu errado. Tente novamente.",
-      "connection": "Erro de conexão. Tente novamente."
+      "connection": "Erro de conexão. Confira sua internet e tente novamente."
     }
   },
   "cookieBanner": {
     "ariaLabel": "Banner de consentimento de cookies",
     "title": "Permitir cookies?",
     "safeExperience": "Usamos cookies para oferecer uma experiência de navegação mais segura e personalizada.",
-    "descriptionPrefix": "Saiba mais sobre como usamos cookies na nossa",
+    "descriptionPrefix": "Saiba mais na ",
     "policyLink": "Política de Cookies",
     "accept": "Permitir",
     "decline": "Recusar"

@@ -16,6 +16,13 @@
       "captchaFailed": "I couldn't send your message. Try again in a moment.",
       "nameRequired": "Write your name.",
       "messageTooShort": "Write a bit more in your message."
+    },
+    "newsletter": {
+      "subscribe": {
+        "success": "Subscription received. Check your email to confirm it.",
+        "rateLimited": "Too many sign-up attempts in a row. Give it a few minutes and try again.",
+        "internal": "I couldn't save your subscription right now. Try again in a moment."
+      }
     }
   },
   "ResumePDFButton": {
@@ -41,6 +48,10 @@
     },
     "github": {
       "continue": "Continue with GitHub"
+    },
+    "password": {
+      "signIn": "Sign in with password",
+      "signUp": "Sign up with password"
     },
     "login": {
       "emailPlaceholder": "Email",
@@ -100,8 +111,34 @@
   },
   "wall": {
     "compose": {
-      "composing": "Composing…",
+      "title": "Leave your mark on the wall",
+      "cta": "Write a message"
+    },
+    "publish": {
+      "step": "Step {current} of {total}",
+      "writeTitle": "Leave your mark",
+      "writeDescription": "Up to 100 characters. Next you pick how the card looks.",
       "placeholder": "Type something nice…",
+      "continue": "Continue",
+      "styleTitle": "Pick the look",
+      "styleDescription": "The art is generated automatically from your text and your user ID: the same message always makes the same card. You choose the style and light or dark; the colours come from the message. Changed your mind about the text? Go back and the card regenerates.",
+      "toneLabel": "Tone",
+      "styleLabel": "Style",
+      "tones": {
+        "dark": "Dark",
+        "light": "Light"
+      },
+      "styles": {
+        "mesh": "Mesh",
+        "rays": "Rays",
+        "truchet": "Truchet",
+        "terrain": "Terrain",
+        "lifehash": "LifeHash"
+      },
+      "now": "Now",
+      "back": "Back",
+      "publish": "Publish",
+      "publishing": "Publishing…",
       "alreadyPosted": "You already left a message!",
       "error": "Something went wrong. Please try again.",
       "success": "Message posted!"
@@ -140,6 +177,7 @@
       "commentAuthor": "Manager",
       "commentTime": "2 hours ago",
       "commentBody": "Don't forget the meeting, buddy!",
+      "walletCommentBody": "Don't trust, verify (and go buy some crypto).",
       "ctaSecurity": "Security",
       "ctaCollaborative": "Collaborative development",
       "ctaFlexibility": "Flexibility",
@@ -159,8 +197,7 @@
       "observabilityBody": "Measure before you trust."
     },
     "lastConnect": {
-      "titlePrefix": "Let's",
-      "titleHighlight": "connect.",
+      "title": "Let's connect.",
       "formEmail": "Your email",
       "formName": "Your name",
       "formMessage": "Write your message...",
@@ -169,10 +206,25 @@
       "genericError": "Something went wrong while sending. Mind trying again in a moment?",
       "thanksShort": "Thank you!",
       "thanksLong": "Thanks for reaching out!",
-      "thanksBody": "I'll get back to you as soon as I can."
+      "thanksBody": "I'll get back to you as soon as I can.",
+      "statusTimezone": "Rio Grande · UTC−3",
+      "statusWorkHours": "working hours here",
+      "statusOffHours": "after hours here",
+      "statusLateNight": "it's the middle of the night here, I may take a while to reply",
+      "responseLabel": "Average reply",
+      "responseValue": "~1 day",
+      "responseNote": "I'll reply as soon as I can",
+      "uplinkReady": "ready to transmit your message"
     }
   },
   "home": {
+    "hero": {
+      "greeting": "Hello,",
+      "greetingMorning": "Good morning, visitor!",
+      "greetingAfternoon": "Good afternoon, visitor!",
+      "greetingEvening": "Good evening, visitor!",
+      "intro": "I'm Romulo de Moraes. I built this site to show a bit of who I am, what I've done, what I've learned and what I plan to achieve as a full-stack developer and student."
+    },
     "profile": {
       "title": "Who is behind the code.",
       "link-title": "Want to see my resume?",
@@ -189,6 +241,65 @@
       "eyebrow": "Projects",
       "description": "Things I built alone, with a team and out of pure curiosity. Open source whenever possible.",
       "downloadsWeek": "/week"
+    },
+    "built": {
+      "eyebrow": "What I've built",
+      "headline": "So far, I've",
+      "items": [
+        "published seedicon.",
+        "classified farm GPS.",
+        "moved an API to FastAPI.",
+        "wrote an on-chain lottery.",
+        "built chess in Go.",
+        "rebuilt Pac-Man.",
+        "took a Best Paper.",
+        "taught a Git course.",
+        "shipped this site."
+      ],
+      "lede": {
+        "before": "None of it started finished:",
+        "highlight": "each one began as an empty file",
+        "after": "and a problem I did not yet know how to solve. Open source whenever possible."
+      },
+      "cards": [
+        {
+          "label": "Working",
+          "title": "Developer",
+          "subtitle": "Agrifence · Rio Grande"
+        },
+        {
+          "label": "Building",
+          "title": "seedicon",
+          "subtitle": "Deterministic SVG avatars"
+        },
+        {
+          "label": "Writing",
+          "title": "Engineering blog",
+          "subtitle": "Decisions, mistakes, infra"
+        }
+      ],
+      "presence": {
+        "statusLabel": "Status",
+        "statusFree": "Available",
+        "statusFreeHint": "no status set",
+        "statusUntil": "until {time}, set on Telegram",
+        "musicLabel": "Listening to",
+        "musicLastLabel": "Last played",
+        "commitEmptyHint": "nothing public in the last few days",
+        "commitEmpty": "No recent commit",
+        "musicEmptyHint": "Spotify is quiet",
+        "musicEmpty": "Nothing playing",
+        "commitLabel": "Latest commit",
+        "commitsLabel": "Commits · {days} days",
+        "commitsHint": "public and private",
+        "visitorsLabel": "On the site now",
+        "visitorsUnit": "{count, plural, one {person} other {people}}",
+        "visitorsHint": "including you"
+      },
+      "reach": {
+        "label": "Reach out",
+        "button": "Start a conversation"
+      }
     },
     "vision": {
       "title": "Vision on",
@@ -213,7 +324,38 @@
     "faq": {
       "eyebrow": "FAQ",
       "title": "Questions that always come up.",
-      "description": "How I work, what I use and the best way to bring me into a project."
+      "description": "How I work, what I use and the best way to bring me into a project.",
+      "contact": "Something not quite clear? Send me a <link>message</link>."
+    },
+    "about": {
+      "eyebrow": "About",
+      "headline": "So far, I've worked on",
+      "builds": [
+        "telemetry for tractors.",
+        "IoT for water treatment.",
+        "conveyor belt monitoring.",
+        "a women's health app.",
+        "prize-linked savings.",
+        "on-chain lotteries.",
+        "an npm package.",
+        "custom-built solutions."
+      ],
+      "lede": "Developer at Agrifence and master's student in Computer Engineering at FURG. By day I turn raw GPS from agricultural machinery into something a farmer can act on; the rest of the time I research smart contracts and distributed systems, mostly how to make randomness on a public blockchain fair enough to run a lottery on.",
+      "whyTitle": "Why this site exists",
+      "whyProblems": "This blog is where I write about the problem behind the code: the assumptions that seemed obvious until production proved them wrong, what it takes to select a fair winner on a public blockchain, and the shortcuts whose cost only showed up months later.",
+      "whyProjects": "It's also where the projects I haven't built yet live. Some will turn into posts, some into repos, some will stay ideas, but they'll be public either way.",
+      "location": "Rio Grande, RS - Brazil",
+      "available": "Open to opportunities",
+      "viewProjects": "View Projects",
+      "github": "GitHub",
+      "contact": "Contact",
+      "statsTitle": "The numbers",
+      "stats": {
+        "years": "Years coding",
+        "users": "Users impacted",
+        "projects": "Projects shipped",
+        "articles": "Article published"
+      }
     }
   },
   "navigation": {
@@ -309,8 +451,7 @@
     },
     "newsletter": {
       "title": "Stay Updated",
-      "subtitle": "Get notified about new posts, projects, and ideas straight to your inbox.",
-      "placeholder": "Enter your email"
+      "subtitle": "Get notified about new posts, projects, and ideas straight to your inbox."
     },
     "nav": {
       "resources": {
@@ -1279,28 +1420,32 @@
       "prefix": "Loved by",
       "suffix": "{count, plural, one {subscriber} other {subscribers}}."
     },
-    "emailLabel": "Email",
-    "emailPlaceholder": "your@email.com",
-    "submit": "Subscribe",
     "privacy": {
       "prefix": "No spam, ever.",
       "suffix": "You can check the privacy policy <link>here</link>."
-    },
+    }
+  },
+  "newsletterForm": {
+    "emailLabel": "Email",
+    "emailPlaceholder": "your@email.com",
+    "submit": "Subscribe",
     "success": {
       "title": "Check your email!",
-      "description": "We sent you a confirmation link to activate your subscription.",
-      "useAnotherEmail": "Use another email"
+      "description": "We sent you a confirmation link to activate your subscription."
+    },
+    "error": {
+      "title": "I couldn't complete your subscription"
     },
     "errors": {
       "generic": "Something went wrong. Please try again.",
-      "connection": "Connection error. Please try again."
+      "connection": "Connection error. Check your internet and try again."
     }
   },
   "cookieBanner": {
     "ariaLabel": "Cookie consent banner",
     "title": "Allow cookies?",
     "safeExperience": "We use cookies to provide a safer, more personalized browsing experience.",
-    "descriptionPrefix": "Learn more about how we use cookies in our",
+    "descriptionPrefix": "Learn more in ",
     "policyLink": "Cookie Policy",
     "accept": "Allow",
     "decline": "Decline"
