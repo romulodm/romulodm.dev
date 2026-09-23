@@ -14,7 +14,7 @@ export default async function Terminal() {
             </div>
 
             <div className="block sm:hidden">
-                <TerminalExperience loadingTime={23} data={data} />
+                <TerminalExperience data={data} />
             </div>
         </section>
 

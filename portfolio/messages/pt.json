@@ -382,26 +382,39 @@
   "terminal": {
     "xp": "experiência",
     "loading-xp-title": "Procurando por experiências...",
-    "loading-xp": "Carregar as experiências do sistema levou ",
+    "loading-xp": "Carregar as experiências do sistema levou {years, plural, one {# ano} other {# anos}}.",
     "education": "formação",
     "loading-education-title": "Procurando por formação...",
-    "loading-education": "Carregar a formação levou ",
+    "loading-education": "Carregar a formação levou {years, plural, one {# ano} other {# anos}}.",
     "visitor": "visitante",
     "tooltip": "Você pode usar este terminal",
-    "loading": "Carregando a mensagem de acompanhamento levou ",
     "not-found-first": "Comando não encontrado, digite ",
     "not-found-second": " para uma lista de comandos.",
     "loadings": {
-      "help": "Carregar a mensagem de ajuda levou ",
-      "initial": "Carregar a mensagem inicial levou ",
-      "follow": "Carregar as redes sociais levou ",
-      "who": "Carregar estas informações inúteis levou ",
-      "who-years": " anos",
-      "whoami": "Carregar esta pílula levou ",
-      "cats": "Carregar estes gatos incríveis levou ",
-      "inter": "Carregar o logo do SC Internacional levou ",
-      "spotify": "Carregar esta playlist incrível levou ",
-      "secret": "Carregar este enigma levou "
+      "help": "Carregar a mensagem de ajuda levou {ms} ms.",
+      "initial": "Carregar a mensagem inicial levou {ms} ms.",
+      "follow": "Carregar as redes sociais levou {ms} ms.",
+      "who": "Carregar estas informações inúteis levou {age} anos.",
+      "whoami": "Carregar esta pílula levou {ms} ms.",
+      "cats": "Convencer estes gatos a posar levou {ms} ms.",
+      "inter": "Carregar o logo do SC Internacional levou {ms} ms.",
+      "spotify": "Carregar esta playlist incrível levou {ms} ms.",
+      "secret": "Carregar este enigma levou {ms} ms.",
+      "secret-hint": "Pensar nesta dica levou {ms} ms. Não espere muito dela.",
+      "secret-wrong": "Conferir a senha levou {ms} ms. Não é essa.",
+      "secret-correct": "Abrir o cofre levou {ms} ms.",
+      "unknown": "Procurar esse comando no sistema inteiro levou {ms} ms.",
+      "weather": "Olhar pela janela levou {ms} ms.",
+      "quote": "Consultar os estoicos levou {ms} ms.",
+      "ping": "64 bytes de romulo: icmp_seq=1 ttl=64 tempo={ms} ms",
+      "sudo": "Negar seu acesso levou {ms} ms. Nem pensei duas vezes.",
+      "date": "Olhar o relógio levou {ms} ms.",
+      "neofetch": "Coletar informações sobre mim levou {ms} ms.",
+      "uptime": "Contar os segundos desde o primeiro commit levou {ms} ms.",
+      "matrix": "Escolher a pílula vermelha levou {ms} ms.",
+      "hack-bank": "Encontrar um banco vulnerável levou {ms} ms.",
+      "coffee": "Esquentar a água levou {ms} ms.",
+      "joke": "Pensar nessa piada levou {ms} ms. Deveria ter levado mais."
     },
     "commands": {
       "help": "Lista de comandos",
@@ -413,14 +426,25 @@
       "cats": "Arte de gatos maravilhosos",
       "inter": "O maior clube de futebol do mundo",
       "spotify": "Uma das minhas playlists",
-      "secret": "Enigma simples, qual é a senha?"
+      "secret": "Enigma simples, qual é a senha?",
+      "weather": "Clima atual em Rio Grande - RS",
+      "quote": "Citação estoica + reflexão",
+      "ping": "Verifica se estou acordado",
+      "joke": "Piada de programador",
+      "sudo": "Tente algo proibido",
+      "date": "Data e hora atual",
+      "neofetch": "Informações do sistema (eu)",
+      "uptime": "Tempo desde que o sistema iniciou",
+      "matrix": "Modo hacker",
+      "hack-bank": "Simulação totalmente legal",
+      "coffee": "Fazer café para codar"
     },
     "initial": {
       "content": "Para uma lista de comandos disponíveis, digite "
     },
     "who": {
       "so": "Então...",
-      "about": "Tenho 20 anos, sou apenas um estudante e entusiasta de tecnologia que gosta de jogar, ler livros e fazer outras coisas nerds. 🤓"
+      "about": "Tenho {age} anos, sou apenas um estudante e entusiasta de tecnologia que gosta de jogar, ler livros e fazer outras coisas nerds. 🤓"
     },
     "whoami": {
       "title": "A vida não é um mistério a ser resolvido, mas uma experiência a ser vivida.",
@@ -437,10 +461,79 @@
       "how-try": "sua tentativa",
       "how-second": ", sendo sua tentativa um número de quatro dígitos.",
       "how-hint": "Para ver uma dica, digite ",
-      "hint-time": "Vamos lá, cara, essas mensagens não demoram para ser exibidas...",
       "hint": "A dica é: é um ano 🤯 uau, dica incrível! Mais uma, esse ano aparece em uma mensagem aqui no terminal...",
-      "wrong": "Esta verificação não levou nenhum tempo.",
       "reward": "Correto! Sua recompensa aqui: "
+    },
+    "close-tab": "Fechar aba",
+    "weather": {
+      "wind": "Vento",
+      "temperature": "Temperatura",
+      "condition": "Condição",
+      "cloudy": "Nublado"
+    },
+    "quote": {
+      "translation": "Suporta e abstém-te.",
+      "reflection": "A ideia é simples, mas poderosa: suportar aquilo que não está sob nosso controle e evitar reagir impulsivamente ao que nos afeta. Em um mundo cheio de distrações e pressões, isso vira quase uma \"skill rara\"."
+    },
+    "ping": {
+      "online": "🟢 online",
+      "maybe": "🟡 talvez online",
+      "offline": "🔴 offline",
+      "morning": "Provavelmente começando o dia com café ☕",
+      "afternoon": "Trabalhando / codando 🚀",
+      "evening": "Talvez relaxando ou estudando 📚",
+      "night": "Dormindo 😴 (ou deveria estar)",
+      "timezone": "fuso",
+      "hour": "hora"
+    },
+    "sudo": {
+      "denied": "Permission denied: você não é root 😎",
+      "reported": "Este incidente será reportado."
+    },
+    "date": {
+      "night": "🌙 Hora de descansar...",
+      "morning": "☀️ Bora codar!",
+      "afternoon": "🚀 Produtividade em andamento",
+      "evening": "🌆 Hora de desacelerar"
+    },
+    "neofetch": {
+      "uptime": "{age} anos",
+      "name": "Nome",
+      "age": "Idade",
+      "location": "Local",
+      "stack": "Stack",
+      "stack-value": "Next.js, Go, Kafka, Redis e mais",
+      "interests": "Interesses",
+      "interests-value": "Sistemas distribuídos, backend, Web3",
+      "status": "Status",
+      "status-value": "Sempre construindo algo"
+    },
+    "uptime": {
+      "loading": "Procurando o primeiro commit...",
+      "error": "O GitHub não respondeu agora. Tente de novo daqui a pouco.",
+      "value": "no ar há {days}d {hours}h {minutes}m {seconds}s"
+    },
+    "hack-bank": {
+      "initializing": "Inicializando...",
+      "accessing": "Acessando o servidor...",
+      "injecting": "Injetando payload...",
+      "bypassing": "Burlando o firewall...",
+      "done": "💰 Transferência concluída em {seconds} segundos.",
+      "disclaimer": "Valor transferido: R$ 0,00. Nenhum banco foi ferido nesta simulação."
+    },
+    "coffee": {
+      "brewing": "Passando café",
+      "done": "O café levou {seconds} segundos para ficar pronto.",
+      "ready": "☕ Café pronto. Agora dá pra codar."
+    },
+    "joke": {
+      "items": [
+        "Por que programadores programam no escuro? Porque luz atrai bug. 🥁",
+        "Existem 10 tipos de pessoas: as que entendem binário e as que não entendem.",
+        "Funciona na minha máquina. Então vamos mandar a minha máquina pro cliente.",
+        "Uma query SQL entra num bar, vai até duas mesas e pergunta: posso fazer um JOIN?",
+        "Resolvi um problema com regex. Agora tenho dois problemas."
+      ]
     }
   },
   "footer": {

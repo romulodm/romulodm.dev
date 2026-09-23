@@ -1,13 +1,18 @@
 import { useTranslations } from "next-intl";
-import { useState, useRef, type JSX } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type JSX, type RefObject } from "react";
 
 type CommandComponent = () => JSX.Element;
+
+/** Distance from the bottom (px) still treated as "at the bottom". */
+const STICK_THRESHOLD_PX = 24;
 
 interface TerminalFunctionalProps {
     componentsToShow: CommandComponent[];
     textTypedByUser: string;
     setTextTypedByUser: (text: string) => void;
     checkMessageEntered: () => void;
+    /** The scrollable terminal body that wraps this component. */
+    scrollContainerRef: RefObject<HTMLDivElement | null>;
 }
 
 export default function TerminalFunctional({
@@ -15,12 +20,56 @@ export default function TerminalFunctional({
     textTypedByUser,
     setTextTypedByUser,
     checkMessageEntered,
+    scrollContainerRef,
 }: TerminalFunctionalProps): JSX.Element {
     const [messageHistory, setMessageHistory] = useState<string[]>([]);
     const [historyIndex, setHistoryIndex] = useState<number>(0);
     const inputRef = useRef<HTMLInputElement>(null);
+    const contentRef = useRef<HTMLDivElement>(null);
+
+    /*
+     * Whether the view should follow new output. Submitting a command turns it
+     * on; scrolling away from the bottom turns it off, so a visitor reading
+     * older output is not yanked down while something like `matrix` or
+     * `coffee` keeps growing.
+     */
+    const stickToBottomRef = useRef(false);
 
     const t = useTranslations("terminal");
+
+    // Jump to the new output right after the command's output is committed,
+    // before paint, so the visitor never sees the old scroll position.
+    useLayoutEffect(() => {
+        const container = scrollContainerRef.current;
+        if (container && stickToBottomRef.current) {
+            container.scrollTop = container.scrollHeight;
+        }
+    }, [componentsToShow, scrollContainerRef]);
+
+    // Outputs keep growing after they mount (spinners, progress bars, fetched
+    // data), so a size change also re-pins the view while it is following.
+    useEffect(() => {
+        const container = scrollContainerRef.current;
+        const content = contentRef.current;
+        if (!container || !content) return;
+
+        const observer = new ResizeObserver(() => {
+            if (stickToBottomRef.current) container.scrollTop = container.scrollHeight;
+        });
+        observer.observe(content);
+
+        function onScroll(): void {
+            if (!container) return;
+            const distance = container.scrollHeight - container.scrollTop - container.clientHeight;
+            stickToBottomRef.current = distance <= STICK_THRESHOLD_PX;
+        }
+        container.addEventListener("scroll", onScroll, { passive: true });
+
+        return () => {
+            observer.disconnect();
+            container.removeEventListener("scroll", onScroll);
+        };
+    }, [scrollContainerRef]);
 
     function setCursorToEnd(inputElement: HTMLInputElement): void {
         setTimeout(() => {
@@ -32,6 +81,7 @@ export default function TerminalFunctional({
         const inputElement = e.currentTarget;
 
         if (e.key === "Enter") {
+            stickToBottomRef.current = true;
             setMessageHistory([...messageHistory, textTypedByUser]);
             setHistoryIndex(messageHistory.length + 1);
             checkMessageEntered();
@@ -54,7 +104,7 @@ export default function TerminalFunctional({
     }
 
     return (
-        <div className="flex flex-col px-2" onClick={() => inputRef.current?.focus()}>
+        <div ref={contentRef} className="flex flex-col px-2" onClick={() => inputRef.current?.focus()}>
             {componentsToShow.map((Component, index) => (
                 <Component key={index} />
             ))}

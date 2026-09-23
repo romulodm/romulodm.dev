@@ -382,26 +382,39 @@
   "terminal": {
     "xp": "experience",
     "loading-xp-title": "Looking for experience...",
-    "loading-xp": "Loading system experience took ",
+    "loading-xp": "Loading system experience took {years, plural, one {# year} other {# years}}.",
     "education": "education",
     "loading-education-title": "Looking for education...",
-    "loading-education": "Loading education took ",
+    "loading-education": "Loading education took {years, plural, one {# year} other {# years}}.",
     "visitor": "visitor",
     "tooltip": "You can use this terminal",
-    "loading": "Loading the follow-up message took ",
     "not-found-first": "Command not found, type ",
     "not-found-second": " for a list of commands.",
     "loadings": {
-      "help": "Loading the help message took ",
-      "initial": "Loading the initial message took ",
-      "follow": "Loading social networks took ",
-      "who": "Loading this useless info took ",
-      "who-years": " years",
-      "whoami": "Loading this pill took ",
-      "cats": "Loading these amazing cats took ",
-      "inter": "Loading SC Internacional's logo took ",
-      "spotify": "Loading this awesome playlist took ",
-      "secret": "Loading this riddle took "
+      "help": "Loading the help message took {ms} ms.",
+      "initial": "Loading the initial message took {ms} ms.",
+      "follow": "Loading social networks took {ms} ms.",
+      "who": "Loading this useless info took {age} years.",
+      "whoami": "Loading this pill took {ms} ms.",
+      "cats": "Convincing these cats to pose took {ms} ms.",
+      "inter": "Loading SC Internacional's logo took {ms} ms.",
+      "spotify": "Loading this awesome playlist took {ms} ms.",
+      "secret": "Loading this riddle took {ms} ms.",
+      "secret-hint": "Coming up with this hint took {ms} ms. Don't expect much from it.",
+      "secret-wrong": "Checking the password took {ms} ms. That's not it.",
+      "secret-correct": "Cracking the vault took {ms} ms.",
+      "unknown": "Searching the whole system for that command took {ms} ms.",
+      "weather": "Looking out the window took {ms} ms.",
+      "quote": "Consulting the Stoics took {ms} ms.",
+      "ping": "64 bytes from romulo: icmp_seq=1 ttl=64 time={ms} ms",
+      "sudo": "Denying your access took {ms} ms. No second thoughts.",
+      "date": "Checking the clock took {ms} ms.",
+      "neofetch": "Collecting info about me took {ms} ms.",
+      "uptime": "Counting the seconds since the first commit took {ms} ms.",
+      "matrix": "Taking the red pill took {ms} ms.",
+      "hack-bank": "Finding a vulnerable bank took {ms} ms.",
+      "coffee": "Heating the water took {ms} ms.",
+      "joke": "Coming up with this joke took {ms} ms. It should have taken longer."
     },
     "commands": {
       "help": "List of commands",
@@ -413,14 +426,25 @@
       "cats": "Wonderful cat art",
       "inter": "The greatest football club in the world",
       "spotify": "One of my playlists",
-      "secret": "Simple riddle, what's the password?"
+      "secret": "Simple riddle, what's the password?",
+      "weather": "Current weather in Rio Grande - RS",
+      "quote": "Stoic quote + reflection",
+      "ping": "Checks whether I'm awake",
+      "joke": "Programmer joke",
+      "sudo": "Try something forbidden",
+      "date": "Current date and time",
+      "neofetch": "System info (me)",
+      "uptime": "Time since the system started",
+      "matrix": "Hacker mode",
+      "hack-bank": "Totally legal simulation",
+      "coffee": "Brew coffee to code"
     },
     "initial": {
       "content": "For a list of available commands, type "
     },
     "who": {
       "so": "So...",
-      "about": "I'm 20 years old, just a student and tech enthusiast who likes to play games, read books and do other nerdy stuff. 🤓"
+      "about": "I'm {age} years old, just a student and tech enthusiast who likes to play games, read books and do other nerdy stuff. 🤓"
     },
     "whoami": {
       "title": "Life is not a mystery to be solved, but an experience to be lived.",
@@ -437,10 +461,79 @@
       "how-try": "your attempt",
       "how-second": ", your attempt being a four-digit number.",
       "how-hint": "To see a hint, type ",
-      "hint-time": "Come on, man, these messages don't take long to show up...",
       "hint": "The hint is: it's a year 🤯 wow, amazing hint! One more — this year appears in a message here in the terminal...",
-      "wrong": "This check took no time at all.",
       "reward": "Correct! Your reward here: "
+    },
+    "close-tab": "Close tab",
+    "weather": {
+      "wind": "Wind",
+      "temperature": "Temperature",
+      "condition": "Condition",
+      "cloudy": "Cloudy"
+    },
+    "quote": {
+      "translation": "Bear and forbear.",
+      "reflection": "The idea is simple but powerful: endure what is outside our control and avoid reacting impulsively to what affects us. In a world full of distractions and pressure, that has become almost a \"rare skill\"."
+    },
+    "ping": {
+      "online": "🟢 online",
+      "maybe": "🟡 maybe online",
+      "offline": "🔴 offline",
+      "morning": "Probably starting the day with coffee ☕",
+      "afternoon": "Working / coding 🚀",
+      "evening": "Maybe relaxing or studying 📚",
+      "night": "Sleeping 😴 (or should be)",
+      "timezone": "timezone",
+      "hour": "hour"
+    },
+    "sudo": {
+      "denied": "Permission denied: you are not root 😎",
+      "reported": "This incident will be reported."
+    },
+    "date": {
+      "night": "🌙 Time to rest...",
+      "morning": "☀️ Let's code!",
+      "afternoon": "🚀 Productivity in progress",
+      "evening": "🌆 Time to slow down"
+    },
+    "neofetch": {
+      "uptime": "{age} years",
+      "name": "Name",
+      "age": "Age",
+      "location": "Location",
+      "stack": "Stack",
+      "stack-value": "Next.js, Go, Kafka, Redis and more",
+      "interests": "Interests",
+      "interests-value": "Distributed systems, backend, Web3",
+      "status": "Status",
+      "status-value": "Always building something"
+    },
+    "uptime": {
+      "loading": "Looking for the first commit...",
+      "error": "GitHub didn't answer right now. Try again in a bit.",
+      "value": "up {days}d {hours}h {minutes}m {seconds}s"
+    },
+    "hack-bank": {
+      "initializing": "Initializing...",
+      "accessing": "Accessing server...",
+      "injecting": "Injecting payload...",
+      "bypassing": "Bypassing firewall...",
+      "done": "💰 Transfer complete in {seconds} seconds.",
+      "disclaimer": "Amount transferred: $0.00. No banks were harmed in this simulation."
+    },
+    "coffee": {
+      "brewing": "Brewing coffee",
+      "done": "The coffee took {seconds} seconds to be ready.",
+      "ready": "☕ Coffee ready. Now you can code."
+    },
+    "joke": {
+      "items": [
+        "Why do programmers code in the dark? Because light attracts bugs. 🥁",
+        "There are 10 kinds of people: those who understand binary and those who don't.",
+        "It works on my machine. Fine, then we'll ship my machine to the client.",
+        "A SQL query walks into a bar, goes up to two tables and asks: can I join you?",
+        "I solved a problem with regex. Now I have two problems."
+      ]
     }
   },
   "footer": {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, type JSX } from "react";
+import { useRef, useState, type JSX, type ReactNode } from "react";
 import { IoAddOutline } from "react-icons/io5";
 import {
     VscChromeClose,
@@ -15,6 +15,7 @@ import TerminalExperience from "./TerminalExperience";
 import TerminalFunctional from "./TerminalFunctional";
 import {
     DefaultMessage,
+    EmptyPromptMessage,
     InitialMessage,
     HelpMessage,
     CatsMessage,
@@ -82,6 +83,38 @@ const commands: CommandsMap = {
     coffee: CoffeeMessage,
 };
 
+const TAB_BASE_CLASS =
+    "dark:text-white flex px-3 ml-1.5 py-1 flex-row w-56 h-8 rounded-lg items-center justify-between";
+const TAB_ACTIVE_CLASS = "bg-neutral-300 dark:bg-neutral-800";
+const TAB_INACTIVE_CLASS =
+    "bg-neutral-200 hover:bg-neutral-300 dark:bg-neutral-900 dark:hover:bg-neutral-800/70";
+
+interface TerminalTabProps {
+    active: boolean;
+    onSelect: () => void;
+    /**
+     * Rendered next to the label. Kept outside the select button because a
+     * <button> inside another <button> is invalid HTML and breaks hydration.
+     */
+    trailing: ReactNode;
+}
+
+function TerminalTab({ active, onSelect, trailing }: TerminalTabProps): JSX.Element {
+    return (
+        <div className={`${TAB_BASE_CLASS} ${active ? TAB_ACTIVE_CLASS : TAB_INACTIVE_CLASS}`}>
+            <button
+                type="button"
+                onClick={onSelect}
+                className={`flex flex-1 h-full flex-row items-center gap-2 ${active ? "cursor-default" : "cursor-pointer"}`}
+            >
+                <VscTerminalPowershell />
+                <span>pwsh in romulodm</span>
+            </button>
+            {trailing}
+        </div>
+    );
+}
+
 interface ResumePageClientProps {
     data: ResumeData;
     locale: string;
@@ -90,8 +123,7 @@ interface ResumePageClientProps {
 export default function TerminalClient({ data, locale }: ResumePageClientProps): JSX.Element {
     const t = useTranslations("terminal");
 
-    // ✅ antes você fez useState(...) mas guardou o tuple inteiro
-    const loadingTime = useMemo(() => Math.floor(Math.random() * 300), []);
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
 
     const [showTooltip, setShowTooltip] = useState<boolean>(true);
 
@@ -114,11 +146,14 @@ export default function TerminalClient({ data, locale }: ResumePageClientProps):
     }
 
     function checkMessageEntered(): void {
-        const CommandComponent = commands[textTypedByUser];
+        const typed = textTypedByUser.trim();
+        const CommandComponent = commands[typed.toLowerCase()];
 
-        const match = textTypedByUser.match(secretPassRegex);
+        const match = typed.match(secretPassRegex);
 
-        if (textTypedByUser === "clear") {
+        if (typed === "") {
+            setComponentsToShow((prev) => [...prev, EmptyPromptMessage]);
+        } else if (typed.toLowerCase() === "clear") {
             setComponentsToShow([]);
         } else if (match) {
             const enteredPassword = match[1];
@@ -126,12 +161,12 @@ export default function TerminalClient({ data, locale }: ResumePageClientProps):
             if (enteredPassword === SECRET_PASSWORD) {
                 setComponentsToShow((prev) => [
                     ...prev,
-                    () => <SecretCorrectMessage command={textTypedByUser} />,
+                    () => <SecretCorrectMessage command={typed} />,
                 ]);
             } else {
                 setComponentsToShow((prev) => [
                     ...prev,
-                    () => <SecretWrongMessage command={textTypedByUser} />,
+                    () => <SecretWrongMessage command={typed} />,
                 ]);
             }
         } else if (CommandComponent) {
@@ -139,7 +174,7 @@ export default function TerminalClient({ data, locale }: ResumePageClientProps):
         } else {
             setComponentsToShow((prev) => [
                 ...prev,
-                () => <UnknowMessage command={textTypedByUser} />,
+                () => <UnknowMessage command={typed} />,
             ]);
         }
 
@@ -157,45 +192,33 @@ export default function TerminalClient({ data, locale }: ResumePageClientProps):
         <div className="flex flex-col overflow-hidden rounded-lg shadow-xl pt-10">
             <div className="flex flex-row justify-between bg-gray-100 w-full border-t rounded-tl-lg rounded-tr-lg shadow-3xl dark:bg-neutral-700 dark:border-neutral-700">
                 <div className="flex flex-row items-center text-sm py-1.5">
-                    <button
-                        onClick={() => setDisplayedNavigationTab(0)}
-                        className={`${displayedNavigationTab === 0
-                            ? "bg-neutral-300 dark:bg-neutral-800"
-                            : "cursor-pointer bg-neutral-200 hover:bg-neutral-300 dark:bg-neutral-900 dark:hover:dark:bg-neutral-800/70"
-                            } dark:text-white flex cursor-default px-3 ml-1.5 py-1 flex-row w-56 h-8 rounded-lg items-center justify-between`}
-                    >
-                        <div className="flex flex-row items-center gap-2">
-                            <VscTerminalPowershell />
-                            <p>pwsh in romulodm</p>
-                        </div>
-                        <div className="flex flex-row items-center text-xs">
-                            <VscChromeClose />
-                        </div>
-                    </button>
+                    <TerminalTab
+                        active={displayedNavigationTab === 0}
+                        onSelect={() => setDisplayedNavigationTab(0)}
+                        trailing={
+                            // Decorative: the first tab cannot be closed.
+                            <span aria-hidden="true" className="flex flex-row items-center text-xs">
+                                <VscChromeClose />
+                            </span>
+                        }
+                    />
 
                     {showSecondNavigationTab ? (
                         <>
-                            <button
-                                onClick={() => setDisplayedNavigationTab(1)}
-                                className={`${displayedNavigationTab === 1
-                                    ? "bg-neutral-300 dark:bg-neutral-800"
-                                    : "cursor-pointer bg-neutral-200 hover:bg-neutral-300 dark:bg-neutral-900 dark:hover:dark:bg-neutral-800/70"
-                                    } dark:text-white flex cursor-default px-3 ml-1.5 py-1 flex-row w-56 h-8 rounded-lg items-center justify-between`}
-                            >
-                                <div className="flex flex-row items-center gap-2">
-                                    <VscTerminalPowershell />
-                                    <p>pwsh in romulodm</p>
-                                </div>
-                                <button
-                                    onClick={(event) => {
-                                        event.stopPropagation();
-                                        closeNavigationTab();
-                                    }}
-                                    className="flex flex-row items-center text-xs"
-                                >
-                                    <VscChromeClose />
-                                </button>
-                            </button>
+                            <TerminalTab
+                                active={displayedNavigationTab === 1}
+                                onSelect={() => setDisplayedNavigationTab(1)}
+                                trailing={
+                                    <button
+                                        type="button"
+                                        aria-label={t("close-tab")}
+                                        onClick={closeNavigationTab}
+                                        className="flex flex-row items-center text-xs cursor-pointer"
+                                    >
+                                        <VscChromeClose />
+                                    </button>
+                                }
+                            />
 
                             <button
                                 onClick={() => setShowSecondNavigationTab(true)}
@@ -240,15 +263,16 @@ export default function TerminalClient({ data, locale }: ResumePageClientProps):
                 </div>
             </div>
 
-            <div className="flex flex-row p-2 h-110 overflow-auto border dark:bg-neutral-900 dark:border-neutral-800 rounded-bl-lg rounded-br-lg default-scroll">
+            <div ref={scrollContainerRef} className="flex flex-row p-2 h-110 overflow-auto border dark:bg-neutral-900 dark:border-neutral-800 rounded-bl-lg rounded-br-lg default-scroll">
                 {displayedNavigationTab === 0 ? (
-                    <TerminalExperience loadingTime={loadingTime} data={data} />
+                    <TerminalExperience data={data} />
                 ) : (
                     <TerminalFunctional
                         componentsToShow={componentsToShow}
                         textTypedByUser={textTypedByUser}
                         setTextTypedByUser={setTextTypedByUser}
                         checkMessageEntered={checkMessageEntered}
+                        scrollContainerRef={scrollContainerRef}
                     />
                 )}
             </div>
