@@ -87,6 +87,11 @@ const config: Config = {
           from: { transform: "translateX(0)" },
           to: { transform: "translateX(-50%)" },
         },
+        // Equalizer bars of the Spotify cell in the "Agora" strip.
+        "presence-eq": {
+          "0%, 100%": { transform: "scaleY(0.45)" },
+          "50%": { transform: "scaleY(1)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -96,6 +101,7 @@ const config: Config = {
         "blink": "blink 1s step-end infinite",
         "stack-marquee":
           "stack-marquee var(--marquee-duration, 40s) linear infinite",
+        "presence-eq": "presence-eq 1s ease-in-out infinite",
       },
       typography: {
         DEFAULT: {
