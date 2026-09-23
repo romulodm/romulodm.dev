@@ -1,5 +1,6 @@
 // app/[locale]/newsletter/page.tsx
 import type { Metadata } from 'next'
+import { setRequestLocale } from 'next-intl/server'
 import { prisma } from '@romulo/database'
 import { unstable_cache } from 'next/cache'
 import Link from 'next/link'
@@ -9,11 +10,14 @@ import { Footer } from '@/components/Footer'
 import { SUPPORTED_LOCALES, type LocaleCode } from '@/lib/locales'
 import { formatCount } from '@/lib/format-number'
 import { buildPageMetadata } from '@/lib/seo'
-import { NewsletterSubscribeForm } from './NewsletterSubscribeForm'
+import { NewsletterSubscribeForm } from '@/components/newsletter/NewsletterSubscribeForm'
 
 interface PageProps {
     params: Promise<{ locale: LocaleCode }>
 }
+
+// Casa com o `{ revalidate: 300 }` do unstable_cache mais abaixo.
+export const revalidate = 300
 
 // ── Data fetching ────────────────────────────────────────────────────────────
 
@@ -192,6 +196,8 @@ export default async function NewsletterPage({
     params: Promise<{ locale: LocaleCode }>
 }) {
     const { locale: rawLocale } = await params
+    // Requisito do next-intl para render estatico — ver app/[locale]/layout.tsx.
+    setRequestLocale(rawLocale)
     const locale = SUPPORTED_LOCALES.find((l) => l.code === rawLocale)?.code ?? 'pt-BR'
     const { posts, subscriberCount, totalViews, totalLikes, totalComments, emailsSent, openCount } =
         await getNewsletterPageData(locale)
@@ -243,7 +249,7 @@ export default async function NewsletterPage({
                             </p>
 
                             {/* Inline subscribe form */}
-                            <NewsletterSubscribeForm variant="hero" />
+                            <NewsletterSubscribeForm />
 
                             <p className="mt-3 text-xs text-muted-foreground">
                                 Sem spam, cancele quando quiser. Seu e-mail nunca será compartilhado.
