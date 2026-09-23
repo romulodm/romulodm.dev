@@ -5,7 +5,25 @@ import { prisma } from '@romulo/database'
 import { routing } from '@/i18n/routing'
 import { absoluteUrl, localeAlternates } from '@/lib/seo'
 
-export const revalidate = 3600
+// Renderiza a cada request em vez de ser prerenderizado no build.
+//
+// Antes era `revalidate = 3600`, o que fazia o Next executar a query no momento
+// do `next build` — e o build da imagem Docker nao tem Postgres. Nem o runner do
+// CI. O sitemap so e lido por crawler, algumas vezes por dia, entao prerender
+// nao comprava quase nada e custava acoplar o build ao banco.
+//
+// Deliberadamente NAO usamos try/catch com fallback vazio aqui: sitemap vazio
+// servido ao Google e pior que erro visivel, e o catch tambem mascararia uma
+// instabilidade real do banco em producao.
+//
+// `revalidate` nao pode coexistir com force-dynamic — o Next rejeita a
+// combinacao. O cache vive uma camada acima: nginx/conf.d/app.conf tem um
+// `location = /sitemap.xml` com proxy_cache (TTL 1h), entao na pratica uma
+// request por hora chega ate aqui. Sem ele, cada GET seria o findMany abaixo,
+// que nao tem `take` e cresce com o numero de posts — alvo facil de abuso,
+// porque a rota e publica e o rate limit por IP sozinho ainda deixa passar
+// 30 varreduras por segundo.
+export const dynamic = 'force-dynamic'
 
 /**
  * Rotas publicas que existem em todo locale.

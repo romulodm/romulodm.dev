@@ -3,6 +3,20 @@ import type { MetadataRoute } from 'next'
 import { absoluteUrl, SITE_URL } from '@/lib/seo'
 
 /**
+ * OBRIGATORIO. Sem isto o Next prerenderiza esta rota no build e o opt-in
+ * abaixo nunca acontece.
+ *
+ * ROBOTS_ALLOW_INDEXING e SITE_URL sao definidas em runtime, no
+ * `environment:` do docker-compose.prod.yml. No momento do build nenhuma das
+ * duas existe, entao `allowIndexing` e false, `isLocalhost` e true, e o
+ * `Disallow: /` era gravado como arquivo estatico dentro da imagem. Definir a
+ * variavel no container depois nao mudava nada: o arquivo ja estava pronto.
+ *
+ * Nao troque por `revalidate` — o primeiro valor ainda sairia do build.
+ */
+export const dynamic = 'force-dynamic'
+
+/**
  * Substitui o antigo `app/robots.txt` estatico, que era `Allow: *` sem nenhuma
  * restricao e sem referencia ao sitemap.
  *
