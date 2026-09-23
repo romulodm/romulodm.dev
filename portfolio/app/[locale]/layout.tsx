@@ -1,11 +1,10 @@
 // app/[locale]/layout.tsx
 import { ReactNode } from "react";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono, Lobster } from "next/font/google";
 import { notFound } from "next/navigation";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
+import { setRequestLocale } from "next-intl/server";
 import NextTopLoader from "nextjs-toploader";
 import { ThemeProvider } from "next-themes";
 import { routing } from '@/i18n/routing';
@@ -28,7 +27,7 @@ const jetbrains = JetBrains_Mono({ subsets: ["latin"], weight: ["400", "500", "6
 const lobster = Lobster({ subsets: ["latin"], weight: ["400"], variable: "--font-lobster", display: "swap" });
 
 export function generateStaticParams() {
-  return routing.locales.map((locale) => ({ locale }));
+  return [];
 }
 
 export const metadata: Metadata = {
@@ -89,7 +88,7 @@ export default async function RootLayout({
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) notFound();
 
-  const session = await getServerSession(authOptions);
+  setRequestLocale(locale);
 
   return (
     <html lang={locale} suppressHydrationWarning>
@@ -108,7 +107,7 @@ export default async function RootLayout({
         <NextTopLoader color="hsl(var(--primary))" height={3} showSpinner={false} crawl crawlSpeed={500} speed={500} easing="ease" />
         <NextIntlClientProvider locale={locale} messages={(await import(`../../messages/${locale}.json`)).default}>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            <Providers session={session}>
+            <Providers>
               {children}
               <CookieBanner />
               <ToastProvider />
