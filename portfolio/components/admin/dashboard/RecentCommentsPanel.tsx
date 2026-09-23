@@ -2,32 +2,12 @@
 'use client';
 
 import { Link } from '@/i18n/navigation';
-import Image from 'next/image';
+import { UserAvatar } from '@/components/ui/UserAvatar';
 import { MessageSquare, Ban, ArrowBigUp, ArrowBigDown, Pencil } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import { Panel, EmptyState } from './primitives';
 import { timeAgo } from './format';
 import type { RecentComment } from './types';
-
-function Avatar({ username, image }: { username: string; image: string | null }) {
-    if (image) {
-        return (
-            <Image
-                src={image}
-                alt={username}
-                width={28}
-                height={28}
-                className="h-7 w-7 shrink-0 rounded-full object-cover"
-                unoptimized
-            />
-        );
-    }
-    return (
-        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold uppercase text-muted-foreground">
-            {username.charAt(0)}
-        </span>
-    );
-}
 
 /** Score do comentário só aparece quando há voto — zero não é informação. */
 function ScoreBadge({ score }: { score: number }) {
@@ -72,7 +52,7 @@ export function RecentCommentsPanel({
                     {comments.map((c) => (
                         <li key={c.id} className="px-5 py-3 transition-colors hover:bg-muted/40">
                             <div className="flex items-start gap-3">
-                                <Avatar username={c.author.username} image={c.author.image} />
+                                <UserAvatar user={c.author} size={28} />
                                 <div className="min-w-0 flex-1">
                                     <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
                                         <span className="text-xs font-semibold text-foreground">

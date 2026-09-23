@@ -1,4 +1,4 @@
-// components/admin/dashboard/types.ts
+import type { AvatarUser } from "@/lib/avatar";
 
 export type Period = '7d' | '30d' | '90d' | '12m';
 export type Bucket = 'day' | 'week' | 'month';
@@ -68,7 +68,7 @@ export interface RecentComment {
     score: number;
     createdAt: string;
     edited: boolean;
-    author: { id: string; username: string; image: string | null; banned: boolean };
+    author: AvatarUser & { id: string; banned: boolean };
     postSlug: string;
     postTitle: string;
 }
