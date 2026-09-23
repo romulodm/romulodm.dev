@@ -11,6 +11,7 @@ import {
 import { ThemeMenuItems } from "./ThemeMenuItems";
 import Link from "next/link";
 import { navItems } from "./Navbar";
+import { moreItems } from "./moreItems";
 import { useLocale, useTranslations } from "next-intl";
 
 interface MobileMenuProps {
@@ -33,6 +34,22 @@ export function MobileMenu({ onOpenLanguageModal }: MobileMenuProps) {
                 {navItems.map((item) => (
                     <DropdownMenuItem key={item.href} asChild>
                         <Link href={item.href} className="flex items-center gap-2 text-sm">
+                            {item.icon}
+                            {item.label}
+                        </Link>
+                    </DropdownMenuItem>
+                ))}
+
+                {/* Os links do "More" — o painel do desktop nao aparece no mobile
+                    (hidden md:block em NavMore), entao eles entram achatados aqui. */}
+                {moreItems.map((item) => (
+                    <DropdownMenuItem key={item.href} asChild>
+                        <Link
+                            href={item.href}
+                            target={item.external ? "_blank" : undefined}
+                            rel={item.external ? "noopener noreferrer" : undefined}
+                            className="flex items-center gap-2 text-sm"
+                        >
                             {item.icon}
                             {item.label}
                         </Link>

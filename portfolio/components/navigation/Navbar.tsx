@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from "react";
-import { BookOpen, Rss, Home, Languages } from "lucide-react";
+import { BookOpen, Rss, Home, Languages, LogIn } from "lucide-react";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { useSession } from "next-auth/react";
@@ -125,12 +125,19 @@ const Navbar = () => {
                             />
                         ) : (
                             <>
-                                <button
+                                {/* Ghost com icone, o mesmo tratamento dos icones ao
+                                    lado: entrar nao e a acao principal de um blog, e o
+                                    laranja solido brigava com o `~` da marca. Sem
+                                    tooltip — o botao ja tem rotulo. */}
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
                                     onClick={openAuthModal}
-                                    className="text-sm mr-2 font-medium bg-primary text-white px-3 py-2 rounded hover:opacity-90 transition-opacity"
+                                    className="px-3 py-2 text-sm font-medium text-foreground hover:bg-gray-400/60 hover:text-black dark:hover:bg-neutral-800/50 dark:hover:text-foreground"
                                 >
-                                    Login
-                                </button>
+                                    <LogIn className="h-4 w-4" />
+                                    {t('navigation.login')}
+                                </Button>
                                 <MobileMenu onOpenLanguageModal={() => setLanguageModalOpen(true)} />
                             </>
                         )}

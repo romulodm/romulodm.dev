@@ -1,56 +1,15 @@
 'use client'
 
 import { useState, useRef } from "react";
-import Link from "next/link";
 import Image from "next/image";
-import { ChevronDown, FileText, Radio, Activity, Heart, BookOpen } from "lucide-react";
+import Link from "next/link";
+import { ChevronDown } from "lucide-react";
+
+import { featuredItems, quickLinks } from "./moreItems";
 
 interface MoreMenuProps {
     onClose?: () => void;
 }
-
-const featuredItems = [
-    {
-        href: "/wall",
-        title: "Guestbook",
-        description: "Deixe uma mensagem aqui",
-        icon: <BookOpen className="h-5 w-5" />,
-        image: "/assets/wall.png",
-        accent: "from-violet-500/20 to-purple-600/20",
-    },
-    {
-        href: "/support",
-        title: "Apoia-se",
-        description: "Me apoie para continuar criando",
-        icon: <Heart className="h-5 w-5" />,
-        image: "/assets/coffee.png",
-        accent: "from-rose-500/20 to-pink-600/20",
-    },
-];
-
-const quickLinks = [
-    {
-        href: "/resume",
-        label: "Resume",
-        description: "Minha experiência profissional",
-        icon: <FileText className="h-4 w-4" />,
-        external: false
-    },
-    {
-        href: "/newsletter",
-        label: "Newsletter",
-        description: "Assine para receber novidades",
-        icon: <Radio className="h-4 w-4" />,
-        external: false
-    },
-    {
-        href: "/status",
-        label: "Status",
-        description: "Uptime dos meus serviços",
-        icon: <Activity className="h-4 w-4" />,
-        external: true,
-    },
-];
 
 export function NavMore({ onClose }: MoreMenuProps) {
     const [open, setOpen] = useState(false);
@@ -66,8 +25,10 @@ export function NavMore({ onClose }: MoreMenuProps) {
     };
 
     return (
+        // Escondido no mobile: la os mesmos links entram achatados no menu de
+        // hamburguer (ver moreItems), porque o painel de 560px nao cabe.
         <div
-            className="relative"
+            className="relative hidden md:block"
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
         >
@@ -86,52 +47,62 @@ export function NavMore({ onClose }: MoreMenuProps) {
             </button>
 
             {/* Dropdown panel */}
+            {/* 560px = 24 (p-3) + 148 + 8 + 148 (cards) + 12 (gap) + 220 (quick links):
+                os cards batem exatos em 148px sem esticar a coluna da direita. */}
             <div
-                className={`absolute left-1/2 -translate-x-1/2 top-full mt-3 w-[540px] transition-all duration-200 origin-top ${open
+                className={`absolute left-1/2 -translate-x-1/2 top-full mt-3 w-[560px] transition-all duration-200 origin-top ${open
                     ? "opacity-100 scale-100 translate-y-0 pointer-events-auto"
                     : "opacity-0 scale-95 -translate-y-1 pointer-events-none"
                     }`}
             >
                 {/* Arrow */}
-                <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-3 h-3 rotate-45 bg-card border-l border-t border-border" />
+                <div className="absolute -top-1.5 z-10 left-1/2 -translate-x-1/2 w-3 h-3 rotate-45 bg-card border-l border-t border-border" />
 
                 <div className="relative bg-card border border-border rounded-xl shadow-2xl shadow-black/20 overflow-hidden p-3 grid grid-cols-[1fr_220px] gap-3 items-stretch">
                     {/* Left: Featured cards */}
                     <div className="grid grid-cols-2 gap-2 self-stretch">
-                        {featuredItems.map((item) => (
+                        {featuredItems.map(({ href, title, description, icon: Icon, accent, image }) => (
                             <Link
-                                key={item.href}
-                                href={item.href}
+                                key={href}
+                                href={href}
                                 onClick={() => setOpen(false)}
-                                className="group relative rounded-lg overflow-hidden min-h-36 flex flex-col justify-end p-3 bg-muted hover:ring-1 hover:ring-primary/40 transition-all duration-200"
+                                className="group relative flex h-full w-[148px] flex-col justify-between gap-6 overflow-hidden border-border rounded-xl border p-3.5 transition-colors"
+                                style={{
+                                    backgroundColor: `${accent}1a`,
+                                }}
                             >
-                                {/* Background image */}
-                                {item.image && (
-                                    <Image
-                                        src={item.image}
-                                        alt={item.title}
-                                        fill
-                                        className="object-cover transition-transform duration-300 group-hover:scale-105"
-                                        sizes="160px"
-                                    />
-                                )}
+                                {/* Aquarela de fundo, decorativa: o titulo ja descreve o link. */}
+                                <Image
+                                    src={image}
+                                    alt=""
+                                    fill
+                                    sizes="148px"
+                                    className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                                />
 
-                                {/* Gradient overlay */}
-                                <div className={`absolute inset-0 bg-gradient-to-br ${item.accent} opacity-60`} />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+                                {/* Gradiente escuro embaixo, onde fica o texto: garante
+                                    contraste do texto branco em qualquer tema, mesmo
+                                    sobre as areas claras da pintura. */}
+                                <span
+                                    aria-hidden
+                                    className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-black/25"
+                                />
 
-                                {/* Icon top-right */}
-                                <div className="absolute top-2.5 right-2.5 text-white/60 group-hover:text-white/90 transition-colors">
-                                    {item.icon}
-                                </div>
+                                {/* Icone solto em branco, alinhado a esquerda com o texto
+                                    de baixo. A sombra segura o contraste nas areas claras
+                                    da pintura (a janela do Guestbook, o ceu do Apoia-se). */}
+                                <Icon
+                                    size={20}
+                                    strokeWidth={2}
+                                    className="relative text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.7)]"
+                                />
 
-                                {/* Text */}
-                                <div className="relative z-10">
-                                    <p className="text-sm font-semibold text-white leading-tight">
-                                        {item.title}
+                                <div className="relative">
+                                    <p className="text-[13px] font-medium text-white">
+                                        {title}
                                     </p>
-                                    <p className="text-xs text-white/60 mt-0.5 leading-snug">
-                                        {item.description}
+                                    <p className="text-xs leading-snug text-white/75">
+                                        {description}
                                     </p>
                                 </div>
                             </Link>

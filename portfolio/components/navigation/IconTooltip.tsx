@@ -25,16 +25,12 @@ interface IconTooltipProps {
  */
 export function IconTooltip({ label, children, side = "bottom" }: IconTooltipProps) {
     return (
-        <TooltipProvider delayDuration={250} skipDelayDuration={400}>
+        <TooltipProvider delayDuration={150} skipDelayDuration={400}>
             <Tooltip>
                 <TooltipTrigger asChild>{children}</TooltipTrigger>
-                <TooltipContent
-                    side={side}
-                    sideOffset={8}
-                    className="border border-border bg-card font-medium text-foreground shadow-md"
-                >
-                    {label}
-                </TooltipContent>
+                {/* Sem className: o estilo (chip escuro + seta) mora no
+                    TooltipContent, para ser o mesmo em todo lugar. */}
+                <TooltipContent side={side}>{label}</TooltipContent>
             </Tooltip>
         </TooltipProvider>
     );
