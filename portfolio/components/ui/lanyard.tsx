@@ -1,7 +1,7 @@
  
 'use client';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Canvas, extend, useFrame } from '@react-three/fiber';
+import { Canvas, extend, useFrame, useThree, events as createPointerEvents } from '@react-three/fiber';
 import { useGLTF, useTexture, Environment, Lightformer } from '@react-three/drei';
 import {
     BallCollider,
@@ -38,6 +38,60 @@ interface LanyardProps {
     canvasRef?: React.Ref<HTMLCanvasElement>;
     /** Fires on the first frame after the GLB and strap texture are resolved. */
     onReady?: () => void;
+    /**
+     * Elemento que recebe os eventos de ponteiro no lugar do canvas. Permite
+     * arrastar o cracha mesmo com o canvas em `pointer-events: none` por cima
+     * de outros elementos clicaveis (o raycast so pega quando o cursor esta no cracha).
+     */
+    eventSource?: React.RefObject<HTMLElement | null>;
+    /**
+     * Altura (px) do quadro de referencia da camera. Quando o canvas e mais alto
+     * que isso, a cena mantem escala e alinhamento pelo topo e o canvas so ganha
+     * area extra para baixo — o cracha pode ser arrastado sem ser cortado.
+     */
+    frameHeight?: () => number;
+}
+
+/**
+ * Eventos com `eventSource` externo: calcula o ponteiro a partir do rect atual do
+ * canvas em cada evento. O padrao do r3f usa um rect medido com debounce, que fica
+ * desatualizado durante o scroll e desalinha o raycast.
+ */
+const liveRectEvents: typeof createPointerEvents = (store) => {
+    const base = createPointerEvents(store);
+    return {
+        ...base,
+        compute(event, state) {
+            const rect = state.gl.domElement.getBoundingClientRect();
+            state.pointer.set(
+                ((event.clientX - rect.left) / rect.width) * 2 - 1,
+                -((event.clientY - rect.top) / rect.height) * 2 + 1
+            );
+            state.raycaster.setFromCamera(state.pointer, state.camera);
+        },
+    };
+};
+
+/** Estende o frustum para baixo mantendo o enquadramento de um quadro `frameHeight`. */
+function ViewFrame({ frameHeight }: { frameHeight: () => number }) {
+    const camera = useThree((s) => s.camera) as THREE.PerspectiveCamera;
+    const size = useThree((s) => s.size);
+
+    useFrame(() => {
+        const W = size.width;
+        const H = frameHeight();
+        if (!W || !H) return;
+        // Impede o r3f de sobrescrever aspect/projecao no resize.
+        (camera as THREE.PerspectiveCamera & { manual?: boolean }).manual = true;
+        const v = camera.view;
+        const aspect = W / H;
+        if (camera.aspect !== aspect || !v || v.fullWidth !== W || v.fullHeight !== H || v.height !== size.height) {
+            camera.aspect = aspect;
+            camera.setViewOffset(W, H, 0, 0, W, size.height);
+        }
+    });
+
+    return null;
 }
 
 export default function Lanyard({
@@ -48,7 +102,9 @@ export default function Lanyard({
     containerClassName,
     cardTexture,
     canvasRef,
-    onReady
+    onReady,
+    eventSource,
+    frameHeight
 }: LanyardProps) {
     const [isMobile, setIsMobile] = useState<boolean>(() => typeof window !== 'undefined' && window.innerWidth < 768);
 
@@ -63,11 +119,14 @@ export default function Lanyard({
             className={clsx(containerClassName || "relative z-0 w-full h-screen flex justify-center items-center transform scale-100 origin-center")}>
             <Canvas
                 ref={canvasRef}
+                eventSource={eventSource as React.RefObject<HTMLElement> | undefined}
+                events={eventSource ? liveRectEvents : undefined}
                 camera={{ position, fov }}
                 dpr={[1, isMobile ? 1.5 : 2]}
                 gl={{ alpha: transparent, preserveDrawingBuffer: true }}
                 onCreated={({ gl }) => gl.setClearColor(new THREE.Color(0x000000), transparent ? 0 : 1)}
             >
+                {frameHeight && <ViewFrame frameHeight={frameHeight} />}
                 <ambientLight intensity={Math.PI} />
                 <Physics gravity={gravity} timeStep={isMobile ? 1 / 30 : 1 / 60}>
                     <Band isMobile={isMobile} cardTexture={cardTexture} onReady={onReady} />
@@ -182,6 +241,17 @@ function Band({ maxSpeed = 50, minSpeed = 0, isMobile = false, cardTexture, onRe
             };
         }
     }, [hovered, dragged]);
+
+    // Arrastar o cracha por cima de texto nao pode selecionar o texto de baixo.
+    useEffect(() => {
+        if (!dragged) return;
+        window.getSelection()?.removeAllRanges();
+        const prev = document.body.style.userSelect;
+        document.body.style.userSelect = 'none';
+        return () => {
+            document.body.style.userSelect = prev;
+        };
+    }, [dragged]);
 
     useFrame((state, delta) => {
         if (dragged && typeof dragged !== 'boolean') {

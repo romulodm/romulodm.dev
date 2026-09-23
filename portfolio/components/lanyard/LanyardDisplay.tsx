@@ -19,12 +19,18 @@ interface LanyardDisplayProps {
     position?: [number, number, number];
     fov?: number;
     containerClassName?: string;
+    /** Repassado ao <Canvas>: eventos de ponteiro vem deste elemento. */
+    eventSource?: React.RefObject<HTMLElement | null>;
+    /** Repassado ao <Lanyard>: altura do quadro de referencia da camera. */
+    frameHeight?: () => number;
 }
 
 export default function LanyardDisplay({
     position = [0, 0, 20],
     fov = 20,
     containerClassName,
+    eventSource,
+    frameHeight,
 }: LanyardDisplayProps) {
     const [cardTexture, setCardTexture] = useState<HTMLCanvasElement | null>(null);
     const [isReady, setIsReady] = useState(false);
@@ -72,6 +78,8 @@ export default function LanyardDisplay({
                                 cardTexture={cardTexture}
                                 canvasRef={canvasRef}
                                 onReady={handleSceneReady}
+                                eventSource={eventSource}
+                                frameHeight={frameHeight}
                             />
                         </Suspense>
                     )}
