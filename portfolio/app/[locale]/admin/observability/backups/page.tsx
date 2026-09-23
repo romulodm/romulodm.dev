@@ -7,8 +7,6 @@ import { isAdminAuthenticated } from "@/lib/auth-helpers";
 import { listBackups } from "@/lib/backups/s3-client";
 import { BackupsClient } from "@/components/admin/observability/BackupsClient";
 
-export const dynamic = "force-dynamic";
-
 export default async function AdminBackupsPage() {
   const locale = await getLocale();
 
