@@ -346,6 +346,12 @@ model WallMessage {
   message   String   @db.VarChar(100)
   authorId  String
   theme     Int      @default(0)
+  /// Card art chosen in the publish modal. Plain strings, not Prisma enums,
+  /// for the same reason as User.avatarStyle: adding or retiring a style is a
+  /// code change in portfolio/components/wall/cardArt.ts, not a migration.
+  /// Validated at the API edge against CARD_ART_STYLES / CARD_ART_TONES.
+  artStyle  String   @default("mesh") @db.VarChar(20)
+  artTone   String   @default("dark") @db.VarChar(10)
   createdAt DateTime @default(now())
   author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
