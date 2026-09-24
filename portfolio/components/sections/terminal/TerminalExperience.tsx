@@ -9,6 +9,8 @@ import { EducationList } from "@/components/resume/EducationList";
 
 interface TerminalExperienceProps {
     data: ResumeData;
+    /** Collapse each experience behind a "show more" button (see ExperienceList). */
+    collapsible?: boolean;
 }
 
 /**
@@ -25,7 +27,7 @@ function yearsSinceFirstStart(items: ReadonlyArray<{ start: string }>): number {
     return new Date().getFullYear() - Math.min(...years);
 }
 
-export default function TerminalExperience({ data }: TerminalExperienceProps): JSX.Element {
+export default function TerminalExperience({ data, collapsible = false }: TerminalExperienceProps): JSX.Element {
     const t = useTranslations("terminal");
 
     const educationYears = yearsSinceFirstStart(data.education);
@@ -76,7 +78,7 @@ export default function TerminalExperience({ data }: TerminalExperienceProps): J
             </div>
 
             <div>
-                <ExperienceList experiences={data.experience} />
+                <ExperienceList experiences={data.experience} collapsible={collapsible} />
             </div>
         </div>
     )

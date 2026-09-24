@@ -13,8 +13,10 @@ export default async function Terminal() {
                 <TerminalClient data={data} locale={locale} />
             </div>
 
+            {/* Below `sm` there is no terminal (and no scroll box around the
+                list), so each experience starts collapsed. */}
             <div className="block sm:hidden">
-                <TerminalExperience data={data} />
+                <TerminalExperience data={data} collapsible />
             </div>
         </section>
 

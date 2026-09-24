@@ -1634,5 +1634,14 @@
     "description": "The link may be broken or the page may have been moved.",
     "home": "Back home",
     "blog": "Go to the blog"
+  },
+  "experienceList": {
+    "duration": {
+      "years": "{count, plural, one {# year} other {# years}}",
+      "months": "{count, plural, one {# month} other {# months}}",
+      "both": "{years} {months}"
+    },
+    "showMore": "Show more",
+    "showLess": "Show less"
   }
 }
