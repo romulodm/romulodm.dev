@@ -1,7 +1,19 @@
 "use client";
 
 import React, { useEffect, useState, type JSX, type ReactNode } from "react";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
+
+import { CATALOG } from "./catalog";
+import {
+    Cmd,
+    Muted,
+    Output,
+    Prompt,
+    Spinner,
+    formatSeconds,
+    useFakeLoadTime,
+    useIntlLocale,
+} from "./TerminalPrimitives";
 
 const SECRET_REWARD_URL = process.env.NEXT_PUBLIC_TERMINAL_SECRET_REWARD ?? "";
 
@@ -13,31 +25,6 @@ const BIRTH_DATE = new Date(2003, 8, 22);
  * is a year shown somewhere in this terminal, so this value must stay constant.
  */
 const INTER_FOUNDATION_YEAR = 1909;
-
-const SPINNER_FRAMES = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
-
-/**
- * Picks a fake loading time once per mounted output, so re-renders keep the
- * same number. Outputs only mount on the client, after the visitor opens the
- * interactive tab, which is why a random initial state cannot cause a hydration
- * mismatch here. Callers keep ranges below 1000 so no random value reads like a
- * four-digit year and muddles the `secret` riddle.
- */
-function useFakeLoadTime(min: number, max: number): number {
-    const [ms] = useState(() => Math.floor(min + Math.random() * (max - min + 1)));
-    return ms;
-}
-
-function useIntlLocale(): string {
-    return useLocale() === "pt" ? "pt-BR" : "en-US";
-}
-
-function formatSeconds(ms: number, intlLocale: string): string {
-    return new Intl.NumberFormat(intlLocale, {
-        minimumFractionDigits: 1,
-        maximumFractionDigits: 1,
-    }).format(ms / 1000);
-}
 
 function getAge(birthDate: Date): number {
     const today = new Date();
@@ -64,80 +51,9 @@ async function getRepoCreatedAt(): Promise<Date> {
     return new Date(data.created_at);
 }
 
-function Visitor(): JSX.Element {
+function useAvailableCommands(): { name: string; description: string }[] {
     const t = useTranslations("terminal");
-    return (
-        <div className="text-blue-600 font-semibold dark:text-sky-400">
-            {t("visitor")}@romulodm:~$&nbsp;
-        </div>
-    );
-}
-
-/** The echoed prompt line: `visitor@romulodm:~$ <command>`. */
-function Prompt({ command }: { command: string }): JSX.Element {
-    return (
-        <div className="flex flex-row">
-            <Visitor />
-            <div className="whitespace-nowrap font-semibold dark:text-white/80">{command}</div>
-        </div>
-    );
-}
-
-function Muted({ children, className = "" }: { children: ReactNode; className?: string }): JSX.Element {
-    return <div className={`text-gray-500 dark:text-neutral-400/90 ${className}`}>{children}</div>;
-}
-
-function Output({ children, className = "" }: { children: ReactNode; className?: string }): JSX.Element {
-    return <div className={`mt-2 text-gray-700 dark:text-neutral-300 ${className}`}>{children}</div>;
-}
-
-function Spinner(): JSX.Element {
-    const [frame, setFrame] = useState(0);
-
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setFrame((prev) => (prev + 1) % SPINNER_FRAMES.length);
-        }, 80);
-
-        return () => clearInterval(interval);
-    }, []);
-
-    return (
-        <span aria-hidden="true" className="inline-block w-[1ch]">
-            {SPINNER_FRAMES[frame]}
-        </span>
-    );
-}
-
-interface CommandsObject {
-    [key: string]: string;
-}
-
-function useAvailableCommands(): CommandsObject {
-    const t = useTranslations("terminal");
-    return {
-        "- help": t("commands.help"),
-        "- clear": t("commands.clear"),
-        "- initial": t("commands.initial"),
-        "- who": t("commands.who"),
-        "- whoami": t("commands.whoami"),
-        "- follow": t("commands.follow"),
-        "- weather": t("commands.weather"),
-        "- curl quote": t("commands.quote"),
-        "- ping romulo": t("commands.ping"),
-        "- cats": t("commands.cats"),
-        "- inter": t("commands.inter"),
-        "- spotify": t("commands.spotify"),
-        "- joke": t("commands.joke"),
-        "- sudo": t("commands.sudo"),
-        "- date": t("commands.date"),
-        "- neofetch": t("commands.neofetch"),
-        "- secret": t("commands.secret"),
-        "- uptime": t("commands.uptime"),
-        "- matrix": t("commands.matrix"),
-        "- hack bank": t("commands.hack-bank"),
-        "- coffee": t("commands.coffee"),
-    };
+    return CATALOG.map(({ name, key }) => ({ name: `- ${name}`, description: t(`commands.${key}`) }));
 }
 
 export function DefaultMessage(): JSX.Element {
@@ -148,7 +64,7 @@ export function DefaultMessage(): JSX.Element {
     );
 }
 
-interface CommandMessageProps {
+export interface CommandMessageProps {
     command: string;
 }
 
@@ -161,7 +77,12 @@ export function EmptyPromptMessage(): JSX.Element {
     );
 }
 
-export function UnknowMessage({ command }: CommandMessageProps): JSX.Element {
+interface UnknowMessageProps extends CommandMessageProps {
+    /** Closest known command, when the input looks like a typo of one. */
+    suggestion?: string | null;
+}
+
+export function UnknowMessage({ command, suggestion }: UnknowMessageProps): JSX.Element {
     const t = useTranslations("terminal");
     const ms = useFakeLoadTime(300, 900);
 
@@ -172,6 +93,9 @@ export function UnknowMessage({ command }: CommandMessageProps): JSX.Element {
             <div className="flex flex-row text-gray-500 dark:text-neutral-400/90">
                 <p>{t("not-found-first")}</p> <p className="strong font-bold text-red-500">'help'</p>{t("not-found-second")}
             </div>
+            {suggestion ? (
+                <Muted>{t.rich("suggestion", { command: suggestion, cmd: (chunks) => <Cmd>{chunks}</Cmd> })}</Muted>
+            ) : null}
         </div>
     );
 }
@@ -188,15 +112,15 @@ export function HelpMessage(): JSX.Element {
 
             <div className="flex px-2 py-3">
                 <div className="w-32 pr-1">
-                    {Object.keys(cmds).map((command) => (
-                        <p className="font-semibold text-red-500" key={command}>
-                            {command}
+                    {cmds.map(({ name }) => (
+                        <p className="font-semibold text-red-500 whitespace-nowrap" key={name}>
+                            {name}
                         </p>
                     ))}
                 </div>
                 <div>
-                    {Object.entries(cmds).map(([command, description]) => (
-                        <p className="text-gray-500 dark:text-neutral-400/90" key={command}>
+                    {cmds.map(({ name, description }) => (
+                        <p className="text-gray-500 dark:text-neutral-400/90" key={name}>
                             {description}
                         </p>
                     ))}

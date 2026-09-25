@@ -41,6 +41,22 @@ import {
     CoffeeMessage,
     JokeMessage,
 } from "./TerminalMessages";
+import {
+    BlogMessage,
+    CompletionsMessage,
+    CowsayMessage,
+    GitLogMessage,
+    HistoryMessage,
+    ManMessage,
+    NpmInstallMessage,
+    PapersMessage,
+    SeediconMessage,
+    SlMessage,
+    TopMessage,
+    VisitorsMessage,
+    WordmarkMessage,
+} from "./TerminalExtraMessages";
+import { suggestCommand } from "./catalog";
 import CustomTooltip from "./CustomTooltip";
 import { useTranslations } from "next-intl";
 
@@ -56,6 +72,19 @@ interface CommandsMap {
     [key: string]: CommandComponent;
 }
 
+function TopCommand(): JSX.Element {
+    return <TopMessage colorful={false} />;
+}
+
+function HtopCommand(): JSX.Element {
+    return <TopMessage colorful />;
+}
+
+/**
+ * Commands without arguments, looked up by the exact (lowercased) input.
+ * Commands that take arguments or need the terminal state are handled in
+ * `checkMessageEntered`.
+ */
 const commands: CommandsMap = {
     help: HelpMessage,
     initial: InitialMessage,
@@ -81,6 +110,12 @@ const commands: CommandsMap = {
     matrix: MatrixMessage,
     "hack bank": HackBankMessage,
     coffee: CoffeeMessage,
+
+    papers: PapersMessage,
+    visitors: VisitorsMessage,
+    top: TopCommand,
+    htop: HtopCommand,
+    sl: SlMessage,
 };
 
 const TAB_BASE_CLASS =
@@ -138,6 +173,7 @@ export default function TerminalClient({ data, locale }: ResumePageClientProps):
         InitialMessage,
     ]);
     const [textTypedByUser, setTextTypedByUser] = useState<string>("");
+    const [commandHistory, setCommandHistory] = useState<string[]>([]);
 
     function closeNavigationTab(): void {
         setDisplayedNavigationTab(0);
@@ -145,37 +181,64 @@ export default function TerminalClient({ data, locale }: ResumePageClientProps):
         setComponentsToShow([DefaultMessage, InitialMessage]);
     }
 
+    function pushOutput(component: CommandComponent): void {
+        setComponentsToShow((prev) => [...prev, component]);
+    }
+
+    function showCompletions(typed: string, options: string[]): void {
+        pushOutput(() => <CompletionsMessage typed={typed} options={options} />);
+    }
+
     function checkMessageEntered(): void {
         const typed = textTypedByUser.trim();
-        const CommandComponent = commands[typed.toLowerCase()];
+        const lower = typed.toLowerCase();
+        const head = lower.split(/\s+/)[0] ?? "";
+        // Argument with its original casing: seedicon seeds are case-sensitive.
+        const rest = typed.slice(head.length).trim();
 
+        const history = typed ? [...commandHistory, typed] : commandHistory;
+        if (typed) setCommandHistory(history);
+
+        // Own keys only: "constructor" or "toString" would otherwise resolve to
+        // Object.prototype members and be rendered as components.
+        const CommandComponent = Object.hasOwn(commands, lower) ? commands[lower] : undefined;
         const match = typed.match(secretPassRegex);
 
         if (typed === "") {
-            setComponentsToShow((prev) => [...prev, EmptyPromptMessage]);
-        } else if (typed.toLowerCase() === "clear") {
+            pushOutput(EmptyPromptMessage);
+        } else if (lower === "clear") {
             setComponentsToShow([]);
+        } else if (lower === "exit") {
+            closeNavigationTab();
+        } else if (lower === "history") {
+            pushOutput(() => <HistoryMessage entries={history} />);
+        } else if (lower === "git log" || lower === "git log --oneline") {
+            pushOutput(() => <GitLogMessage command={typed} oneline={lower.endsWith("--oneline")} />);
+        } else if (lower === "blog" || lower === "blog --latest") {
+            pushOutput(() => <BlogMessage command={typed} latestOnly={lower.endsWith("--latest")} />);
+        } else if (lower === "npm install" || lower === "npm i") {
+            pushOutput(() => <NpmInstallMessage command={typed} />);
+        } else if (head === "cowsay") {
+            pushOutput(() => <CowsayMessage command={typed} text={rest} />);
+        } else if (head === "seedicon") {
+            pushOutput(() => <SeediconMessage command={typed} text={rest} />);
+        } else if (head === "wordmark" || head === "woodmark") {
+            pushOutput(() => <WordmarkMessage command={typed} text={rest} />);
+        } else if (head === "man") {
+            pushOutput(() => <ManMessage command={typed} topic={rest.toLowerCase()} />);
         } else if (match) {
             const enteredPassword = match[1];
 
             if (enteredPassword === SECRET_PASSWORD) {
-                setComponentsToShow((prev) => [
-                    ...prev,
-                    () => <SecretCorrectMessage command={typed} />,
-                ]);
+                pushOutput(() => <SecretCorrectMessage command={typed} />);
             } else {
-                setComponentsToShow((prev) => [
-                    ...prev,
-                    () => <SecretWrongMessage command={typed} />,
-                ]);
+                pushOutput(() => <SecretWrongMessage command={typed} />);
             }
         } else if (CommandComponent) {
-            setComponentsToShow((prev) => [...prev, CommandComponent]);
+            pushOutput(CommandComponent);
         } else {
-            setComponentsToShow((prev) => [
-                ...prev,
-                () => <UnknowMessage command={typed} />,
-            ]);
+            const suggestion = suggestCommand(typed);
+            pushOutput(() => <UnknowMessage command={typed} suggestion={suggestion} />);
         }
 
         setTextTypedByUser("");
@@ -273,6 +336,8 @@ export default function TerminalClient({ data, locale }: ResumePageClientProps):
                         setTextTypedByUser={setTextTypedByUser}
                         checkMessageEntered={checkMessageEntered}
                         scrollContainerRef={scrollContainerRef}
+                        history={commandHistory}
+                        onShowCompletions={showCompletions}
                     />
                 )}
             </div>

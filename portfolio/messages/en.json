@@ -414,7 +414,20 @@
       "matrix": "Taking the red pill took {ms} ms.",
       "hack-bank": "Finding a vulnerable bank took {ms} ms.",
       "coffee": "Heating the water took {ms} ms.",
-      "joke": "Coming up with this joke took {ms} ms. It should have taken longer."
+      "joke": "Coming up with this joke took {ms} ms. It should have taken longer.",
+      "papers": "Looking up my papers on Google Scholar took {ms} ms.",
+      "blog": "Fetching the posts from the database took {ms} ms.",
+      "git-log": "Running git log across all my repositories took {ms} ms.",
+      "visitors": "Counting who is here took {ms} ms.",
+      "top": "Listing my processes took {ms} ms.",
+      "npm-install": "Resolving the dependency tree took {ms} ms.",
+      "sl": "Calling the train took {ms} ms.",
+      "cowsay": "Waking up the cow took {ms} ms.",
+      "seedicon": "Generating the avatars took {ms} ms. No network, just your text.",
+      "man": "Opening the manual took {ms} ms. Nobody reads it anyway.",
+      "history": "Remembering what you did took {ms} ms.",
+      "completions": "Guessing what you meant took {ms} ms.",
+      "wordmark": "Lighting every pixel by hand took {ms} ms."
     },
     "commands": {
       "help": "List of commands",
@@ -437,7 +450,21 @@
       "uptime": "Time since the system started",
       "matrix": "Hacker mode",
       "hack-bank": "Totally legal simulation",
-      "coffee": "Brew coffee to code"
+      "coffee": "Brew coffee to code",
+      "papers": "Published papers I have authored",
+      "blog": "Latest blog posts",
+      "git-log": "My latest public commits",
+      "visitors": "How many people are on the site now",
+      "top": "My processes, live",
+      "htop": "top, but colorful",
+      "npm-install": "Installs everything you don't need",
+      "sl": "A train. That's it.",
+      "cowsay": "A cow repeats what you say",
+      "seedicon": "Generates avatars from any text",
+      "man": "A command's manual",
+      "history": "Commands you have typed",
+      "exit": "Closes this tab",
+      "wordmark": "Writes some text in flickering pixels"
     },
     "initial": {
       "content": "For a list of available commands, type "
@@ -534,6 +561,106 @@
         "A SQL query walks into a bar, goes up to two tables and asks: can I join you?",
         "I solved a problem with regex. Now I have two problems."
       ]
+    },
+    "suggestion": "Did you mean <cmd>{command}</cmd>?",
+    "args": {
+      "text": "text",
+      "command": "command"
+    },
+    "papers": {
+      "award": "🏆 {award}",
+      "note": "These are only the published papers I have authored. I have others submitted and under review, and I keep writing."
+    },
+    "blog": {
+      "empty": "No posts published yet. Check back soon.",
+      "error": "The database didn't answer right now. Try again in a bit.",
+      "reading": "{minutes} min read",
+      "all": "All posts:"
+    },
+    "git-log": {
+      "empty": "No recent public commits.",
+      "error": "fatal: GitHub didn't answer right now. Try again in a bit."
+    },
+    "visitors": {
+      "count": "👀 {count, plural, one {# person} other {# people}} on the site right now, including you.",
+      "error": "Couldn't count right now, but at least you're here."
+    },
+    "top": {
+      "tasks": "Tasks: {total} total, {running} running, 1 barely sleeping",
+      "processes": [
+        "coffee.exe",
+        "thesis.tex",
+        "agrifence-api",
+        "isys-paper.tex",
+        "spotify",
+        "next-server",
+        "inter-1909",
+        "sleep.sh"
+      ]
+    },
+    "npm-install": {
+      "done": "added {count} packages, 0 of which you need, in {seconds}s",
+      "funding": "{count} packages are looking for funding. This site included."
+    },
+    "sl": {
+      "passed": "🚂 The train went by in {seconds} seconds. Did you mean ls?"
+    },
+    "cowsay": {
+      "default": "Moo! Type cowsay followed by some text."
+    },
+    "seedicon": {
+      "usage": "Usage: seedicon followed by some text. Example: <cmd>seedicon romulo</cmd>",
+      "same": "Same text, same avatar, on any machine.",
+      "install": "To use it in your project:"
+    },
+    "man": {
+      "what": "What manual page do you want?",
+      "example": "For example, try <cmd>man man</cmd>.",
+      "missing": "No manual entry for {command}.",
+      "name": "NAME",
+      "synopsis": "SYNOPSIS",
+      "description": "DESCRIPTION",
+      "bugs": "BUGS",
+      "pages": {
+        "help": "Lists more commands than fit on the screen.",
+        "clear": "Clears the terminal, not your conscience.",
+        "initial": "The © 2024 was never updated.",
+        "who": "Age is computed live; the author gets older without notice.",
+        "whoami": "Answers a simple question with a philosophy essay.",
+        "follow": "Following does not guarantee a follow back.",
+        "papers": "Reviewer 2 is still not satisfied.",
+        "blog": "Posts come out less often than promised.",
+        "git-log": "Messages like 'fix' and 'now it works' are intentional.",
+        "visitors": "Counts you twice if you open two tabs.",
+        "weather": "The data is hardcoded; look out the window for the live version.",
+        "quote": "Reading the Stoics does not stop anyone from getting mad at CI.",
+        "ping": "Sometimes reports online while the author is asleep.",
+        "cats": "No cats were consulted about the use of their likeness.",
+        "inter": "Accepts no counterarguments.",
+        "spotify": "Musical taste not covered by warranty.",
+        "joke": "Jokes do not improve with repetition.",
+        "sudo": "Only works for root. You are not root.",
+        "date": "Cannot go back in time, despite requests.",
+        "neofetch": "The coffee-driven kernel has no stable release.",
+        "top": "sleep.sh never gets enough CPU.",
+        "htop": "Same as top, with more colors and the same lack of sleep.",
+        "uptime": "Measures time since a chess repository, for historical reasons.",
+        "matrix": "There is no spoon.",
+        "hack-bank": "No money was moved. The author checked his own balance.",
+        "coffee": "Does not serve actual coffee. Yet.",
+        "npm-install": "node_modules weighs more than the rest of the project.",
+        "sl": "Exists to punish people who mistype ls.",
+        "cowsay": "The cow repeats everything, unfiltered.",
+        "seedicon": "Complaints about the avatar are not accepted: your text picked it.",
+        "man": "Reading the manual is still optional, as always.",
+        "history": "Forgets everything on reload. Sometimes that is for the best.",
+        "secret": "The hint is worse than the riddle.",
+        "exit": "Closes the tab, but you can always come back.",
+        "wordmark": "The flickering pixels are not a bug, but nobody has proven otherwise."
+      }
+    },
+    "history": {
+      "empty": "No commands yet."
     }
   },
   "footer": {

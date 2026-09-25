@@ -414,7 +414,20 @@
       "matrix": "Escolher a pílula vermelha levou {ms} ms.",
       "hack-bank": "Encontrar um banco vulnerável levou {ms} ms.",
       "coffee": "Esquentar a água levou {ms} ms.",
-      "joke": "Pensar nessa piada levou {ms} ms. Deveria ter levado mais."
+      "joke": "Pensar nessa piada levou {ms} ms. Deveria ter levado mais.",
+      "papers": "Buscar meus artigos no Google Acadêmico levou {ms} ms.",
+      "blog": "Buscar os posts no banco levou {ms} ms.",
+      "git-log": "Rodar git log em todos os meus repositórios levou {ms} ms.",
+      "visitors": "Contar quem está aqui levou {ms} ms.",
+      "top": "Listar meus processos levou {ms} ms.",
+      "npm-install": "Resolver a árvore de dependências levou {ms} ms.",
+      "sl": "Chamar o trem levou {ms} ms.",
+      "cowsay": "Acordar a vaca levou {ms} ms.",
+      "seedicon": "Gerar os avatares levou {ms} ms. Sem rede, só o seu texto.",
+      "man": "Abrir o manual levou {ms} ms. Ninguém lê mesmo.",
+      "history": "Relembrar o que você fez levou {ms} ms.",
+      "completions": "Adivinhar o que você queria levou {ms} ms.",
+      "wordmark": "Acender cada pixel à mão levou {ms} ms."
     },
     "commands": {
       "help": "Lista de comandos",
@@ -437,7 +450,21 @@
       "uptime": "Tempo desde que o sistema iniciou",
       "matrix": "Modo hacker",
       "hack-bank": "Simulação totalmente legal",
-      "coffee": "Fazer café para codar"
+      "coffee": "Fazer café para codar",
+      "papers": "Artigos publicados em que sou autor",
+      "blog": "Últimos posts do blog",
+      "git-log": "Meus últimos commits públicos",
+      "visitors": "Quantas pessoas estão no site agora",
+      "top": "Meus processos, ao vivo",
+      "htop": "O top, só que colorido",
+      "npm-install": "Instala tudo que você não precisa",
+      "sl": "Um trem. Só isso.",
+      "cowsay": "Uma vaca repete o que você disser",
+      "seedicon": "Gera avatares a partir de um texto",
+      "man": "Manual de um comando",
+      "history": "Comandos que você já digitou",
+      "exit": "Fecha esta aba",
+      "wordmark": "Escreve um texto em pixels piscando"
     },
     "initial": {
       "content": "Para uma lista de comandos disponíveis, digite "
@@ -534,6 +561,106 @@
         "Uma query SQL entra num bar, vai até duas mesas e pergunta: posso fazer um JOIN?",
         "Resolvi um problema com regex. Agora tenho dois problemas."
       ]
+    },
+    "suggestion": "Você quis dizer <cmd>{command}</cmd>?",
+    "args": {
+      "text": "texto",
+      "command": "comando"
+    },
+    "papers": {
+      "award": "🏆 {award}",
+      "note": "Estes são só os artigos já publicados em que sou autor. Tenho outros submetidos, aguardando revisão, e continuo escrevendo."
+    },
+    "blog": {
+      "empty": "Nenhum post publicado ainda. Volte em breve.",
+      "error": "O banco não respondeu agora. Tente de novo daqui a pouco.",
+      "reading": "{minutes} min de leitura",
+      "all": "Todos os posts:"
+    },
+    "git-log": {
+      "empty": "Nenhum commit público recente.",
+      "error": "fatal: o GitHub não respondeu agora. Tente de novo daqui a pouco."
+    },
+    "visitors": {
+      "count": "👀 {count, plural, one {# pessoa} other {# pessoas}} no site agora, contando com você.",
+      "error": "Não consegui contar agora, mas pelo menos você está aqui."
+    },
+    "top": {
+      "tasks": "Tarefas: {total} no total, {running} rodando, 1 dormindo pouco",
+      "processes": [
+        "cafe.exe",
+        "dissertacao.tex",
+        "agrifence-api",
+        "artigo-isys.tex",
+        "spotify",
+        "next-server",
+        "inter-1909",
+        "sono.sh"
+      ]
+    },
+    "npm-install": {
+      "done": "adicionados {count} pacotes, dos quais você precisa de 0, em {seconds}s",
+      "funding": "{count} pacotes estão procurando financiamento. Inclusive este site."
+    },
+    "sl": {
+      "passed": "🚂 O trem passou em {seconds} segundos. Você queria digitar ls?"
+    },
+    "cowsay": {
+      "default": "Muuu! Digite cowsay seguido de um texto."
+    },
+    "seedicon": {
+      "usage": "Uso: seedicon seguido de um texto. Exemplo: <cmd>seedicon romulo</cmd>",
+      "same": "Mesmo texto, mesmo avatar, em qualquer máquina.",
+      "install": "Para usar no seu projeto:"
+    },
+    "man": {
+      "what": "Qual página de manual você quer?",
+      "example": "Por exemplo, tente <cmd>man man</cmd>.",
+      "missing": "Não há entrada de manual para {command}.",
+      "name": "NOME",
+      "synopsis": "SINOPSE",
+      "description": "DESCRIÇÃO",
+      "bugs": "BUGS",
+      "pages": {
+        "help": "Lista mais comandos do que cabem na tela.",
+        "clear": "Limpa o terminal, mas não a sua consciência.",
+        "initial": "O © 2024 nunca foi atualizado.",
+        "who": "A idade é calculada na hora; o autor envelhece sem aviso prévio.",
+        "whoami": "Responde uma pergunta simples com um ensaio de filosofia.",
+        "follow": "Seguir não garante follow de volta.",
+        "papers": "O revisor 2 continua insatisfeito.",
+        "blog": "Posts saem com menos frequência do que o prometido.",
+        "git-log": "Mensagens como 'fix' e 'agora vai' são intencionais.",
+        "visitors": "Conta você duas vezes se você abrir duas abas.",
+        "weather": "Os dados são fixos; olhe pela janela para a versão ao vivo.",
+        "quote": "Ler os estoicos não impede ninguém de se irritar com o CI.",
+        "ping": "Às vezes responde online enquanto o autor dorme.",
+        "cats": "Nenhum gato foi consultado sobre o uso da própria imagem.",
+        "inter": "Não aceita argumentos contrários.",
+        "spotify": "Gosto musical não incluso na garantia.",
+        "joke": "As piadas não melhoram com a repetição.",
+        "sudo": "Só funciona para o root. Você não é o root.",
+        "date": "Não volta no tempo, apesar dos pedidos.",
+        "neofetch": "O kernel movido a café não tem versão estável.",
+        "top": "sono.sh nunca recebe CPU suficiente.",
+        "htop": "Igual ao top, com mais cores e o mesmo sono.",
+        "uptime": "Mede o tempo desde um repositório de xadrez, por motivos históricos.",
+        "matrix": "Não existe colher.",
+        "hack-bank": "Nenhum real foi transferido. O autor conferiu o próprio saldo.",
+        "coffee": "Não serve café de verdade. Ainda.",
+        "npm-install": "node_modules pesa mais que o resto do projeto inteiro.",
+        "sl": "Existe para punir quem erra ao digitar ls.",
+        "cowsay": "A vaca repete tudo, sem filtro.",
+        "seedicon": "Reclamações sobre o avatar não são aceitas: foi o seu texto que escolheu.",
+        "man": "Ler o manual continua opcional, como sempre.",
+        "history": "Esquece tudo quando a página recarrega. Às vezes é melhor assim.",
+        "secret": "A dica é pior do que o enigma.",
+        "exit": "Fecha a aba, mas você sempre pode voltar.",
+        "wordmark": "Pixels piscando não são um bug, mas também ninguém provou o contrário."
+      }
+    },
+    "history": {
+      "empty": "Nenhum comando ainda."
     }
   },
   "footer": {

@@ -1,4 +1,6 @@
 import { useTranslations } from "next-intl";
+
+import { complete } from "./catalog";
 import { useEffect, useLayoutEffect, useRef, useState, type JSX, type RefObject } from "react";
 
 type CommandComponent = () => JSX.Element;
@@ -13,6 +15,10 @@ interface TerminalFunctionalProps {
     checkMessageEntered: () => void;
     /** The scrollable terminal body that wraps this component. */
     scrollContainerRef: RefObject<HTMLDivElement | null>;
+    /** Non-empty commands entered so far, oldest first (arrow-key recall). */
+    history: string[];
+    /** Prints the candidates when Tab cannot extend the input any further. */
+    onShowCompletions: (typed: string, options: string[]) => void;
 }
 
 export default function TerminalFunctional({
@@ -21,8 +27,9 @@ export default function TerminalFunctional({
     setTextTypedByUser,
     checkMessageEntered,
     scrollContainerRef,
+    history,
+    onShowCompletions,
 }: TerminalFunctionalProps): JSX.Element {
-    const [messageHistory, setMessageHistory] = useState<string[]>([]);
     const [historyIndex, setHistoryIndex] = useState<number>(0);
     const inputRef = useRef<HTMLInputElement>(null);
     const contentRef = useRef<HTMLDivElement>(null);
@@ -82,22 +89,37 @@ export default function TerminalFunctional({
 
         if (e.key === "Enter") {
             stickToBottomRef.current = true;
-            setMessageHistory([...messageHistory, textTypedByUser]);
-            setHistoryIndex(messageHistory.length + 1);
+            // Points one past the end of the history as it will be after this
+            // entry is recorded, so ArrowUp recalls this very command first.
+            setHistoryIndex(textTypedByUser.trim() ? history.length + 1 : history.length);
             checkMessageEntered();
             setTextTypedByUser("");
+        } else if (e.key === "Tab") {
+            // An empty prompt lets Tab move focus as usual, so keyboard users
+            // can still leave the terminal.
+            if (!textTypedByUser.trim()) return;
+            e.preventDefault();
+
+            const { value, options } = complete(textTypedByUser);
+            if (value !== textTypedByUser) {
+                setTextTypedByUser(value);
+                setCursorToEnd(inputElement);
+            } else if (options.length > 0) {
+                stickToBottomRef.current = true;
+                onShowCompletions(textTypedByUser, options);
+            }
         } else if (e.key === "ArrowUp") {
             if (historyIndex > 0) {
                 setHistoryIndex(historyIndex - 1);
-                setTextTypedByUser(messageHistory[historyIndex - 1]);
+                setTextTypedByUser(history[historyIndex - 1]);
                 setCursorToEnd(inputElement);
             }
         } else if (e.key === "ArrowDown") {
-            if (historyIndex < messageHistory.length - 1) {
+            if (historyIndex < history.length - 1) {
                 setHistoryIndex(historyIndex + 1);
-                setTextTypedByUser(messageHistory[historyIndex + 1]);
-            } else if (historyIndex === messageHistory.length - 1) {
-                setHistoryIndex(messageHistory.length);
+                setTextTypedByUser(history[historyIndex + 1]);
+            } else if (historyIndex === history.length - 1) {
+                setHistoryIndex(history.length);
                 setTextTypedByUser("");
             }
         }
