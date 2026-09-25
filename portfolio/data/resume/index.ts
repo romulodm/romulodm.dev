@@ -5,6 +5,7 @@ export type ResumeData = typeof EN_INFOS;
 export type ExperienceItem = ResumeData['experience'][number];
 export type EducationItem = ResumeData['education'][number];
 export type LanguageItem = ResumeData['languages'][number];
+export type SkillGroup = ResumeData['skills'][number];
 
 export function getResumeData(locale: string): ResumeData {
   if (locale === 'en') return EN_INFOS;

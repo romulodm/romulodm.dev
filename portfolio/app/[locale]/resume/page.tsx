@@ -1,4 +1,4 @@
-import { getLocale } from 'next-intl/server';
+import { getLocale, setRequestLocale } from 'next-intl/server';
 import { getResumeData } from '@/data/resume';
 import { ResumePageClient } from '@/components/resume/ResumePageClient';
 import Navbar from '@/components/navigation/Navbar';
@@ -24,7 +24,16 @@ export async function generateMetadata({
   })
 }
 
-export default async function Resume() {
+export default async function Resume({
+    params,
+}: {
+    params: Promise<{ locale: string }>
+}) {
+    // Precisa vir antes do getLocale(): sem isto o next-intl resolve o locale
+    // pelo header da requisicao e o render vira dinamico.
+    const { locale: routeLocale } = await params
+    setRequestLocale(routeLocale)
+
     const locale = await getLocale();
     const data = getResumeData(locale);
 

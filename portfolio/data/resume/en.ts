@@ -1,7 +1,8 @@
 const furg = "/logos/furg_logo.jpg";
-const raquel = "/logos/itec2_logo.jpg";
+const augen = "/logos/augen.png";
+const agrifence = "/logos/agrifence.png";
 const byte = "/logos/bytejr_logo.jpg";
-const itec = "/logos/itec2_logo.jpg";
+const itec = "/logos/itec_logo.jpg";
 const lamsa = "/logos/lamsa_logo.svg";
 const petc3 = "/logos/petc3_logo.jpg";
 
@@ -9,16 +10,21 @@ export const EN_INFOS = {
   infos: {
     name: 'Romulo de Moraes',
     position: 'Software Developer',
-    bio: 'I am an Information Systems student with a strong interest in web development. On my GitHub, I stay active with personal and group projects with various goals and themes, using technologies similar to those mentioned in the experiences below. I am communicative, enjoy writing and teaching about what I learn, and I love challenges.',
+    bio: 'Software developer with 4 years of experience in backend, frontend, and IoT, working across precision agriculture, digital health, and industrial monitoring. At Agrifence, I develop GNSS telemetry processing for agricultural machinery, from geospatial indexing (PostGIS and H3) to machine learning-based operation classification, within an event-driven architecture using Kafka and Kubernetes. Previously, I developed NestJS microservices for a health app with more than 15,000 downloads and IoT systems spanning from firmware to web-based monitoring dashboards. I am currently pursuing a Master’s degree in Computer Engineering at PPGComp/FURG, where I research blockchain, smart contracts, and decentralized lotteries.',
   },
+
   contact: {
     address: 'Rio Grande, Brazil',
-    email: 'romulotg12@gmail.com',
+    email: 'demoraes.romulo@hotmail.com',
     linkedin: 'https://www.linkedin.com/in/romulodm',
     github: 'https://www.github.com/romulodm',
+    portfolio: 'https://romulodm.dev',
   },
+
   labels: {
-    experiences: 'Experiences',
+    skills: 'Technical Skills',
+    researchInterests: 'Research Interests',
+    experiences: 'Experience',
     education: 'Education',
     languages: 'Languages',
     address: 'Address:',
@@ -26,12 +32,15 @@ export const EN_INFOS = {
     linkedinLabel: 'LinkedIn:',
     githubLabel: 'GitHub:',
     linkedinText: 'LinkedIn Profile',
+    portfolioLabel: 'Portfolio:',
+    portfolioText: 'romulodm.dev',
     githubText: 'GitHub Profile',
     native: 'native',
   },
+
   education: [
     {
-      school: 'Universidade Federal do Rio Grande - FURG',
+      school: 'Federal University of Rio Grande - FURG',
       url: 'https://www.furg.br',
       icon: furg,
       location: 'Rio Grande, Brazil',
@@ -51,7 +60,93 @@ export const EN_INFOS = {
       end: 'March 2026',
     },
   ],
+
   experience: [
+    {
+      company: 'Agrifence',
+      url: 'https://agrifence.com.br/',
+      icon: agrifence,
+      location: 'Rio Grande, Brazil',
+      contract: 'Developer',
+      position: 'Backend Developer',
+      start: 'January 2026',
+      end: 'Present',
+      about:
+        'Agrifence develops a precision agriculture platform that collects GNSS telemetry data from agricultural machinery through IoT. I work on the backend team, focusing on telemetry ingestion and processing, geospatial data, and agricultural operation classification.',
+      description: [
+        'Developed a pipeline for ingesting and processing GNSS coordinates, using PostGIS and H3 to transform machine telemetry into measurable and queryable geospatial data.',
+        'Developed a pipeline for classifying agricultural operations from GNSS trajectories without relying on CAN bus data, using XGBoost and Random Forest and achieving approximately 93.9% accuracy.',
+        'Implemented spatiotemporal queries in PostGIS to identify interactions between machines, using GiST indexes and optimizations for queries over millions of coordinates.',
+        'Contributed to the evolution of the telemetry pipeline architecture, focusing on Kafka for event processing and KEDA for service scalability.',
+        'Implemented backend observability with Sentry, centralizing error monitoring and facilitating the investigation of production failures.',
+        'Work on adapting the platform for municipal fleet monitoring, tailoring features and business rules to the needs of local governments.',
+      ],
+      skills: [
+        'Python',
+        'FastAPI',
+        'Flask',
+        'PostgreSQL',
+        'PostGIS',
+        'H3',
+        'Redis',
+        'Celery',
+        'Kafka',
+        'Docker',
+        'Kubernetes',
+        'KEDA',
+        'AWS',
+        'Terraform',
+        'GitHub Actions',
+        'CI/CD',
+        'Nginx',
+        'Sentry',
+        'XGBoost',
+        'Random Forest',
+        'Machine Learning',
+        'Geospatial Analysis',
+      ],
+    },
+
+    {
+      company: 'Augen',
+      url: 'https://augenengenharia.com/',
+      icon: augen,
+      location: 'Rio Grande, Brazil',
+      contract: 'Intern',
+      position: 'Embedded Software Developer',
+      start: 'September 2025',
+      end: 'December 2025',
+      about:
+        'Worked on Poço 4.0, an IoT system for automated water monitoring and treatment, focusing on embedded software and monitoring tools for equipment deployed in the field.',
+      description: [
+        'Developed a web application for remote equipment monitoring, including visualization of errors, warnings, and analysis, cleaning, calibration, and dosing routines.',
+        'Implemented system observability and an intelligent alert mechanism based on equipment events and sensor readings.',
+        'Refactored and standardized the core Python codebase of Poço 4.0, applying design patterns such as Factory Method, Adapter, Singleton, Observer, and Chain of Responsibility.',
+        'Implemented unit and integration tests for hardware communication modules and contributed to documenting team processes.',
+      ],
+      skills: [
+        'Python',
+        'Modbus',
+        'OPC-UA',
+        'MQTT',
+        'Raspberry Pi',
+        'ESP32',
+        'LoRa',
+        'Docker',
+        'AWS IoT',
+        'Express',
+        'React',
+        'SQLite',
+        'Prometheus',
+        'Grafana',
+        'Flask',
+        'FastAPI',
+        'PostgreSQL',
+        'Redis',
+        'Sentry',
+      ],
+    },
+
     {
       company: 'Byte Jr.',
       url: 'https://www.linkedin.com/company/bytejr/',
@@ -60,50 +155,73 @@ export const EN_INFOS = {
       contract: 'Volunteer',
       position: 'President',
       start: 'March 2024',
-      end: 'Present',
+      end: 'January 2025',
       about:
-        "I am working on restructuring the junior enterprise Byte Jr. together with Professor Dr. Luciano Maciel Ribeiro and colleagues from C3 - FURG. We are continuing projects that were on hold and improving the company\u2019s financial and administrative health.",
-      skills: ['People Management', 'Administration'],
+        'Led the C3/FURG junior technology enterprise through an administrative and financial restructuring process, focusing on resuming projects, acquiring new clients, and reorganizing internal operations.',
+      description: [
+        'Coordinated the resumption of pending projects and oversaw two major deliveries completed during my term.',
+        'Worked on acquiring new clients and restoring the company’s participation in the Brazilian Junior Enterprise Movement.',
+        'Led, together with the team, the company’s administrative and financial reorganization, concluding the term with its financial situation regularized.',
+      ],
+      skills: [
+        'People Management',
+        'Administration',
+        'SCRUM',
+      ],
     },
+
     {
-      company: 'iTEC - Plena',
+      company: 'iTEC | Plena',
       url: 'https://www.linkedin.com/company/raquel-menopausa/?originalSubdomain=br',
-      icon: raquel,
+      icon: itec,
       location: 'Rio Grande, Brazil',
-      contract: 'Research Fellowship',
-      position: 'Back-end Developer',
+      contract: 'Scholarship',
+      position: 'Backend Developer',
       start: 'April 2024',
-      end: 'Present',
+      end: 'June 2025',
       about:
-        'I am working on the backend development of an application focused on women\u2019s health. We are using microservices architecture with NestJS, working together with the computer vision, artificial intelligence, and frontend teams.',
+        'Worked on the backend of Raquel Menopausa, a health and wellness app with more than 15,000 downloads, developing NestJS microservices in collaboration with frontend, artificial intelligence, and computer vision teams.',
+      description: [
+        'Developed the microservice responsible for the app’s social features, including communities, friendships, posts, comments, and likes, with media storage on AWS S3.',
+        'Implemented the push notification system using AWS SNS and Firebase Cloud Messaging, achieving approximately a 98% delivery rate.',
+        'Reduced the average loading time of selected screens from approximately 800 ms to 350 ms through pagination and data-flow optimizations.',
+        'Developed user profile and preference modules, as well as advertising modules with view and click metrics collection.',
+      ],
       skills: [
         'NestJS',
         'Jest',
         'ESLint',
         'Prisma',
         'PostgreSQL',
-        'Azure Dev-Ops',
+        'JWT',
+        'Swagger',
+        'Azure DevOps',
         'Docker',
         'Terraform',
-        'AWS',
+        'AWS ECR',
+        'AWS ECS',
+        'AWS S3',
+        'AWS SNS',
+        'Firebase Cloud Messaging',
       ],
     },
+
     {
-      company: 'iTEC - MexTec',
+      company: 'iTEC | MexTec',
       url: 'https://itecfurg.org/?p=4101',
       icon: itec,
       location: 'Rio Grande, Brazil',
-      contract: 'Research Fellowship',
+      contract: 'Scholarship',
       position: 'Full-stack Developer',
       start: 'December 2023',
       end: 'July 2024',
       about:
-        'I worked on developing a web system that processes and displays information on a control panel. These data were collected from various sensors and transmitted via ESP32. Additionally, I was involved in integration with the teams responsible for maintaining and operating the sensors.',
+        'Worked on the development of an IoT system for continuous conveyor belt monitoring, covering everything from communication with field devices to the backend and web-based monitoring dashboard.',
       description: [
-        'Development of a web system using React, with authentication, real-time data display, access levels...',
-        'Backend development with Express, building some modules and adapting them for the frontend.',
-        'Communication via ESP32 using HTTP and MQTT.',
-        'Project infrastructure management, checking logs and performance.',
+        'Worked on ESP32 and Raspberry Pi firmware for reading industrial sensors and transmitting data via MQTT, HTTP, and sockets.',
+        'Developed the ingestion and persistence pipeline for sensor readings using an Express and MongoDB backend, integrating field devices with the monitoring system.',
+        'Built a React dashboard for real-time sensor monitoring, featuring time-series charts, authentication, and multiple access levels.',
+        'Monitored infrastructure logs and performance and resolved bottlenecks in the message ingestion and processing flow.',
       ],
       skills: [
         'React',
@@ -117,9 +235,13 @@ export const EN_INFOS = {
         'Socket.io',
         'MQTT',
         'ESP32',
+        'Raspberry Pi',
         'LoRa',
+        'C++',
+        'Arduino',
       ],
     },
+
     {
       company: 'EMAJ',
       url: 'https://www.furg.br/comunidade/escritorio-modelo-assessoria-juridica',
@@ -130,7 +252,12 @@ export const EN_INFOS = {
       start: 'August 2023',
       end: 'December 2023',
       about:
-        'EMAJ is a legal advisory office at FURG run by law students and professors, serving the general public. I worked on developing a web system to assist EMAJ members in their daily activities. The idea came from Professor Andr\u00e9 Prisco, coordinator of the Information Systems course, and was part of the thesis of three Computer Engineering students.',
+        'Contributed to the development of a web system for EMAJ, FURG’s legal assistance office, used by Law students and professors to assist the public and organize legal cases handled by the office.',
+      description: [
+        'Developed React and Express features for querying and managing the office’s legal cases.',
+        'Implemented authentication, access control, and document storage using AWS S3.',
+        'Worked with PostgreSQL and Sequelize on application data modeling and persistence.',
+      ],
       skills: [
         'React',
         'Tailwind CSS',
@@ -141,9 +268,10 @@ export const EN_INFOS = {
         'Multer',
         'AWS S3',
         'Sequelize',
-        'PostgresSQL',
+        'PostgreSQL',
       ],
     },
+
     {
       company: 'LAMSA',
       url: 'https://www.linkedin.com/company/lamsa-furg/',
@@ -154,24 +282,33 @@ export const EN_INFOS = {
       start: 'May 2023',
       end: 'November 2023',
       about:
-        'I assisted in researching and developing a virtual reality game using the Unity platform, addressing the theme of ocean preservation and aiming to educate children about the importance of conserving marine species.',
-      skills: ['C#', 'Unity'],
+        'Contributed to the research and development of a Unity-based virtual reality game focused on ocean conservation, designed to teach children about preserving marine species from the region.',
+      description: [
+        'Developed features and interactions for the virtual reality environment using Unity and C#.',
+        'Contributed to adapting marine conservation content into an interactive experience for children.',
+      ],
+      skills: [
+        'C#',
+        'Unity',
+      ],
     },
+
     {
       company: 'PETC3',
       url: 'https://www.instagram.com/petc3furg/',
       icon: petc3,
       location: 'Rio Grande, Brazil',
-      contract: 'Research Fellowship',
-      position: 'Researcher',
+      contract: 'Scholarship',
+      position: 'Scholarship Student',
       start: 'June 2022',
       end: 'December 2023',
       about:
-        'PET is a government program aimed at groups of students who demonstrate potential, aiming to promote extracurricular activities under the guidance of a tutor professor. This project was my first experience within FURG and was essential for improving some soft skills - mainly communication and teamwork.',
+        'Participated in teaching, outreach, and software development projects at PETC3, as well as organizing events and activities for C3/FURG students and the broader community.',
       description: [
-        "Participation in the LEGO subproject, where we taught computational thinking to students in the region\u2019s schools using Scratch and LEGO Mindstorms.",
-        "Participation in the PETCode subproject, where we created applications to assist PETC3\u2019s internal demands, posted on Instagram about programming, and studied together.",
-        'Organization of events for the students of C3 - FURG.',
+        'Participated in computational thinking activities at three schools in the region, delivering talks and workshops using LEGO Mindstorms and Scratch.',
+        'Helped organize C3 academic events and prepare materials for talks and workshops.',
+        'Contributed to PETC3 internal development projects, including PET.APP in Flutter and PETCode applications.',
+        'Produced programming-related content and participated in educational activities for the academic community and students from local schools.',
       ],
       skills: [
         'HTML',
@@ -180,13 +317,31 @@ export const EN_INFOS = {
         'Python',
         'Flask',
         'React',
+        'Flutter',
         'Express',
         'JWT',
-        'PostgresSQL',
+        'PostgreSQL',
         'MongoDB',
       ],
     },
   ],
+
+  skills: [
+    { category: 'Programming Languages', items: 'Python, TypeScript, JavaScript, Go, C#, C++' },
+    { category: 'Backend', items: 'FastAPI, NestJS, Express, Flask, Prisma, Celery, Kafka, Redis, RabbitMQ' },
+    { category: 'Frontend', items: 'HTML/CSS, React, Next.js, Flutter, Tailwind CSS, Material UI' },
+    { category: 'Data', items: 'PostgreSQL, PostGIS, MySQL, MongoDB, H3, XGBoost/Random Forest' },
+    { category: 'DevOps & Cloud', items: 'Docker, Kubernetes (KEDA), AWS (S3, SES, SNS, ECS, IoT), Terraform, GitHub Actions, Sentry' },
+    { category: 'IoT', items: 'MQTT, ESP32, Raspberry Pi, LoRa, Modbus, OPC-UA' },
+    { category: 'Practices', items: 'Git, SCRUM, Kanban, testing (Jest), Swagger/OpenAPI' },
+  ],
+
+  researchInterests: [
+    'Smart contracts and blockchain applications in prize-linked savings systems and lotteries',
+    'Decentralized lottery mechanisms and on-chain verifiable randomness',
+    'Processing and geospatial analysis of GNSS telemetry',
+  ],
+
   languages: [
     {
       name: 'Portuguese',
@@ -196,8 +351,8 @@ export const EN_INFOS = {
     },
     {
       name: 'English',
-      level: 'B1',
-      color: 'yellow',
+      level: 'C1',
+      color: 'blue',
       native: false,
     },
   ],
