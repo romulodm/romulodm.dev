@@ -71,7 +71,7 @@ export default function BuiltLinks() {
                         </span>
 
                         <span className="block">
-                            <span className="block text-[17px] font-semibold text-foreground">
+                            <span className="block text-base font-semibold text-foreground">
                                 {card.title}
                             </span>
                             <span className="mt-1 block text-sm text-muted-foreground">
