@@ -35,14 +35,28 @@ const PUBLIC_ONLY = 'is:public';
 
 const WINDOW_DAYS = 7;
 
+/**
+ * How many public commits `recent` carries. The home strip only reads the
+ * first one; the interactive terminal's `git log` prints the whole list. They
+ * come from the same search request, so the list costs no extra rate limit.
+ */
+const RECENT_LIMIT = 10;
+
+export type PublicCommit = {
+    /** Full SHA; callers shorten it for display. */
+    sha: string;
+    /** Summary line only. */
+    message: string;
+    url: string;
+    /** owner/repo, as shown under the message. */
+    repository: string;
+    date: string;
+};
+
 export type CommitActivity = {
-    latest: {
-        message: string;
-        url: string;
-        /** owner/repo, as shown under the message. */
-        repository: string;
-        date: string;
-    } | null;
+    latest: PublicCommit | null;
+    /** Newest first, at most RECENT_LIMIT, public repositories only. */
+    recent: PublicCommit[];
     /** Commits authored in the last WINDOW_DAYS days, public and private. */
     countLastWeek: number;
     windowDays: number;
@@ -51,17 +65,18 @@ export type CommitActivity = {
 type SearchResponse = {
     total_count: number;
     items: {
+        sha: string;
         html_url: string;
         commit: { message: string; author: { date: string } };
         repository: { full_name: string };
     }[];
 };
 
-async function search(query: string): Promise<SearchResponse> {
+async function search(query: string, perPage = 1): Promise<SearchResponse> {
     const token = process.env.NEXT_GITHUB_TOKEN;
 
     const response = await fetch(
-        `${SEARCH}?q=${encodeURIComponent(query)}&sort=author-date&order=desc&per_page=1`,
+        `${SEARCH}?q=${encodeURIComponent(query)}&sort=author-date&order=desc&per_page=${perPage}`,
         {
             headers: {
                 Accept: 'application/vnd.github+json',
@@ -151,7 +166,7 @@ async function countContributions(fromIso: string, toIso: string): Promise<numbe
 
 async function read(): Promise<CommitActivity> {
     const [latest, week] = await Promise.all([
-        search(`author:${USER} ${PUBLIC_ONLY}`),
+        search(`author:${USER} ${PUBLIC_ONLY}`, RECENT_LIMIT),
         // Fallback only, for when the GraphQL query below cannot run. It
         // undercounts, but a low number beats an empty cell.
         search(`author:${USER} author-date:>=${isoDaysAgo(WINDOW_DAYS)}`).catch(() => null),
@@ -165,19 +180,19 @@ async function read(): Promise<CommitActivity> {
         return week?.total_count ?? 0;
     });
 
-    const item = latest.items?.[0];
+    const recent: PublicCommit[] = (latest.items ?? []).map((item) => ({
+        sha: item.sha,
+        // Only the summary line: commit bodies can be paragraphs long and both
+        // the card and `git log --oneline` show a single line.
+        message: item.commit.message.split('\n')[0],
+        url: item.html_url,
+        repository: item.repository.full_name,
+        date: item.commit.author.date,
+    }));
 
     return {
-        latest: item
-            ? {
-                  // Only the summary line: commit bodies can be paragraphs long
-                  // and the card is a single line.
-                  message: item.commit.message.split('\n')[0],
-                  url: item.html_url,
-                  repository: item.repository.full_name,
-                  date: item.commit.author.date,
-              }
-            : null,
+        latest: recent[0] ?? null,
+        recent,
         countLastWeek,
         windowDays: WINDOW_DAYS,
     };
@@ -185,7 +200,9 @@ async function read(): Promise<CommitActivity> {
 
 export async function getCommitActivity(): Promise<CommitActivity> {
     const { data } = await cached<CommitActivity>(
-        { key: 'presence:github', ttlSeconds: 600, staleSeconds: 3600 },
+        // `:v2` because entries cached before `recent` existed lack the field;
+        // a fresh key keeps them from being served for up to an hour.
+        { key: 'presence:github:v2', ttlSeconds: 600, staleSeconds: 3600 },
         read,
     );
     return data;
