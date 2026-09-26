@@ -73,7 +73,7 @@ export default function NewsletterConfirmClient({ token }: { token: string }) {
             </div>
 
             {/* Heading */}
-            <h1 className="text-2xl font-bold text-foreground mb-2">
+            <h1 className="type-h1 text-foreground mb-2">
               {state === "loading" && "Confirmando…"}
               {state === "success" && "Tudo certo! 🎉"}
               {state === "error" && "Ops! Algo deu errado"}
