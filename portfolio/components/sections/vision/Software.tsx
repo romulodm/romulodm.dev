@@ -1,20 +1,176 @@
 'use client';
 
-import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { useTranslations } from 'next-intl';
 import { TbActivityHeartbeat, TbTopologyStar3 } from 'react-icons/tb';
 import { MdRocketLaunch, MdSecurity } from 'react-icons/md';
 import { FaCode, FaPeopleCarry } from 'react-icons/fa';
 import { SiTeespring } from 'react-icons/si';
 import { IoFlashOutline } from 'react-icons/io5';
-import { HiOutlineAcademicCap, HiOutlineShieldCheck, HiOutlineSparkles } from 'react-icons/hi2';
+import {
+  HiOutlineAcademicCap,
+  HiOutlineArrowTopRightOnSquare,
+  HiOutlineShieldCheck,
+  HiOutlineSparkles,
+} from 'react-icons/hi2';
 import { Parallax } from 'react-scroll-parallax';
 import { animated, useSpringValue } from '@react-spring/web';
+import { pixels } from 'seedicon/pixels';
 import { Avatar, Button, Card, Chip } from './ui';
 import { Default, Mobile, useMobileMode } from './Responsive';
-import Reach from './Reach';
+import Reach, { REACH_MAX_HEIGHT, REACH_TOP_MOBILE } from './Reach';
 
 const SURFACE_GLOW = 'drop-shadow(0 0 20px var(--vs-background-body))';
+
+/* -------------------------------------------------------------------------- */
+/*                              Wallet comment                                */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * The address hanging under the Web3 card. It is both the link target and the
+ * seed of the avatar next to it, which is the whole point of the card: the
+ * drawing is not a picture of the address, it IS the address, run through
+ * seedicon. Changing this string changes the drawing.
+ */
+const WALLET_ADDRESS = '0xba32a6076cd558947b3da6148fc4994b421eed56';
+
+const WALLET_EXPLORER_URL = `https://etherscan.io/address/${WALLET_ADDRESS}`;
+
+/** Matches `.vs-avatar--sm` (2rem), so the SVG fills it instead of sitting in it. */
+const WALLET_AVATAR_SIZE = 32;
+
+/**
+ * Scroll step that reveals the comment: the one where the cursor has reached
+ * the "collaborative development" button.
+ *
+ * It cannot simply be a late step. The board scrolls up as the animation
+ * advances, and this comment sits near the top of it, so by step 4 it is
+ * already off screen — it would fade in above the viewport and never be seen.
+ * Step 2 is the last one where the stack it hangs from is still comfortably in
+ * frame, and it is also where the cursor lands on the button. The manager's
+ * comment can afford step 3 because it sits at the bottom of the board, which
+ * is still on screen by then.
+ */
+const WALLET_COMMENT_STEP = 2;
+
+/**
+ * How far right of the stack's left edge the bubble hangs. This is the knob for
+ * sliding it sideways: the stack is positioned by `desktop.left`, and the
+ * comment just follows that edge, so an indent here moves the comment alone and
+ * leaves the four cards where they are.
+ */
+const WALLET_COMMENT_INDENT = '6rem';
+
+/** Same knob on mobile, smaller: there the bubble is as wide as the stack. */
+const WALLET_COMMENT_INDENT_MOBILE = '1.5rem';
+
+/**
+ * An address is 42 characters and the middle of it is never read: wallets and
+ * explorers all show the ends and drop the rest, so the card does the same.
+ */
+function shortenAddress(address: string) {
+  return `${address.slice(0, 8)}…${address.slice(-6)}`;
+}
+
+/**
+ * A second comment on the board, under the Web3 card. Unlike everything else
+ * here — mock UI that only exists to be looked at — this one is a real link to
+ * the address on Etherscan, which is why it opts back into pointer events that
+ * the board turns off wholesale.
+ */
+function WalletComment({ step }: { step: number }) {
+  const t = useTranslations('vision.software');
+  const mobile = useMobileMode();
+
+  const visible = step >= WALLET_COMMENT_STEP;
+
+  const opacity = useSpringValue(0);
+
+  useEffect(() => {
+    opacity.start(visible ? 1 : 0);
+  }, [visible, opacity]);
+
+  return (
+    <Card
+      as={animated.a}
+      href={WALLET_EXPLORER_URL}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="vs-wallet-comment"
+      variant="outlined"
+      // Opacity alone would leave an invisible link that still takes clicks and
+      // still stops the keyboard on its way down the page, so both follow the
+      // same flag the animation does.
+      aria-hidden={!visible}
+      tabIndex={visible ? 0 : -1}
+      style={{
+        marginTop: '0.5rem',
+        // On mobile the bubble would be wider than the stack (and than a 360px
+        // screen), so it takes the stack's width and lets the sentence wrap.
+        marginLeft: mobile ? WALLET_COMMENT_INDENT_MOBILE : WALLET_COMMENT_INDENT,
+        width: mobile ? 'auto' : 'max-content',
+        borderRadius: '1.5rem',
+        // Same clipped corner as the manager's comment: it reads as a bubble
+        // hanging from the card above instead of a card floating on its own.
+        borderTopLeftRadius: 0,
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: '0.7rem',
+        padding: '0.5rem',
+        filter: SURFACE_GLOW,
+        // The board container sets `pointerEvents: none` so none of the fake UI
+        // can be clicked. This card is the one thing on it that really is a
+        // link, so it turns them back on for itself — but only once it is on
+        // screen.
+        pointerEvents: visible ? 'auto' : 'none',
+        opacity,
+      }}
+    >
+      <Avatar size="sm" style={{ overflow: 'hidden' }}>
+        {/*
+         * Same reasoning as the project card on the home page: "seedicon/pixels"
+         * is the single-style entry point, so the other sixteen renderers never
+         * reach the bundle. The markup is raw because `pixels()` returns an SVG
+         * string; it is built from the constant above, never from user input,
+         * and it is deterministic, so server and client render the same bytes.
+         */}
+        <span
+          aria-hidden="true"
+          style={{ display: 'flex' }}
+          dangerouslySetInnerHTML={{
+            __html: pixels({
+              seed: WALLET_ADDRESS,
+              size: WALLET_AVATAR_SIZE,
+              shape: 'circle',
+            }),
+          }}
+        />
+      </Avatar>
+
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
+        <span
+          className="vs-body3 vs-t-secondary"
+          style={{ fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.3rem' }}
+        >
+          {shortenAddress(WALLET_ADDRESS)}
+          <HiOutlineArrowTopRightOnSquare aria-hidden />
+        </span>
+        {/*
+          * One line, no wrapping: the card is `width: max-content`, so the
+          * sentence sets its width instead of being folded into a block. Keep
+          * the translations short enough that the bubble still fits the board.
+          */}
+        <span
+          className="vs-body2 vs-t-secondary"
+          style={{ marginRight: '0.5rem', whiteSpace: mobile ? 'normal' : 'nowrap' }}
+        >
+          {t('walletCommentBody')}
+        </span>
+      </div>
+    </Card>
+  );
+}
 
 /* -------------------------------------------------------------------------- */
 /*                        Pilhas de cards sobre o board                       */
@@ -39,6 +195,19 @@ type StackDefinition = {
    * e os dois seguintes a direita. No mobile sempre colapsa para 1.
    */
   columns?: number;
+  /**
+   * Rendered under the stack, aligned with its first column — so under the last
+   * card of that column, which on the engineering stack is Web3. On mobile the
+   * columns collapse into one, so it lands under the last card instead.
+   */
+  footer?: (step: number) => ReactNode;
+  /**
+   * Mobile only: rendered below the stack (and its footer), centred on the
+   * board. The buttons card goes here so it moves with the stack's parallax
+   * instead of on its own; as separate layers they drifted into each other
+   * and the buttons covered the last cards.
+   */
+  mobileTail?: (step: number) => ReactNode;
   desktop: Placement;
   mobile: Placement;
 };
@@ -59,20 +228,23 @@ const CARD_STACKS: StackDefinition[] = [
       { key: 'academia', icon: <HiOutlineAcademicCap /> },
     ],
     desktop: { top: '0%', left: '52%' },
-    mobile: { top: '1%', left: '1rem' },
+    mobile: { top: '0.6rem', left: '1rem' },
   },
   {
     key: 'engineering',
     speed: 16,
     cards: [
-      { key: 'web3', icon: <TbTopologyStar3 /> },
       { key: 'security', icon: <HiOutlineShieldCheck /> },
+      { key: 'web3', icon: <TbTopologyStar3 /> },
       { key: 'performance', icon: <IoFlashOutline /> },
       { key: 'observability', icon: <TbActivityHeartbeat /> },
     ],
     columns: 2,
+    footer: (step) => <WalletComment step={step} />,
+    mobileTail: (step) => <CtaCard step={step} inline />,
     desktop: { top: '46%', left: '3%' },
-    mobile: { top: '64%', left: '1rem' },
+    // Full width so the column can centre the stack and the buttons under it.
+    mobile: { top: '37rem', left: '0', right: '0' },
   },
 ];
 
@@ -84,7 +256,7 @@ const CARD_STACKS: StackDefinition[] = [
  * Larguras identicas e espacamento limpo sem numero magico — e sem precisar
  * saber a altura do card, que era o problema do translateY com offset fixo.
  */
-function CardStack({ stack }: { stack: StackDefinition }) {
+function CardStack({ stack, step }: { stack: StackDefinition; step: number }) {
   const t = useTranslations('vision.software');
   const mobile = useMobileMode();
 
@@ -119,11 +291,9 @@ function CardStack({ stack }: { stack: StackDefinition }) {
       width: 'max-content',
     };
 
-  return (
-    <Parallax
-      speed={stack.speed}
-      style={{ position: 'absolute', ...(mobile ? stack.mobile : stack.desktop) }}
-    >
+  const tail = mobile ? stack.mobileTail?.(step) : null;
+
+  const cards = (
       <div style={layout}>
         {stack.cards.map((card) => (
           <Card
@@ -164,15 +334,47 @@ function CardStack({ stack }: { stack: StackDefinition }) {
           </Card>
         ))}
       </div>
+  );
+
+  return (
+    <Parallax
+      speed={stack.speed}
+      style={{ position: 'absolute', ...(mobile ? stack.mobile : stack.desktop) }}
+    >
+      {tail ? (
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '2rem',
+          }}
+        >
+          {/*
+           * `min-content` makes this box as wide as the cards (they never wrap)
+           * and not as wide as the footer, whose sentence wraps on mobile.
+           */}
+          <div style={{ width: 'min-content' }}>
+            {cards}
+            {stack.footer?.(step)}
+          </div>
+          {tail}
+        </div>
+      ) : (
+        <>
+          {cards}
+          {stack.footer?.(step)}
+        </>
+      )}
     </Parallax>
   );
 }
 
-function BoardCards() {
+function BoardCards({ step }: { step: number }) {
   return (
     <>
       {CARD_STACKS.map((stack) => (
-        <CardStack key={stack.key} stack={stack} />
+        <CardStack key={stack.key} stack={stack} step={step} />
       ))}
     </>
   );
@@ -266,10 +468,10 @@ const LABEL_TRANSFORMS = {
 
 const CURSOR_STATES = [
   { top: '0', left: '20%', rotate: '0deg', opacity: '0' },
-  { top: '12%', left: '51%', rotate: '0deg', opacity: '1' },
+  { top: '5%', left: '51%', rotate: '0deg', opacity: '1' },
   { top: '51%', left: '40%', rotate: '-90deg', opacity: '1' },
   { top: '58.5%', left: '54%', rotate: '-90deg', opacity: '1' },
-  { top: '81%', left: '4%', rotate: '0deg', opacity: '1' },
+  { top: '80%', left: '-1%', rotate: '0deg', opacity: '1' },
   { top: '100%', left: '30%', rotate: '0deg', opacity: '0' },
 ];
 
@@ -333,6 +535,57 @@ function Cursor({ step, name }: { step: number; name: string }) {
 }
 
 /* -------------------------------------------------------------------------- */
+/*                                  CTA card                                  */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * The three buttons, with the manager's comment hanging under them. On desktop
+ * it is placed on the board by itself; `inline` drops the positioning so the
+ * mobile layout can put it in the flow under the engineering stack.
+ */
+function CtaCard({ step, inline = false }: { step: number; inline?: boolean }) {
+  const t = useTranslations('vision.software');
+  const mobile = useMobileMode();
+
+  const placement: React.CSSProperties = inline
+    ? {}
+    : {
+      position: 'absolute',
+      top: '82%',
+      left: '50%',
+      transform: 'translateX(-50%)',
+    };
+
+  return (
+    <Card
+      variant="outlined"
+      style={{
+        ...placement,
+        filter: SURFACE_GLOW,
+        display: 'flex',
+        flexDirection: mobile ? 'column' : 'row',
+      }}
+    >
+      <Button variant="outlined" color="neutral" startDecorator={<MdSecurity />}>
+        {t('ctaSecurity')}
+      </Button>
+      <Button
+        variant="solid"
+        color="success"
+        startDecorator={<FaCode />}
+        style={{ whiteSpace: 'nowrap' }}
+      >
+        {t('ctaCollaborative')}
+      </Button>
+      <Button variant="outlined" color="neutral" startDecorator={<SiTeespring />}>
+        {t('ctaFlexibility')}
+      </Button>
+      <Comment step={step} />
+    </Card>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
 /*                                    Board                                   */
 /* -------------------------------------------------------------------------- */
 
@@ -357,8 +610,10 @@ function Board({ step }: { step: number }) {
         width: 'min(50rem, 100%)',
         // o board e mais estreito que a secao: sem isso ele encosta na esquerda
         marginInline: 'auto',
-        // no mobile tudo empilha em coluna, entao o board precisa de mais altura
-        height: mobile ? '58rem' : '40rem',
+        // no mobile tudo empilha em coluna, entao o board precisa de mais altura.
+        // Posicoes mobile ficam em rem (nao %) para nao andarem quando esta
+        // altura muda.
+        height: mobile ? '78rem' : '40rem',
         overflow: 'visible',
         background: 'transparent',
         position: 'relative',
@@ -376,7 +631,7 @@ function Board({ step }: { step: number }) {
         speed={10}
         style={{
           position: 'absolute',
-          top: mobile ? '20%' : '20%',
+          top: mobile ? '11.6rem' : '20%',
           left: mobile ? '1rem' : '2%',
         }}
       >
@@ -401,7 +656,7 @@ function Board({ step }: { step: number }) {
         speed={15}
         style={{
           position: 'absolute',
-          top: mobile ? '42%' : '34%',
+          top: mobile ? '24.4rem' : '34%',
           right: mobile ? undefined : '22%',
           left: mobile ? '1rem' : undefined,
         }}
@@ -449,37 +704,11 @@ function Board({ step }: { step: number }) {
       </Parallax>
 
       {/* --------------------------- pilhas de cards ------------------------- */}
-      <BoardCards />
+      <BoardCards step={step} />
 
       {/* ------------------------------ botoes ------------------------------- */}
-      <Card
-        variant="outlined"
-        style={{
-          position: 'absolute',
-          top: mobile ? '86%' : '82%',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          filter: SURFACE_GLOW,
-          display: 'flex',
-          flexDirection: mobile ? 'column' : 'row',
-        }}
-      >
-        <Button variant="outlined" color="neutral" startDecorator={<MdSecurity />}>
-          {t('ctaSecurity')}
-        </Button>
-        <Button
-          variant="solid"
-          color="success"
-          startDecorator={<FaCode />}
-          style={{ whiteSpace: 'nowrap' }}
-        >
-          {t('ctaCollaborative')}
-        </Button>
-        <Button variant="outlined" color="neutral" startDecorator={<SiTeespring />}>
-          {t('ctaFlexibility')}
-        </Button>
-        <Comment step={step} />
-      </Card>
+      {/* On mobile the buttons ride along with the engineering stack (mobileTail). */}
+      {!mobile && <CtaCard step={step} />}
     </div>
   );
 }
@@ -488,35 +717,51 @@ function Board({ step }: { step: number }) {
 /*                              Software (Goals)                              */
 /* -------------------------------------------------------------------------- */
 
+/** Share of the scroll progress spent before the board animation starts. */
+const ANIMATION_DELAY = 0.2;
+
 export default function Software() {
   const t = useTranslations('vision.software');
   const mobile = useMobileMode();
 
-  const animationDelay = 0.2;
-
-  const [scrollingProgress, setScrollingProgress] = useState(0);
-  const animationStep = useMemo(
-    () =>
-      Math.min(
-        Math.round(Math.max(0, scrollingProgress - animationDelay) * (6 / (1 - animationDelay))),
-        5,
-      ),
-    [scrollingProgress],
-  );
+  /*
+   * The step is stored, not the raw progress. react-scroll-parallax calls
+   * onProgressChange whenever it recomputes, including when its props change
+   * on a re-render; storing a float that jitters between recomputes re-renders
+   * on every call and ends in "Maximum update depth exceeded". An integer step
+   * only changes a handful of times, so React bails out of the rest, and the
+   * callback is stable so re-renders do not re-register the element.
+   */
+  const [animationStep, setAnimationStep] = useState(0);
+  const handleProgress = useCallback((progress: number) => {
+    const next = Math.min(
+      Math.round(Math.max(0, progress - ANIMATION_DELAY) * (6 / (1 - ANIMATION_DELAY))),
+      5,
+    );
+    setAnimationStep(next);
+  }, []);
 
   return (
     <Parallax
       shouldAlwaysCompleteAnimation
-      onProgressChange={(progress) => setScrollingProgress(progress)}
+      onProgressChange={handleProgress}
     >
       <div
         style={{
           display: 'flex',
           flexDirection: 'column',
           width: '100%',
-          // o board mobile e mais alto, entao a secao acompanha para o
-          // formulario (posicionado em 67%) nao subir por cima dos cards
-          height: mobile ? '1800px' : '1200px',
+          // On mobile the section should close right after the form. The form
+          // sits at a fixed offset (from this box's edge, not from inside the
+          // padding) with a capped height; this box stops 2.5rem short of its
+          // bottom, and the `pb-20` (5rem) of <Vision /> makes up the rest, so
+          // the section's `overflow-hidden` ends 2.5rem below the form. That
+          // leaves room for the privacy notice, which overflows the form box a
+          // little. The padding is the same at every width on purpose, so the
+          // desktop layout does not depend on a responsive class.
+          height: mobile
+            ? `calc(${REACH_TOP_MOBILE} + ${REACH_MAX_HEIGHT} - 2.5rem)`
+            : '1200px',
           marginTop: mobile ? '4rem' : '2rem',
           position: 'relative',
           padding: '37px',
