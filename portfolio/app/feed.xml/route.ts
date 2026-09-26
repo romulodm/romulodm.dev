@@ -3,7 +3,16 @@ import { NextResponse } from 'next/server'
 import { routing } from '@/i18n/routing'
 import { buildRssFeed } from '@/lib/feed'
 
-export const revalidate = 600
+// Era `revalidate = 600`, que obrigava o Next a montar o feed durante o
+// `next build` — e nem a imagem Docker nem o runner do CI tem banco. O cache
+// continua existindo pelo header Cache-Control abaixo, que os leitores de RSS
+// respeitam.
+//
+// A linha abaixo e redundante no Next 16 (GET handler ja e dinamico por
+// padrao; foi o `revalidate` que optava pelo estatico). Fica como guardrail:
+// deixa explicito que esta rota nao pode ser prerenderizada, e quebra cedo se
+// alguem reintroduzir `revalidate` sem se lembrar do porque.
+export const dynamic = 'force-dynamic'
 
 /**
  * Feed na raiz, sem prefixo de locale.
