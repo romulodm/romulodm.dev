@@ -326,7 +326,7 @@ export default function TerminalClient({ data, locale }: ResumePageClientProps):
                 </div>
             </div>
 
-            <div ref={scrollContainerRef} className="flex flex-row p-2 h-110 overflow-auto border dark:bg-neutral-900 dark:border-neutral-800 rounded-bl-lg rounded-br-lg default-scroll">
+            <div ref={scrollContainerRef} className="flex flex-row p-2 h-110 overflow-auto border dark:bg-neutral-900 dark:border-neutral-800 rounded-bl-lg rounded-br-lg terminal-scroll">
                 {displayedNavigationTab === 0 ? (
                     <TerminalExperience data={data} />
                 ) : (
