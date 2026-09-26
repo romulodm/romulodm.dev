@@ -90,7 +90,11 @@ For cryptocurrency donations, the following is recorded: originating wallet addr
 
 ### 3.6 Contact form
 
-The contact form collects **name, email address, and the message text**. It is operated by a **third-party form-forwarding service**; messages are delivered to the controller's mailbox and are not written to the Site's database.
+The contact form collects **name, email address, topic, and the message text**. As of this policy's latest update, messages **are stored in the Site's database** and no longer pass through a third-party form-forwarding service.
+
+Alongside the message, and solely to prevent abuse, the Site records the page **language**, the browser's **user agent**, and an **identifier derived from the IP address**. That identifier is a cryptographic digest (SHA-256) of the IP combined with a server-side secret — **the IP address itself is not stored**, and the identifier cannot be reversed back into one. It exists only to recognise that several messages came from the same origin.
+
+Submission is protected by **Cloudflare Turnstile**, an anti-automation check that replaces the traditional CAPTCHA (see section 5.1).
 
 ### 3.7 Technical and security data
 
@@ -138,7 +142,8 @@ The Site **does not sell data**. Sharing occurs only with **processors** perform
 | PIX payment processor | Issuing and settling the charge | Payer's name, email, phone, and tax ID, when provided; amount |
 | Infrastructure and hosting provider | Running the application and database | All stored data, under contract and confidentiality obligations |
 | Transactional email and newsletter delivery service | Delivering confirmations, password recovery, and campaigns | Recipient email address and message content |
-| Contact form service | Forwarding form messages | Name, email, and message |
+| Anti-automation (*CAPTCHA*) verification service | Telling people apart from bots on the contact form | Technical browser signals and IP address, sent directly from your browser to the provider |
+| Instant messaging service | Alerting the controller that a new message arrived | Name, topic, and an opening excerpt of the message |
 | Automated content moderation service | Detecting abusive content before publication | Comment or message text |
 | URL safety verification service | Blocking phishing and malware links | URLs contained in submitted content |
 | Error monitoring service | Diagnosing failures | Technical logs, which may include a user identifier |
@@ -225,6 +230,7 @@ To withdraw consent you have already given, delete the `cookie_consent` cookie �
 | Application access logs | 6 months, under Art. 15 of the Internet Civil Framework, extendable by court order |
 | IP address used for rate limiting | Minutes to hours, with automatic cache expiry |
 | Error and diagnostic logs | Per the monitoring service's retention policy, typically up to 90 days |
+| Contact form messages | For as long as they remain useful to the exchange they belong to, and at most **24 months** from submission. They may be deleted sooner, at any time, at the sender's request |
 | Ban records | For as long as necessary to prevent recurrence and to exercise legal rights |
 | Blockchain donation data | **Permanent and irreversible by nature** — see section 9.3 |
 

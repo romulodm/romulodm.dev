@@ -89,7 +89,11 @@ En las donaciones con criptomonedas se registran: dirección de la cartera de or
 
 ### 3.6 Formulario de contacto
 
-El formulario de contacto recoge **nombre, correo electrónico y el texto del mensaje**. Lo opera un **servicio externo de reenvío de formularios**; los mensajes llegan al buzón del responsable y no se guardan en la base de datos del Sitio.
+El formulario de contacto recoge **nombre, correo electrónico, asunto y el texto del mensaje**. Desde la última actualización de esta política, los mensajes **se guardan en la base de datos del Sitio** y ya no pasan por un servicio externo de reenvío de formularios.
+
+Junto al mensaje se registran, únicamente para prevenir abusos: el **idioma** de la página, el **agente de usuario** del navegador y un **identificador derivado de la dirección IP**. Ese identificador es el resultado de una función de resumen criptográfico (SHA-256) aplicada a la IP junto con un secreto del servidor — **la dirección IP en sí no se almacena** y el identificador no permite reconstruirla. Sirve solo para reconocer que varios mensajes provienen del mismo origen.
+
+El envío está protegido por **Cloudflare Turnstile**, un mecanismo de verificación antiautomatización que sustituye al CAPTCHA tradicional (véase la sección 5.1).
 
 ### 3.7 Datos técnicos y de seguridad
 
@@ -137,7 +141,8 @@ El Sitio **no vende datos**. Solo se comparten con **encargados del tratamiento*
 | Pasarela de pago PIX | Emisión y liquidación del cobro | Nombre, correo, teléfono e identificación fiscal del pagador, cuando se aportan; importe |
 | Proveedor de infraestructura y alojamiento | Ejecutar la aplicación y la base de datos | Todos los datos almacenados, bajo contrato y deber de confidencialidad |
 | Servicio de envío de correos transaccionales y del boletín | Entregar confirmaciones, recuperación de contraseña y campañas | Correo del destinatario y contenido del mensaje |
-| Servicio del formulario de contacto | Reenviar mensajes del formulario | Nombre, correo y mensaje |
+| Servicio de verificación antiautomatización (*CAPTCHA*) | Distinguir personas de robots en el formulario de contacto | Señales técnicas del navegador y dirección IP, enviadas directamente por tu navegador al proveedor |
+| Servicio de mensajería instantánea | Avisar al responsable de que llegó un mensaje nuevo | Nombre, asunto y un fragmento inicial del mensaje |
 | Servicio de moderación automatizada de contenido | Detectar contenido abusivo antes de publicarlo | Texto del comentario o mensaje |
 | Servicio de verificación de seguridad de URLs | Bloquear enlaces de *phishing* y malware | URLs contenidas en el contenido enviado |
 | Servicio de monitorización de errores | Diagnosticar fallos | Registros técnicos, que pueden incluir un identificador de usuario |
@@ -224,6 +229,7 @@ Para revocar un consentimiento ya prestado, borra la cookie `cookie_consent`: el
 | Registros de acceso a la aplicación | 6 meses, conforme al art. 15 del Marco Civil de Internet, prorrogables por orden judicial |
 | Dirección IP para limitación de peticiones | De minutos a horas, con expiración automática en caché |
 | Registros de error y diagnóstico | Según la política de retención del servicio de monitorización, típicamente hasta 90 días |
+| Mensajes del formulario de contacto | Mientras sean útiles para la relación a la que se destinan, y como máximo **24 meses** desde el envío. Pueden suprimirse antes, en cualquier momento, a petición del remitente |
 | Registros de expulsión | Mientras sea necesario para impedir la reincidencia y para el ejercicio regular de derechos |
 | Datos de donaciones en blockchain | **Permanentes e irreversibles por naturaleza** — véase la sección 9.3 |
 
