@@ -38,7 +38,9 @@ services:
       start_period: 10s
 
   minio-init:
-    image: minio/mc:latest
+    # minio/mc was removed from Docker Hub (and quay.io). The server image ships
+    # the same `mc` binary (the healthcheck above already relies on it).
+    image: minio/minio:latest
     container_name: romulodm-minio-init
     env_file:
       - .env
@@ -172,13 +174,13 @@ services:
       - SITE_DOMAIN=${SITE_DOMAIN:?defina SITE_DOMAIN no .env}
       - WWW_DOMAIN=${WWW_DOMAIN:-}
 
+    # Keep the envsubst command on ONE line. In a folded scalar (`>`), lines
+    # indented deeper than the first keep their newlines, so splitting the
+    # redirections across lines makes the shell run `envsubst` on empty stdin
+    # and then `> default.conf` on its own: nginx starts with an EMPTY vhost and
+    # every request falls into the 444 catch-all in nginx.conf.
     entrypoint: >
-      /bin/sh -c "
-        envsubst '$$SITE_DOMAIN $$WWW_DOMAIN'
-          < /etc/nginx/templates/app.conf
-          > /etc/nginx/conf.d/default.conf &&
-        nginx -g 'daemon off;'
-      "
+      /bin/sh -c "envsubst '$$SITE_DOMAIN $$WWW_DOMAIN' < /etc/nginx/templates/app.conf > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
 
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro

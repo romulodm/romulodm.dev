@@ -57,7 +57,9 @@ services:
       start_period: 10s
 
   minio-init:
-    image: minio/mc:latest
+    # minio/mc was removed from Docker Hub (and quay.io). The server image ships
+    # the same `mc` binary (the healthcheck above already relies on it).
+    image: minio/minio:latest
     container_name: dev-romulodm-minio-init
     env_file:
       - .env
