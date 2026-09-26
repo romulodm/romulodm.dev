@@ -8,7 +8,7 @@ import { AVATAR_SELECT } from "@/lib/avatar";
 import { rateLimitResponse } from "@/lib/api-errors";
 import { getApiTranslator } from "@/lib/api-intl";
 import { getRequestIp, rateLimit } from "@/lib/rate-limit";
-import { isCardArtStyle, isCardArtTone } from "@/components/wall/cardArt";
+import { PICKABLE_CARD_ART_TONES, isCardArtStyle, isCardArtTone } from "@/components/wall/cardArt";
 
 const PAGE_SIZE = 21;
 
@@ -94,7 +94,11 @@ export async function POST(req: NextRequest) {
   // The modal only offers valid values, so anything else is a hand-made
   // request. Rejecting it (instead of silently defaulting) keeps the stored
   // column honest: every row holds a style someone actually picked.
-  if (!isCardArtStyle(artStyle) || !isCardArtTone(artTone)) {
+  if (
+    !isCardArtStyle(artStyle) ||
+    !isCardArtTone(artTone) ||
+    !PICKABLE_CARD_ART_TONES.includes(artTone)
+  ) {
     return NextResponse.json({ error: "Invalid card style" }, { status: 400 });
   }
 
