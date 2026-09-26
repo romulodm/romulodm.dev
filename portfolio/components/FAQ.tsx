@@ -9,16 +9,16 @@ import { AnimatedSection } from "./AnimatedSection";
 import { ContactTrigger } from "./modals/ContactTrigger";
 
 /**
- * Secao de perguntas frequentes: cabecalho fixo a esquerda e lista numerada a
- * direita (empilha no mobile).
+ * Seção de perguntas frequentes: cabeçalho fixo à esquerda e lista de
+ * perguntas à direita (empilha no mobile).
  *
  * As perguntas vivem em `messages/{locale}.json` sob `faq.items`, lidas com
- * `t.raw` — `t()` formata mensagem e nao devolve array. O cabecalho vem de
+ * `t.raw` — `t()` formata mensagem e não devolve array. O cabeçalho vem de
  * `home.faq` (eyebrow, title, description).
  *
- * Cada item pode ter um `cta` + `href` opcionais. Isso existe para nao precisar
- * de HTML dentro da traducao: link como dado, e nao como marcacao, evita
- * `dangerouslySetInnerHTML` e mantem o JSON legivel para quem so quer revisar
+ * Cada item pode ter um `cta` + `href` opcionais. Isso existe para não precisar
+ * de HTML dentro da tradução: link como dado, e não como marcação, evita
+ * `dangerouslySetInnerHTML` e mantém o JSON legível para quem só quer revisar
  * texto.
  */
 
@@ -31,25 +31,27 @@ interface FAQItemData {
 
 interface FAQItemProps {
     item: FAQItemData;
-    number: string;
     isOpen: boolean;
     onToggle: () => void;
-    /** Base para os ids de aria — precisa ser estavel entre servidor e cliente. */
+    /** Base para os ids de aria — precisa ser estável entre servidor e cliente. */
     domId: string;
 }
 
 /**
  * Sinal de "+" que vira "−". Ao abrir, as duas barras giram em sentido
- * horario: a horizontal da meia volta (180°) e a vertical um quarto (90°),
- * terminando as duas deitadas uma sobre a outra. Ao fechar, a transicao
- * volta pelo mesmo caminho (anti-horario) e o "+" se reconstroi.
+ * horário: a horizontal da meia volta (180°) e a vertical um quarto (90°),
+ * terminando as duas deitadas uma sobre a outra. Ao fechar, a transição
+ * volta pelo mesmo caminho (anti-horário) e o "+" se reconstrói.
  */
 function PlusMinus({ isOpen }: { isOpen: boolean }) {
     const bar =
         "absolute bg-current transition-transform duration-300 ease-out";
 
     return (
-        <span aria-hidden className="relative h-4 w-4 justify-self-end">
+        <span
+            aria-hidden
+            className="relative h-4 w-4 justify-self-end"
+        >
             <span
                 className={cn(
                     bar,
@@ -68,10 +70,18 @@ function PlusMinus({ isOpen }: { isOpen: boolean }) {
     );
 }
 
-function FAQItem({ item, number, isOpen, onToggle, domId }: FAQItemProps) {
+function FAQItem({
+    item,
+    isOpen,
+    onToggle,
+    domId,
+}: FAQItemProps) {
     const buttonId = `${domId}-button`;
     const panelId = `${domId}-panel`;
-    const isExternal = Boolean(item.href && /^https?:\/\//.test(item.href));
+    const isExternal = Boolean(
+        item.href && /^https?:\/\//.test(item.href),
+    );
+
     const ctaClassName =
         "text-sm font-medium text-primary transition-opacity hover:opacity-80";
 
@@ -84,17 +94,15 @@ function FAQItem({ item, number, isOpen, onToggle, domId }: FAQItemProps) {
                 aria-controls={panelId}
                 onClick={onToggle}
                 className={cn(
-                    "grid w-full grid-cols-[32px_minmax(0,1fr)_24px] items-center gap-4 py-5 text-left sm:grid-cols-[40px_minmax(0,1fr)_24px] lg:py-[22px]",
+                    "grid w-full grid-cols-[minmax(0,1fr)_24px] items-center gap-4 py-5 text-left lg:py-[22px]",
                     "text-foreground transition-colors hover:text-primary",
                     "rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60",
                 )}
             >
-                <span className="text-xs font-medium tabular-nums tracking-[0.04em] text-muted-foreground">
-                    {number}
-                </span>
                 <span className="text-lg font-semibold leading-snug tracking-tight lg:text-xl">
                     {item.q}
                 </span>
+
                 <PlusMinus isOpen={isOpen} />
             </button>
 
@@ -110,7 +118,7 @@ function FAQItem({ item, number, isOpen, onToggle, domId }: FAQItemProps) {
                 )}
             >
                 <div className="overflow-hidden">
-                    <div className="pb-6 sm:pl-14 sm:pr-10 lg:pb-[26px]">
+                    <div className="pb-6 sm:pr-10 lg:pb-[26px]">
                         <p className="text-pretty text-base leading-[1.65] text-muted-foreground">
                             {item.a}
                         </p>
@@ -127,7 +135,10 @@ function FAQItem({ item, number, isOpen, onToggle, domId }: FAQItemProps) {
                                         {item.cta} →
                                     </a>
                                 ) : (
-                                    <Link href={item.href} className={ctaClassName}>
+                                    <Link
+                                        href={item.href}
+                                        className={ctaClassName}
+                                    >
                                         {item.cta} →
                                     </Link>
                                 )}
@@ -140,33 +151,59 @@ function FAQItem({ item, number, isOpen, onToggle, domId }: FAQItemProps) {
     );
 }
 
-export function FAQ({ allowMultiple = false }: { allowMultiple?: boolean }) {
+export function FAQ({
+    allowMultiple = false,
+}: {
+    allowMultiple?: boolean;
+}) {
     const t = useTranslations("faq");
     const tHeader = useTranslations("home.faq");
     const domId = useId();
 
     const items = t.raw("items") as FAQItemData[];
 
-    // O primeiro item comeca aberto: mostra de cara que a lista expande.
-    const [open, setOpen] = useState<Set<number>>(() => new Set([0]));
+    // O primeiro item começa aberto: mostra de cara que a lista expande.
+    const [open, setOpen] = useState<Set<number>>(
+        () => new Set([0]),
+    );
 
     const toggle = (index: number) => {
         setOpen((previous) => {
             const next = new Set(previous);
+
             if (next.has(index)) {
                 next.delete(index);
                 return next;
             }
-            if (!allowMultiple) next.clear();
+
+            if (!allowMultiple) {
+                next.clear();
+            }
+
             next.add(index);
             return next;
         });
     };
 
-    if (!Array.isArray(items) || items.length === 0) return null;
+    if (!Array.isArray(items) || items.length === 0) {
+        return null;
+    }
 
     return (
-        <AnimatedSection className="relative z-10 w-full" delay={0.2}>
+        // On the home page the FAQ sits right under the "Let's connect" form,
+        // which only fades in after a few scrolls. With the default reveal the
+        // FAQ was already on screen while the form was still arriving, and the
+        // two read as one block. Here it waits until its top is past ~70% of
+        // the viewport, rises from further down and hides again when the
+        // visitor scrolls back up, like the form does. The extra top padding
+        // keeps the two sections apart.
+        <AnimatedSection
+            className="relative z-10 pt-10 lg:pt-28 w-full"
+            delay={0.1}
+            offset={80}
+            rootMargin="0px 0px -30% 0px"
+            once={false}
+        >
             <div className="grid w-full grid-cols-1 gap-10 lg:grid-cols-[minmax(0,380px)_minmax(0,1fr)] lg:gap-20">
                 <header className="flex flex-col gap-4 self-start lg:sticky lg:top-24">
                     <p
@@ -175,9 +212,11 @@ export function FAQ({ allowMultiple = false }: { allowMultiple?: boolean }) {
                     >
                         {tHeader("eyebrow")}
                     </p>
-                    <h2 className="text-balance text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100 sm:text-4xl lg:text-5xl lg:leading-[1.05]">
+
+                    <h2 className="type-h2 text-balance text-neutral-900 dark:text-neutral-100">
                         {tHeader("title")}
                     </h2>
+
                     <p className="max-w-[360px] text-pretty text-base leading-relaxed text-neutral-500 dark:text-neutral-400">
                         {tHeader("description")}{" "}
                         {tHeader.rich("contact", {
@@ -198,7 +237,6 @@ export function FAQ({ allowMultiple = false }: { allowMultiple?: boolean }) {
                         <FAQItem
                             key={item.q}
                             item={item}
-                            number={String(index + 1).padStart(2, "0")}
                             domId={`${domId}-${index}`}
                             isOpen={open.has(index)}
                             onToggle={() => toggle(index)}
