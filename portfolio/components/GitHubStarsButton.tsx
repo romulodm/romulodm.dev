@@ -39,7 +39,7 @@ export function GitHubStarsButton({
 
     // ── Tamanhos ──────────────────────────────────────────────────
     const sizes = {
-        sm: { btn: 'h-6 px-2.5 text-[0.68rem] gap-1.5', icon: 12 },
+        sm: { btn: 'h-6 px-2.5 text-xs gap-1.5', icon: 12 },
         md: { btn: 'h-7 px-3 text-xs gap-2', icon: 13 },
         lg: { btn: 'h-9 px-4 text-sm gap-2.5', icon: 15 },
     }
