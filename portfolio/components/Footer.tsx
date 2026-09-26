@@ -44,7 +44,6 @@ export function Footer() {
             className="relative z-[5] overflow-hidden pt-10 px-4 sm:px-5 mt-10"
             style={{
                 borderRadius: '56px 56px 0 0',
-                fontFamily: "'DM Sans', sans-serif",
             }}
         >
             {/* Ceu do footer: mesma paleta do HeroPowder (claro/escuro) */}
@@ -63,28 +62,22 @@ export function Footer() {
             />
             {/* ── CTA ── */}
             <div className="relative z-[2] text-center max-w-[740px] mx-auto mb-10 px-4">
-                <h2
-                    className="font-extrabold text-neutral-900 dark:text-white leading-[1.06] tracking-tight mb-5"
-                    style={{
-                        fontSize: 'clamp(2rem, 5.5vw, 4.2rem)',
-                        letterSpacing: '-0.025em',
-                    }}
-                >
+                <h2 className="text-6xl font-black text-neutral-900 dark:text-white mb-3">
                     {t('cta.title')}
                 </h2>
 
                 {/* Botão agora abre o modal */}
                 <button
                     onClick={() => setContactOpen(true)}
-                    className="inline-flex items-center gap-2.5 bg-[#0e0e0e] text-white text-[0.95rem] font-medium px-[22px] py-[13px] rounded-full hover:opacity-90 transition-opacity"
+                    className="inline-flex items-center gap-2.5 bg-[#0e0e0e] text-white text-sm font-medium px-[22px] py-[13px] rounded-full hover:opacity-90 transition-opacity"
                 >
                     {t('cta.button')}
-                    <span className="bg-[#F9733D] text-white w-[26px] h-[26px] rounded-full flex items-center justify-center text-[0.85rem]">
+                    <span className="bg-[#F9733D] text-white w-[26px] h-[26px] rounded-full flex items-center justify-center text-sm">
                         <FaArrowRightLong />
                     </span>
                 </button>
 
-                <p className="mt-[18px] text-sm sm:text-base text-neutral-900 dark:text-white font-semibold opacity-80">
+                <p className="mt-3 text-sm sm:text-base text-neutral-900 dark:text-white opacity-80">
                     {t('cta.disclaimer')}
                 </p>
             </div>
@@ -128,13 +121,13 @@ export function Footer() {
 
                     {/* About */}
                     <div className="col-span-2 md:col-span-1">
-                        <h4 className="text-sm font-semibold text-white mb-4 tracking-[0.01em]">
+                        <h4 className="type-small font-semibold text-white mb-4">
                             {t('nav.about.title')}
                         </h4>
-                        <p className="text-[0.72rem] text-white/50 leading-relaxed">
+                        <p className="text-xs text-white/50 leading-relaxed">
                             {t('nav.about.description')}
                         </p>
-                        <p className="text-[0.72rem] mt-4 text-white/50 leading-relaxed">
+                        <p className="text-xs mt-4 text-white/50 leading-relaxed">
                             {t('nav.about.community')}
                         </p>
                         <div className="space-y-4 mt-4">
@@ -143,10 +136,10 @@ export function Footer() {
                                     <Mail className="h-4 w-4" />
                                 </div>
                                 <a
-                                    href="mailto:eu@romulodm.dev"
+                                    href="mailto:romulo@romulodm.dev"
                                     className="text-sm text-white/50 hover:text-white transition-colors duration-300"
                                 >
-                                    eu@romulodm.dev
+                                    romulo@romulodm.dev
                                 </a>
                             </div>
                             <div className="flex items-center space-x-2 text-gray-300">
@@ -181,7 +174,7 @@ export function Footer() {
                             <BsInstagram />
                         </SocialBtn>
                     </div>
-                    <GitHubStarsButton user="romulodm" repo="go-chess" />
+                    <GitHubStarsButton user="romulodm" repo="romulodm.dev" />
                 </div>
 
                 {/* ── Bottom bar ── */}
@@ -213,7 +206,7 @@ export function Footer() {
 function FooterCol({ title, children }: { title: string; children: React.ReactNode }) {
     return (
         <div>
-            <h4 className="text-sm font-semibold text-white mb-4 tracking-[0.01em]">{title}</h4>
+            <h4 className="type-small font-semibold text-white mb-4">{title}</h4>
             <ul className="list-none p-0 m-0 flex flex-col gap-2.5">{children}</ul>
         </div>
     )
@@ -224,7 +217,7 @@ function FooterLink({ href, children }: { href: string; children: React.ReactNod
         <li>
             <a
                 href={href}
-                className="text-[0.78rem] text-white/50 no-underline leading-snug hover:text-white/80 transition-colors"
+                className="text-xs text-white/50 no-underline leading-snug hover:text-white/80 transition-colors"
             >
                 {children}
             </a>
