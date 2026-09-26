@@ -4,11 +4,11 @@
 
 ## Tech Debt
 
-**Dead "game" / Centrifugo remnants:**
-- Issue: A removed multiplayer game still leaves traces. `portfolio/next.config.js` lists `transpilePackages: ["game", "phaser", "centrifuge"]` and sets a Cache-Control header for `/game/assets/:path*`, but `portfolio/package.json` declares none of these packages and `portfolio/public/game` does not exist. `worker/workers/game.worker.ts` publishes to Centrifugo at `CENTRIFUGO_API_URL`, which defaults to `http://realtime:8000/api`. No compose file defines a `realtime` service, and `worker/index.ts` never imports or starts the game worker.
+**Unwired "game" / Centrifugo skeleton:**
+- Issue: `worker/workers/game.worker.ts` calls itself an "MVP skeleton" for a planned game, but nothing else exists for it. `portfolio/next.config.js` lists `transpilePackages: ["game", "phaser", "centrifuge"]` and sets a Cache-Control header for `/game/assets/:path*`, but `portfolio/package.json` declares none of these packages and `portfolio/public/game` does not exist. `worker/workers/game.worker.ts` publishes to Centrifugo at `CENTRIFUGO_API_URL`, which defaults to `http://realtime:8000/api`. No compose file defines a `realtime` service, and `worker/index.ts` never imports or starts the game worker.
 - Files: `portfolio/next.config.js`, `worker/workers/game.worker.ts`, `worker/index.ts`, `docker-compose.prod.yml`
 - Impact: Misleading config. Anyone reading it may assume a realtime service exists, and it adds noise to Next.js build config.
-- Fix approach: Delete `worker/workers/game.worker.ts`. Remove the `transpilePackages` entry and the `/game/assets` header rule from `portfolio/next.config.js`.
+- Fix approach: If the game is not on the roadmap, delete `worker/workers/game.worker.ts`; either way, remove the `transpilePackages` entry and the `/game/assets` header rule from `portfolio/next.config.js`.
 
 **Orphan search event consumer:**
 - Issue: `worker/workers/search.worker.ts` (around line 132) loops on `redis.brpop("search:events", 2)`, and `worker/index.ts:98` starts it through `startSearchConsumer()`. Nothing in `portfolio/`, `worker/` or `packages/` ever pushes to `search:events`. The portfolio syncs synchronously through `portfolio/lib/search-sync.ts` (`syncPostToSearch`/`removePostFromSearch`, called from `portfolio/app/api/posts/route.ts` and `portfolio/app/api/posts/[id]/route.ts`).
