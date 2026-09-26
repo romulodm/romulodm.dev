@@ -7,6 +7,10 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@romulo/database";
 import { Footer } from "@/components/Footer";
 
+// Chama getServerSession no render (o perfil muda conforme voce e ou nao o dono).
+// Conteudo por usuario: nao cacheavel, e cookie em render estatico da 500.
+export const dynamic = "force-dynamic";
+
 type Props = { params: Promise<{ username: string }> };
 
 export default async function Profile(props: Props) {

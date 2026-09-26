@@ -5,7 +5,10 @@ import { getLocale } from "next-intl/server";
 import { unstable_cache } from "next/cache";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { revalidatePath } from "next/cache";
+import { AVATAR_SELECT } from "@/lib/avatar";
+import { revalidatePath, updateTag } from "next/cache";
+
+import { PROFILE_CACHE_TAG } from "@/lib/cache-tags";
 
 // ── Cached public profile ─────────────────────────────────────────────────────
 
@@ -15,9 +18,8 @@ export const getProfileByUsername = unstable_cache(
             where: { username },
             select: {
                 id: true,
-                username: true,
+                ...AVATAR_SELECT,
                 email: true,
-                image: true,
                 createdAt: true,
                 banned: true,
                 githubUrl: true,
@@ -27,8 +29,8 @@ export const getProfileByUsername = unstable_cache(
             },
         });
     },
-    ["profile-by-username"],
-    { revalidate: 60 },
+    [PROFILE_CACHE_TAG],
+    { revalidate: 60, tags: [PROFILE_CACHE_TAG] },
 );
 
 // ── Comments (paginated) ──────────────────────────────────────────────────────
@@ -99,26 +101,42 @@ export async function updateProfileSettings(data: {
 
     const userId = (session.user as any).id as string;
 
+    const nextUsername = data.username?.trim();
+
     // Username uniqueness check
-    if (data.username) {
+    if (nextUsername) {
         const conflict = await prisma.user.findFirst({
-            where: { username: data.username, id: { not: userId } },
+            where: { username: nextUsername, id: { not: userId } },
             select: { id: true },
         });
         if (conflict) return { error: "username_taken" as const };
     }
 
-    await prisma.user.update({
+    const updated = await prisma.user.update({
         where: { id: userId },
         data: {
-            ...(data.username ? { username: data.username } : {}),
+            ...(nextUsername ? { username: nextUsername } : {}),
             ...(data.githubUrl !== undefined ? { githubUrl: data.githubUrl } : {}),
             ...(data.linkedinUrl !== undefined ? { linkedinUrl: data.linkedinUrl } : {}),
         },
+        select: { username: true },
     });
 
+    // Sem isto a entrada de cache do username antigo sobrevive ate 60s: a URL
+    // velha continua renderizando um perfil que ja nao existe e depois passa a
+    // 404 sem aviso.
+    //
+    // `updateTag` e nao `revalidateTag`: aqui e uma Server Action e o usuario
+    // acabou de mudar o proprio perfil, entao precisa ver o resultado agora
+    // (read-your-own-writes). O `revalidateTag` de um argumento so virou erro de
+    // tipo no Next 16.3, e a versao de dois argumentos serve conteudo velho de
+    // proposito — o oposto do que se quer depois de um save.
+    updateTag(PROFILE_CACHE_TAG);
     revalidatePath(`/`);
-    return { ok: true as const };
+
+    // O client precisa do username final para trocar a URL e pedir um refresh
+    // do token do NextAuth, que guarda o username do login.
+    return { ok: true as const, username: updated.username };
 }
 
 // ── Newsletter locale update ──────────────────────────────────────────────────

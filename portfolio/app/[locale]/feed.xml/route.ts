@@ -3,13 +3,18 @@ import { NextResponse } from 'next/server'
 import { routing } from '@/i18n/routing'
 import { buildRssFeed } from '@/lib/feed'
 
-// Regenera no maximo a cada 10 min. Feed e lido por robo em loop; sem isso cada
-// leitor de RSS dispara markdown + query a cada visita.
-export const revalidate = 600
+// Feed e lido por robo em loop, entao o cache importa — mas ele vem do header
+// Cache-Control da resposta, nao de ISR. `revalidate = 600` obrigava o Next a
+// executar markdown + query no `next build`, e o build da imagem nao tem banco.
+//
+// A linha abaixo e redundante no Next 16 (GET handler ja e dinamico por
+// padrao) e fica como guardrail contra reintroduzir `revalidate`. O que de
+// fato protege o banco aqui e o Cache-Control publico da resposta — por isso
+// esta rota nao precisa da zona proxy_cache que /sitemap.xml usa.
+export const dynamic = 'force-dynamic'
 
-export function generateStaticParams() {
-  return routing.locales.map((locale) => ({ locale }))
-}
+// generateStaticParams foi removido junto: com force-dynamic nao ha prerender
+// para parametrizar, e a validacao de locale ja acontece no GET abaixo.
 
 export async function GET(
   _request: Request,

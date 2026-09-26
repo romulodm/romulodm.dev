@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import { setRequestLocale } from 'next-intl/server'
 import { getLegalDocument, getLegalHeadings } from '@/lib/legal'
 import { buildPageMetadata } from '@/lib/seo'
 import { LegalPage } from '@/components/legal/LegalPage'
@@ -32,6 +33,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function PrivacyPolicyPage({ params }: PageProps) {
   const { locale } = await params
+  // Requisito do next-intl para render estatico — ver app/[locale]/layout.tsx.
+  setRequestLocale(locale)
 
   let doc
   try {

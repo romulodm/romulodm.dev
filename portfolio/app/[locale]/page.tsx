@@ -1,16 +1,16 @@
 import Link from 'next/link'
 import type { Metadata } from 'next';
 import { useLocale, useTranslations } from 'next-intl';
-import { getTranslations } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 import { FaArrowRightLong } from 'react-icons/fa6';
-import { FiCode, FiHelpCircle, FiUser } from 'react-icons/fi';
+import { FiCode, FiUser } from 'react-icons/fi';
 
 import { JsonLd } from '@/components/seo/JsonLd';
 import { buildPageMetadata, personJsonLd, websiteJsonLd } from '@/lib/seo';
 
 import Navbar from '@/components/navigation/Navbar';
-import Hero from '@/components/sections/Hero';
+import Hero from '@/components/sections/hero/Hero';
 import About from '@/components/sections/About';
 import SectionHeader from '@/components/sections/SectionHeader';
 import Terminal from '@/components/sections/terminal/Terminal';
@@ -21,6 +21,7 @@ import Vision from '@/components/sections/vision/Vision';
 import { FAQ } from '@/components/FAQ';
 import Bento from '@/components/sections/bento/Bento';
 import { Footer } from '@/components/Footer';
+import Presence from '@/components/sections/presence/Presence';
 
 type HomeProps = {
   params: Promise<{ locale: string }>
@@ -39,21 +40,28 @@ export async function generateMetadata({ params }: HomeProps): Promise<Metadata>
   })
 }
 
-export default function Home() {
+export default async function Home({ params }: HomeProps) {
+  // Requisito do next-intl para render estatico. Ver o comentario extenso em
+  // app/[locale]/layout.tsx — precisa ser repetido por arquivo.
+  const { locale: routeLocale } = await params
+  setRequestLocale(routeLocale)
+
+  return <HomeContent />
+}
+
+function HomeContent() {
   const t = useTranslations();
   const locale = useLocale();
 
   return (
     <main className="min-h-screen default-scroll bg-background">
-      {/* Dados estruturados: e o que faz o Google exibir nome, cargo e links
-          sociais no painel lateral em vez de so o titulo da pagina. */}
       <JsonLd data={personJsonLd(locale)} />
       <JsonLd data={websiteJsonLd(locale)} />
       <Navbar />
       <Hero />
       <About />
 
-      <section className="flex flex-col justify-center w-full -mt-14 md:mt-0 mb-4 px-4 max-w-7xl mx-auto">
+      <section className="flex flex-col justify-center w-full -mt-14 mb-4 px-4 max-w-7xl mx-auto">
         <div className="flex flex-row justify-center w-full py-2">
           <SectionHeader
             accent="resume"
@@ -67,24 +75,13 @@ export default function Home() {
         <Terminal />
         <Timeline />
 
-        <hr className="mt-3 mb-5 dark:border-[#2f3031]" />
-
-        <div className="flex items-center justify-between w-full py-4 px-2 sm:py-8 sm:px-6 bg-gray-200 dark:bg-neutral-900 border rounded-lg dark:border-neutral-800 flex-col sm:flex-row text-center sm:text-left">
-          <div className="mb-2 sm:mb-0">
-            <p className="text-slate-700 dark:text-neutral-300 font-bold mb-1 text-lg sm:text-2xl">{t('home.profile.link-title')} 📋</p>
-            <p className="text-slate-500 dark:text-neutral-400 text-sm sm:text-lg">{t('home.profile.link-content')}</p>
-          </div>
-          <Link href="/resume">
-            <button className="flex px-5 min-w-44 text-sm md:text-md justify-center w-full font-semibold items-center gap-2 p-3 bg-blue-600 dark:bg-blue-600/50 hover:bg-blue-700 dark:hover:bg-blue-700/50 rounded-lg text-white">
-              {t('home.profile.link-button')}
-              <FaArrowRightLong />
-            </button>
-          </Link>
+        <div className="my-5">
+          <Presence />
         </div>
       </section>
 
-      <section className='w-full flex items-center justify-center py-16 px-4 max-w-7xl mx-auto'>
-        <div className="flex flex-col justify-center items-center w-full">
+      <section className='w-full flex items-center justify-center pb-16 px-4 max-w-7xl mx-auto'>
+        <div className="flex flex-col justify-center items-center w-full max-w-7xl mx-auto">
           <div className="flex flex-row justify-center w-full py-2">
             <SectionHeader
               accent="projects"
@@ -94,7 +91,6 @@ export default function Home() {
               description={t('home.projects.description')}
             />
           </div>
-
           <Projects />
         </div>
       </section>
@@ -105,7 +101,7 @@ export default function Home() {
         <div className="w-full">
           <hr className="mt-3 mb-5 dark:border-[#2f3031]" />
 
-          <div className="flex items-center justify-between w-full py-4 px-2 sm:py-8 sm:px-6 bg-gray-200 dark:bg-neutral-900 border rounded-lg dark:border-neutral-800 flex-col sm:flex-row text-center sm:text-left">
+          <div className="flex items-center justify-between w-full py-4 px-2 sm:py-8 sm:px-6 bg-card border rounded-lg dark:border-neutral-800 flex-col sm:flex-row text-center sm:text-left">
             <div className="mb-2 sm:mb-0">
               <p className="text-slate-700 dark:text-neutral-300 font-bold mb-1 text-lg sm:text-2xl">{t('home.vision.link-title')} 📝</p>
               <p className="text-slate-500 dark:text-neutral-400 text-sm sm:text-lg">{t('home.vision.link-content')}</p>
@@ -124,21 +120,12 @@ export default function Home() {
 
       <section className='w-full flex items-center justify-center py-16 px-4 max-w-7xl mx-auto'>
         <div className="flex flex-col justify-center items-center w-full">
-          <div className="flex flex-row justify-center w-full py-2">
-            <SectionHeader
-              accent="primary"
-              icon={<FiHelpCircle />}
-              eyebrow={t('home.faq.eyebrow')}
-              title={t('home.faq.title')}
-              description={t('home.faq.description')}
-            />
-          </div>
-
           <FAQ />
-          <Bento />
+          <div className="mt-16 w-full">
+            <Bento />
+          </div>
         </div>
       </section>
-
       <Footer />
     </main >
   )

@@ -1,11 +1,15 @@
 import { prisma } from '@romulo/database'
 import { Metadata } from 'next'
-import { getTranslations } from 'next-intl/server'
+import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { DonationWidget } from '@/components/support/DonationWidget'
 import { SupportersSidebar } from '@/components/support/SupportSidebar'
 import Navbar from '@/components/navigation/Navbar'
 import { Footer } from '@/components/Footer'
 import { buildPageMetadata } from '@/lib/seo'
+
+// Ranking de apoiadores muda com pouca frequencia; 5 min de cache e suficiente
+// e evita uma query por visita.
+export const revalidate = 300
 
 export async function generateMetadata({
     params,
@@ -68,7 +72,15 @@ async function getStats() {
     }
 }
 
-export default async function SupportPage() {
+export default async function SupportPage({
+    params,
+}: {
+    params: Promise<{ locale: string }>
+}) {
+    // Requisito do next-intl para render estatico — ver app/[locale]/layout.tsx.
+    const { locale } = await params
+    setRequestLocale(locale)
+
     const { topDonors, recentDonors, stats } = await getStats()
     const totalSupporters = stats._count.id
 
@@ -77,8 +89,8 @@ export default async function SupportPage() {
             <Navbar />
             <main className="max-w-5xl mx-auto px-4 py-24">
                 <div className="text-center mb-8">
-                    <h1 className="text-3xl font-bold text-foreground mb-2">Compre um café</h1>
-                    <p className="text-muted-foreground max-w-md mx-auto">
+                    <h1 className="type-h1 text-foreground mb-2">Compre um café</h1>
+                    <p className="type-body text-muted-foreground max-w-md mx-auto">
                         Cada café me ajuda a continuar escrevendo e mantendo o blog.
                         Obrigado pelo apoio! ☕
                     </p>
