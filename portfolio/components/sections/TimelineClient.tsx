@@ -74,10 +74,10 @@ export default function TimelineClient(): ReactElement {
                                                 className={`absolute w-72 top-28 px-4 pt-1 z-50 ${globalEventIndex === 0 ? 'text-left' : 'text-center'}`}
                                                 style={globalEventIndex === 0 ? { transform: 'translateX(-8%)' } : { transform: 'translateX(-50%)' }}
                                             >
-                                                <h3 className="font-semibold tracking-tight text-gray-800 dark:text-neutral-300">
+                                                <h3 className="type-h3 text-gray-800 dark:text-neutral-300">
                                                     {heading}
                                                 </h3>
-                                                <p className="text-[0.9rem] font-medium leading-relaxed tracking-tight text-gray-500 dark:text-neutral-400/80">
+                                                <p className="text-sm font-medium leading-relaxed tracking-tight text-gray-500 dark:text-neutral-400/80">
                                                     {description}
                                                 </p>
                                             </main>

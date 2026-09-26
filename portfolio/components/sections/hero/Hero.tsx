@@ -200,10 +200,10 @@ export default function Hero() {
                 <div
                     className="flex w-full max-w-[960px] flex-col items-center rounded-t-3xl border border-b-0 border-black/10 bg-white/75 px-5 pb-44 pt-12 backdrop-blur-2xl dark:border-white/10 dark:bg-[rgba(23,23,23,0.85)] min-[810px]:px-9 md:min-h-[560px] md:pt-16"
                 >
-                    <h2 className={`text-center transition-opacity duration-500 ${greetingKey ? 'opacity-100' : 'opacity-0'} text-[32px] font-normal leading-[40px] tracking-[-1.28px] text-neutral-900 dark:text-neutral-100 md:text-[44px] md:leading-[57px] md:tracking-[-1.76px]`}>
+                    <h2 className={`text-center transition-opacity duration-500 ${greetingKey ? 'opacity-100' : 'opacity-0'} text-3xl sm:text-4xl font-normal leading-[40px] tracking-[-1.28px] text-neutral-900 dark:text-neutral-100`}>
                         {greetingKey ? t(greetingKey) : t('greeting')}
                     </h2>
-                    <p className="mt-3 max-w-[586px] text-center text-sm leading-[21px] tracking-[-0.28px] text-neutral-600 dark:text-neutral-400 md:text-base md:leading-6">
+                    <p className="type-base mt-3 max-w-[586px] text-center text-neutral-600 dark:text-neutral-400">
                         {t('intro')}
                     </p>
 

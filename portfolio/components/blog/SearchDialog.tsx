@@ -195,7 +195,7 @@ export function SearchDialog() {
                                                             {hit.tags.slice(0, 3).map(tag => (
                                                                 <span
                                                                     key={tag}
-                                                                    className="text-[10px] px-1.5 py-0.5 bg-primary/10 text-primary rounded-full"
+                                                                    className="text-xs px-1.5 py-0.5 bg-primary/10 text-primary rounded-full"
                                                                 >
                                                                     #{tag}
                                                                 </span>

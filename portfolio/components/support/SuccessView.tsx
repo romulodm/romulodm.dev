@@ -10,7 +10,7 @@ export function SuccessView({ onReset }: Props) {
     return (
         <div className="rounded-xl border border-border bg-card p-8 text-center shadow-sm">
             <p className="text-5xl mb-3">☕</p>
-            <h3 className="text-xl font-bold text-foreground mb-2">{t('success.title')}</h3>
+            <h3 className="type-h3 text-foreground mb-2">{t('success.title')}</h3>
             <p className="text-muted-foreground text-sm mb-5">
                 {t('success.description')}
             </p>

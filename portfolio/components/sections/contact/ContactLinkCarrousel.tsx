@@ -23,7 +23,9 @@ const ItemTooltip = styled(({ className, ...props }: ItemTooltipProps) => (
   },
   '& .MuiTooltip-tooltip': {
     backgroundColor: color,
-    fontSize: '13px',
+    // Sem tema MUI, o Tooltip usaria Roboto/Arial; herda a fonte do site.
+    fontFamily: 'inherit',
+    fontSize: '0.875rem',
   },
 }));
 

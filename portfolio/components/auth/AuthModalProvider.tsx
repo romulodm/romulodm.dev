@@ -54,7 +54,7 @@ export function AuthModalProvider({ children }: { children: ReactNode }) {
                 toast.error(
                     <div>
                         <p style={{ fontWeight: 600, marginBottom: 4 }}>{t("accountNotLinked")}</p>
-                        <p style={{ fontSize: 13, opacity: 0.9 }}>{t("accountNotLinkedDescription")}</p>
+                        <p className="text-sm" style={{ opacity: 0.9 }}>{t("accountNotLinkedDescription")}</p>
                     </div>,
                     { autoClose: 6000 }
                 )

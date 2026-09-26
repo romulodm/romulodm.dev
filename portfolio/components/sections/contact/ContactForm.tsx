@@ -309,7 +309,7 @@ export default function ContactForm({
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-white dark:bg-neutral-950 bg-opacity-50 z-20 transition-all duration-300">
           <div className="send-email w-fit h-fit rounded-lg p-10 relative email-message">
             <BsSendCheck className="text-primary text-6xl mx-auto mb-3.5" />
-            <h2 className="text-2xl dark:text-white font-bold mb-2">{t('sended-title')}</h2>
+            <h2 className="type-h3 dark:text-white mb-2">{t('sended-title')}</h2>
             <p className="text-gray-600 dark:text-white">{t('sended-content')}</p>
           </div>
         </div>

@@ -116,7 +116,7 @@ export function LegalPage({
             </p>
           )}
 
-          <h1 className="mt-3 text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl">
+          <h1 className="type-h1 mt-3 text-foreground">
             {title}
           </h1>
         </header>

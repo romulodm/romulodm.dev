@@ -101,7 +101,7 @@ export function PixView({ pixId, donationId, brCode, brCodeBase64, coffees, amou
 
                 {/* Title */}
                 <div>
-                    <h3 className="font-bold text-foreground mb-1">{t('pix.title')}</h3>
+                    <h3 className="type-h3 text-foreground mb-1">{t('pix.title')}</h3>
                     <p className="text-sm text-muted-foreground">
                         {t('pix.description')}
                     </p>

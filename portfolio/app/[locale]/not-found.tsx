@@ -21,7 +21,7 @@ export default async function LocaleNotFound() {
             404
           </p>
 
-          <h1 className="mb-3 text-2xl font-semibold text-foreground">{t('title')}</h1>
+          <h1 className="type-h1 mb-3 text-foreground">{t('title')}</h1>
 
           <p className="mb-8 leading-relaxed text-muted-foreground">
             {t('description')}

@@ -152,7 +152,7 @@ export function AvatarModal({ open, onOpenChange, user, onSaved }: Props) {
                 onClick={() => setDraft((d) => ({ ...d, source: "SEEDICON" }))}
               />
             </div>
-            <p className="text-[11px] text-muted-foreground">
+            <p className="text-xs text-muted-foreground">
               Sua foto do {user.image?.includes("github") ? "GitHub" : "Google"} fica
               guardada de qualquer jeito — você pode voltar para ela depois.
             </p>
@@ -172,7 +172,7 @@ export function AvatarModal({ open, onOpenChange, user, onSaved }: Props) {
                 readOnly
                 value={draft.seed}
                 onFocus={(e) => e.currentTarget.select()}
-                className="flex-1 min-w-0 px-3 py-2 rounded-lg border border-border bg-accent/40 font-mono text-[11px] focus:outline-none focus:border-primary transition-colors"
+                className="flex-1 min-w-0 px-3 py-2 rounded-lg border border-border bg-accent/40 font-mono text-xs focus:outline-none focus:border-primary transition-colors"
               />
               <IconButton onClick={copySeed} title="Copiar UUID">
                 {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}

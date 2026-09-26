@@ -57,7 +57,7 @@ export function Eyebrow({ accent, label }: { accent: string; label: string }) {
              * through the variable because the project does not map a
              * `font-mono` family of its own in Tailwind.
              */}
-            <span className="min-w-0 truncate font-[family-name:var(--font-jetbrains),ui-monospace,monospace] text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+            <span className="min-w-0 truncate font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">
                 {label}
             </span>
         </span>
@@ -77,7 +77,7 @@ export function CellBody({
     return (
         <span className="block min-w-0">
             <span
-                className={`flex min-w-0 items-center gap-2.5 overflow-hidden text-foreground ${mono ? 'font-[family-name:var(--font-jetbrains),ui-monospace,monospace] text-[15px] font-medium' : 'text-[17px] font-semibold'}`}
+                className={`flex min-w-0 items-center gap-2.5 overflow-hidden text-foreground ${mono ? 'font-mono text-sm font-medium' : 'text-base font-semibold'}`}
             >
                 {title}
             </span>

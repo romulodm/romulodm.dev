@@ -110,7 +110,7 @@ export function TableOfContents() {
 
   return (
     <div className="space-y-3 p-5">
-      <h3 className="text-sm font-bold text-foreground">{t('title')}</h3>
+      <h3 className="type-small font-semibold text-foreground">{t('title')}</h3>
       <nav className="space-y-1">
         {headings.map((heading) => (
           <a key={heading.id} href={`#${heading.id}`} onClick={(event) => scrollToHeading(event, heading.id)} className={['block text-xs leading-snug transition-colors hover:text-foreground', heading.level === 3 ? 'pl-3' : '', activeId === heading.id ? 'font-semibold text-primary' : 'text-muted-foreground'].join(' ')}>

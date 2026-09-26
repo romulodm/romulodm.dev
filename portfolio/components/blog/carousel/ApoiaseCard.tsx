@@ -137,7 +137,7 @@ const ApoiaseCard = () => {
 
                     <div className="apoiase-content">
                         <div className="flex w-full flex-col items-center justify-center gap-1 sm:flex-row">
-                            <h2 className="mb-1 text-center text-2xl font-extrabold leading-tight text-secondary">
+                            <h2 className="type-h2 mb-1 text-center text-secondary">
                                 {t("apoiase.title")}
                             </h2>
                             <img
@@ -157,10 +157,10 @@ const ApoiaseCard = () => {
                             target="_blank"
                             onMouseEnter={handleButtonEnter}
                             onMouseLeave={handleButtonLeave}
-                            className="inline-flex items-center gap-2.5 rounded-sm bg-secondary px-4 py-1.5 text-[0.9rem] font-medium text-white transition-opacity hover:opacity-90"
+                            className="inline-flex items-center gap-2.5 rounded-sm bg-secondary px-4 py-1.5 text-sm font-medium text-white transition-opacity hover:opacity-90"
                         >
                             {t("apoiase.button")}
-                            <span className="flex h-[24px] w-[24px] items-center justify-center rounded-sm bg-primary text-[0.8rem]">
+                            <span className="flex h-[24px] w-[24px] items-center justify-center rounded-sm bg-primary text-xs">
                                 <FaArrowRightLong />
                             </span>
                         </Link>

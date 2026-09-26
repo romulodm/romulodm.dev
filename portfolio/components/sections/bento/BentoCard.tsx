@@ -44,7 +44,7 @@ export default function BentoCard({
 }) {
   const header = (
     <div className={align === 'top' ? 'relative z-10' : 'relative z-10 mt-auto'}>
-      <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-400 transition-colors duration-300 group-hover:text-primary group-focus-visible:text-primary motion-reduce:transition-none dark:text-neutral-500">
+      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-neutral-400 transition-colors duration-300 group-hover:text-primary group-focus-visible:text-primary motion-reduce:transition-none dark:text-neutral-500">
         {eyebrow}
       </p>
       {/* `pr-12` reserva a coluna da seta: sem essa folga a ultima linha do

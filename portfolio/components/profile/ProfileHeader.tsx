@@ -81,7 +81,7 @@ export function ProfileHeader({ profile, isMe, isAdmin, localeCode }: Props) {
             )}
 
             <div className="flex-1 min-w-0">
-                <h1 className="text-2xl font-bold tracking-tight">@{profile.username}</h1>
+                <h1 className="type-h1">@{profile.username}</h1>
                 {isMe && (
                     <p className="text-sm text-muted-foreground truncate">{profile.email}</p>
                 )}

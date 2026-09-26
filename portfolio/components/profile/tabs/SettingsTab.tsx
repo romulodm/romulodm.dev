@@ -95,7 +95,7 @@ export function SettingsTab({ profile }: { profile: Profile }) {
         <div className="space-y-6">
             {/* ── Profile info ─────────────────────────────────────────────── */}
             <div className="rounded-lg border border-border p-5 space-y-4">
-                <h3 className="text-sm font-semibold text-foreground">Informações do perfil</h3>
+                <h3 className="type-small font-semibold text-foreground">Informações do perfil</h3>
 
                 <Field label="Username">
                     <input
@@ -152,7 +152,7 @@ export function SettingsTab({ profile }: { profile: Profile }) {
             {/* ── Password (email accounts only) ───────────────────────────── */}
             {profile.provider === "EMAIL_PASSWORD" && (
                 <div className="rounded-lg border border-border p-5 space-y-4">
-                    <h3 className="text-sm font-semibold text-foreground">Alterar senha</h3>
+                    <h3 className="type-small font-semibold text-foreground">Alterar senha</h3>
 
                     <Field label="Senha atual">
                         <input type="password" value={currentPw} onChange={(e) => setCurrentPw(e.target.value)}

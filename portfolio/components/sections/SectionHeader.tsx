@@ -56,12 +56,12 @@ export default function SectionHeader({
                     {eyebrow}
                 </p>
 
-                <h2 className="mt-1 text-balance text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100 sm:text-4xl">
+                <h2 className="type-h2 mt-1 text-balance text-neutral-900 dark:text-neutral-100">
                     {title}
                 </h2>
 
                 {description && (
-                    <p className="mx-auto mt-2 max-w-lg text-pretty text-base leading-relaxed text-neutral-500 dark:text-neutral-400">
+                    <p className="mx-auto mt-2 max-w-lg text-pretty type-body text-neutral-500 dark:text-neutral-400">
                         {description}
                         {highlight && (
                             <>

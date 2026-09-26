@@ -132,7 +132,7 @@ function PostCardRow({ post }: { post: Post }) {
           )}
 
           {/* Title */}
-          <h2 className="font-bold text-foreground text-base leading-snug line-clamp-2 group-hover:text-primary transition-colors">
+          <h2 className="type-h3 text-foreground line-clamp-2 group-hover:text-primary transition-colors">
             {post.title}
           </h2>
 
@@ -196,7 +196,7 @@ function PostCardGrid({ post }: { post: Post }) {
             </div>
           )}
 
-          <h2 className="font-bold text-foreground text-base leading-snug line-clamp-2 group-hover:text-primary transition-colors">
+          <h2 className="type-h3 text-foreground line-clamp-2 group-hover:text-primary transition-colors">
             {post.title}
           </h2>
 

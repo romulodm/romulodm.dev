@@ -68,7 +68,7 @@ export function DeleteCommentModal({ open, onClose, onConfirm, bodyPreview }: De
             <Trash2 className="w-4.5 h-4.5 text-red-500" />
           </div>
           <div className="flex-1 min-w-0">
-            <h2 id="delete-modal-title" className="text-sm font-semibold text-foreground leading-snug">
+            <h2 id="delete-modal-title" className="type-h3 text-foreground">
               {t("title")}
             </h2>
             <p className="text-xs text-muted-foreground mt-0.5">{t("subtitle")}</p>

@@ -291,7 +291,7 @@ export default function Cards({ startIndex }: { startIndex: number }) {
             </span>
             <CellBody
                 title={
-                    <span className="text-[28px] leading-none tabular-nums">
+                    <span className="text-3xl leading-none tabular-nums">
                         {commits ? commits.countLastWeek : EMPTY}
                     </span>
                 }
@@ -315,8 +315,8 @@ export default function Cards({ startIndex }: { startIndex: number }) {
                     title={
                         <>
                             <span className="h-2 w-2 shrink-0 rounded-full bg-[var(--vision-color)]" />
-                            <span className="text-[28px] leading-none tabular-nums">{people}</span>
-                            <span className="truncate text-[17px]">
+                            <span className="text-3xl leading-none tabular-nums">{people}</span>
+                            <span className="truncate text-base">
                                 {t('visitorsUnit', { count: people })}
                             </span>
                         </>
