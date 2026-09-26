@@ -29,18 +29,14 @@ export function AlreadyPostedCard({ user }: { user: WallAuthor }) {
         >
           <path
             d="M0 25 Q 50 5 100 22 T 200 22 T 300 22 T 400 22 T 500 22 T 600 22 T 600 22 L600 40 L0 40 Z"
-            fill="#141414"
+            className="fill-white dark:fill-[#141414]"
           />
         </svg>
 
         <div className="flex items-center justify-between gap-3
-                                bg-[#141414] px-4 border-0 pb-4 pt-2 -mt-0.5">
+                                bg-white dark:bg-[#141414] px-4 border-0 pb-4 pt-2 -mt-0.5">
           <div className="w-full flex justify-center items-center gap-3 min-w-0">
-            <AvatarCircle
-              username={user.username}
-              image={user.image}
-              size={35}
-            />
+            <AvatarCircle user={user} size={35} />
           </div>
         </div>
       </div>

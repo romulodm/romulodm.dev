@@ -1,50 +1,21 @@
 // components/wall/ui/AvatarCircle.tsx
-import Image from "next/image";
-import { avatarColor } from "../utils";
+import { UserAvatar } from "@/components/ui/UserAvatar";
+import type { AvatarUser } from "@/lib/avatar";
 
 interface Props {
-  username: string;
-  image: string | null;
+  user: AvatarUser;
   size?: number;
-  /** Optional hex/css color to override the default hashed avatar background. */
-  bg?: string;
 }
 
-export function AvatarCircle({ username, image, size = 26, bg }: Props) {
-  if (image) {
-    return (
-      <Image
-        src={image}
-        alt={username}
-        width={size}
-        height={size}
-        className="rounded-full object-cover shrink-0"
-        style={{ width: size, height: size }}
-      />
-    );
-  }
-
-  // When an explicit bg color is provided (from the card theme), use inline style.
-  // Otherwise fall back to the Tailwind class from avatarColor().
-  if (bg) {
-    return (
-      <div
-        className="rounded-full shrink-0 flex items-center justify-center
-                   text-white font-semibold ring-1 ring-white/15"
-        style={{ width: size, height: size, fontSize: size * 0.38, background: bg }}
-      >
-        {username[0].toUpperCase()}
-      </div>
-    );
-  }
-
-  return (
-    <div
-      className={`rounded-full shrink-0 flex items-center justify-center
-                  text-white font-bold ${avatarColor(username)}`}
-      style={{ width: size, height: size, fontSize: size * 0.38 }}
-    >
-      {username[0].toUpperCase()}
-    </div>
-  );
+/**
+ * Avatar dos cards do mural.
+ *
+ * Era aqui que vivia o fallback de letra inicial sobre uma cor derivada do nome
+ * (`avatarColor`, em ../utils). Com o seedicon quem nao tem foto do provider
+ * recebe um avatar proprio em vez de uma inicial, entao o fallback saiu e a
+ * funcao foi removida. O wrapper continua existindo porque os quatro cards
+ * passam tamanhos fixos e compartilham o mesmo ring.
+ */
+export function AvatarCircle({ user, size = 26 }: Props) {
+  return <UserAvatar user={user} size={size} className="ring-1 ring-black/10 dark:ring-white/15" />;
 }

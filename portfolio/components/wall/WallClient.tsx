@@ -70,8 +70,8 @@ export function WallClient({
     >
       {/* ── Header ── */}
       <header className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-foreground mb-2">The wall remembers</h1>
-        <p className="text-muted-foreground max-w-md mx-auto">
+        <h1 className="type-h1 text-foreground mb-2">The wall remembers</h1>
+        <p className="type-body text-muted-foreground max-w-md mx-auto">
           Words that echo through time, leaving a mark here. Share your thoughts, memories, or just say hi!
         </p>
       </header>

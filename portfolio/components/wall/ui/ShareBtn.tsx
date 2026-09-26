@@ -15,7 +15,7 @@ export function ShareBtn({ msgId }: { msgId: string }) {
     <button
       onClick={copy}
       title="Copy link"
-      className="text-white/30 hover:text-white/70 transition-colors p-0.5"
+      className="text-neutral-400 hover:text-neutral-700 dark:text-white/30 dark:hover:text-white/70 transition-colors p-0.5"
     >
       {ok ? (
         <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="none">

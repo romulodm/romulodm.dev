@@ -19,18 +19,17 @@ export function SignInCard({ onSignIn }: Props) {
       <div className="flex-1 flex flex-col items-center justify-center gap-3 px-6 relative z-10">
         <div className="text-center">
           <p
-            className="text-white font-semibold text-[15px]"
-            style={{ fontFamily: "'Bricolage Grotesque', serif" }}
+            className="type-h3 text-white"
           >
             &ldquo;Join the wall…&rdquo;
           </p>
-          <p className="text-white/50 text-[12px] mt-0.5">Sign in to leave your mark</p>
+          <p className="text-white/50 text-xs mt-0.5">Sign in to leave your mark</p>
         </div>
 
         <button
           onClick={onSignIn}
           className="flex items-center gap-2 bg-white/15 hover:bg-white/22 active:bg-white/30
-                     border border-white/20 rounded-lg px-4 py-2 text-white text-[12px]
+                     border border-white/20 rounded-lg px-4 py-2 text-white text-xs
                      font-medium transition-all duration-150"
         >
           <svg className="w-3.5 h-3.5 opacity-70" viewBox="0 0 16 16" fill="none">
@@ -52,16 +51,16 @@ export function SignInCard({ onSignIn }: Props) {
         >
           <path
             d="M0 25 Q 50 5 100 22 T 200 22 T 300 22 T 400 22 T 500 22 T 600 22 T 600 22 L600 40 L0 40 Z"
-            fill="#141414"
+            className="fill-white dark:fill-[#141414]"
           />
         </svg>
 
         <div className="flex items-center justify-between gap-3
-                                bg-[#141414] px-4 border-0 pb-4 pt-2 -mt-0.5">
+                                bg-white dark:bg-[#141414] px-4 border-0 pb-4 pt-2 -mt-0.5">
 
           <div className="w-full flex justify-center items-center p-1 gap-3 min-w-0">
-            <FaGithub className="text-2xl text-white" />
-            <span className="text-white/20 text-sm">·</span>
+            <FaGithub className="text-2xl text-neutral-900 dark:text-white" />
+            <span className="text-neutral-300 dark:text-white/20 text-sm">·</span>
             <FcGoogle className="text-2xl" />
           </div>
 
