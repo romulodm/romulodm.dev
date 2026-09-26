@@ -1,11 +1,11 @@
 // components/profile/types.ts
 
-export type Profile = {
+import type { AvatarUser } from "@/lib/avatar";
+
+export type Profile = AvatarUser & {
     id: string;
-    username: string;
     email: string;
     banned: boolean;
-    image: string | null;
     createdAt: string | Date;
     githubUrl: string | null;
     linkedinUrl: string | null;
