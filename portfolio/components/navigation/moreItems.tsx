@@ -15,7 +15,7 @@ export type FeaturedItem = {
     icon: LucideIcon;
     /** Cor do card: borda a 25% e fundo a 10% (visivel so enquanto a imagem carrega). */
     accent: string;
-    /** Aquarela de fundo do card (public/images/more, 480x640 WebP, 3:4). */
+    /** Pixel art de fundo do card (public/images/more, 480x640 WebP, 3:4). */
     image: string;
 };
 

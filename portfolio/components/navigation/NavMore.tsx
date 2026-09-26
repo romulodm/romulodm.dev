@@ -26,7 +26,7 @@ export function NavMore({ onClose }: MoreMenuProps) {
 
     return (
         // Escondido no mobile: la os mesmos links entram achatados no menu de
-        // hamburguer (ver moreItems), porque o painel de 560px nao cabe.
+        // hamburguer (ver moreItems), porque o painel (~600px) nao cabe.
         <div
             className="relative hidden md:block"
             onMouseEnter={handleMouseEnter}
@@ -47,10 +47,10 @@ export function NavMore({ onClose }: MoreMenuProps) {
             </button>
 
             {/* Dropdown panel */}
-            {/* 560px = 24 (p-3) + 148 + 8 + 148 (cards) + 12 (gap) + 220 (quick links):
-                os cards batem exatos em 148px sem esticar a coluna da direita. */}
+            {/* Largura pelo conteudo (w-max): os cards tem 148px fixos e a coluna
+                da direita cresce com o texto mais longo, sem quebrar linha. */}
             <div
-                className={`absolute left-1/2 -translate-x-1/2 top-full mt-3 w-[560px] transition-all duration-200 origin-top ${open
+                className={`absolute left-1/2 -translate-x-1/2 top-full mt-3 w-max transition-all duration-200 origin-top ${open
                     ? "opacity-100 scale-100 translate-y-0 pointer-events-auto"
                     : "opacity-0 scale-95 -translate-y-1 pointer-events-none"
                     }`}
@@ -58,7 +58,7 @@ export function NavMore({ onClose }: MoreMenuProps) {
                 {/* Arrow */}
                 <div className="absolute -top-1.5 z-10 left-1/2 -translate-x-1/2 w-3 h-3 rotate-45 bg-card border-l border-t border-border" />
 
-                <div className="relative bg-card border border-border rounded-xl shadow-2xl shadow-black/20 overflow-hidden p-3 grid grid-cols-[1fr_220px] gap-3 items-stretch">
+                <div className="relative bg-card border border-border rounded-xl shadow-2xl shadow-black/20 overflow-hidden p-3 grid grid-cols-[auto_auto] gap-3 items-stretch">
                     {/* Left: Featured cards */}
                     <div className="grid grid-cols-2 gap-2 self-stretch">
                         {featuredItems.map(({ href, title, description, icon: Icon, accent, image }) => (
@@ -71,7 +71,7 @@ export function NavMore({ onClose }: MoreMenuProps) {
                                     backgroundColor: `${accent}1a`,
                                 }}
                             >
-                                {/* Aquarela de fundo, decorativa: o titulo ja descreve o link. */}
+                                {/* Pixel art de fundo, decorativa: o titulo ja descreve o link. */}
                                 <Image
                                     src={image}
                                     alt=""
@@ -98,7 +98,7 @@ export function NavMore({ onClose }: MoreMenuProps) {
                                 />
 
                                 <div className="relative">
-                                    <p className="text-[13px] font-medium text-white">
+                                    <p className="text-xs font-medium text-white">
                                         {title}
                                     </p>
                                     <p className="text-xs leading-snug text-white/75">
@@ -123,7 +123,7 @@ export function NavMore({ onClose }: MoreMenuProps) {
                                 <span className="text-muted-foreground group-hover:text-foreground transition-colors flex-shrink-0">
                                     {link.icon}
                                 </span>
-                                <div className="flex flex-col">
+                                <div className="flex flex-col whitespace-nowrap">
                                     <p className="text-sm font-medium text-foreground leading-none">
                                         {link.label}
                                     </p>
