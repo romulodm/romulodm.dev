@@ -1,11 +1,11 @@
 import { notFound } from 'next/navigation'
+import { setRequestLocale } from 'next-intl/server'
 import Image from 'next/image'
 import { prisma } from '@romulo/database'
 import { unstable_cache } from 'next/cache'
 import { markdownToHtml } from '@/lib/markdown'
 import { formatDistanceToNow } from '@/lib/utils'
 import { CommentsSection } from '@/components/comments/CommentsSection'
-import { listPostComments } from '@/lib/comments'
 import type { Metadata } from 'next'
 import Navbar from '@/components/navigation/Navbar'
 import { PostReactionSidebar } from '@/components/blog/PostReactionsSidebar'
@@ -178,6 +178,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function PostPage({ params }: PageProps) {
   const { locale, slug } = await params // ✅ await params
 
+  // Requisito do next-intl para render estatico — ver app/[locale]/layout.tsx.
+  setRequestLocale(locale)
+
   const post = await getCachedPostBySlug(slug)
   if (!post) notFound()
 
@@ -193,12 +196,21 @@ export default async function PostPage({ params }: PageProps) {
     avatarUrl: post.author.image ?? null,
   }
 
-  const [htmlContent, { items: initialComments, nextCursor }, relatedRaw] =
-    await Promise.all([
-      markdownToHtml(translation.contentMarkdown),
-      listPostComments({ postId: post.id, sort: defaultSort }),
-      getCachedRelatedPosts(locale, post.id),
-    ])
+  // Os comentarios NAO sao buscados aqui de proposito.
+  //
+  // `listPostComments` chama getServerSession para marcar em quais comentarios o
+  // visitante votou — ou seja, le cookie. Uma pagina que le cookie no render nao
+  // pode ser estatica: o Next aborta com DYNAMIC_SERVER_USAGE e devolve 500. Era
+  // a causa do erro em /[locale]/blog/[slug].
+  //
+  // O conteudo do post e igual para todo mundo e deve ser cacheado; o estado de
+  // voto e por usuario e nao pode. Entao a parte por usuario sai do render e vai
+  // para o cliente: o CommentsSection ja busca sozinho quando recebe a lista
+  // vazia (ver o useEffect com o comentario "pagina estatica" la dentro).
+  const [htmlContent, relatedRaw] = await Promise.all([
+    markdownToHtml(translation.contentMarkdown),
+    getCachedRelatedPosts(locale, post.id),
+  ])
 
   const relatedPosts = relatedRaw.map((p) => ({
     id: p.id,
@@ -274,7 +286,7 @@ export default async function PostPage({ params }: PageProps) {
                 </div>
               )}
 
-              <h1 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
+              <h1 className="type-h1 text-foreground mb-4">
                 {translation.title}
               </h1>
 
@@ -366,8 +378,8 @@ export default async function PostPage({ params }: PageProps) {
               <div id="comments-section">
                 <CommentsSection
                   postId={post.id}
-                  initialComments={initialComments}
-                  initialNextCursor={nextCursor}
+                  initialComments={[]}
+                  initialNextCursor={null}
                   totalCount={post.commentsCount}
                   initialSort={defaultSort}
                 />

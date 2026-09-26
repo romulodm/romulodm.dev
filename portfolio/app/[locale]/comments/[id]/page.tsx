@@ -2,9 +2,31 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import Navbar from "@/components/navigation/Navbar";
 import { CommentCard } from "@/components/comments/CommentCard";
+import { cache } from "react";
 import { getCommentById } from "@/lib/comments";
 import type { Metadata } from "next";
 import { Footer } from "@/components/Footer";
+
+// getCommentById le a sessao para marcar o voto do visitante — conteudo por
+// usuario, nao cacheavel, e ler cookie em render estatico daria 500.
+export const dynamic = "force-dynamic";
+
+/**
+ * generateMetadata e o componente abaixo precisam do mesmo comentario e rodam
+ * no mesmo request. Sem esta memoizacao a query roda duas vezes por page view
+ * — e ela nao e barata: findUnique com author, votes, post + translations,
+ * parent + author + votes, e replies aninhadas em dois niveis, cada uma
+ * puxando author e votes de novo.
+ *
+ * O Next memoiza `fetch`, nao chamada de Prisma; e `lib/comments.ts` e
+ * "use server", entao importar de la e chamada de funcao normal, sem
+ * deduplicacao. `cache()` do React resolve, com escopo de um request.
+ *
+ * O wrapper mora aqui e nao em lib/comments.ts porque modulo "use server"
+ * exige que todo export seja funcao async declarada — `cache()` devolve um
+ * wrapper e o Next rejeita.
+ */
+const getComment = cache(getCommentById);
 
 interface PageProps {
     params: Promise<{ id: string }>;
@@ -13,7 +35,7 @@ interface PageProps {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
     const { id } = await params;
 
-    const comment = await getCommentById(id);
+    const comment = await getComment(id);
 
     if (!comment) return { title: "Comentário não encontrado" };
 
@@ -25,7 +47,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function CommentPage({ params }: PageProps) {
     const { id } = await params;
 
-    const comment = await getCommentById(id);
+    const comment = await getComment(id);
 
     if (!comment) notFound();
 
