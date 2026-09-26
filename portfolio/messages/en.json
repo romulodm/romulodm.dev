@@ -110,6 +110,31 @@
     "action": "Sign in"
   },
   "wall": {
+    "page": {
+      "title": "The wall remembers",
+      "description": "Words that echo through time, leaving a mark here. Share your thoughts, memories, or just say hi!"
+    },
+    "signIn": {
+      "title": "“Join the wall…”",
+      "subtitle": "Sign in to leave your mark",
+      "cta": "Write a message…"
+    },
+    "posted": {
+      "title": "Your mark is on the wall ✓",
+      "subtitle": "Scroll down to find your message"
+    },
+    "list": {
+      "loadMore": "Load more",
+      "loading": "Loading…"
+    },
+    "actions": {
+      "copyLink": "Copy link",
+      "linkCopied": "Link copied",
+      "delete": "Delete message",
+      "confirmDelete": "Delete?",
+      "yes": "Yes",
+      "no": "No"
+    },
     "compose": {
       "title": "Leave your mark on the wall",
       "cta": "Write a message"
@@ -121,7 +146,7 @@
       "placeholder": "Type something nice…",
       "continue": "Continue",
       "styleTitle": "Pick the look",
-      "styleDescription": "The art is generated automatically from your text and your user ID: the same message always makes the same card. You choose the style and light or dark; the colours come from the message. Changed your mind about the text? Go back and the card regenerates.",
+      "styleDescription": "The art is generated automatically from your text and your user ID: the same message always makes the same card. You choose the style; the colours come from the message. Changed your mind about the text? Go back and the card regenerates.",
       "toneLabel": "Tone",
       "styleLabel": "Style",
       "tones": {

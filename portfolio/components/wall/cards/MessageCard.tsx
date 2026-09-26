@@ -3,6 +3,7 @@
 // components/wall/cards/MessageCard.tsx
 
 import { useMemo } from "react";
+import { useLocale } from "next-intl";
 import {
   DEFAULT_CARD_ART_STYLE,
   DEFAULT_CARD_ART_TONE,
@@ -11,7 +12,7 @@ import {
   isCardArtTone,
   wallCardSeed,
 } from "../cardArt";
-import { formatDate, getRotation, type WallMsg } from "../utils";
+import { formatDate, type WallMsg } from "../utils";
 import { CardFace } from "./CardFace";
 import { ShareBtn } from "../ui/ShareBtn";
 import { DeleteBtn } from "../ui/DeleteBtn";
@@ -23,6 +24,7 @@ interface Props {
 }
 
 export function MessageCard({ msg, canDelete, onDeleted }: Props) {
+  const locale = useLocale();
   const art = useMemo(
     () =>
       generateCardArt(
@@ -41,9 +43,8 @@ export function MessageCard({ msg, canDelete, onDeleted }: Props) {
       art={art}
       message={msg.message}
       author={msg.author}
-      caption={formatDate(msg.createdAt)}
+      caption={formatDate(msg.createdAt, locale)}
       className="transition-transform duration-300 hover:scale-[1.02] hover:z-10 cursor-default"
-      style={{ transform: `rotate(${getRotation(msg.id)}deg)` }}
       actions={
         <>
           {canDelete && <DeleteBtn msgId={msg.id} onDeleted={onDeleted} />}

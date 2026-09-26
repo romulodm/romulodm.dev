@@ -110,6 +110,31 @@
     "action": "Entrar"
   },
   "wall": {
+    "page": {
+      "title": "O mural lembra",
+      "description": "Palavras que ecoam no tempo e deixam uma marca aqui. Compartilhe pensamentos, memórias ou só dê um oi!"
+    },
+    "signIn": {
+      "title": "“Entre no mural…”",
+      "subtitle": "Faça login para deixar sua marca",
+      "cta": "Escrever recado…"
+    },
+    "posted": {
+      "title": "Sua marca está no mural ✓",
+      "subtitle": "Role para baixo para encontrar seu recado"
+    },
+    "list": {
+      "loadMore": "Carregar mais",
+      "loading": "Carregando…"
+    },
+    "actions": {
+      "copyLink": "Copiar link",
+      "linkCopied": "Link copiado",
+      "delete": "Excluir recado",
+      "confirmDelete": "Excluir?",
+      "yes": "Sim",
+      "no": "Não"
+    },
     "compose": {
       "title": "Deixe sua marca no mural",
       "cta": "Escrever recado"
@@ -121,7 +146,7 @@
       "placeholder": "Escreva algo legal…",
       "continue": "Continuar",
       "styleTitle": "Escolha o visual",
-      "styleDescription": "A arte é gerada automaticamente a partir do seu texto e do seu ID de usuário: o mesmo recado sempre gera o mesmo card. Você escolhe o estilo e se prefere claro ou escuro; as cores vêm da mensagem. Mudou o texto? Volte e o card se refaz.",
+      "styleDescription": "A arte é gerada automaticamente a partir do seu texto e do seu ID de usuário: o mesmo recado sempre gera o mesmo card. Você escolhe o estilo; as cores vêm da mensagem. Mudou o texto? Volte e o card se refaz.",
       "toneLabel": "Tom",
       "styleLabel": "Estilo",
       "tones": {

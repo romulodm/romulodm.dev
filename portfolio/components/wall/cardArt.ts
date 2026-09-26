@@ -136,14 +136,19 @@ function inkFor(ground: string): string {
 /* ----------------------------------------------------------------- canvas */
 
 /**
- * The art box. The footer (avatar, name, date) covers roughly the bottom 60
- * units, so compositions keep their interest in the top ~160. The SVG uses
- * `slice`, which crops instead of stretching when a long message makes the
- * card taller than this ratio.
+ * The art box. The card panel (CardShell) uses this same ratio, so the whole
+ * box is on screen. VISIBLE_H dates from when a wave footer covered the
+ * bottom ~60 units; compositions still anchor to it, and changing it would
+ * redraw every message already on the wall. The SVG uses `slice`, which
+ * crops instead of stretching when a long message makes the panel taller
+ * than this ratio.
  */
 const W = 400;
 const H = 220;
 const VISIBLE_H = 160;
+
+/** CSS aspect-ratio of the art panel. */
+export const CARD_ART_ASPECT = `${W} / ${H}`;
 
 /**
  * What each style returns: the body of the <svg> plus, optionally, <defs>.
@@ -207,13 +212,15 @@ const mesh: Style = (rng, p) => {
 };
 
 /**
- * Sunburst: thin rays from a point below the card, alternating ground and a
- * colour only a little lighter, with a sun on the horizon. Low contrast
- * between rays on purpose, the text sits right on them.
+ * Sunburst: thin rays from a point on the bottom edge, alternating ground
+ * and a colour only a little lighter, with the sun sitting on that edge so
+ * only its top half shows. Low contrast between rays on purpose, the text
+ * sits right on them.
  */
 const rays: Style = (rng, p) => {
   const ox = between(rng, 0.25, 0.75) * W;
-  const oy = VISIBLE_H + 20;
+  // The panel shows the whole art box, so the bottom edge is the horizon.
+  const oy = H;
   const count = int(rng, 14, 22);
   const spread = Math.PI;
   // Rays are a tint of the ground, not a blend with another palette colour:
@@ -379,6 +386,14 @@ export const CARD_ART_TONES = Object.keys(PALETTES) as CardArtTone[];
 
 export const DEFAULT_CARD_ART_STYLE: CardArtStyle = "mesh";
 export const DEFAULT_CARD_ART_TONE: CardArtTone = "dark";
+
+/**
+ * Tones a visitor can pick when publishing. The light palette still exists
+ * and messages already stored with it keep rendering light, but it is not
+ * offered for now. The modal hides the tone picker while this has a single
+ * entry, and the API rejects anything outside it.
+ */
+export const PICKABLE_CARD_ART_TONES: CardArtTone[] = ["dark"];
 
 /**
  * Style and tone are stored as plain strings (see WallMessage in the Prisma

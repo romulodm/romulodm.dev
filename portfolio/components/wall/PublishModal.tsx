@@ -16,9 +16,9 @@ import {
 } from "@/components/ui/dialog";
 import {
   CARD_ART_STYLES,
-  CARD_ART_TONES,
   DEFAULT_CARD_ART_STYLE,
   DEFAULT_CARD_ART_TONE,
+  PICKABLE_CARD_ART_TONES,
   generateCardArt,
   wallCardSeed,
   type CardArtStyle,
@@ -40,9 +40,10 @@ interface Props {
  * Two steps on purpose. The art is derived from the text, so a live preview
  * next to the textarea would repaint the whole card on every keystroke,
  * which reads as flicker rather than feedback. Step 1 is only the text;
- * step 2 freezes it and lets the visitor pick a style and a tone. Going back
- * keeps both the text and the choice, so editing one word and returning to
- * step 2 shows the same style with its new palette.
+ * step 2 freezes it and lets the visitor pick a style (and a tone, when
+ * more than one is pickable). Going back keeps both the text and the
+ * choice, so editing one word and returning to step 2 shows the same style
+ * with its new palette.
  */
 export function PublishModal({ user, open, onOpenChange, onPosted }: Props) {
   const t = useTranslations("wall.publish");
@@ -127,26 +128,28 @@ export function PublishModal({ user, open, onOpenChange, onPosted }: Props) {
             <div className="grid gap-5">
               <CardFace art={preview} message={text.trim()} author={user} caption={t("now")} />
 
-              <div className="grid gap-2">
-                <p className="text-sm font-medium">{t("toneLabel")}</p>
-                <div role="radiogroup" className="inline-flex w-fit rounded-lg border border-input p-0.5">
-                  {CARD_ART_TONES.map((tn) => (
-                    <button
-                      key={tn}
-                      type="button"
-                      role="radio"
-                      aria-checked={tone === tn}
-                      onClick={() => setTone(tn)}
-                      className={`rounded-md px-3 py-1 text-sm transition-colors ${tone === tn
-                        ? "bg-primary text-primary-foreground"
-                        : "text-muted-foreground hover:text-foreground"
-                        }`}
-                    >
-                      {t(`tones.${tn}`)}
-                    </button>
-                  ))}
+              {PICKABLE_CARD_ART_TONES.length > 1 && (
+                <div className="grid gap-2">
+                  <p className="text-sm font-medium">{t("toneLabel")}</p>
+                  <div role="radiogroup" className="inline-flex w-fit rounded-lg border border-input p-0.5">
+                    {PICKABLE_CARD_ART_TONES.map((tn) => (
+                      <button
+                        key={tn}
+                        type="button"
+                        role="radio"
+                        aria-checked={tone === tn}
+                        onClick={() => setTone(tn)}
+                        className={`rounded-md px-3 py-1 text-sm transition-colors ${tone === tn
+                          ? "bg-primary text-primary-foreground"
+                          : "text-muted-foreground hover:text-foreground"
+                          }`}
+                      >
+                        {t(`tones.${tn}`)}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
               <div className="grid gap-2">
                 <p className="text-sm font-medium">{t("styleLabel")}</p>

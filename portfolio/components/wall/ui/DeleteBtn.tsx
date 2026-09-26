@@ -1,6 +1,7 @@
 // components/wall/ui/DeleteBtn.tsx
 "use client";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 interface Props {
   msgId: string;
@@ -8,6 +9,7 @@ interface Props {
 }
 
 export function DeleteBtn({ msgId, onDeleted }: Props) {
+  const t = useTranslations("wall.actions");
   const [confirm, setConfirm]   = useState(false);
   const [loading, setLoading]   = useState(false);
 
@@ -34,18 +36,18 @@ export function DeleteBtn({ msgId, onDeleted }: Props) {
   if (confirm) {
     return (
       <div className="flex items-center gap-1.5">
-        <span className="text-neutral-500 dark:text-white/40 text-xs">Delete?</span>
+        <span className="text-neutral-500 dark:text-white/40 text-xs">{t("confirmDelete")}</span>
         <button
           onClick={handleDelete}
           className="text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300 text-xs font-medium transition-colors"
         >
-          Yes
+          {t("yes")}
         </button>
         <button
           onClick={() => setConfirm(false)}
           className="text-neutral-400 hover:text-neutral-700 dark:text-white/30 dark:hover:text-white/60 text-xs transition-colors"
         >
-          No
+          {t("no")}
         </button>
       </div>
     );
@@ -54,7 +56,8 @@ export function DeleteBtn({ msgId, onDeleted }: Props) {
   return (
     <button
       onClick={() => setConfirm(true)}
-      title="Delete message"
+      title={t("delete")}
+      aria-label={t("delete")}
       className="text-neutral-400 hover:text-red-500 dark:text-white/25 dark:hover:text-red-400 transition-colors p-0.5"
     >
       <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="none">

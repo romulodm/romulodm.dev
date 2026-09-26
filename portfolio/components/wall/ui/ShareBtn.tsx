@@ -1,12 +1,16 @@
 // components/wall/ui/ShareBtn.tsx
 "use client";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 export function ShareBtn({ msgId }: { msgId: string }) {
+  const t = useTranslations("wall.actions");
   const [ok, setOk] = useState(false);
 
   const copy = () => {
-    navigator.clipboard.writeText(`${window.location.origin}/wall#${msgId}`);
+    // Current path instead of a hard-coded "/wall", so the copied link keeps
+    // the locale the visitor is reading in.
+    navigator.clipboard.writeText(`${window.location.origin}${window.location.pathname}#${msgId}`);
     setOk(true);
     setTimeout(() => setOk(false), 1800);
   };
@@ -14,7 +18,8 @@ export function ShareBtn({ msgId }: { msgId: string }) {
   return (
     <button
       onClick={copy}
-      title="Copy link"
+      title={ok ? t("linkCopied") : t("copyLink")}
+      aria-label={ok ? t("linkCopied") : t("copyLink")}
       className="text-neutral-400 hover:text-neutral-700 dark:text-white/30 dark:hover:text-white/70 transition-colors p-0.5"
     >
       {ok ? (
