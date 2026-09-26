@@ -1661,6 +1661,34 @@
       "connection": "Erro de conexão. Confira sua internet e tente novamente."
     }
   },
+  "newsletterPage": {
+    "meta": {
+      "title": "Newsletter",
+      "description": "Conteúdo sobre desenvolvimento web, TypeScript e engenharia de software. Direto no seu e-mail."
+    },
+    "hero": {
+      "title": "{count, plural, =0 {Seja o primeiro leitor inscrito} one {Junte-se a # leitor inscrito} other {Junte-se a # leitores inscritos}}",
+      "description": "Receba posts sobre desenvolvimento, arquitetura, carreira, vida acadêmica e muito mais diretamente no seu e-mail.",
+      "note": "Sem spam, cancele quando quiser. Seu e-mail nunca será compartilhado.",
+      "benefits": {
+        "newPosts": "Novos artigos assim que publicados",
+        "tips": "Dicas e conteúdo técnico exclusivo",
+        "projects": "Projetos e novidades em primeira mão"
+      }
+    },
+    "stats": {
+      "posts": "Posts publicados",
+      "views": "Visualizações totais",
+      "likes": "Curtidas nos posts",
+      "comments": "Comentários"
+    },
+    "recent": {
+      "title": "Posts recentes",
+      "viewAll": "Ver todos",
+      "empty": "Nenhum post publicado ainda.",
+      "readingTime": "{minutes} min"
+    }
+  },
   "cookieBanner": {
     "ariaLabel": "Banner de consentimento de cookies",
     "title": "Permitir cookies?",

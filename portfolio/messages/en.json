@@ -1661,6 +1661,34 @@
       "connection": "Connection error. Check your internet and try again."
     }
   },
+  "newsletterPage": {
+    "meta": {
+      "title": "Newsletter",
+      "description": "Writing on web development, TypeScript and software engineering. Straight to your inbox."
+    },
+    "hero": {
+      "title": "{count, plural, =0 {Be the first to subscribe} one {Join # subscribed reader} other {Join # subscribed readers}}",
+      "description": "Get posts on development, architecture, career, academic life and more, straight to your inbox.",
+      "note": "No spam, unsubscribe anytime. Your email is never shared.",
+      "benefits": {
+        "newPosts": "New articles as soon as they're published",
+        "tips": "Exclusive tips and technical content",
+        "projects": "First look at projects and news"
+      }
+    },
+    "stats": {
+      "posts": "Published posts",
+      "views": "Total views",
+      "likes": "Post likes",
+      "comments": "Comments"
+    },
+    "recent": {
+      "title": "Recent posts",
+      "viewAll": "View all",
+      "empty": "No posts published yet.",
+      "readingTime": "{minutes} min"
+    }
+  },
   "cookieBanner": {
     "ariaLabel": "Cookie consent banner",
     "title": "Allow cookies?",
