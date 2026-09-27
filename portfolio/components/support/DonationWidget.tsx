@@ -14,6 +14,7 @@ import { FaCreditCard } from 'react-icons/fa'
 import { StripeForm } from './StripeForm'
 import { PixView } from './PixView'
 import { SuccessView } from './SuccessView'
+import { PaymentTrustNote } from './PaymentTrustNote'
 
 import {
     NETWORKS, TOKENS, ERC20_TRANSFER_ABI, COFFEE_USD,
@@ -110,6 +111,15 @@ function InfoTooltip({ children }: { children: React.ReactNode }) {
 }
 
 export function DonationWidget() {
+    return (
+        <div className="space-y-3">
+            <DonationWidgetBody />
+            <PaymentTrustNote />
+        </div>
+    )
+}
+
+function DonationWidgetBody() {
     const t = useTranslations('support')
     const { resolvedTheme } = useTheme()
     const { data: session } = useSession()
@@ -211,6 +221,10 @@ export function DonationWidget() {
                     body: JSON.stringify(basePayload()),
                 })
                 const data = await res.json()
+                // Without this check a failed create (provider down, rate limit)
+                // stored the error payload as pixData and rendered a QR view with
+                // no QR code in it.
+                if (!res.ok) { setError(t('widget.genericError')); return }
                 setPixData(data); setStep('pix-qr')
             } else {
                 const res = await fetch('/api/donations/stripe/create-intent', {
@@ -219,6 +233,7 @@ export function DonationWidget() {
                     body: JSON.stringify(basePayload()),
                 })
                 const data = await res.json()
+                if (!res.ok) { setError(t('widget.genericError')); return }
                 setClientSecret(data.clientSecret); setStep('stripe')
             }
         } catch { setError(t('widget.genericError')) }
@@ -329,6 +344,7 @@ export function DonationWidget() {
             {...pixData}
             coffees={coffees}
             amount={coffees * 500}
+            onBack={() => { setPixData(null); setStep('form') }}
             onSuccess={() => setStep('success')}
         />
     )
