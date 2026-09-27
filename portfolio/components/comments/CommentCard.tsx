@@ -1,7 +1,6 @@
 ﻿"use client";
 
 import { useEffect, useState, useTransition } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
@@ -10,7 +9,9 @@ import { toast } from "react-toastify";
 import { CommentComposer } from "@/components/comments/CommentComposer";
 import { DeleteCommentModal } from "@/components/comments/DeleteCommentModal";
 import { MarkdownEditor } from "@/components/comments/MarkdownEditor";
+import { UserAvatar } from "@/components/ui/UserAvatar";
 import { useAuthGuard } from "@/hooks/auth-guard";
+import type { AvatarUser } from "@/lib/avatar";
 import { getIntlLocaleCode } from "@/lib/locales";
 
 export type CommentData = {
@@ -19,7 +20,7 @@ export type CommentData = {
   score: number;
   createdAt: Date;
   editedAt?: Date | null;
-  author: { id: string; username: string; image: string | null };
+  author: { id: string } & AvatarUser;
   userVote?: number;
   replies?: CommentData[];
   post?: { slug: string; title: string };
@@ -233,7 +234,7 @@ export function CommentCard({
     toast.success(
       <div>
         <p style={{ fontWeight: 600, marginBottom: 2 }}>{t("linkCopied")}</p>
-        <p style={{ fontSize: 12, opacity: 0.75, wordBreak: "break-all" }}>{url}</p>
+        <p className="text-xs" style={{ opacity: 0.75, wordBreak: "break-all" }}>{url}</p>
       </div>
     );
   }
@@ -248,12 +249,10 @@ export function CommentCard({
           >
             [+]
           </button>
-          <Image
-            src={comment.author.image ?? "/default.png"}
-            alt={comment.author.username}
-            width={18}
-            height={18}
-            className="rounded-full w-4 h-4 object-cover opacity-50 shrink-0"
+          <UserAvatar
+            user={comment.author}
+            size={18}
+            className="w-4 h-4 opacity-50"
           />
           <span>
             <span className="font-medium text-foreground/60">@{comment.author.username}</span>
@@ -278,12 +277,10 @@ export function CommentCard({
         <div className="flex items-start gap-2 flex-1 min-w-0">
           <div className="flex flex-col items-center shrink-0 self-stretch" style={{ width: 28 }}>
             <Link href={`/${locale}/profile/${comment.author.username}`} className="shrink-0">
-              <Image
-                src={comment.author.image ?? "/default.png"}
-                alt={comment.author.username}
-                width={28}
-                height={28}
-                className="rounded-full w-7 h-7 object-cover ring-1 ring-border hover:opacity-80 transition-opacity"
+              <UserAvatar
+                user={comment.author}
+                size={28}
+                className="ring-1 ring-border hover:opacity-80 transition-opacity"
               />
             </Link>
 
@@ -299,7 +296,7 @@ export function CommentCard({
               title={t("hideComment")}
             >
               <div className="flex-1 w-px bg-border/50 group-hover/thread:bg-red-400 transition-colors" style={{ minHeight: 8 }} />
-              <div className="shrink-0 w-4 h-4 rounded-full border border-border bg-background flex items-center justify-center text-muted-foreground group-hover/thread:text-red-500 group-hover/thread:border-red-400 transition-colors text-[10px] font-bold leading-none select-none my-0.5">-</div>
+              <div className="shrink-0 w-4 h-4 rounded-full border border-border bg-background flex items-center justify-center text-muted-foreground group-hover/thread:text-red-500 group-hover/thread:border-red-400 transition-colors text-xs font-bold leading-none select-none my-0.5">-</div>
               <div className="flex-1 w-px bg-border/50 group-hover/thread:bg-red-400 transition-colors" style={{ minHeight: 8 }} />
             </div>
           </div>

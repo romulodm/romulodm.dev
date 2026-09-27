@@ -19,24 +19,14 @@ PGPASSWORD="$POSTGRES_PASSWORD" pg_dump \
   -F c \
   -f "$BACKUP_DIR/main_${TIMESTAMP}.dump"
 
-# ── 2. Dump Umami database ────────────────────────────────────
-echo "📦 Dumping $UMAMI_DB..."
-PGPASSWORD="$UMAMI_POSTGRES_PASSWORD" pg_dump \
-  -h umami-db \
-  -U "$UMAMI_POSTGRES_USER" \
-  -d "$UMAMI_DB" \
-  -F c \
-  -f "$BACKUP_DIR/umami_${TIMESTAMP}.dump"
-
-# ── 3. Compress ───────────────────────────────────────────────
+# ── 2. Compress ───────────────────────────────────────────────
 ARCHIVE="$BACKUP_DIR/backup_${TIMESTAMP}.tar.gz"
 tar -czf "$ARCHIVE" -C "$BACKUP_DIR" \
-  "main_${TIMESTAMP}.dump" \
-  "umami_${TIMESTAMP}.dump"
+  "main_${TIMESTAMP}.dump"
 
 echo "🗜  Archive: $ARCHIVE ($(du -sh $ARCHIVE | cut -f1))"
 
-# ── 4. Upload to AWS S3 ───────────────────────────────────────
+# ── 3. Upload to AWS S3 ───────────────────────────────────────
 echo "☁️  Uploading to S3: s3://${AWS_S3_BUCKET}/$(basename $ARCHIVE)"
 
 aws s3 cp "$ARCHIVE" "s3://${AWS_S3_BUCKET}/$(basename $ARCHIVE)" \
@@ -45,7 +35,7 @@ aws s3 cp "$ARCHIVE" "s3://${AWS_S3_BUCKET}/$(basename $ARCHIVE)" \
 
 echo "✅ Upload complete!"
 
-# ── 5. Remove old backups from S3 ────────────────────────────
+# ── 4. Remove old backups from S3 ────────────────────────────
 echo "🧹 Removing backups older than $RETENTION_DAYS days..."
 CUTOFF=$(date -d "-${RETENTION_DAYS} days" +"%Y-%m-%dT%H:%M:%S")
 
@@ -58,12 +48,12 @@ aws s3api list-objects-v2 \
     aws s3 rm "s3://${AWS_S3_BUCKET}/$key"
 done
 
-# ── 6. List existing backups on S3 ───────────────────────────
+# ── 5. List existing backups on S3 ───────────────────────────
 echo ""
 echo "📋 Backups on S3:"
 aws s3 ls "s3://${AWS_S3_BUCKET}/" --human-readable
 
-# ── 7. Clean up temp files ────────────────────────────────────
+# ── 6. Clean up temp files ────────────────────────────────────
 rm -rf "$BACKUP_DIR"
 
 echo ""

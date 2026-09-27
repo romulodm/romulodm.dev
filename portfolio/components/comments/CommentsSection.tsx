@@ -81,7 +81,7 @@ export function CommentsSection({
     return (
         <section className="mt-12 pt-8 border-t border-border">
             <div className="flex items-center justify-between mb-6 gap-4 flex-wrap">
-                <h2 className="text-lg font-semibold">
+                <h2 className="type-h3">
                     {totalCount > 0
                         ? `${totalCount} comentário${totalCount !== 1 ? "s" : ""}`
                         : "Comentários"}

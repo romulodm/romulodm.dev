@@ -30,8 +30,8 @@ function EducationCard({
   return (
     <article
       className={cn(
-        'relative flex gap-3 pb-4 mb-2',
-        isLast ? 'timeline-connector-last' : 'timeline-connector'
+        'relative flex gap-3',
+        isLast ? '' : 'mb-3'
       )}
     >
       <div className="relative z-10 flex-shrink-0 pt-[1px]">

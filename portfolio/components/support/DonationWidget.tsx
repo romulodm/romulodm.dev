@@ -638,7 +638,7 @@ export function DonationWidget() {
                 <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 p-4">
                     <div className="w-full max-w-sm rounded-xl border border-border bg-card p-5 shadow-xl">
                         <div className="flex items-center justify-between mb-4">
-                            <h3 className="font-semibold text-foreground">Escolha sua carteira</h3>
+                            <h3 className="type-h3 text-foreground">Escolha sua carteira</h3>
                             <button type="button" onClick={() => setShowWallets(false)} className="text-muted-foreground hover:text-foreground">
                                 <X className="h-4 w-4" />
                             </button>

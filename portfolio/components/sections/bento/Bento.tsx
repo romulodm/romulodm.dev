@@ -3,16 +3,25 @@
 import { useTranslations } from 'next-intl';
 import BentoCard from './BentoCard';
 import LocationTile from './LocationTile';
-import { EnvelopeArt, GuestbookArt } from './illustrations';
+import MailAppsStrip from './MailAppsStrip';
+import { GuestbookArt } from './illustrations';
 
 export default function Bento() {
   const t = useTranslations('bento');
 
   return (
-    <section className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-4 py-16">
+    /* Ocupa a largura toda do container da secao (max-w-7xl), alinhando borda
+       com borda com o FAQ logo acima. */
+    <section className="flex w-full flex-col gap-4">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-        <BentoCard href="/wall" eyebrow={t('guestbook.eyebrow')} title={t('guestbook.title')} align="bottom">
-          <GuestbookArt className="w-[15rem] text-neutral-500 dark:text-neutral-400" />
+        <BentoCard
+          href="/wall"
+          eyebrow={t('guestbook.eyebrow')}
+          title={t('guestbook.title')}
+          align="bottom"
+          contentClassName="-mx-2"
+        >
+          <GuestbookArt className="w-[16.5rem]" />
         </BentoCard>
 
         <LocationTile />
@@ -22,8 +31,12 @@ export default function Bento() {
           eyebrow={t('newsletter.eyebrow')}
           title={t('newsletter.title')}
           align="bottom"
+          dots
+          /* a fita precisa vazar pelas laterais: o padding do card e desfeito
+             aqui e o corte fica por conta do `overflow-hidden` do BentoCard */
+          contentClassName="-mx-6"
         >
-          <EnvelopeArt className="w-[14rem] text-primary" />
+          <MailAppsStrip />
         </BentoCard>
       </div>
 

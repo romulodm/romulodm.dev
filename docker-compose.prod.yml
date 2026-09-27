@@ -1,4 +1,3 @@
-version: '3.8'
 name: 'romulodm.dev'
 
 services:
@@ -39,7 +38,9 @@ services:
       start_period: 10s
 
   minio-init:
-    image: minio/mc:latest
+    # minio/mc was removed from Docker Hub (and quay.io). The server image ships
+    # the same `mc` binary (the healthcheck above already relies on it).
+    image: minio/minio:latest
     container_name: romulodm-minio-init
     env_file:
       - .env
@@ -57,37 +58,6 @@ services:
       - romulodm-network
     restart: "no"
 
-  umami-db:
-    image: postgres:16-alpine
-    container_name: romulodm-umami-db
-    env_file:
-      - .env
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: ${UMAMI_POSTGRES_USER}
-      POSTGRES_PASSWORD: ${UMAMI_POSTGRES_PASSWORD}
-      POSTGRES_DB: ${UMAMI_DB}
-    volumes:
-      - umami_postgres_data:/var/lib/postgresql/data
-    networks:
-      - romulodm-network
-
-  umami:
-    image: ghcr.io/umami-software/umami:postgresql-latest
-    container_name: romulodm-umami
-    env_file:
-      - .env
-    environment:
-      DATABASE_URL: postgresql://${UMAMI_POSTGRES_USER}:${UMAMI_POSTGRES_PASSWORD}@umami-db:5432/${UMAMI_DB}
-      APP_SECRET: ${APP_SECRET}
-      REDIS_URL: redis://redis:6379
-    depends_on:
-      - umami-db
-      - redis
-    restart: unless-stopped
-    networks:
-      - romulodm-network
-
   redis:
     image: redis:7-alpine
     container_name: romulodm-redis
@@ -98,6 +68,7 @@ services:
       - romulodm-network
 
   worker:
+    image: ghcr.io/${GHCR_OWNER:-romulodm}/romulodm-worker:${APP_TAG:-latest}
     build:
       context: .
       dockerfile: worker/Dockerfile
@@ -111,20 +82,85 @@ services:
     networks:
       - romulodm-network
 
+  search-go:
+    image: ghcr.io/${GHCR_OWNER:-romulodm}/romulodm-search:${APP_TAG:-latest}
+    build:
+      context: ./search
+      dockerfile: Dockerfile
+    container_name: romulodm-search
+    restart: unless-stopped
+    environment:
+      PORT: 8080
+      SNAPSHOT_PATH: /data/documents.json
+      SEARCH_INTERNAL_SECRET: ${SEARCH_INTERNAL_SECRET:?defina SEARCH_INTERNAL_SECRET no .env}
+    volumes:
+      - search_data:/data
+    networks:
+      - romulodm-network
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/health || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
   app:
+    image: ghcr.io/${GHCR_OWNER:-romulodm}/romulodm-app:${APP_TAG:-latest}
     build:
       context: .
       dockerfile: portfolio/Dockerfile
+      args:
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-}
+        NEXT_PUBLIC_SITE_NAME: ${NEXT_PUBLIC_SITE_NAME:-}
+        NEXT_PUBLIC_SITE_DESCRIPTION: ${NEXT_PUBLIC_SITE_DESCRIPTION:-}
+        NEXT_PUBLIC_APP_NAME: ${NEXT_PUBLIC_APP_NAME:-}
+        NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-}
+        NEXT_PUBLIC_GA4_MEASUREMENT_ID: ${NEXT_PUBLIC_GA4_MEASUREMENT_ID:-}
+        NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY:-}
+        NEXT_PUBLIC_WALLET_ADDRESS: ${NEXT_PUBLIC_WALLET_ADDRESS:-}
+        NEXT_PUBLIC_ENCRYPTION_PUBLIC_KEY: ${NEXT_PUBLIC_ENCRYPTION_PUBLIC_KEY:-}
+        NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${NEXT_PUBLIC_TURNSTILE_SITE_KEY:-}
+        NEXT_PUBLIC_TERMINAL_SECRET_PASSWORD: ${NEXT_PUBLIC_TERMINAL_SECRET_PASSWORD:-}
+        NEXT_PUBLIC_TERMINAL_SECRET_REWARD: ${NEXT_PUBLIC_TERMINAL_SECRET_REWARD:-}
+        NEXT_PUBLIC_SENTRY_DSN: ${NEXT_PUBLIC_SENTRY_DSN:-}
+        NEXT_PUBLIC_SENTRY_ENVIRONMENT: ${NEXT_PUBLIC_SENTRY_ENVIRONMENT:-production}
+        NEXT_PUBLIC_SENTRY_RELEASE: ${NEXT_PUBLIC_SENTRY_RELEASE:-}
+        NEXT_PUBLIC_SENTRY_TRACES_SAMPLE_RATE: ${NEXT_PUBLIC_SENTRY_TRACES_SAMPLE_RATE:-}
+        SENTRY_ORG: ${SENTRY_ORG:-}
+        SENTRY_PROJECT: ${SENTRY_PROJECT:-}
+      secrets:
+        - sentry_auth_token
     container_name: romulodm-app
     env_file:
       - .env
+    environment:
+      SITE_URL: ${SITE_URL:?defina SITE_URL no .env}
+      ROBOTS_ALLOW_INDEXING: ${ROBOTS_ALLOW_INDEXING:-false}
+      SEARCH_GO_URL: http://search-go:8080
     restart: unless-stopped
     depends_on:
       - postgres
       - minio
       - redis
+      - search-go
     networks:
       - romulodm-network
+
+  migrate:
+    image: ghcr.io/${GHCR_OWNER:-romulodm}/romulodm-migrator:${APP_TAG:-latest}
+    build:
+      context: .
+      dockerfile: portfolio/Dockerfile
+      target: migrator
+    container_name: romulodm-migrate
+    profiles: [tools]
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+    networks:
+      - romulodm-network
+    restart: "no"
 
   nginx:
     image: nginx:alpine
@@ -133,9 +169,26 @@ services:
     ports:
       - "80:80"
       - "443:443"
+
+    environment:
+      - SITE_DOMAIN=${SITE_DOMAIN:?defina SITE_DOMAIN no .env}
+      - WWW_DOMAIN=${WWW_DOMAIN:-}
+
+    # Keep the envsubst command on ONE line. In a folded scalar (`>`), lines
+    # indented deeper than the first keep their newlines, so splitting the
+    # redirections across lines makes the shell run `envsubst` on empty stdin
+    # and then `> default.conf` on its own: nginx starts with an EMPTY vhost and
+    # every request falls into the 444 catch-all in nginx.conf.
+    entrypoint: >
+      /bin/sh -c "envsubst '$$SITE_DOMAIN $$WWW_DOMAIN' < /etc/nginx/templates/app.conf > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
+
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./nginx/templates/app.conf:/etc/nginx/templates/app.conf:ro
+      - ./nginx/conf.d/proxy-params.inc:/etc/nginx/conf.d/proxy-params.inc:ro
+      - ./nginx/conf.d/security-headers.inc:/etc/nginx/conf.d/security-headers.inc:ro
+      - ./nginx/conf.d/cloudflare-real-ip.inc:/etc/nginx/conf.d/cloudflare-real-ip.inc:ro
+
       - ./nginx/logs:/var/log/nginx
       - certbot_www:/var/www/certbot:ro
       - certbot_certs:/etc/letsencrypt:ro
@@ -161,6 +214,7 @@ services:
       - romulodm-network
 
   backup:
+    profiles: [prod]
     build:
       context: ./backup
       dockerfile: Dockerfile
@@ -168,18 +222,16 @@ services:
     env_file:
       - .env
     environment:
-      BACKUP_RETENTION_DAYS: 7   # quantos dias manter no bucket
+      BACKUP_RETENTION_DAYS: 7
       TZ: America/Sao_Paulo
     depends_on:
       - postgres
-      - umami-db
     networks:
       - romulodm-network
-    restart: "no"   # não reinicia — é executado pelo cron abaixo
+    restart: "no"
  
-  # ── Cron que dispara o backup ─────────────────────────────
-  # Usa a imagem "mcuadros/ofelia" — scheduler leve para Docker
   cron:
+    profiles: [prod]
     image: mcuadros/ofelia:latest
     container_name: romulodm-cron
     restart: unless-stopped
@@ -191,11 +243,15 @@ services:
     networks:
       - romulodm-network
 
+secrets:
+  sentry_auth_token:
+    environment: SENTRY_AUTH_TOKEN
+
 volumes:
   postgres_data:
-  umami_postgres_data:
   minio_data:
   redis_data:
+  search_data:
   certbot_www:
   certbot_certs:
 

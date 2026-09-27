@@ -27,7 +27,7 @@ export async function RightSidebar({ relatedPosts, currentPostId, locale }: Prop
       <div className="sticky top-20 space-y-3">
         {filtered.length > 0 && (
           <div className="p-5">
-            <h3 className="mb-3 text-sm font-bold text-foreground">{t('otherPosts')}</h3>
+            <h3 className="type-small font-semibold mb-3 text-foreground">{t('otherPosts')}</h3>
             <div className="space-y-3">
               {filtered.map((post) => (
                 <Link key={post.id} href={`/${locale}/blog/${post.slug}`} className="group flex gap-3">

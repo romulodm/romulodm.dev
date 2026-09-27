@@ -1,22 +1,24 @@
 'use client';
 
 import { useId, useState } from "react";
-import { ChevronDown } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { cn } from "@/lib/utils";
 import { Link } from "@/i18n/navigation";
 import { AnimatedSection } from "./AnimatedSection";
+import { ContactTrigger } from "./modals/ContactTrigger";
 
 /**
- * Acordeao de perguntas frequentes.
+ * Seção de perguntas frequentes: cabeçalho fixo à esquerda e lista de
+ * perguntas à direita (empilha no mobile).
  *
  * As perguntas vivem em `messages/{locale}.json` sob `faq.items`, lidas com
- * `t.raw` — `t()` formata mensagem e nao devolve array.
+ * `t.raw` — `t()` formata mensagem e não devolve array. O cabeçalho vem de
+ * `home.faq` (eyebrow, title, description).
  *
- * Cada item pode ter um `cta` + `href` opcionais. Isso existe para nao precisar
- * de HTML dentro da traducao: link como dado, e nao como marcacao, evita
- * `dangerouslySetInnerHTML` e mantem o JSON legivel para quem so quer revisar
+ * Cada item pode ter um `cta` + `href` opcionais. Isso existe para não precisar
+ * de HTML dentro da tradução: link como dado, e não como marcação, evita
+ * `dangerouslySetInnerHTML` e mantém o JSON legível para quem só quer revisar
  * texto.
  */
 
@@ -31,65 +33,79 @@ interface FAQItemProps {
     item: FAQItemData;
     isOpen: boolean;
     onToggle: () => void;
-    /** Base para os ids de aria — precisa ser estavel entre servidor e cliente. */
+    /** Base para os ids de aria — precisa ser estável entre servidor e cliente. */
     domId: string;
 }
 
-function FAQItem({ item, isOpen, onToggle, domId }: FAQItemProps) {
-    const buttonId = `${domId}-button`;
-    const panelId = `${domId}-panel`;
-    const isExternal = Boolean(item.href && /^https?:\/\//.test(item.href));
+/**
+ * Sinal de "+" que vira "−". Ao abrir, as duas barras giram em sentido
+ * horário: a horizontal da meia volta (180°) e a vertical um quarto (90°),
+ * terminando as duas deitadas uma sobre a outra. Ao fechar, a transição
+ * volta pelo mesmo caminho (anti-horário) e o "+" se reconstrói.
+ */
+function PlusMinus({ isOpen }: { isOpen: boolean }) {
+    const bar =
+        "absolute bg-current transition-transform duration-300 ease-out";
 
     return (
-        <div
-            className={cn(
-                "w-full overflow-hidden rounded-[5px] bg-neutral-200/90 backdrop-blur-sm dark:bg-neutral-900/80",
-                "border border-border/50 transition-colors",
-                "hover:border-border/80",
-            )}
+        <span
+            aria-hidden
+            className="relative h-4 w-4 justify-self-end"
         >
-            {/*
-             * Botao de verdade, nao div com onClick: a versao anterior nao era
-             * alcancavel por teclado e nao anunciava estado para leitor de tela.
-             */}
+            <span
+                className={cn(
+                    bar,
+                    "left-0 top-[7px] h-0.5 w-4",
+                    isOpen ? "rotate-180" : "rotate-0",
+                )}
+            />
+            <span
+                className={cn(
+                    bar,
+                    "left-[7px] top-0 h-4 w-0.5",
+                    isOpen ? "rotate-90" : "rotate-0",
+                )}
+            />
+        </span>
+    );
+}
+
+function FAQItem({
+    item,
+    isOpen,
+    onToggle,
+    domId,
+}: FAQItemProps) {
+    const buttonId = `${domId}-button`;
+    const panelId = `${domId}-panel`;
+    const isExternal = Boolean(
+        item.href && /^https?:\/\//.test(item.href),
+    );
+
+    const ctaClassName =
+        "text-sm font-medium text-primary transition-opacity hover:opacity-80";
+
+    return (
+        <div className="flex flex-col border-b border-border">
             <button
                 type="button"
                 id={buttonId}
                 aria-expanded={isOpen}
                 aria-controls={panelId}
                 onClick={onToggle}
-                className="flex w-full items-center justify-between gap-5 px-5 py-[18px] pr-4 text-left"
+                className={cn(
+                    "grid w-full grid-cols-[minmax(0,1fr)_24px] items-center gap-4 py-5 text-left lg:py-[22px]",
+                    "text-foreground transition-colors hover:text-primary",
+                    "rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60",
+                )}
             >
-                <span className="flex-1 text-base font-medium leading-6 text-foreground">
+                <span className="text-lg font-semibold leading-snug tracking-tight lg:text-xl">
                     {item.q}
                 </span>
-                <ChevronDown
-                    aria-hidden
-                    className={cn(
-                        "h-6 w-6 shrink-0 text-muted-foreground transition-transform duration-500 ease-out",
-                        isOpen ? "rotate-180" : "rotate-0",
-                    )}
-                />
+
+                <PlusMinus isOpen={isOpen} />
             </button>
 
-            {/*
-             * Abertura por `grid-template-rows: 0fr -> 1fr`.
-             *
-             * A alternativa comum, `max-height: 0 -> valor grande`, tem um
-             * defeito visivel ao fechar: o navegador interpola ate o teto
-             * arbitrario (digamos 1000px), mas o conteudo tem ~150px. Os
-             * primeiros ~85% da transicao acontecem fora da tela e o painel
-             * parece travar antes de sumir de uma vez.
-             *
-             * Com `fr` o alvo e a altura real do conteudo, entao a duracao vale
-             * inteira nos dois sentidos e nao ha numero magico para manter.
-             * Exige o filho com `overflow-hidden` para recortar durante o
-             * colapso.
-             *
-             * `invisible` tira o link interno da ordem de tabulacao com o painel
-             * fechado — o atributo `hidden` faria isso tambem, mas aplica
-             * `display: none` e cancelaria a transicao.
-             */}
             <div
                 id={panelId}
                 role="region"
@@ -102,10 +118,10 @@ function FAQItem({ item, isOpen, onToggle, domId }: FAQItemProps) {
                 )}
             >
                 <div className="overflow-hidden">
-                    <hr className="mx-5 mb-2 border-border/50" />
-
-                    <div className="px-5 pb-[18px] pt-2">
-                        <p className="text-sm leading-6 text-muted-foreground">{item.a}</p>
+                    <div className="pb-6 sm:pr-10 lg:pb-[26px]">
+                        <p className="text-pretty text-base leading-[1.65] text-muted-foreground">
+                            {item.a}
+                        </p>
 
                         {item.cta && item.href && (
                             <p className="mt-3">
@@ -114,14 +130,14 @@ function FAQItem({ item, isOpen, onToggle, domId }: FAQItemProps) {
                                         href={item.href}
                                         target="_blank"
                                         rel="noreferrer"
-                                        className="text-sm font-medium text-primary transition-opacity hover:opacity-80"
+                                        className={ctaClassName}
                                     >
                                         {item.cta} →
                                     </a>
                                 ) : (
                                     <Link
                                         href={item.href}
-                                        className="text-sm font-medium text-primary transition-opacity hover:opacity-80"
+                                        className={ctaClassName}
                                     >
                                         {item.cta} →
                                     </Link>
@@ -135,40 +151,88 @@ function FAQItem({ item, isOpen, onToggle, domId }: FAQItemProps) {
     );
 }
 
-export function FAQ({ allowMultiple = true }: { allowMultiple?: boolean }) {
+export function FAQ({
+    allowMultiple = false,
+}: {
+    allowMultiple?: boolean;
+}) {
     const t = useTranslations("faq");
+    const tHeader = useTranslations("home.faq");
     const domId = useId();
 
     const items = t.raw("items") as FAQItemData[];
 
-    const [open, setOpen] = useState<Set<number>>(new Set());
+    // O primeiro item começa aberto: mostra de cara que a lista expande.
+    const [open, setOpen] = useState<Set<number>>(
+        () => new Set([0]),
+    );
 
     const toggle = (index: number) => {
         setOpen((previous) => {
             const next = new Set(previous);
+
             if (next.has(index)) {
                 next.delete(index);
                 return next;
             }
-            if (!allowMultiple) next.clear();
+
+            if (!allowMultiple) {
+                next.clear();
+            }
+
             next.add(index);
             return next;
         });
     };
 
-    if (!Array.isArray(items) || items.length === 0) return null;
+    if (!Array.isArray(items) || items.length === 0) {
+        return null;
+    }
 
     return (
-        <AnimatedSection className="relative z-10 mx-auto max-w-[1320px]" delay={0.4}>
-            <section className="w-full px-3 pt-20 md:pt-32 lg:px-5">
-                <div className="mb-12 text-center">
-                    <h2 className="text-4xl font-semibold text-foreground md:text-5xl">
-                        {t("title")}
-                    </h2>
-                    <p className="mt-2 text-muted-foreground">{t("subtitle")}</p>
-                </div>
+        // On the home page the FAQ sits right under the "Let's connect" form,
+        // which only fades in after a few scrolls. With the default reveal the
+        // FAQ was already on screen while the form was still arriving, and the
+        // two read as one block. Here it waits until its top is past ~70% of
+        // the viewport, rises from further down and hides again when the
+        // visitor scrolls back up, like the form does. The extra top padding
+        // keeps the two sections apart.
+        <AnimatedSection
+            className="relative z-10 pt-10 lg:pt-28 w-full"
+            delay={0.1}
+            offset={80}
+            rootMargin="0px 0px -30% 0px"
+            once={false}
+        >
+            <div className="grid w-full grid-cols-1 gap-10 lg:grid-cols-[minmax(0,380px)_minmax(0,1fr)] lg:gap-20">
+                <header className="flex flex-col gap-4 self-start lg:sticky lg:top-24">
+                    <p
+                        className="text-sm font-semibold uppercase tracking-widest"
+                        style={{ color: "var(--primary-color)" }}
+                    >
+                        {tHeader("eyebrow")}
+                    </p>
 
-                <div className="mx-auto flex max-w-[900px] flex-col gap-4">
+                    <h2 className="type-h2 text-balance text-neutral-900 dark:text-neutral-100">
+                        {tHeader("title")}
+                    </h2>
+
+                    <p className="max-w-[360px] text-pretty text-base leading-relaxed text-neutral-500 dark:text-neutral-400">
+                        {tHeader("description")}{" "}
+                        {tHeader.rich("contact", {
+                            link: (chunks) => (
+                                <ContactTrigger
+                                    topic="OTHER"
+                                    className="font-medium text-primary underline decoration-primary/40 underline-offset-[3px] transition-colors hover:decoration-current"
+                                >
+                                    {chunks}
+                                </ContactTrigger>
+                            ),
+                        })}
+                    </p>
+                </header>
+
+                <div className="flex flex-col border-t border-border lg:border-t-0">
                     {items.map((item, index) => (
                         <FAQItem
                             key={item.q}
@@ -179,7 +243,7 @@ export function FAQ({ allowMultiple = true }: { allowMultiple?: boolean }) {
                         />
                     ))}
                 </div>
-            </section>
+            </div>
         </AnimatedSection>
     );
 }

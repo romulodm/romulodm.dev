@@ -6,16 +6,22 @@ import {
   buildCampaignJobId,
   buildEmailMessageId,
   buildTransactionalJobId,
+  createQueue,
   defaultJobOptions,
+  notificationJobOptions,
   queueRuntimeConfig,
+  registerRepeatable,
   QUEUE_CAMPAIGN,
+  QUEUE_NOTIFICATIONS,
   QUEUE_TRANSACTIONAL,
+  RETRY_TRANSACTIONAL_EMAIL_JOB_NAME,
   type CampaignEmailJob,
+  type NotificationJob,
   type TransactionalEmailJob,
 } from "@romulo/queues";
 
 import { emailService } from "../lib/email/email.service";
-import { logWorkerError } from "../lib/worker-observability";
+import { logWorkerError, logWorkerEvent } from "../lib/worker-observability";
 import {
   campaignTemplate,
   confirmationTemplate,
@@ -38,7 +44,7 @@ const BRAND: BrandConfig = {
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
-export type TransactionalJobContext = Pick<Job<TransactionalEmailJob>, "data">;
+export type TransactionalJobContext = Pick<Job<TransactionalEmailJob>, "data" | "attemptsMade" | "opts">;
 export type CampaignJobContext = Pick<Job<CampaignEmailJob>, "data" | "attemptsMade" | "opts">;
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -216,6 +222,10 @@ export async function processTransactionalEmailJob(job: TransactionalJobContext)
   const { data } = job;
   const messageId = buildEmailMessageId("transactional", buildTransactionalJobId(data));
   const r = recipient(data);
+  // Repassado pro provider: um erro ambíguo (timeout/rede) na Resend só
+  // dispara o fallback pro SES quando não sobra mais retry — ver
+  // FallbackProvider.
+  const lastAttempt = isFinalAttempt(job);
 
   switch (data.type) {
     case "CONFIRMATION":
@@ -224,6 +234,7 @@ export async function processTransactionalEmailJob(job: TransactionalJobContext)
         subject: `Confirm your subscription — ${BRAND.name}`,
         html: confirmationTemplate({ confirmationUrl: data.confirmationUrl, brand: BRAND, recipient: r }),
         messageId,
+        isFinalAttempt: lastAttempt,
       });
       return;
 
@@ -233,6 +244,7 @@ export async function processTransactionalEmailJob(job: TransactionalJobContext)
         subject: `Welcome to ${BRAND.name}! 🎉`,
         html: welcomeTemplate({ unsubscribeUrl: data.unsubscribeUrl, brand: BRAND, recipient: r }),
         messageId,
+        isFinalAttempt: lastAttempt,
       });
       return;
 
@@ -242,6 +254,7 @@ export async function processTransactionalEmailJob(job: TransactionalJobContext)
         subject: `Confirm unsubscribe — ${BRAND.name}`,
         html: unsubscribeConfirmTemplate({ unsubscribeUrl: data.unsubscribeUrl, brand: BRAND, recipient: r }),
         messageId,
+        isFinalAttempt: lastAttempt,
       });
       return;
 
@@ -256,6 +269,7 @@ export async function processTransactionalEmailJob(job: TransactionalJobContext)
           recipient: r,
         }),
         messageId,
+        isFinalAttempt: lastAttempt,
       });
       return;
 
@@ -294,6 +308,7 @@ export async function processCampaignEmailJob(job: CampaignJobContext): Promise<
       subject: data.subject,
       html,
       messageId: buildEmailMessageId("campaign", deliveryId),
+      isFinalAttempt: isFinalAttempt(job),
     });
 
     const updated = await prisma.campaignRecipient.updateMany({
@@ -337,6 +352,90 @@ export async function processCampaignEmailJob(job: CampaignJobContext): Promise<
     await markCampaignCompleteIfDone(data.campaignId).catch((err) =>
       logWorkerError("campaign.mark_complete_failed", err, { campaignId: data.campaignId }),
     );
+  }
+}
+
+// ── Sweep: rede de segurança contra provedor fora do ar por mais tempo do
+// que o retry do BullMQ aguenta ──────────────────────────────────────────────
+//
+// `transactionalEmailJobOptions` dá só 3 tentativas com backoff de 5s/10s —
+// span total de ~15s. Isso cobre uma falha transitória rápida, mas não um
+// provedor fora do ar por minutos (ou o circuit breaker do EmailService
+// aberto por 60s — mais que o span inteiro do retry). Depois da 3ª tentativa
+// o job vai pro "failed" do BullMQ e nada mais mexe nele.
+//
+// Esse sweep roda a cada `transactionalEmailSweepIntervalMs` (10 min por
+// padrão) via job repetível no QUEUE_NOTIFICATIONS (mesmo padrão do
+// `retry-onchain`, ver onchain.worker.ts) e dá mais uma chance pros jobs
+// falhos recentes — espalhando as tentativas ao longo de horas em vez de
+// segundos, sem precisar de tabela nova no banco: o próprio job falho do
+// BullMQ já carrega tudo que precisa pra tentar de novo.
+
+/** Depois disso, desiste — o alerta do Telegram na tentativa final já disparou. */
+const SWEEP_MAX_AGE_MS = 6 * 60 * 60 * 1000;
+
+/** Tentativas originais (3) + no máximo mais 5 rodadas do sweep. */
+const SWEEP_MAX_TOTAL_ATTEMPTS = 8;
+
+export async function sweepFailedTransactionalEmails(redis: Redis): Promise<void> {
+  const queue = createQueue<TransactionalEmailJob>(QUEUE_TRANSACTIONAL, redis);
+
+  try {
+    const failed = await queue.getFailed(0, 200);
+    const now = Date.now();
+    let retried = 0;
+
+    for (const job of failed) {
+      const failedAt = job.finishedOn ?? job.timestamp;
+      if (now - failedAt > SWEEP_MAX_AGE_MS) continue;
+      if (job.attemptsMade >= SWEEP_MAX_TOTAL_ATTEMPTS) continue;
+
+      try {
+        await job.retry();
+        retried++;
+      } catch (error) {
+        logWorkerError("email.sweep_retry_failed", error, { jobId: job.id });
+      }
+    }
+
+    if (retried > 0 || failed.length > 0) {
+      logWorkerEvent("info", "email.sweep_ran", {
+        retried,
+        totalFailed: failed.length,
+      });
+    }
+  } finally {
+    await queue.close();
+  }
+}
+
+/**
+ * Registra o job repetível do sweep. Idempotente — seguro chamar em todo
+ * boot do worker (mesmo padrão de `scheduleOnchainRetry`).
+ */
+export async function scheduleTransactionalEmailSweep(redis: Redis): Promise<void> {
+  const queue = createQueue<NotificationJob>(QUEUE_NOTIFICATIONS, redis, {
+    defaultJobOptions: {
+      ...notificationJobOptions,
+      attempts: 3,
+      removeOnComplete: { count: 10 },
+      removeOnFail: { age: 24 * 3600 },
+    },
+  });
+
+  try {
+    const result = await registerRepeatable(queue, {
+      name: RETRY_TRANSACTIONAL_EMAIL_JOB_NAME,
+      data: { type: "retry-transactional-email" },
+      repeat: { every: queueRuntimeConfig.transactionalEmailSweepIntervalMs },
+      jobOptions: { ...notificationJobOptions, attempts: 3 },
+    });
+
+    console.log(
+      `[EmailSweep] Job ${result.action} — intervalo: ${queueRuntimeConfig.transactionalEmailSweepIntervalMs} ms.`,
+    );
+  } finally {
+    await queue.close();
   }
 }
 

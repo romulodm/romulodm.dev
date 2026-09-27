@@ -1,8 +1,29 @@
 {
-  "404": {
-    "error": "erro",
-    "title": "Algo deu errado.",
-    "button": "Tentar novamente"
+  "api": {
+    "common": {
+      "emailRequired": "Informe seu e-mail.",
+      "emailInvalid": "Esse e-mail não parece válido.",
+      "invalidBody": "Não consegui ler os dados enviados.",
+      "invalidRequest": "Confere os campos e tenta de novo.",
+      "internalError": "Algo quebrou do meu lado. Tenta de novo em instantes.",
+      "rateLimited": "Muitas tentativas seguidas. Espera um pouco antes de tentar de novo.",
+      "unauthorized": "Você precisa entrar para fazer isso.",
+      "forbidden": "Você não tem acesso a isso.",
+      "notFound": "Não encontrei isso."
+    },
+    "contact": {
+      "rateLimited": "Você já mandou algumas mensagens agora há pouco. Tenta de novo mais tarde.",
+      "captchaFailed": "Não consegui enviar sua mensagem. Tenta de novo em instantes.",
+      "nameRequired": "Escreve seu nome.",
+      "messageTooShort": "Escreve um pouco mais na mensagem."
+    },
+    "newsletter": {
+      "subscribe": {
+        "success": "Inscrição recebida. Confira seu e-mail para confirmar.",
+        "rateLimited": "Muitas tentativas de inscrição seguidas. Espera alguns minutos e tenta de novo.",
+        "internal": "Não consegui registrar sua inscrição agora. Tenta de novo em instantes."
+      }
+    }
   },
   "ResumePDFButton": {
     "view": "Visualizar",
@@ -28,11 +49,14 @@
     "github": {
       "continue": "Continuar com GitHub"
     },
+    "password": {
+      "signIn": "Entrar com senha",
+      "signUp": "Cadastrar com senha"
+    },
     "login": {
       "emailPlaceholder": "E-mail",
       "passwordPlaceholder": "Senha",
       "submit": "Entrar",
-      "invalidCredentials": "E-mail ou senha incorretos.",
       "forgotPassword": "Esqueceu sua senha?",
       "noAccount": "Não tem conta?",
       "createNow": "Criar agora"
@@ -56,16 +80,6 @@
       "rememberedPassword": "Lembrou a senha?",
       "didntForgetPassword": "Não esqueceu sua senha?",
       "login": "Entrar"
-    },
-    "reset": {
-      "description": "Escolha sua nova senha.",
-      "passwordPlaceholder": "Nova senha",
-      "confirmPasswordPlaceholder": "Confirmar nova senha",
-      "submit": "Salvar nova senha",
-      "genericError": "Não foi possível redefinir sua senha.",
-      "successTitle": "Senha redefinida!",
-      "successDescription": "Sua senha foi atualizada com sucesso.",
-      "goToLogin": "Ir para o login"
     },
     "validation": {
       "emailInvalid": "E-mail inválido.",
@@ -96,47 +110,66 @@
     "action": "Entrar"
   },
   "wall": {
+    "page": {
+      "title": "O mural lembra",
+      "description": "Palavras que ecoam no tempo e deixam uma marca aqui. Compartilhe pensamentos, memórias ou só dê um oi!"
+    },
+    "signIn": {
+      "title": "“Entre no mural…”",
+      "subtitle": "Faça login para deixar sua marca",
+      "cta": "Escrever recado…"
+    },
+    "posted": {
+      "title": "Sua marca está no mural ✓",
+      "subtitle": "Role para baixo para encontrar seu recado"
+    },
+    "list": {
+      "loadMore": "Carregar mais",
+      "loading": "Carregando…"
+    },
+    "actions": {
+      "copyLink": "Copiar link",
+      "linkCopied": "Link copiado",
+      "delete": "Excluir recado",
+      "confirmDelete": "Excluir?",
+      "yes": "Sim",
+      "no": "Não"
+    },
     "compose": {
-      "composing": "Digitando…",
+      "title": "Deixe sua marca no mural",
+      "cta": "Escrever recado"
+    },
+    "publish": {
+      "step": "Etapa {current} de {total}",
+      "writeTitle": "Deixe seu recado",
+      "writeDescription": "Até 100 caracteres. No próximo passo você escolhe o visual do card.",
       "placeholder": "Escreva algo legal…",
+      "continue": "Continuar",
+      "styleTitle": "Escolha o visual",
+      "styleDescription": "A arte é gerada automaticamente a partir do seu texto e do seu ID de usuário: o mesmo recado sempre gera o mesmo card. Você escolhe o estilo; as cores vêm da mensagem. Mudou o texto? Volte e o card se refaz.",
+      "toneLabel": "Tom",
+      "styleLabel": "Estilo",
+      "tones": {
+        "dark": "Escuro",
+        "light": "Claro"
+      },
+      "styles": {
+        "mesh": "Mesh",
+        "rays": "Raios",
+        "truchet": "Truchet",
+        "terrain": "Relevo",
+        "lifehash": "LifeHash"
+      },
+      "now": "Agora",
+      "back": "Voltar",
+      "publish": "Publicar",
+      "publishing": "Publicando…",
       "alreadyPosted": "Você já deixou uma mensagem!",
       "error": "Algo deu errado. Tente novamente.",
       "success": "Mensagem postada!"
     }
   },
-  "blog": {
-    "page-title": "Blog - Romulo de Moraes",
-    "title": "As opiniões expressas aqui são reflexões pessoais que dizem respeito à minha visão sobre tecnologia e outros assuntos; sinta-se à vontade para interagir, compartilhar suas ideias e enviar sugestões.",
-    "card-button": "Leia mais",
-    "filter": {
-      "search": "Buscar postagem",
-      "random": "Postagem aleatória",
-      "filter": "Filtrar postagens",
-      "filter-all": "Todas"
-    },
-    "newsletter": {
-      "title": "Quer receber as novas postagens?",
-      "content": "Se inscreva em nossa newsletter.",
-      "btn": "Inscreva-se",
-      "privacy": "Política de privacidade"
-    },
-    "about-portfolio": {
-      "title": "Quer saber como esse site foi construído?",
-      "content": "Veja a publicação que fiz sobre o código e a arquitetura construída.",
-      "btn": "Ver postagem"
-    },
-    "suggestions": {
-      "title": "Quer sugerir algum tema?",
-      "content": "Mande uma sugestão sobre algum assunto da área.",
-      "btn": "Enviar sugestão",
-      "privacy": "Política de privacidade"
-    },
-    "not-found-title": "Bem, isso não deveria acontecer...",
-    "not-found-content": "Não encontrei nenhuma postagem que corresponda aos seus critérios de pesquisa. Tente pesquisar por títulos ou temas...",
-    "metadata-description": "Artigos sobre desenvolvimento web, JavaScript, TypeScript e muito mais."
-  },
   "contact": {
-    "text": "Sinta-se livre para me contatar caso haja alguma questão ou sugestão. Estou aberto para ideias e oportunidades.",
     "modal-title": "Vamos conversar",
     "modal-subtitle": "Me conte sobre sua ideia, dúvida ou oportunidade.",
     "form-email": "Seu email",
@@ -144,25 +177,19 @@
     "form-text": "O que você está pensando?",
     "form-button": "Enviar",
     "sended-title": "Agradeço seu contato!",
-    "sended-content": "Sua mensagem foi enviada com sucesso."
+    "sended-content": "Sua mensagem foi enviada com sucesso.",
+    "topic-FULL_TIME": "Vaga full-time",
+    "topic-FREELANCE": "Projeto freelance",
+    "topic-SAYING_HI": "Só passando pra dizer oi",
+    "topic-BUG_REPORT": "Report de bug",
+    "topic-OTHER": "Outro",
+    "error-generic": "Não consegui enviar sua mensagem. Tente de novo em instantes.",
+    "form-topic-placeholder": "Selecione um assunto",
+    "privacy-notice": "Uso suas informações só para responder esta mensagem. Elas não viram lista de e-mail e nunca são vendidas. Detalhes na <link>política de privacidade</link>."
   },
-  "connect": {
-    "getInTouch": {
-      "titlePrefix": "Vamos",
-      "titleHighlight": "manter contato.",
-      "description": "Me manda mensagem sobre <b>qualquer coisa</b>: uma ideia de projeto, uma dúvida sobre algum post, ou só um oi. Costumo responder rápido."
-    },
-    "openSource": {
-      "titleHighlight": "Open source",
-      "joinThe": "e o lado",
-      "darkSide": "sombrio",
-      "boldSide": "iluminado",
-      "ofTheForce": "da força.",
-      "description": "Quase tudo que eu construo fica <b>público no GitHub</b>. Código aberto é a forma mais honesta de aprender: qualquer pessoa pode ler, discordar e melhorar."
-    },
+  "vision": {
     "software": {
       "titleHighlight": "Software",
-      "titleRest": "que nasce da colaboração.",
       "description": "As melhores decisões técnicas que eu tomei vieram de <b>revisão de código</b> e de conversa difícil, não de inspiração solitária.",
       "cursorName": "Romulo",
       "frameOne": "Design.",
@@ -175,6 +202,7 @@
       "commentAuthor": "Manager",
       "commentTime": "2 horas atrás",
       "commentBody": "Não se esqueça da reunião, amigo!",
+      "walletCommentBody": "Não confie, verifique (e compre crypto).",
       "ctaSecurity": "Segurança",
       "ctaCollaborative": "Desenvolvimento colaborativo",
       "ctaFlexibility": "Flexibilidade",
@@ -194,168 +222,237 @@
       "observabilityBody": "Medir antes de confiar."
     },
     "lastConnect": {
-      "bubble": "Vamos trocar uma ideia?",
-      "titlePrefix": "Vamos",
-      "titleHighlight": "nos conectar.",
+      "title": "Vamos nos conectar.",
       "formEmail": "Seu e-mail",
       "formName": "Seu nome",
       "formMessage": "Escreva sua mensagem...",
-      "surpriseButton": "Me surpreenda",
       "submitButton": "Enviar mensagem",
       "sentButton": "Mensagem enviada",
       "genericError": "Algo deu errado no envio. Tenta de novo em alguns instantes?",
       "thanksShort": "Obrigado!",
       "thanksLong": "Obrigado por escrever!",
       "thanksBody": "Respondo assim que possível.",
-      "surprise1": "Oi Romulo! Caí aqui por acaso e acabei lendo o site inteiro. Bom demais.",
-      "surprise2": "Tenho uma ideia de projeto que não sai da minha cabeça. Topa ouvir?",
-      "surprise3": "Vim pelo blog, fiquei pela engenharia. Vamos trocar uma ideia sobre isso?"
-    }
-  },
-  "hero": {
-    "greeting-1": "Bom dia",
-    "greeting-2": "Boa tarde",
-    "greeting-3": "Boa noite",
-    "greeting-4": "Boa noite",
-    "visitor-1": "visitante!",
-    "visitor-2": "querido(a)!",
-    "visitor-3": "dev :)",
-    "visitor-4": "pessoa.",
-    "visitor-5": "visitante :)",
-    "visitor-6": "amigo(a).",
-    "content": "Me chamo Romulo de Moraes, decidi criar este site para mostrar um pouco de quem eu sou, o que eu fiz, o que aprendi e o que planejo alcançar sendo um desenvolvedor full-stack e estudante.",
-    "star-title": "Dê uma estrela",
-    "star-content": "Acesse o repositório desse site.",
-    "resume-title": "Acesse o currículo",
-    "resume-content": "Dinâmico, interativo e atualizado.",
-    "view-more": "Ver mais"
-  },
-  "about": {
-    "eyebrow": "Sobre nós",
-    "headline": "Com a missão de empoderar times remotos",
-    "subheadline": "Aliquet nec orci mattis amet quisque ullamcorper neque, nibh sem. At arcu, sit dui mi, nibh dui, diam eget aliquam. Quisque id at vitae feugiat egestas.",
-    "missionTitle": "Nossa missão",
-    "missionParagraph1": "Faucibus commodo massa rhoncus, volutpat. Dignissim sed eget risus enim. Mattis mauris semper sed amet vitae sed turpis id. Id dolor praesent donec est. Odio penatibus risus viverra tellus varius sit neque erat velit. Faucibus commodo massa rhoncus, volutpat. Dignissim sed eget risus enim. Mattis mauris semper sed amet vitae sed turpis id.",
-    "missionParagraph2": "Et vitae blandit facilisi magna lacus commodo. Vitae sapien duis odio id et. Id blandit molestie auctor fermentum dignissim. Lacus diam tincidunt ac cursus in vel. Mauris varius vulputate et ultrices hac adipiscing egestas. Iaculis convallis ac tempor et ut. Ac lorem vel integer orci.",
-    "theNumbers": "Os números",
-    "stats": {
-      "raised": "Captado",
-      "companies": "Empresas",
-      "deals": "Negócios fechados",
-      "leads": "Leads gerados",
-      "yearsCoding": "Anos programando",
-      "usersImpacted": "Usuários impactados",
-      "projectsShipped": "Projetos entregues",
-      "articlesPublished": "Artigos publicados"
-    },
-    "command": "romulo.exe --about",
-    "location": "Rio Grande, RS - Brasil",
-    "availability": "Aberto a oportunidades",
-    "buttons": {
-      "projects": "Ver projetos",
-      "contact": "Contato"
-    },
-    "images": {
-      "whiteboardAlt": "Sessão de whiteboard em equipe",
-      "collaborationAlt": "Colaboração em equipe",
-      "memberAlt": "Membro da equipe",
-      "workspaceAlt": "Espaço de coworking",
-      "extraAlt": "Foto adicional da equipe"
+      "statusTimezone": "Rio Grande · UTC−3",
+      "statusWorkHours": "horário comercial por aqui",
+      "statusOffHours": "fora do expediente por aqui",
+      "statusLateNight": "madrugada por aqui, talvez eu demore a responder",
+      "responseLabel": "Resposta média",
+      "responseValue": "~1 dia",
+      "responseNote": "responderei o mais rápido possível",
+      "uplinkReady": "pronto pra transmitir sua mensagem"
     }
   },
   "home": {
-    "page-title": "Romulo de Moraes",
+    "hero": {
+      "greeting": "Olá,",
+      "greetingMorning": "Bom dia, visitante!",
+      "greetingAfternoon": "Boa tarde, visitante!",
+      "greetingEvening": "Boa noite, visitante!",
+      "intro": "Me chamo Romulo de Moraes, decidi criar este site para mostrar um pouco de quem eu sou, o que eu fiz, o que aprendi e o que planejo alcançar sendo um desenvolvedor full-stack e estudante."
+    },
     "profile": {
-      "title": "Visão geral de",
-      "title-colored": "Perfil",
+      "title": "Quem está por trás do código.",
       "link-title": "Quer ver meu currículo?",
       "link-content": "Resumi minhas experiências e disponibilizei o download.",
-      "link-button": "Ver currículo online"
+      "link-button": "Ver currículo online",
+      "eyebrow": "Perfil",
+      "description": "Experiências, formação e o caminho que me trouxe até aqui — em ordem cronológica."
     },
     "projects": {
-      "title": "Alguns",
-      "title-colored": "Projetos",
+      "title": "Do rascunho ao deploy.",
       "code": "Código",
       "preview": "Acessar",
       "public": "repositórios públicos",
-      "link-title": "Ficou interessado?",
-      "link-content": "Você pode ver mais dos meus projetos e tentativas.",
-      "link-button": "Ver mais projetos"
+      "eyebrow": "Projetos",
+      "description": "Coisas que eu construí sozinho, em equipe e por pura curiosidade. Código aberto sempre que dá.",
+      "downloadsWeek": "/semana"
+    },
+    "built": {
+      "eyebrow": "O que eu construí",
+      "headline": "Até aqui, eu",
+      "items": [
+        "publiquei o seedicon.",
+        "classifiquei GPS agrícola.",
+        "migrei a API pro FastAPI.",
+        "escrevi loteria on-chain.",
+        "montei um xadrez em Go.",
+        "reescrevi o Pac-Man.",
+        "levei um Best Paper.",
+        "dei um minicurso de Git.",
+        "construí este site."
+      ],
+      "lede": {
+        "before": "Nada disso nasceu pronto:",
+        "highlight": "cada um começou como um arquivo vazio",
+        "after": "e um problema que eu ainda não sabia resolver. Código aberto sempre que dá."
+      },
+      "cards": [
+        {
+          "label": "Trabalhando",
+          "title": "Desenvolvedor",
+          "subtitle": "Agrifence · Rio Grande"
+        },
+        {
+          "label": "Construindo",
+          "title": "seedicon",
+          "subtitle": "Avatares SVG determinísticos"
+        },
+        {
+          "label": "Escrevendo",
+          "title": "Blog de engenharia",
+          "subtitle": "Decisões, erros e infra"
+        }
+      ],
+      "presence": {
+        "statusLabel": "Status",
+        "statusFree": "Disponível",
+        "statusFreeHint": "sem status definido",
+        "statusUntil": "até {time}, definido no Telegram",
+        "musicLabel": "Ouvindo",
+        "musicLastLabel": "Última música ouvida",
+        "commitEmptyHint": "nada público nos últimos dias",
+        "commitEmpty": "Sem commit recente",
+        "musicEmptyHint": "o Spotify está quieto",
+        "musicEmpty": "Nada tocando",
+        "commitLabel": "Último commit",
+        "commitsLabel": "Commits · {days} dias",
+        "commitsHint": "públicos e privados",
+        "visitorsLabel": "No site agora",
+        "visitorsUnit": "{count, plural, one {pessoa} other {pessoas}}",
+        "visitorsHint": "incluindo você"
+      },
+      "reach": {
+        "label": "Fale comigo",
+        "button": "Começar uma conversa"
+      }
     },
     "vision": {
       "title": "Visão sobre",
-      "title-colored": "Software",
       "link-title": "Quer saber mais?",
       "link-content": "Você pode ver mais sobre o que eu penso no meu blog.",
       "link-button": "Ver postagens"
     },
     "contact": {
-      "title": "Entre em",
-      "title-colored": "Contato"
+      "title": "Entre em"
     },
     "showcase": {
       "eyebrow": "Tecnologias",
       "title": "Trabalha com tudo.",
       "description": "Frontend, backend, bancos de dados, DevOps, blockchain, sistemas embarcados, gateways de pagamento, APIs e mais.",
       "highlight": "Sim."
+    },
+    "software": {
+      "eyebrow": "Visão",
+      "title": "Software que nasce da colaboração.",
+      "description": "As melhores decisões técnicas que eu tomei vieram de revisão de código e de conversa difícil, não de inspiração solitária."
+    },
+    "faq": {
+      "eyebrow": "FAQ",
+      "title": "Perguntas que sempre aparecem.",
+      "description": "Como eu trabalho, o que eu uso e a melhor forma de me chamar para um projeto.",
+      "contact": "Algo que não ficou muito claro? Mande uma <link>mensagem</link>."
+    },
+    "about": {
+      "eyebrow": "Sobre",
+      "headline": "Até aqui, eu trabalhei em",
+      "builds": [
+        "telemetria para tratores.",
+        "IoT para tratamento de água.",
+        "monitoramento de esteiras.",
+        "um app de saúde feminina.",
+        "poupança premiada.",
+        "loterias on-chain.",
+        "um pacote npm.",
+        "soluções sob medida."
+      ],
+      "lede": "Desenvolvedor na Agrifence e mestrando em Engenharia de Computação na FURG. No dia a dia, transformo o GPS bruto de máquinas agrícolas em informação que o produtor consegue usar; no resto do tempo, pesquiso smart contracts e sistemas distribuídos, principalmente como tornar a aleatoriedade de uma blockchain pública justa o bastante para sustentar uma loteria.",
+      "whyTitle": "Por que este site existe",
+      "whyProblems": "Este blog é onde escrevo sobre o problema por trás do código: as suposições que pareciam óbvias até a produção provar o contrário, o que é preciso para sortear um vencedor de forma justa em uma blockchain pública e os atalhos cujo custo só apareceu meses depois.",
+      "whyProjects": "É também onde ficam os projetos que ainda não construí. Alguns vão virar posts, outros vão virar repositórios, outros vão continuar sendo ideias, mas todos serão públicos.",
+      "location": "Rio Grande, RS - Brasil",
+      "available": "Aberto a oportunidades",
+      "viewProjects": "Ver projetos",
+      "github": "GitHub",
+      "contact": "Contato",
+      "statsTitle": "Em números",
+      "stats": {
+        "years": "Anos programando",
+        "users": "Usuários impactados",
+        "projects": "Projetos entregues",
+        "articles": "Artigo publicado"
+      }
     }
   },
-  "profile": {
-    "link-title": "Quer ver meu currículo?",
-    "link-content": "Resumi minhas experiências e disponibilizei o download.",
-    "link-button": "Ver currículo online"
-  },
   "navigation": {
+    "login": "Entrar",
+    "tooltip": {
+      "search": "Buscar posts",
+      "language": "Mudar idioma",
+      "theme": "Mudar tema",
+      "rss": "Feed RSS"
+    },
+    "themeOptions": {
+      "light": "Claro",
+      "dark": "Escuro",
+      "system": "Sistema"
+    },
     "home": "Início",
-    "resume": "Currículo",
-    "settings": "Configurações",
     "theme": "Tema",
     "language": "Idioma",
-    "user": "Usuário",
     "modal": {
       "profile": "Perfil",
       "logout": "Sair"
     }
   },
-  "post": {
-    "comment-title": "Deixe um comentário",
-    "comment-placeholder": "Escreva seu comentário aqui...",
-    "comment-button": "Postar comentário",
-    "comments-empty": "Ainda não há comentários."
-  },
-  "resume": {
-    "page-title": "Currículo online - Romulo de Moraes",
-    "linkedin": "Perfil do LinkedIn",
-    "github": "Perfil do GitHub",
-    "titles": {
-      "xp": "Experiências",
-      "education": "Educação",
-      "lang": "Idiomas"
-    }
-  },
   "terminal": {
     "xp": "experiência",
     "loading-xp-title": "Procurando por experiências...",
-    "loading-xp": "Carregar as experiências do sistema levou ",
+    "loading-xp": "Carregar as experiências do sistema levou {years, plural, one {# ano} other {# anos}}.",
     "education": "formação",
     "loading-education-title": "Procurando por formação...",
-    "loading-education": "Carregar a formação levou ",
+    "loading-education": "Carregar a formação levou {years, plural, one {# ano} other {# anos}}.",
     "visitor": "visitante",
     "tooltip": "Você pode usar este terminal",
-    "loading": "Carregando a mensagem de acompanhamento levou ",
     "not-found-first": "Comando não encontrado, digite ",
     "not-found-second": " para uma lista de comandos.",
     "loadings": {
-      "help": "Carregar a mensagem de ajuda levou ",
-      "initial": "Carregar a mensagem inicial levou ",
-      "follow": "Carregar as redes sociais levou ",
-      "who": "Carregar estas informações inúteis levou ",
-      "who-years": " anos",
-      "whoami": "Carregar esta pílula levou ",
-      "cats": "Carregar estes gatos incríveis levou ",
-      "inter": "Carregar o logo do SC Internacional levou ",
-      "spotify": "Carregar esta playlist incrível levou ",
-      "secret": "Carregar este enigma levou "
+      "help": "Carregar a mensagem de ajuda levou {ms} ms.",
+      "initial": "Carregar a mensagem inicial levou {ms} ms.",
+      "follow": "Carregar as redes sociais levou {ms} ms.",
+      "who": "Carregar estas informações inúteis levou {age} anos.",
+      "whoami": "Carregar esta pílula levou {ms} ms.",
+      "cats": "Convencer estes gatos a posar levou {ms} ms.",
+      "inter": "Carregar o logo do SC Internacional levou {ms} ms.",
+      "spotify": "Carregar esta playlist incrível levou {ms} ms.",
+      "secret": "Carregar este enigma levou {ms} ms.",
+      "secret-hint": "Pensar nesta dica levou {ms} ms. Não espere muito dela.",
+      "secret-wrong": "Conferir a senha levou {ms} ms. Não é essa.",
+      "secret-correct": "Abrir o cofre levou {ms} ms.",
+      "unknown": "Procurar esse comando no sistema inteiro levou {ms} ms.",
+      "weather": "Olhar pela janela levou {ms} ms.",
+      "quote": "Consultar os estoicos levou {ms} ms.",
+      "ping": "64 bytes de romulo: icmp_seq=1 ttl=64 tempo={ms} ms",
+      "sudo": "Negar seu acesso levou {ms} ms. Nem pensei duas vezes.",
+      "date": "Olhar o relógio levou {ms} ms.",
+      "neofetch": "Coletar informações sobre mim levou {ms} ms.",
+      "uptime": "Contar os segundos desde o primeiro commit levou {ms} ms.",
+      "matrix": "Escolher a pílula vermelha levou {ms} ms.",
+      "hack-bank": "Encontrar um banco vulnerável levou {ms} ms.",
+      "coffee": "Esquentar a água levou {ms} ms.",
+      "joke": "Pensar nessa piada levou {ms} ms. Deveria ter levado mais.",
+      "papers": "Buscar meus artigos no Google Acadêmico levou {ms} ms.",
+      "blog": "Buscar os posts no banco levou {ms} ms.",
+      "git-log": "Rodar git log em todos os meus repositórios levou {ms} ms.",
+      "visitors": "Contar quem está aqui levou {ms} ms.",
+      "top": "Listar meus processos levou {ms} ms.",
+      "npm-install": "Resolver a árvore de dependências levou {ms} ms.",
+      "sl": "Chamar o trem levou {ms} ms.",
+      "cowsay": "Acordar a vaca levou {ms} ms.",
+      "seedicon": "Gerar os avatares levou {ms} ms. Sem rede, só o seu texto.",
+      "man": "Abrir o manual levou {ms} ms. Ninguém lê mesmo.",
+      "history": "Relembrar o que você fez levou {ms} ms.",
+      "completions": "Adivinhar o que você queria levou {ms} ms.",
+      "wordmark": "Acender cada pixel à mão levou {ms} ms."
     },
     "commands": {
       "help": "Lista de comandos",
@@ -367,14 +464,39 @@
       "cats": "Arte de gatos maravilhosos",
       "inter": "O maior clube de futebol do mundo",
       "spotify": "Uma das minhas playlists",
-      "secret": "Enigma simples, qual é a senha?"
+      "secret": "Enigma simples, qual é a senha?",
+      "weather": "Clima atual em Rio Grande - RS",
+      "quote": "Citação estoica + reflexão",
+      "ping": "Verifica se estou acordado",
+      "joke": "Piada de programador",
+      "sudo": "Tente algo proibido",
+      "date": "Data e hora atual",
+      "neofetch": "Informações do sistema (eu)",
+      "uptime": "Tempo desde que o sistema iniciou",
+      "matrix": "Modo hacker",
+      "hack-bank": "Simulação totalmente legal",
+      "coffee": "Fazer café para codar",
+      "papers": "Artigos publicados em que sou autor",
+      "blog": "Últimos posts do blog",
+      "git-log": "Meus últimos commits públicos",
+      "visitors": "Quantas pessoas estão no site agora",
+      "top": "Meus processos, ao vivo",
+      "htop": "O top, só que colorido",
+      "npm-install": "Instala tudo que você não precisa",
+      "sl": "Um trem. Só isso.",
+      "cowsay": "Uma vaca repete o que você disser",
+      "seedicon": "Gera avatares a partir de um texto",
+      "man": "Manual de um comando",
+      "history": "Comandos que você já digitou",
+      "exit": "Fecha esta aba",
+      "wordmark": "Escreve um texto em pixels piscando"
     },
     "initial": {
       "content": "Para uma lista de comandos disponíveis, digite "
     },
     "who": {
       "so": "Então...",
-      "about": "Tenho 20 anos, sou apenas um estudante e entusiasta de tecnologia que gosta de jogar, ler livros e fazer outras coisas nerds. 🤓"
+      "about": "Tenho {age} anos, sou apenas um estudante e entusiasta de tecnologia que gosta de jogar, ler livros e fazer outras coisas nerds. 🤓"
     },
     "whoami": {
       "title": "A vida não é um mistério a ser resolvido, mas uma experiência a ser vivida.",
@@ -391,48 +513,180 @@
       "how-try": "sua tentativa",
       "how-second": ", sendo sua tentativa um número de quatro dígitos.",
       "how-hint": "Para ver uma dica, digite ",
-      "hint-time": "Vamos lá, cara, essas mensagens não demoram para ser exibidas...",
       "hint": "A dica é: é um ano 🤯 uau, dica incrível! Mais uma, esse ano aparece em uma mensagem aqui no terminal...",
-      "wrong": "Esta verificação não levou nenhum tempo.",
       "reward": "Correto! Sua recompensa aqui: "
+    },
+    "close-tab": "Fechar aba",
+    "weather": {
+      "wind": "Vento",
+      "temperature": "Temperatura",
+      "condition": "Condição",
+      "cloudy": "Nublado"
+    },
+    "quote": {
+      "translation": "Suporta e abstém-te.",
+      "reflection": "A ideia é simples, mas poderosa: suportar aquilo que não está sob nosso controle e evitar reagir impulsivamente ao que nos afeta. Em um mundo cheio de distrações e pressões, isso vira quase uma \"skill rara\"."
+    },
+    "ping": {
+      "online": "🟢 online",
+      "maybe": "🟡 talvez online",
+      "offline": "🔴 offline",
+      "morning": "Provavelmente começando o dia com café ☕",
+      "afternoon": "Trabalhando / codando 🚀",
+      "evening": "Talvez relaxando ou estudando 📚",
+      "night": "Dormindo 😴 (ou deveria estar)",
+      "timezone": "fuso",
+      "hour": "hora"
+    },
+    "sudo": {
+      "denied": "Permission denied: você não é root 😎",
+      "reported": "Este incidente será reportado."
+    },
+    "date": {
+      "night": "🌙 Hora de descansar...",
+      "morning": "☀️ Bora codar!",
+      "afternoon": "🚀 Produtividade em andamento",
+      "evening": "🌆 Hora de desacelerar"
+    },
+    "neofetch": {
+      "uptime": "{age} anos",
+      "name": "Nome",
+      "age": "Idade",
+      "location": "Local",
+      "stack": "Stack",
+      "stack-value": "Next.js, Go, Kafka, Redis e mais",
+      "interests": "Interesses",
+      "interests-value": "Sistemas distribuídos, backend, Web3",
+      "status": "Status",
+      "status-value": "Sempre construindo algo"
+    },
+    "uptime": {
+      "loading": "Procurando o primeiro commit...",
+      "error": "O GitHub não respondeu agora. Tente de novo daqui a pouco.",
+      "value": "no ar há {days}d {hours}h {minutes}m {seconds}s"
+    },
+    "hack-bank": {
+      "initializing": "Inicializando...",
+      "accessing": "Acessando o servidor...",
+      "injecting": "Injetando payload...",
+      "bypassing": "Burlando o firewall...",
+      "done": "💰 Transferência concluída em {seconds} segundos.",
+      "disclaimer": "Valor transferido: R$ 0,00. Nenhum banco foi ferido nesta simulação."
+    },
+    "coffee": {
+      "brewing": "Passando café",
+      "done": "O café levou {seconds} segundos para ficar pronto.",
+      "ready": "☕ Café pronto. Agora dá pra codar."
+    },
+    "joke": {
+      "items": [
+        "Por que programadores programam no escuro? Porque luz atrai bug. 🥁",
+        "Existem 10 tipos de pessoas: as que entendem binário e as que não entendem.",
+        "Funciona na minha máquina. Então vamos mandar a minha máquina pro cliente.",
+        "Uma query SQL entra num bar, vai até duas mesas e pergunta: posso fazer um JOIN?",
+        "Resolvi um problema com regex. Agora tenho dois problemas."
+      ]
+    },
+    "suggestion": "Você quis dizer <cmd>{command}</cmd>?",
+    "args": {
+      "text": "texto",
+      "command": "comando"
+    },
+    "papers": {
+      "award": "🏆 {award}",
+      "note": "Estes são só os artigos já publicados em que sou autor. Tenho outros submetidos, aguardando revisão, e continuo escrevendo."
+    },
+    "blog": {
+      "empty": "Nenhum post publicado ainda. Volte em breve.",
+      "error": "O banco não respondeu agora. Tente de novo daqui a pouco.",
+      "reading": "{minutes} min de leitura",
+      "all": "Todos os posts:"
+    },
+    "git-log": {
+      "empty": "Nenhum commit público recente.",
+      "error": "fatal: o GitHub não respondeu agora. Tente de novo daqui a pouco."
+    },
+    "visitors": {
+      "count": "👀 {count, plural, one {# pessoa} other {# pessoas}} no site agora, contando com você.",
+      "error": "Não consegui contar agora, mas pelo menos você está aqui."
+    },
+    "top": {
+      "tasks": "Tarefas: {total} no total, {running} rodando, 1 dormindo pouco",
+      "processes": [
+        "cafe.exe",
+        "dissertacao.tex",
+        "agrifence-api",
+        "artigo-isys.tex",
+        "spotify",
+        "next-server",
+        "inter-1909",
+        "sono.sh"
+      ]
+    },
+    "npm-install": {
+      "done": "adicionados {count} pacotes, dos quais você precisa de 0, em {seconds}s",
+      "funding": "{count} pacotes estão procurando financiamento. Inclusive este site."
+    },
+    "sl": {
+      "passed": "🚂 O trem passou em {seconds} segundos. Você queria digitar ls?"
+    },
+    "cowsay": {
+      "default": "Muuu! Digite cowsay seguido de um texto."
+    },
+    "seedicon": {
+      "usage": "Uso: seedicon seguido de um texto. Exemplo: <cmd>seedicon romulo</cmd>",
+      "same": "Mesmo texto, mesmo avatar, em qualquer máquina.",
+      "install": "Para usar no seu projeto:"
+    },
+    "man": {
+      "what": "Qual página de manual você quer?",
+      "example": "Por exemplo, tente <cmd>man man</cmd>.",
+      "missing": "Não há entrada de manual para {command}.",
+      "name": "NOME",
+      "synopsis": "SINOPSE",
+      "description": "DESCRIÇÃO",
+      "bugs": "BUGS",
+      "pages": {
+        "help": "Lista mais comandos do que cabem na tela.",
+        "clear": "Limpa o terminal, mas não a sua consciência.",
+        "initial": "O © 2024 nunca foi atualizado.",
+        "who": "A idade é calculada na hora; o autor envelhece sem aviso prévio.",
+        "whoami": "Responde uma pergunta simples com um ensaio de filosofia.",
+        "follow": "Seguir não garante follow de volta.",
+        "papers": "O revisor 2 continua insatisfeito.",
+        "blog": "Posts saem com menos frequência do que o prometido.",
+        "git-log": "Mensagens como 'fix' e 'agora vai' são intencionais.",
+        "visitors": "Conta você duas vezes se você abrir duas abas.",
+        "weather": "Os dados são fixos; olhe pela janela para a versão ao vivo.",
+        "quote": "Ler os estoicos não impede ninguém de se irritar com o CI.",
+        "ping": "Às vezes responde online enquanto o autor dorme.",
+        "cats": "Nenhum gato foi consultado sobre o uso da própria imagem.",
+        "inter": "Não aceita argumentos contrários.",
+        "spotify": "Gosto musical não incluso na garantia.",
+        "joke": "As piadas não melhoram com a repetição.",
+        "sudo": "Só funciona para o root. Você não é o root.",
+        "date": "Não volta no tempo, apesar dos pedidos.",
+        "neofetch": "O kernel movido a café não tem versão estável.",
+        "top": "sono.sh nunca recebe CPU suficiente.",
+        "htop": "Igual ao top, com mais cores e o mesmo sono.",
+        "uptime": "Mede o tempo desde um repositório de xadrez, por motivos históricos.",
+        "matrix": "Não existe colher.",
+        "hack-bank": "Nenhum real foi transferido. O autor conferiu o próprio saldo.",
+        "coffee": "Não serve café de verdade. Ainda.",
+        "npm-install": "node_modules pesa mais que o resto do projeto inteiro.",
+        "sl": "Existe para punir quem erra ao digitar ls.",
+        "cowsay": "A vaca repete tudo, sem filtro.",
+        "seedicon": "Reclamações sobre o avatar não são aceitas: foi o seu texto que escolheu.",
+        "man": "Ler o manual continua opcional, como sempre.",
+        "history": "Esquece tudo quando a página recarrega. Às vezes é melhor assim.",
+        "secret": "A dica é pior do que o enigma.",
+        "exit": "Fecha a aba, mas você sempre pode voltar.",
+        "wordmark": "Pixels piscando não são um bug, mas também ninguém provou o contrário."
+      }
+    },
+    "history": {
+      "empty": "Nenhum comando ainda."
     }
-  },
-  "vision": {
-    "link-title": "Quer saber mais?",
-    "link-content": "Você pode ver mais sobre o que eu penso no meu blog.",
-    "link-button": "Ver postagens",
-    "icons": {
-      "first-title": "Inovação",
-      "first-content": "Definindo as regras do amanhã.",
-      "second-title": "Comunidade",
-      "second-content": "Facilitando a vida das pessoas."
-    },
-    "frame": {
-      "one": "Design.",
-      "two": "Prototipar.",
-      "three": "Desenvolver.",
-      "four": "Aprimorar."
-    },
-    "productivity": {
-      "title": "Produtividade em sua melhor forma.",
-      "word-1": "Com ",
-      "bold-1": "qualidade ",
-      "word-2": "e ",
-      "bold-2": "sustentabilidade ",
-      "word-3": "no coração."
-    },
-    "development": {
-      "left": "Segurança",
-      "center": "Desenvolvimento colaborativo",
-      "right": "Flexibilidade"
-    },
-    "comment": {
-      "time": "2 horas atrás",
-      "content": "Não se esqueça da reunião, amigo!"
-    }
-  },
-  "announcement": {
-    "content": "Olá, esse portfólio ainda está em desenvolvimento, ok? 🤠"
   },
   "footer": {
     "cta": {
@@ -442,9 +696,7 @@
     },
     "newsletter": {
       "title": "Fique por dentro",
-      "subtitle": "Receba novidades sobre posts, projetos e ideias diretamente no seu e-mail.",
-      "placeholder": "Insira seu e-mail",
-      "subscribe": "Inscrever-se"
+      "subtitle": "Receba novidades sobre posts, projetos e ideias diretamente no seu e-mail."
     },
     "nav": {
       "resources": {
@@ -463,16 +715,14 @@
         "links": {
           "about": "Sobre",
           "login": "Entrar",
-          "logout": "Sair",
-          "privacy": "Política de privacidade"
+          "logout": "Sair"
         }
       },
       "legal": {
         "title": "Legal",
         "links": {
           "privacy": "Política de privacidade",
-          "terms": "Termos de serviço",
-          "notices": "Avisos legais"
+          "terms": "Termos de serviço"
         }
       },
       "about": {
@@ -531,69 +781,21 @@
       }
     ]
   },
-  "blogPost": {
-    "notFoundTitle": "Post não encontrado",
-    "videoTitle": "Vídeo do post",
-    "published": "Publicado {time}",
-    "readingTime": "{minutes} min de leitura",
-    "originallyPublishedAt": "Publicado originalmente em:"
-  },
-  "commentsPage": {
-    "metadataNotFound": "Comentário não encontrado",
-    "metadataTitle": "Comentário de @{username} em \"{postTitle}\"",
-    "comment": "Comentário",
-    "replyingTo": "Respondendo a @{username}",
-    "backToPost": "Ir para \"{title}\""
-  },
-  "newsletterFlow": {
-    "confirm": {
-      "loadingTitle": "Confirmando...",
-      "successTitle": "Tudo certo!",
-      "errorTitle": "Ops! Algo deu errado",
-      "successDefaultMessage": "Inscrição confirmada!",
-      "errorDefaultMessage": "Erro ao confirmar inscrição.",
-      "networkError": "Erro de conexão. Tente novamente mais tarde.",
-      "successListTitle": "A partir de agora você vai receber:",
-      "successItems": {
-        "posts": "Novos posts assim que publicados",
-        "exclusive": "Dicas e conteúdos exclusivos",
-        "updates": "Novidades e projetos"
-      },
-      "errorListTitle": "Possíveis causas:",
-      "errorItems": {
-        "expired": "O link expirou (válido por 24h)",
-        "alreadyConfirmed": "Este e-mail já foi confirmado",
-        "incorrect": "O link está incorreto"
-      },
-      "backHome": "Ir para o início",
-      "persistentProblem": "Problema persistindo?",
-      "subscribeAgain": "Inscreva-se novamente"
+  "bento": {
+    "guestbook": {
+      "eyebrow": "Mural",
+      "title": "Deixe um recado no mural."
     },
-    "unsubscribe": {
-      "confirmTitle": "Cancelar inscrição?",
-      "loadingTitle": "Processando...",
-      "successTitle": "Inscrição cancelada",
-      "errorTitle": "Ops! Algo deu errado",
-      "successDefaultMessage": "Inscrição cancelada com sucesso.",
-      "errorDefaultMessage": "Erro ao cancelar inscrição.",
-      "networkError": "Erro de conexão. Tente novamente.",
-      "description": "Você não receberá mais novos posts e atualizações por e-mail. Pode se inscrever novamente a qualquer momento.",
-      "confirmButton": "Sim, cancelar inscrição",
-      "stayButton": "Não, quero continuar",
-      "farewellTitle": "Sentiremos sua falta!",
-      "farewellDescription": "Você pode se inscrever novamente a qualquer momento.",
-      "backHome": "Ir para o início"
+    "location": {
+      "eyebrow": "Onde estou",
+      "title": "Rio Grande, RS. Disponível globalmente.",
+      "base": "Rio Grande, RS",
+      "global": "Remoto"
+    },
+    "newsletter": {
+      "eyebrow": "Newsletter",
+      "title": "Receba os posts novos por e-mail."
     }
-  },
-  "newsletterForm": {
-    "title": "Receba novos posts no seu email",
-    "subtitle": "Inscreva-se na newsletter e seja notificado quando novos artigos forem publicados",
-    "placeholder": "seu@email.com",
-    "subscribe": "Inscrever",
-    "subscribing": "Inscrevendo...",
-    "successDefault": "Obrigado por se inscrever!",
-    "errorDefault": "Algo deu errado. Tente novamente.",
-    "networkError": "Erro ao se inscrever. Tente novamente."
   },
   "support": {
     "metadata": {
@@ -615,8 +817,7 @@
       "genericError": "Algo deu errado. Tente novamente.",
       "methods": {
         "pix": "PIX",
-        "card": "Cartão",
-        "eth": "ETH"
+        "card": "Cartão"
       }
     },
     "pix": {
@@ -631,13 +832,7 @@
       "expired": "Este QR code expirou. Feche e gere uma nova cobrança."
     },
     "crypto": {
-      "back": "Voltar",
-      "wallet": "Carteira:",
-      "waiting": "Aguardando MetaMask...",
-      "send": "Enviar via MetaMask",
       "genericError": "Erro ao processar ETH.",
-      "verifyError": "Erro ao verificar transação.",
-      "missingWallet": "MetaMask não encontrada. Instale em metamask.io",
       "coffees": "{count} café(s)"
     },
     "stripe": {
@@ -673,131 +868,6 @@
       "button": "Apoiar"
     }
   },
-  "api": {
-    "common": {
-      "invalidRequest": "Dados da requisição inválidos.",
-      "invalidBody": "Corpo da requisição inválido.",
-      "unauthorized": "Autenticação necessária.",
-      "forbidden": "Acesso negado.",
-      "notFound": "Recurso não encontrado.",
-      "conflict": "Não foi possível concluir a solicitação.",
-      "rateLimited": "Muitas tentativas. Tente novamente em alguns instantes.",
-      "internalError": "Erro interno.",
-      "internalRetry": "Erro interno. Tente novamente.",
-      "emailRequired": "E-mail é obrigatório.",
-      "emailInvalid": "E-mail inválido."
-    },
-    "auth": {
-      "forgot": {
-        "rateLimited": "Muitas tentativas. Tente novamente em 10 minutos.",
-        "success": "Se esse e-mail estiver cadastrado, você receberá um link em breve.",
-        "internal": "Erro interno."
-      },
-      "register": {
-        "rateLimited": "Muitas tentativas de cadastro. Tente novamente mais tarde.",
-        "conflict": "Não foi possível concluir o cadastro com os dados informados.",
-        "conflictRetry": "Não foi possível concluir o cadastro. Tente novamente.",
-        "passwordRequired": "Senha é obrigatória.",
-        "passwordMin": "A senha deve ter pelo menos 8 caracteres.",
-        "passwordMax": "A senha deve ter no máximo 128 caracteres."
-      }
-    },
-    "comments": {
-      "postIdRequired": "postId é obrigatório.",
-      "empty": "Comentário não pode estar vazio.",
-      "tooLong": "Comentário muito longo (máx. 2000 caracteres).",
-      "rateLimited": "Muitos comentários em pouco tempo. Aguarde um momento.",
-      "cannotComment": "Você não pode comentar.",
-      "postNotFound": "Post não encontrado.",
-      "parentNotFound": "Comentário pai não encontrado.",
-      "commentNotFound": "Comentário não encontrado.",
-      "invalidVote": "Valor de voto inválido."
-    },
-    "newsletter": {
-      "subscribe": {
-        "rateLimited": "Muitas tentativas. Tente novamente em alguns minutos.",
-        "success": "Verifique seu e-mail para confirmar a inscrição.",
-        "internal": "Erro interno. Tente novamente."
-      },
-      "confirm": {
-        "missingToken": "Token ausente.",
-        "invalidToken": "Token inválido ou expirado. Solicite uma nova inscrição.",
-        "success": "Inscrição confirmada com sucesso! Bem-vindo(a).",
-        "internal": "Erro interno."
-      },
-      "unsubscribe": {
-        "missingToken": "Token ausente.",
-        "invalidToken": "Token inválido.",
-        "success": "Você foi removido da newsletter com sucesso.",
-        "internal": "Erro interno."
-      },
-      "requestUnsubscribe": {
-        "rateLimited": "Muitas tentativas. Tente novamente em alguns minutos.",
-        "success": "Verifique seu e-mail para confirmar o pedido de cancelamento.",
-        "internal": "Erro interno. Tente novamente."
-      }
-    },
-    "donations": {
-      "eth": {
-        "invalidTransaction": "Transação inválida."
-      },
-      "pix": {
-        "notAvailableInProduction": "Não disponível em produção.",
-        "missingDonationId": "donationId ausente.",
-        "chargeDescription": "{count}x café para o blog",
-        "internal": "Não foi possível criar a cobrança PIX. Tente novamente.",
-        "checkFailed": "Não foi possível verificar o pagamento. Tentando novamente...",
-        "expired": "Este QR code expirou. Gere uma nova cobrança."
-      },
-      "stripe": {
-        "missingSignature": "Assinatura ausente.",
-        "invalidSignature": "Assinatura inválida.",
-        "internal": "Não foi possível criar a intenção de pagamento Stripe. Tente novamente."
-      },
-      "invalidCoffeeCount": "Quantidade de cafés inválida."
-    },
-    "posts": {
-      "noPosts": "Nenhum post encontrado.",
-      "notFound": "Post não encontrado.",
-      "internalError": "Erro interno do servidor.",
-      "missingRequiredFields": "Campos obrigatórios ausentes.",
-      "invalidBody": "Corpo inválido.",
-      "identifierRequired": "Identificador obrigatório.",
-      "queueOnly": "O flush de views agora roda exclusivamente pelo caminho de fila com worker."
-    },
-    "uploads": {
-      "missingFields": "Campos obrigatórios ausentes: filename, contentType, kind.",
-      "invalidKind": "Tipo inválido. Deve ser \"cover\" ou \"inline\".",
-      "invalidContentType": "Tipo de arquivo não suportado.",
-      "fileTooLarge": "O arquivo é grande demais.",
-      "internal": "Não foi possível preparar o upload. Tente novamente."
-    },
-    "admin": {
-      "newsletterCampaigns": {
-        "subjectRequired": "Assunto é obrigatório.",
-        "postIdRequired": "postId é obrigatório para campanhas baseadas em post.",
-        "postNotFound": "Post não encontrado.",
-        "postMustBePublished": "Só é possível criar campanhas para posts publicados.",
-        "missingPortugueseTranslation": "O post precisa ter tradução em português primeiro.",
-        "customContentRequired": "Conteúdo é obrigatório para campanhas personalizadas.",
-        "readArticle": "Ler artigo ->",
-        "notFound": "Campanha não encontrada.",
-        "draftOnlyEdit": "Apenas campanhas em rascunho podem ser editadas.",
-        "invalidPost": "Post inválido ou não publicado.",
-        "cannotDeleteSending": "Não é possível excluir uma campanha em envio.",
-        "deleted": "Campanha excluída.",
-        "draftOnlySend": "Apenas campanhas em rascunho podem ser enviadas.",
-        "invalidScheduledAt": "scheduledAt inválido.",
-        "futureScheduledAt": "scheduledAt deve ser uma data futura.",
-        "scheduled": "Campanha agendada com sucesso.",
-        "queued": "Campanha enfileirada para envio.",
-        "dispatchFailed": "Falha ao despachar campanha."
-      },
-      "suspiciousComments": {
-        "notFound": "Comentário suspeito não encontrado."
-      }
-    }
-  },
   "admin": {
     "sidebar": {
       "toggleTheme": "Alternar tema",
@@ -822,7 +892,8 @@
         "system": "Sistema",
         "search": "Motor de busca",
         "backups": "Backups",
-        "blog": "Blog"
+        "blog": "Blog",
+        "contact": "Contato"
       }
     },
     "dashboard": {
@@ -1088,7 +1159,6 @@
       "description": "Gerencie usuários que não podem comentar.",
       "loading": "Carregando...",
       "empty": "Nenhum usuário banido.",
-      "bannedAt": "Banido em {date}",
       "unban": "Desbanir",
       "searchPlaceholder": "Buscar por usuário ou e-mail",
       "viewReason": "Ver motivo",
@@ -1290,8 +1360,6 @@
       "template": {
         "previewLabel": "Preview do template",
         "hideHtml": "Ocultar",
-        "showHtml": "Ver HTML",
-        "readArticle": "Ler artigo ->",
         "showPreview": "Ver prévia"
       },
       "subject": {
@@ -1406,6 +1474,52 @@
         "confirm": "Confirmar ban",
         "banning": "Banindo..."
       }
+    },
+    "contact": {
+      "title": "Mensagens de contato",
+      "description": "Tudo que chegou pelo formulário do site.",
+      "unreadCount": "{count} sem ler",
+      "searchPlaceholder": "Buscar por nome, e-mail ou texto…",
+      "loading": "Carregando…",
+      "empty": "Nenhuma mensagem por aqui.",
+      "linkMissing": "Essa mensagem não existe mais — o link aponta para algo que foi apagado.",
+      "dismiss": "Fechar aviso",
+      "openMessage": "Abrir",
+      "markAs": "Marcar como",
+      "delete": "Apagar",
+      "filters": {
+        "status": "Filtrar por status",
+        "topic": "Filtrar por assunto",
+        "allStatuses": "Todos os status",
+        "allTopics": "Todos os assuntos"
+      },
+      "status": {
+        "RECEIVED": "Recebido",
+        "READ": "Lido",
+        "REPLIED": "Respondido",
+        "CLOSED": "Fechado",
+        "SPAM": "Spam"
+      },
+      "topic": {
+        "FULL_TIME": "Vaga full-time",
+        "FREELANCE": "Projeto freelance",
+        "SAYING_HI": "Só um oi",
+        "BUG_REPORT": "Report de bug",
+        "OTHER": "Outro"
+      },
+      "table": {
+        "from": "De",
+        "topic": "Assunto",
+        "message": "Mensagem",
+        "status": "Status",
+        "received": "Recebido em",
+        "actions": "Ações"
+      },
+      "pagination": {
+        "showing": "Mostrando {from}–{to} de {total}",
+        "previous": "Anterior",
+        "next": "Próxima"
+      }
     }
   },
   "blogUi": {
@@ -1432,6 +1546,11 @@
       "empty": "Nenhum post encontrado.",
       "loadMore": "Carregar mais",
       "loadingMore": "Carregando..."
+    },
+    "card": {
+      "published": "Publicado em {date}",
+      "readingTime": "{minutes} min de leitura",
+      "readMore": "Ler mais"
     },
     "carousel": {
       "previousSlide": "Slide anterior",
@@ -1533,21 +1652,6 @@
       }
     }
   },
-  "footerNewsletter": {
-    "title": "Fique por dentro",
-    "description": "Receba novidades sobre posts, projetos e ideias diretamente no seu e-mail.",
-    "placeholder": "Insira seu e-mail",
-    "submit": "Inscrever-se",
-    "submitting": "Enviando...",
-    "success": {
-      "title": "Verifique seu e-mail!",
-      "description": "Enviamos um link de confirmação para você."
-    },
-    "errors": {
-      "generic": "Algo deu errado.",
-      "connection": "Erro de conexão. Tente novamente."
-    }
-  },
   "common": {
     "dialog": {
       "close": "Fechar"
@@ -1561,45 +1665,60 @@
       "prefix": "Aprovado por",
       "suffix": "{count, plural, one {inscrito} other {inscritos}}."
     },
+    "privacy": {
+      "prefix": "Sem spam, nunca.",
+      "suffix": "Você pode conferir a política de privacidade <link>aqui</link>."
+    }
+  },
+  "newsletterForm": {
     "emailLabel": "E-mail",
     "emailPlaceholder": "seu@email.com",
     "submit": "Inscrever-se",
-    "privacy": {
-      "prefix": "Sem spam, nunca.",
-      "suffix": "Você pode conferir a política de privacidade aqui."
-    },
     "success": {
       "title": "Verifique seu e-mail!",
-      "description": "Enviamos um link de confirmação para ativar sua inscrição.",
-      "useAnotherEmail": "Usar outro e-mail"
+      "description": "Enviamos um link de confirmação para ativar sua inscrição."
+    },
+    "error": {
+      "title": "Não consegui concluir sua inscrição"
     },
     "errors": {
       "generic": "Algo deu errado. Tente novamente.",
-      "connection": "Erro de conexão. Tente novamente."
+      "connection": "Erro de conexão. Confira sua internet e tente novamente."
     }
   },
-  "unsubscribeModal": {
-    "trigger": "Cancelar inscrição",
-    "title": "Cancelar inscrição na newsletter",
-    "description": "Digite seu e-mail para receber um link de confirmação.",
-    "emailLabel": "E-mail",
-    "emailPlaceholder": "seu@email.com",
-    "cancel": "Cancelar",
-    "submit": "Enviar confirmação",
-    "close": "Fechar",
-    "success": {
-      "message": "E-mail de confirmação enviado com sucesso! Verifique sua caixa de entrada e clique no link para concluir o cancelamento."
+  "newsletterPage": {
+    "meta": {
+      "title": "Newsletter",
+      "description": "Conteúdo sobre desenvolvimento web, TypeScript e engenharia de software. Direto no seu e-mail."
     },
-    "errors": {
-      "generic": "Não foi possível processar sua solicitação.",
-      "connection": "Erro de conexão. Tente novamente mais tarde."
+    "hero": {
+      "title": "{count, plural, =0 {Seja o primeiro leitor inscrito} one {Junte-se a # leitor inscrito} other {Junte-se a # leitores inscritos}}",
+      "description": "Receba posts sobre desenvolvimento, arquitetura, carreira, vida acadêmica e muito mais diretamente no seu e-mail.",
+      "note": "Sem spam, cancele quando quiser. Seu e-mail nunca será compartilhado.",
+      "benefits": {
+        "newPosts": "Novos artigos assim que publicados",
+        "tips": "Dicas e conteúdo técnico exclusivo",
+        "projects": "Projetos e novidades em primeira mão"
+      }
+    },
+    "stats": {
+      "posts": "Posts publicados",
+      "views": "Visualizações totais",
+      "likes": "Curtidas nos posts",
+      "comments": "Comentários"
+    },
+    "recent": {
+      "title": "Posts recentes",
+      "viewAll": "Ver todos",
+      "empty": "Nenhum post publicado ainda.",
+      "readingTime": "{minutes} min"
     }
   },
   "cookieBanner": {
     "ariaLabel": "Banner de consentimento de cookies",
     "title": "Permitir cookies?",
     "safeExperience": "Usamos cookies para oferecer uma experiência de navegação mais segura e personalizada.",
-    "descriptionPrefix": "Saiba mais sobre como usamos cookies na nossa",
+    "descriptionPrefix": "Saiba mais na ",
     "policyLink": "Política de Cookies",
     "accept": "Permitir",
     "decline": "Recusar"
@@ -1635,37 +1754,6 @@
           "body": "A maioria dos navegadores permite controlar cookies pelas configurações de preferências. Limitar os cookies pode piorar sua experiência de navegação e impedir que o site lembre configurações personalizadas."
         }
       }
-    },
-    "terms": {
-      "title": "Termos e Condições",
-      "updatedAt": "Última atualização: Fevereiro 2026",
-      "close": "Fechar",
-      "sections": {
-        "network": {
-          "title": "Importante - Verifique a rede",
-          "body": "Antes de comprar um bilhete, verifique se a loteria está executando na mesma rede da sua carteira. Compras feitas na rede errada não são reembolsáveis e não são de responsabilidade da plataforma."
-        },
-        "service": {
-          "title": "1. Natureza do serviço",
-          "body": "Esta plataforma é uma loteria descentralizada operando na blockchain, pensada para oferecer transparência e justiça em todos os sorteios. Atualmente, o serviço encontra-se em período de teste na rede Sepolia."
-        },
-        "testing": {
-          "title": "2. Período de teste",
-          "body": "Durante o período de validação, todas as transações utilizam tokens de teste (Sepolia ETH) que não possuem valor econômico real. Nenhum valor monetário verdadeiro está envolvido nesta fase."
-        },
-        "fairness": {
-          "title": "3. Justiça e transparência",
-          "body": "Todos os sorteios são realizados de forma transparente na blockchain. Os resultados podem ser verificados por qualquer pessoa através do contrato inteligente. A plataforma utiliza fontes de aleatoriedade verificáveis para garantir a justiça dos sorteios."
-        },
-        "userResponsibility": {
-          "title": "4. Responsabilidade do utilizador",
-          "body": "O utilizador é responsável por garantir que está conectado à rede correta antes de realizar qualquer transação. A plataforma não se responsabiliza por perdas decorrentes de erros do utilizador, incluindo envio de fundos para endereços incorretos."
-        },
-        "changes": {
-          "title": "5. Modificações dos termos",
-          "body": "A plataforma reserva-se o direito de modificar estes termos a qualquer momento. As alterações serão comunicadas pela plataforma. O uso continuado do serviço após as alterações constitui aceitação dos novos termos."
-        }
-      }
     }
   },
   "profilePage": {
@@ -1683,5 +1771,57 @@
     "loadMore": "Carregar mais",
     "commentingOn": "Comentando em",
     "viewComment": "Ver comentário ->"
+  },
+  "seo": {
+    "home": {
+      "title": "Romulo de Moraes — Engenheiro de Software",
+      "description": "Portfolio e blog de Romulo de Moraes. Projetos, artigos e anotações sobre engenharia de software, backend e infraestrutura."
+    },
+    "blog": {
+      "title": "Blog",
+      "description": "Artigos sobre desenvolvimento de software, arquitetura, infraestrutura e as coisas que aprendo construindo produtos."
+    },
+    "resume": {
+      "title": "Currículo",
+      "description": "Experiência profissional, formação e stack técnica de Romulo de Moraes."
+    },
+    "wall": {
+      "title": "Mural",
+      "description": "Deixe uma mensagem no mural e veja o que outras pessoas escreveram."
+    },
+    "support": {
+      "title": "Apoie o blog",
+      "description": "Me pague um café e ajude a manter o blog no ar. Doações via PIX, cartão ou cripto."
+    },
+    "status": {
+      "title": "Status",
+      "description": "Métricas públicas e saúde dos serviços que mantêm o site no ar."
+    },
+    "feed": {
+      "title": "Feed RSS",
+      "description": "Assine o feed RSS para receber os novos posts do blog."
+    }
+  },
+  "error": {
+    "title": "Algo quebrou por aqui.",
+    "description": "O erro foi registrado e eu vou dar uma olhada. Você pode tentar de novo ou voltar para o início.",
+    "retry": "Tentar novamente",
+    "home": "Voltar ao início",
+    "digest": "Código do erro"
+  },
+  "notFound": {
+    "title": "Página não encontrada.",
+    "description": "O link pode estar quebrado ou a página pode ter sido movida.",
+    "home": "Voltar ao início",
+    "blog": "Ir para o blog"
+  },
+  "experienceList": {
+    "duration": {
+      "years": "{count, plural, one {# ano} other {# anos}}",
+      "months": "{count, plural, one {# mês} other {# meses}}",
+      "both": "{years} e {months}"
+    },
+    "showMore": "Ver mais",
+    "showLess": "Ver menos"
   }
 }

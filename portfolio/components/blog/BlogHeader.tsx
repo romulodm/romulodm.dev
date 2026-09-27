@@ -282,7 +282,7 @@ export function BlogHeader({
                 <span className="text-xs text-muted-foreground">
                   {hits.length} resultado{hits.length !== 1 ? 's' : ''}
                 </span>
-                <span className="text-[10px] text-muted-foreground font-mono">
+                <span className="text-xs text-muted-foreground font-mono">
                   Motor Go · TF-IDF + BK-tree
                 </span>
               </div>
@@ -309,14 +309,14 @@ export function BlogHeader({
                         {hit.tags.length > 0 && (
                           <div className="flex gap-1 mt-1 flex-wrap">
                             {hit.tags.slice(0, 3).map(tag => (
-                              <span key={tag} className="text-[10px] px-1.5 py-0.5 bg-primary/10 text-primary rounded-full">
+                              <span key={tag} className="text-xs px-1.5 py-0.5 bg-primary/10 text-primary rounded-full">
                                 #{tag}
                               </span>
                             ))}
                           </div>
                         )}
                       </div>
-                      <span className="text-[10px] text-muted-foreground font-mono shrink-0 mt-1">
+                      <span className="text-xs text-muted-foreground font-mono shrink-0 mt-1">
                         {hit.score.toFixed(3)}
                       </span>
                     </button>

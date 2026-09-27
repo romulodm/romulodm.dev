@@ -18,6 +18,7 @@ import {
   RequestValidationError,
   sanitizePlainText,
 } from "@/lib/api-validation";
+import { DEFAULT_AVATAR_STYLE, generateAvatarSeed } from "@/lib/avatar";
 import { getRequestIp, rateLimit } from "@/lib/rate-limit";
 
 function createRegisterSchema(t: Awaited<ReturnType<typeof getApiTranslator>>) {
@@ -76,6 +77,12 @@ export async function POST(req: NextRequest) {
         password: passwordHash,
         username: username ?? fallbackUsername,
         emailVerified: false,
+        // Conta por e-mail nao tem foto de provider, entao o avatar gerado e a
+        // unica imagem que ela tem — e ja nasce com uma, em vez do default.png
+        // cinza que todo mundo dividia antes.
+        avatarSeed: generateAvatarSeed(),
+        avatarStyle: DEFAULT_AVATAR_STYLE,
+        avatarSource: "SEEDICON",
       },
       select: { id: true },
     });

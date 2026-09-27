@@ -7,12 +7,12 @@
         "build": "tsc"
     },
     "dependencies": {
-        "viem": "*",
-        "tweetnacl": "*",
-        "tweetnacl-util": "*"
+        "viem": "^2.55.11",
+        "tweetnacl": "^0.14.5",
+        "tweetnacl-util": "^0.15.1"
     },
     "devDependencies": {
-        "@types/node": "*",
-        "typescript": "*"
+        "@types/node": "^22.0.0",
+        "typescript": "^5.0.0"
     }
 }

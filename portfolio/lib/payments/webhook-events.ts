@@ -4,9 +4,9 @@ import { Prisma, prisma } from "@romulo/database";
 
 import { logApiError } from "@/lib/api-errors";
 
-export type WebhookProvider = "PIX" | "STRIPE";
+type WebhookProvider = "PIX" | "STRIPE";
 
-export interface RecordedEvent {
+interface RecordedEvent {
     /** Id of the row in WebhookEvent, used to close the cycle later. */
     id: string;
     /**

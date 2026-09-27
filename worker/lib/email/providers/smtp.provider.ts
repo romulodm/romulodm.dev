@@ -1,5 +1,4 @@
-import nodemailer from "nodemailer";
-import type SMTPPool from "nodemailer/lib/smtp-pool/index.js";
+import nodemailer, { type SentMessageInfo, type Transporter } from "nodemailer";
 import type { EmailProvider, SendEmailOptions, SendResult } from "./base.provider";
 
 // ── Mode ──────────────────────────────────────────────────────────────────────
@@ -33,7 +32,7 @@ const CAMPAIGN_CONFIG = {
 
 export class SmtpProvider implements EmailProvider {
   readonly name = "smtp";
-  private transporter: nodemailer.Transporter<SMTPPool.SentMessageInfo>;
+  private transporter: Transporter<SentMessageInfo>;
   private fromAddress: string;
   private fromName: string;
 

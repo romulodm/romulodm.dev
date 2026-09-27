@@ -1,18 +1,19 @@
 'use client'
 
 import { useState, useEffect, useCallback } from "react";
-import { BookOpen, FileText, Home, Languages, Moon, Sun } from "lucide-react";
+import { BookOpen, Rss, Home, Languages, LogIn } from "lucide-react";
 import Link from "next/link";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useSession } from "next-auth/react";
 import { AuthModal } from "../auth/AuthModal";
 import { Button } from "@/components/ui/button";
 import { LanguageModal } from "../modals/LanguageModal";
-import { useTheme } from "next-themes";
 import { Dropdown } from "./Dropdown";
 import { MobileMenu } from "./MobileMenu";
 import { SearchDialog } from "../blog/SearchDialog";
 import { NavMore } from "./NavMore";
+import { IconTooltip } from "./IconTooltip";
+import { ThemeToggle } from "./ThemeToggle";
 
 export const navItems = [
     { label: "Home", href: "/", icon: <Home className="h-4 w-4" /> },
@@ -21,17 +22,12 @@ export const navItems = [
 
 const Navbar = () => {
     const t = useTranslations();
+    const locale = useLocale();
     const [scrolled, setScrolled] = useState(false);
     const [mobileOpen, setMobileOpen] = useState(false);
     const [open, setOpen] = useState(false);
 
     const [languageModalOpen, setLanguageModalOpen] = useState(false);
-    const { setTheme } = useTheme()
-
-    function toggleTheme() {
-        const isDark = document.documentElement.classList.contains('dark')
-        setTheme(isDark ? 'light' : 'dark')
-    }
 
     const openAuthModal = useCallback(() => setOpen(true), [])
     const closeAuthModal = useCallback(() => setOpen(false), [])
@@ -85,34 +81,42 @@ const Navbar = () => {
                     <div className="flex items-center gap-2">
                         <SearchDialog />
 
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => setLanguageModalOpen(true)}
-                            className="hidden p-2.5 md:flex text-foreground hover:bg-gray-200 dark:hover:bg-secondary hover:text-black dark:hover:text-foreground"
-                        >
-                            <Languages className="h-4 w-4" />
-                        </Button>
+                        <IconTooltip label={t('navigation.tooltip.language')}>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => setLanguageModalOpen(true)}
+                                aria-label={t('navigation.tooltip.language')}
+                                className="hidden p-2.5 md:flex text-foreground hover:bg-gray-400/60 dark:hover:bg-neutral-800/50 hover:text-black dark:hover:text-foreground"
+                            >
+                                <Languages className="h-4 w-4" />
+                            </Button>
+                        </IconTooltip>
 
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={toggleTheme}
-                            className="hidden p-2.5 md:flex text-foreground hover:bg-gray-200 dark:hover:bg-secondary hover:text-black dark:hover:text-foreground"
-                        >
-                            {
-                                <>
-                                    <span className="dark:hidden">
-                                        <Sun className="h-4 w-4" />
-                                    </span>
+                        <ThemeToggle />
 
-                                    <span className="hidden dark:inline">
-                                        <Moon className="h-4 w-4" />
-                                    </span>
-
-                                </>
-                            }
-                        </Button>
+                        {/* Este botao chamava setLanguageModalOpen — abria o modal
+                            de idioma em vez do feed. Agora aponta para o RSS do
+                            locale atual. */}
+                        <IconTooltip label={t('navigation.tooltip.rss')}>
+                            <Button
+                                asChild
+                                variant="ghost"
+                                size="icon"
+                                className="hidden p-2.5 md:flex text-foreground hover:bg-gray-400/60 dark:hover:bg-neutral-800/50 hover:text-black dark:hover:text-foreground"
+                            >
+                                {/* Sem `title`: o atributo nativo abriria um segundo
+                                    balao do navegador por cima do tooltip. */}
+                                <a
+                                    href={`/${locale}/feed.xml`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    aria-label={t('seo.feed.title')}
+                                >
+                                    <Rss className="h-4 w-4" />
+                                </a>
+                            </Button>
+                        </IconTooltip>
 
                         {data ? (
                             <Dropdown
@@ -121,12 +125,19 @@ const Navbar = () => {
                             />
                         ) : (
                             <>
-                                <button
+                                {/* Ghost com icone, o mesmo tratamento dos icones ao
+                                    lado: entrar nao e a acao principal de um blog, e o
+                                    laranja solido brigava com o `~` da marca. Sem
+                                    tooltip — o botao ja tem rotulo. */}
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
                                     onClick={openAuthModal}
-                                    className="text-sm mr-2 font-medium bg-primary text-white px-3 py-2 rounded hover:opacity-90 transition-opacity"
+                                    className="px-3 py-2 text-sm font-medium text-foreground hover:bg-gray-400/60 hover:text-black dark:hover:bg-neutral-800/50 dark:hover:text-foreground"
                                 >
-                                    Login
-                                </button>
+                                    <LogIn className="h-4 w-4" />
+                                    {t('navigation.login')}
+                                </Button>
                                 <MobileMenu onOpenLanguageModal={() => setLanguageModalOpen(true)} />
                             </>
                         )}

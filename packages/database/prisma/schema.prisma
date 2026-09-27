@@ -13,7 +13,25 @@ model User {
   email                 String                 @unique
   createdAt             DateTime               @default(now())
   updatedAt             DateTime               @updatedAt
+  /// Foto vinda do provider OAuth. Nunca sobrescrita nem apagada: se o usuario
+  /// troca para o avatar gerado, ela continua aqui para ele poder voltar.
   image                 String?
+  /// Semente do seedicon. UUID em vez do username porque o usuario troca de
+  /// avatar gerando um UUID novo — se fosse o username, mudar de avatar
+  /// obrigaria a mudar de nome, e mudar de nome trocaria o avatar sem querer.
+  ///
+  /// O default e de nivel Prisma (gerado no client, como o cuid() do `id`
+  /// acima), nao no banco: a migration que criou a coluna preencheu as linhas
+  /// existentes com gen_random_uuid() e deixou NOT NULL sem DEFAULT. Existe
+  /// para que nenhum `user.create` — fixture de teste, seed, rota nova —
+  /// consiga esquecer a semente.
+  avatarSeed            String                 @default(uuid())
+  /// Nome do estilo do seedicon. String, e nao enum do Prisma: uma release nova
+  /// do pacote com mais estilos nao deve exigir migration. A validacao vive na
+  /// borda, contra SEEDICON_STYLES (portfolio/lib/avatar.ts).
+  avatarStyle           String                 @default("pixels")
+  /// Qual das duas imagens renderizar. As duas coexistem sempre.
+  avatarSource          AvatarSource           @default(SEEDICON)
   admin                 Boolean                @default(false)
   emailVerified         Boolean                @default(false)
   password              String?                @db.VarChar(255)
@@ -328,6 +346,12 @@ model WallMessage {
   message   String   @db.VarChar(100)
   authorId  String
   theme     Int      @default(0)
+  /// Card art chosen in the publish modal. Plain strings, not Prisma enums,
+  /// for the same reason as User.avatarStyle: adding or retiring a style is a
+  /// code change in portfolio/components/wall/cardArt.ts, not a migration.
+  /// Validated at the API edge against CARD_ART_STYLES / CARD_ART_TONES.
+  artStyle  String   @default("mesh") @db.VarChar(20)
+  artTone   String   @default("dark") @db.VarChar(10)
   createdAt DateTime @default(now())
   author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
@@ -339,6 +363,13 @@ enum AuthProvider {
   EMAIL_PASSWORD
   GOOGLE
   GITHUB
+}
+
+enum AvatarSource {
+  /// Renderiza User.image (foto do Google/GitHub).
+  PROVIDER
+  /// Renderiza o seedicon a partir de avatarSeed + avatarStyle.
+  SEEDICON
 }
 
 enum PostStatus {
@@ -371,4 +402,43 @@ enum DonationStatus {
   COMPLETED
   FAILED
   EXPIRED
+}
+
+model ContactMessage {
+  id        String        @id @default(cuid())
+  name      String        @db.VarChar(80)
+  email     String        @db.VarChar(160)
+  topic     ContactTopic
+  message   String        @db.VarChar(2000)
+  status    ContactStatus @default(RECEIVED)
+  locale    String        @db.VarChar(5)
+  /// sha256(APP_SECRET + IP). Guardamos o hash e nao o IP: o rate limit vive
+  /// no Redis com chave efemera, e o que sobra de util aqui e so responder
+  /// "essas mensagens vieram todas do mesmo lugar?".
+  ipHash    String        @db.VarChar(64)
+  userAgent String?       @db.VarChar(300)
+  createdAt DateTime      @default(now())
+  readAt    DateTime?
+  repliedAt DateTime?
+  closedAt  DateTime?
+
+  @@index([status, createdAt])
+  @@index([createdAt])
+  @@index([ipHash, createdAt])
+}
+
+enum ContactTopic {
+  FULL_TIME
+  FREELANCE
+  SAYING_HI
+  BUG_REPORT
+  OTHER
+}
+
+enum ContactStatus {
+  RECEIVED
+  READ
+  REPLIED
+  CLOSED
+  SPAM
 }

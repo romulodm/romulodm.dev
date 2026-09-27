@@ -14,7 +14,7 @@ export function ProfileTab({ profile }: { profile: Profile }) {
                     {t("stats.title")}
                 </h2>
                 <div className="grid grid-cols-2 gap-4">
-                    <div className="text-center p-4 rounded-md bg-accent/50">
+                    <div className="text-center p-4 rounded-md bg-secondary/50">
                         <p className="text-2xl font-bold">{profile._count.comments}</p>
                         <p className="text-xs text-muted-foreground mt-1">{t("stats.comments")}</p>
                     </div>

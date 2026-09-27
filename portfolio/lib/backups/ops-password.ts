@@ -26,7 +26,7 @@ function lockoutKey(userId: string) {
   return `backup:ops:lockout:${userId}`;
 }
 
-export interface OpsPasswordResult {
+interface OpsPasswordResult {
   ok: boolean;
   reason?: "missing_password" | "not_configured" | "locked_out" | "invalid";
   retryAfterSeconds?: number;
@@ -84,15 +84,4 @@ export async function verifyOpsPassword(
   // 3. Sucesso — zera contador
   await redis.del(attemptsKey(userId));
   return { ok: true };
-}
-
-/**
- * Helper para gerar o hash via CLI uma única vez:
- *
- *   node -e "import('bcryptjs').then(b => b.default.hash('sua_senha_forte_aqui', 12).then(console.log))"
- *
- * Copia o hash resultante para BACKUP_OPS_PASSWORD_HASH no .env
- */
-export async function hashOpsPassword(plain: string): Promise<string> {
-  return bcrypt.hash(plain, 12);
 }

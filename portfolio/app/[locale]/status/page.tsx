@@ -101,7 +101,7 @@ export default function StatusPage() {
     if (loading) {
         return (
             <main className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
-                <h1 className="mb-8 text-3xl font-bold text-foreground">
+                <h1 className="type-h1 mb-8 text-foreground">
                     Estatisticas e Status do Site
                 </h1>
                 <div className="space-y-3">
@@ -121,7 +121,7 @@ export default function StatusPage() {
 
     return (
         <main className="mx-auto max-w-3xl px-4 py-12 sm:px-6 space-y-14">
-            <h1 className="text-3xl font-bold text-foreground">
+            <h1 className="type-h1 text-foreground">
                 Estatisticas e Status do Site
             </h1>
 
@@ -345,7 +345,7 @@ export default function StatusPage() {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
     return (
         <section className="space-y-6">
-            <h2 className="text-xl font-bold text-foreground border-b border-border pb-2">{title}</h2>
+            <h2 className="type-h3 text-foreground border-b border-border pb-2">{title}</h2>
             {children}
         </section>
     );

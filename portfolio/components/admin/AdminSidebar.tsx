@@ -9,6 +9,7 @@ import {
   FileText,
   Mail,
   AlertTriangle,
+  MessageSquare,
   Ban,
   Moon,
   Sun,
@@ -21,9 +22,11 @@ import {
 import { useState, useEffect } from 'react';
 
 import { Logo } from '../Logo';
+import { UserAvatar } from "@/components/ui/UserAvatar";
+import type { AvatarUser } from "@/lib/avatar";
 
 interface Props {
-  user: { username: string; image: string | null; email: string } | null;
+  user: (AvatarUser & { email: string }) | null;
 }
 
 type NavItem = {
@@ -57,6 +60,7 @@ const NAV_ITEMS: NavItem[] = [
       { id: 'templates', href: '/admin/newsletter/templates' },
     ],
   },
+  { id: 'contact', href: '/admin/contact', icon: MessageSquare },
   { id: 'suspiciousComments', href: '/admin/suspicious-comments', icon: AlertTriangle },
   { id: 'bannedUsers', href: '/admin/banned-users', icon: Ban },
   {
@@ -115,7 +119,9 @@ export function AdminSidebar({ user }: Props) {
   return (
     <aside className="fixed left-0 top-0 z-40 flex h-screen w-64 flex-col border-r border-border bg-card">
       <div className="flex items-center gap-3 border-b border-border px-5 py-5">
-        <Logo className="h-6 w-6 text-primary" />
+        <Link href="/" className="flex items-center gap-2">
+          <Logo className="h-6 w-6 text-primary" />
+        </Link>
         <span className="font-semibold tracking-wide text-foreground">romulodm.dev</span>
       </div>
 
@@ -202,15 +208,11 @@ export function AdminSidebar({ user }: Props) {
 
       <div className="border-t border-border p-4">
         <div className="flex items-center gap-3">
-          {user?.image ? (
-            <img
-              src={user.image}
-              alt={user.username}
-              className="h-8 w-8 rounded-full object-cover ring-1 ring-border"
-            />
+          {user ? (
+            <UserAvatar user={user} size={32} className="ring-1 ring-border" />
           ) : (
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/20 text-xs font-bold text-primary">
-              {user?.username?.charAt(0).toUpperCase() ?? 'A'}
+              A
             </div>
           )}
           <div className="min-w-0 flex-1">

@@ -9,6 +9,9 @@ const withNextIntl = createNextIntlPlugin('./i18n/request.ts');
 
 const nextConfig = {
   output: 'standalone',
+  typescript: {
+    tsconfigPath: 'tsconfig.build.json',
+  },
   outputFileTracingIncludes: {
     '/[locale]/legal/**': ['./content/legal/**'],
   },

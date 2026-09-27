@@ -1,4 +1,4 @@
-import { Languages, LogOut, Menu, Moon, Sun, User } from "lucide-react";
+import { Languages, LogOut, Menu, User } from "lucide-react";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -7,31 +7,37 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import Image from "next/image";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
 import { useTranslations } from "next-intl";
+import { UserAvatar } from "@/components/ui/UserAvatar";
+import { avatarUserFromSession, type AvatarUser } from "@/lib/avatar";
 import { navItems } from "./Navbar";
-import { useTheme } from "next-themes";
+import { moreItems } from "./moreItems";
+import { ThemeMenuItems } from "./ThemeMenuItems";
 
 interface DropdownProps {
+    /**
+     * Vem de `useSession().data.user`, nao de um select do Prisma — por isso
+     * todo campo e opcional. Os tres de avatar sao injetados no JWT pelo
+     * callback `session` em lib/auth.ts.
+     */
     user: {
         username?: string | null;
         image?: string | null;
         email?: string | null;
+        avatarSeed?: string | null;
+        avatarStyle?: string | null;
+        avatarSource?: string | null;
     }
     onOpenLanguageModal: () => void;
 }
 
 export function Dropdown({ user, onOpenLanguageModal }: DropdownProps) {
     const t = useTranslations('navigation.modal');
+    const tNav = useTranslations('navigation');
 
-    const { setTheme } = useTheme();
-
-    function toggleTheme() {
-        const isDark = document.documentElement.classList.contains('dark');
-        setTheme(isDark ? 'light' : 'dark');
-    }
+    const avatarUser = avatarUserFromSession(user);
 
     return (
         <>
@@ -41,14 +47,8 @@ export function Dropdown({ user, onOpenLanguageModal }: DropdownProps) {
                         <div className="md:hidden p-2 text-foreground hover:bg-gray-200 dark:hover:bg-secondary hover:text-black dark:hover:text-foreground rounded">
                             <Menu className="h-5 w-5" />
                         </div>
-                        <div className="hidden md:flex px-4">
-                            <Image
-                                src={user.image ?? "/default.png"}
-                                alt={user?.username ?? "User"}
-                                width={24}
-                                height={24}
-                                className="w-6 h-6 rounded-full object-cover"
-                            />
+                        <div className="hidden md:flex pl-4">
+                            <AvatarSlot user={avatarUser} username={user.username} size={24} />
                         </div>
                     </button>
                 </DropdownMenuTrigger>
@@ -58,13 +58,7 @@ export function Dropdown({ user, onOpenLanguageModal }: DropdownProps) {
                     {/* Header */}
                     <DropdownMenuLabel>
                         <div className="flex items-center gap-3">
-                            <Image
-                                src={user.image ?? "/default.png"}
-                                alt={user?.username ?? "User"}
-                                width={32}
-                                height={32}
-                                className="w-8 h-8 rounded-full object-cover"
-                            />
+                            <AvatarSlot user={avatarUser} username={user.username} size={32} />
                             <div className="flex flex-col">
                                 <span className="text-sm font-medium">@{user.username}</span>
                                 <span className="text-xs text-muted-foreground">{user.email}</span>
@@ -92,20 +86,31 @@ export function Dropdown({ user, onOpenLanguageModal }: DropdownProps) {
                             </DropdownMenuItem>
                         ))}
 
+                        {/* Os links do "More" — o painel do desktop nao aparece no mobile
+                            (hidden md:block em NavMore), entao eles entram achatados aqui. */}
+                        {moreItems.map((item) => (
+                            <DropdownMenuItem key={item.href} asChild>
+                                <Link
+                                    href={item.href}
+                                    target={item.external ? "_blank" : undefined}
+                                    rel={item.external ? "noopener noreferrer" : undefined}
+                                    className="flex items-center gap-2 text-sm"
+                                >
+                                    {item.icon}
+                                    {item.label}
+                                </Link>
+                            </DropdownMenuItem>
+                        ))}
+
                         <DropdownMenuSeparator />
 
-                        <DropdownMenuItem onClick={toggleTheme} className="flex items-center gap-2 cursor-pointer">
-                            <span className="dark:hidden flex items-center gap-2">
-                                <Sun className="h-4 w-4" /> Tema
-                            </span>
-                            <span className="hidden dark:flex items-center gap-2">
-                                <Moon className="h-4 w-4" /> Tema
-                            </span>
-                        </DropdownMenuItem>
+                        <ThemeMenuItems />
+
+                        <DropdownMenuSeparator />
 
                         <DropdownMenuItem onClick={onOpenLanguageModal} className="flex items-center gap-2 cursor-pointer">
                             <Languages className="h-4 w-4" />
-                            Idioma
+                            {tNav("language")}
                         </DropdownMenuItem>
                     </div>
 
@@ -122,5 +127,32 @@ export function Dropdown({ user, onOpenLanguageModal }: DropdownProps) {
                 </DropdownMenuContent>
             </DropdownMenu>
         </>
+    );
+}
+
+/**
+ * O avatar da navbar, com uma saida para o caso de o JWT ainda nao carregar os
+ * campos (token emitido antes desta feature). Nesse intervalo mostra a inicial
+ * em vez de um PNG cinza generico — o callback `jwt` conserta o token na
+ * primeira leitura de sessao, entao isto e transitorio.
+ */
+function AvatarSlot({
+    user,
+    username,
+    size,
+}: {
+    user: AvatarUser | null;
+    username?: string | null;
+    size: number;
+}) {
+    if (user) return <UserAvatar user={user} size={size} />;
+
+    return (
+        <span
+            className="flex shrink-0 items-center justify-center rounded-full bg-primary/20 font-bold uppercase text-primary"
+            style={{ width: size, height: size, fontSize: size * 0.42 }}
+        >
+            {username?.charAt(0) ?? "?"}
+        </span>
     );
 }

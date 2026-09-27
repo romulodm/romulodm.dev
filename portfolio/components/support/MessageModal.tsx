@@ -29,11 +29,11 @@ export function MessageModal({ open, onOpenChange, name, message }: Props) {
                     </DialogTitle>
                 </DialogHeader>
 
-                <div className="space-y-3">
+                <div className="space-y-3 -mt-3">
                     <p className="text-xs text-muted-foreground font-medium tracking-wide">
                         {t('messageModal.label')}
                     </p>
-                    <div className="bg-muted/50 rounded-lg px-4 py-3 max-h-64 max-w-sm overflow-y-auto">
+                    <div className="bg-muted/50 rounded px-4 py-3 max-h-64 max-w-sm overflow-y-auto">
                         <p className="text-sm text-foreground leading-relaxed whitespace-pre-wrap break-words" lang={locale}>
                             {message}
                         </p>

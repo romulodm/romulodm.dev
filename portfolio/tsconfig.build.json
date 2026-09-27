@@ -1,0 +1,28 @@
+// Build-only TypeScript config, wired in through `typescript.tsconfigPath` in
+// next.config.js. tsconfig.json stays the full one — the config the editor and
+// `npm run typecheck` use — so tests remain type-checked in CI.
+//
+// Why the split: tsconfig.json includes `**/*.ts`, which drags portfolio/tests/**
+// into the build's type check. Those tests import outside portfolio/:
+//
+//   tests/integration/**              -> ../../../../testing/integration/fixtures
+//   tests/integration/views.recording -> ../../../worker/workers/views.worker
+//
+// portfolio/Dockerfile copies only packages/{database,queues,templates,web3} and
+// portfolio/. Neither testing/ nor worker/ ends up in the image, so tsc fails with
+// TS2307 inside the container during `next build` — while CI, which checks out the
+// whole repo, resolves those paths and passes green.
+//
+// Test files never reach the bundle either, so the production build has no reason
+// to type-check them. If a new test lands outside tests/, add its pattern here.
+{
+  "extends": "./tsconfig.json",
+  "exclude": [
+    "node_modules",
+    "tests/**",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/__tests__/**",
+    "playwright.config.ts"
+  ]
+}

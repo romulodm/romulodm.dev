@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useCallback, useEffect, useState } from "react";
+import { Suspense, useRef, useCallback, useEffect, useState } from "react";
 import Lanyard from "@/components/ui/lanyard";
 import CardTemplate, { type CardTemplateRef } from "@/components/lanyard/LayardCardTemplate";
 
@@ -12,38 +12,45 @@ function getTodayFormatted(): string {
     return `${day}.${month}.${year}`;
 }
 
+/** Safety net: never leave the hero empty if the GLB fails to resolve. */
+const REVEAL_TIMEOUT_MS = 4000;
+
 interface LanyardDisplayProps {
     position?: [number, number, number];
     fov?: number;
     containerClassName?: string;
+    /** Repassado ao <Canvas>: eventos de ponteiro vem deste elemento. */
+    eventSource?: React.RefObject<HTMLElement | null>;
+    /** Repassado ao <Lanyard>: altura do quadro de referencia da camera. */
+    frameHeight?: () => number;
 }
 
 export default function LanyardDisplay({
     position = [0, 0, 20],
     fov = 20,
     containerClassName,
+    eventSource,
+    frameHeight,
 }: LanyardDisplayProps) {
-    const [cardTextureUrl, setCardTextureUrl] = useState<string | undefined>(undefined);
-    const [textureKey, setTextureKey] = useState(0);
+    const [cardTexture, setCardTexture] = useState<HTMLCanvasElement | null>(null);
     const [isReady, setIsReady] = useState(false);
     const cardTemplateRef = useRef<CardTemplateRef>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const today = getTodayFormatted();
 
-    const handleTextureReady = useCallback((dataUrl: string) => {
-        setCardTextureUrl(dataUrl);
-        setTextureKey((prev) => prev + 1);
+    const handleTextureReady = useCallback((canvas: HTMLCanvasElement) => {
+        setCardTexture(canvas);
+    }, []);
+
+    const handleSceneReady = useCallback(() => {
         setIsReady(true);
     }, []);
 
     useEffect(() => {
-        const timer = setTimeout(async () => {
-            if (cardTemplateRef.current) {
-                await cardTemplateRef.current.captureTexture();
-            }
-        }, 150);
+        if (isReady) return;
+        const timer = setTimeout(() => setIsReady(true), REVEAL_TIMEOUT_MS);
         return () => clearTimeout(timer);
-    }, []);
+    }, [isReady]);
 
     return (
         <>
@@ -57,30 +64,24 @@ export default function LanyardDisplay({
                 date={today}
             />
             <div className={containerClassName}>
-                {/* Skeleton placeholder while loading */}
-
-                {/* 
-                <div
-                    className={`absolute inset-0 z-20 w-full h-full flex items-center justify-center transition-opacity duration-500 ${isReady ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
-                >
-                    <div className="relative w-[200px] h-[280px] animate-pulse">
-                        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[160px] h-[210px] rounded-xl bg-black/20 dark:bg-white/10" />
-                        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1 h-[100px] bg-black/10 dark:bg-white/5" />
-                    </div>
-                </div> 
-                */}
-
-                {/* Actual 3D content with fade-in */}
+                {/* Mounted as soon as the texture exists; revealed once the scene
+                    is live, so the fade-in rides along with the card dropping in. */}
                 <div className={`transition-opacity duration-500 ${isReady ? 'opacity-100' : 'opacity-0'}`}>
-                    {isReady && (
-                        <Lanyard
-                            key={textureKey}
-                            position={position}
-                            fov={fov}
-                            containerClassName="absolute inset-0 w-full h-full"
-                            cardTextureUrl={cardTextureUrl}
-                            canvasRef={canvasRef}
-                        />
+                    {cardTexture && (
+                        // Local boundary: <Canvas> suspends on the GLB, and without
+                        // this it would throw all the way up and blank the hero.
+                        <Suspense fallback={null}>
+                            <Lanyard
+                                position={position}
+                                fov={fov}
+                                containerClassName="absolute inset-0 w-full h-full"
+                                cardTexture={cardTexture}
+                                canvasRef={canvasRef}
+                                onReady={handleSceneReady}
+                                eventSource={eventSource}
+                                frameHeight={frameHeight}
+                            />
+                        </Suspense>
                     )}
                 </div>
             </div>

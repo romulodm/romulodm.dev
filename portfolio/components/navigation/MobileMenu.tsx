@@ -1,6 +1,6 @@
 'use client'
 
-import { Menu, Moon, Sun, Languages } from "lucide-react";
+import { Menu, Rss, Languages } from "lucide-react";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -8,21 +8,19 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { ThemeMenuItems } from "./ThemeMenuItems";
 import Link from "next/link";
 import { navItems } from "./Navbar";
-import { useTheme } from "next-themes";
+import { moreItems } from "./moreItems";
+import { useLocale, useTranslations } from "next-intl";
 
 interface MobileMenuProps {
     onOpenLanguageModal: () => void;
 }
 
 export function MobileMenu({ onOpenLanguageModal }: MobileMenuProps) {
-    const { setTheme } = useTheme();
-
-    function toggleTheme() {
-        const isDark = document.documentElement.classList.contains('dark');
-        setTheme(isDark ? 'light' : 'dark');
-    }
+    const locale = useLocale();
+    const t = useTranslations("navigation");
 
     return (
         <DropdownMenu modal={false}>
@@ -42,20 +40,46 @@ export function MobileMenu({ onOpenLanguageModal }: MobileMenuProps) {
                     </DropdownMenuItem>
                 ))}
 
+                {/* Os links do "More" — o painel do desktop nao aparece no mobile
+                    (hidden md:block em NavMore), entao eles entram achatados aqui. */}
+                {moreItems.map((item) => (
+                    <DropdownMenuItem key={item.href} asChild>
+                        <Link
+                            href={item.href}
+                            target={item.external ? "_blank" : undefined}
+                            rel={item.external ? "noopener noreferrer" : undefined}
+                            className="flex items-center gap-2 text-sm"
+                        >
+                            {item.icon}
+                            {item.label}
+                        </Link>
+                    </DropdownMenuItem>
+                ))}
+
                 <DropdownMenuSeparator />
 
-                <DropdownMenuItem onClick={toggleTheme} className="flex items-center gap-2 cursor-pointer">
-                    <span className="dark:hidden flex items-center gap-2">
-                        <Sun className="h-4 w-4" /> Tema
-                    </span>
-                    <span className="hidden dark:flex items-center gap-2">
-                        <Moon className="h-4 w-4" /> Tema
-                    </span>
-                </DropdownMenuItem>
+                {/* Claro / escuro / sistema — as mesmas tres opcoes do desktop, para
+                    que "sistema" nao fique inalcancavel no mobile. */}
+                <ThemeMenuItems />
+
+                <DropdownMenuSeparator />
 
                 <DropdownMenuItem onClick={onOpenLanguageModal} className="flex items-center gap-2 cursor-pointer">
                     <Languages className="h-4 w-4" />
-                    Idioma
+                    {t("language")}
+                </DropdownMenuItem>
+
+                {/* O botao de RSS do desktop fica escondido no mobile (md:flex),
+                    entao o feed precisa de uma entrada propria aqui. */}
+                <DropdownMenuItem asChild className="flex items-center gap-2 cursor-pointer">
+                    <a
+                        href={`/${locale}/feed.xml`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        <Rss className="h-4 w-4" />
+                        RSS
+                    </a>
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>

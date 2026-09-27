@@ -2,9 +2,8 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
-import { Heart, Eye, MessageSquare } from 'lucide-react';
+import { Heart, Eye, MessageSquare, ArrowRight } from 'lucide-react';
 import { formatDistanceToNow } from '@/lib/utils';
 import { formatCount } from '@/lib/format-number';
 import type { PostLayout } from '@/components/blog/BlogHeader';
@@ -29,60 +28,34 @@ interface Post {
   postTags: { tag: string }[];
   author?: PostAuthor | null;
 }
-
-/** Avatar + @username, com link para o perfil do autor. */
-function AuthorLink({ author, size = 'sm' }: { author?: PostAuthor | null; size?: 'sm' | 'md' }) {
+function ReadMore({ size = 'sm' }: { size?: 'sm' | 'md' }) {
   const t = useTranslations('blogUi.card');
-  const locale = useLocale();
-  const router = useRouter();
-  if (!author) return null;
-
-  const avatarSize = size === 'md' ? 'w-6 h-6' : 'w-5 h-5';
   const textSize = size === 'md' ? 'text-sm' : 'text-xs';
-  const go = (event: React.SyntheticEvent) => {
-    event.preventDefault();
-    event.stopPropagation();
-    router.push(`/${locale}/profile/${author.username}`);
-  };
 
   return (
-    // O card inteiro já é um <Link>; usar <span> evita <a> aninhado (HTML inválido).
     <span
-      role="link"
-      tabIndex={0}
-      title={t('authorProfile', { username: author.username })}
-      onClick={go}
-      onKeyDown={(event) => {
-        if (event.key === 'Enter' || event.key === ' ') go(event);
-      }}
-      className={`flex items-center gap-1.5 min-w-0 cursor-pointer text-muted-foreground hover:text-foreground hover:underline underline-offset-2 transition-colors ${textSize}`}
+      aria-hidden="true"
+      className={`flex items-center gap-1 shrink-0 font-medium text-muted-foreground transition-colors ${textSize}`}
     >
-      {author.image ? (
-        <img
-          src={author.image}
-          alt=""
-          className={`${avatarSize} rounded-full object-cover shrink-0`}
-        />
-      ) : (
-        <span className={`${avatarSize} rounded-full bg-muted shrink-0`} />
-      )}
-      <span className="truncate">@{author.username}</span>
+      {t('readMore')}
+      <ArrowRight
+        size={14}
+        className="transition-transform duration-300 group-hover:translate-x-0.5 mt-0.5"
+      />
     </span>
   );
 }
 
-/** "{n} min de leitura". */
 function ReadingTime({ minutes, size = 'sm' }: { minutes: number; size?: 'sm' | 'md' }) {
   const t = useTranslations('blogUi.card');
 
   return (
-    <span className={`${size === 'md' ? 'text-sm' : 'text-xs'} text-muted-foreground shrink-0`}>
+    <span className={`${size === 'md' ? 'text-sm' : 'text-xs'} text-muted-foreground shrink-0 mr-auto`}>
       {t('readingTime', { minutes })}
     </span>
   );
 }
 
-/** "Publicado {data}" alinhado à direita. */
 function PublishedAt({ date, size = 'sm' }: { date: Date | string | null; size?: 'sm' | 'md' }) {
   const t = useTranslations('blogUi.card');
   const locale = useLocale();
@@ -90,7 +63,7 @@ function PublishedAt({ date, size = 'sm' }: { date: Date | string | null; size?:
 
   return (
     <span className={`${size === 'md' ? 'text-sm' : 'text-xs'} text-muted-foreground shrink-0`}>
-      {t('published', { date: formatDistanceToNow(new Date(date), locale) })}
+      {formatDistanceToNow(new Date(date), locale)}
     </span>
   );
 }
@@ -138,10 +111,10 @@ function PostCardRow({ post }: { post: Post }) {
 
         {/* Content */}
         <div className="flex flex-col flex-1 px-5 py-4 gap-2 min-w-0">
-          {/* Top row: reading time + published date */}
+          {/* Top row: published date (left) + reading time (right) */}
           <div className="flex items-center justify-between gap-2">
-            <ReadingTime minutes={post.readingTime} />
             <PublishedAt date={post.publishedAt} />
+            <ReadingTime minutes={post.readingTime} />
           </div>
 
           {/* Tags */}
@@ -159,7 +132,7 @@ function PostCardRow({ post }: { post: Post }) {
           )}
 
           {/* Title */}
-          <h2 className="font-bold text-foreground text-base leading-snug line-clamp-2 group-hover:text-primary transition-colors">
+          <h2 className="type-h3 text-foreground line-clamp-2 group-hover:text-primary transition-colors">
             {post.title}
           </h2>
 
@@ -173,7 +146,7 @@ function PostCardRow({ post }: { post: Post }) {
           {/* Footer */}
           <div className="flex flex-row items-center justify-between gap-2 pt-3 border-t border-border mt-auto">
             <PostMetaBadges likes={post.likes} views={post.views} comments={post.commentsCount} />
-            <AuthorLink author={post.author} />
+            <ReadMore />
           </div>
         </div>
       </article>
@@ -223,7 +196,7 @@ function PostCardGrid({ post }: { post: Post }) {
             </div>
           )}
 
-          <h2 className="font-bold text-foreground text-base leading-snug line-clamp-2 group-hover:text-primary transition-colors">
+          <h2 className="type-h3 text-foreground line-clamp-2 group-hover:text-primary transition-colors">
             {post.title}
           </h2>
 
@@ -235,7 +208,7 @@ function PostCardGrid({ post }: { post: Post }) {
 
           <div className="flex flex-row items-center justify-between gap-2 pt-4 border-t border-border mt-auto">
             <PostMetaBadges likes={post.likes} views={post.views} comments={post.commentsCount} />
-            <AuthorLink author={post.author} />
+            <ReadMore />
           </div>
         </div>
       </article>

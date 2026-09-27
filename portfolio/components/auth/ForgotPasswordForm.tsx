@@ -48,7 +48,7 @@ export function ForgotPasswordForm({ onBack }: Props) {
       <div className="flex flex-col items-center w-full text-center">
         <div className="flex flex-col items-center mb-5">
           <div className="text-primary w-8 h-8">
-            <Logo />
+            <Logo className="text-primary" />
           </div>
           <p className="text-primary text-xl font-bold mt-1">Acumulou</p>
         </div>

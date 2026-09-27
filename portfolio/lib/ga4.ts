@@ -173,3 +173,21 @@ export async function getPeriodTotals(days = 30) {
         },
     };
 }
+// ── Tempo real: usuários ativos agora ─────────────────────────────────────────
+
+/**
+ * Usuários ativos nos últimos 30 minutos.
+ *
+ * `runRealtimeReport` sem dimensão nenhuma devolve uma única linha com o total.
+ * Pedir uma dimensão aqui (país, página) multiplicaria as linhas e ainda exigiria
+ * somar de volta — e o dado que a home mostra é só a contagem.
+ */
+export async function getRealtimeActiveUsers(): Promise<number> {
+    const [response] = await client.runRealtimeReport({
+        property: `properties/${propertyId}`,
+        metrics: [{ name: 'activeUsers' }],
+        minuteRanges: [{ startMinutesAgo: 29, endMinutesAgo: 0 }],
+    });
+
+    return Number(response.rows?.[0]?.metricValues?.[0]?.value ?? 0);
+}

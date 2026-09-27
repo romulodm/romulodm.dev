@@ -17,7 +17,13 @@ waha-data
 .turbo
 tmp
 
+*.tsbuildinfo
+**/*.tsbuildinfo
+
 .sentryclirc
 **/.sentryclirc
 .env.sentry-build-plugin
 **/.env.sentry-build-plugin
+
+packages/*/index.js
+packages/*/index.js.map

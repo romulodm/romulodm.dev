@@ -1,5 +1,4 @@
-version: '3.8'
-name: 'romulodm.dev'
+name: 'nginx/romulodm.dev'
 
 services:
   postgres:
@@ -16,23 +15,6 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    networks:
-      - romulodm-network
-
-  umami-db:
-    image: postgres:16-alpine
-    container_name: romulodm-umami-db
-    env_file:
-      - .env
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: ${UMAMI_POSTGRES_USER}
-      POSTGRES_PASSWORD: ${UMAMI_POSTGRES_PASSWORD}
-      POSTGRES_DB: ${UMAMI_DB}
-    ports:
-      - "5433:5432"
-    volumes:
-      - umami_postgres_data:/var/lib/postgresql/data
     networks:
       - romulodm-network
 
@@ -75,7 +57,9 @@ services:
       start_period: 10s
 
   minio-init:
-    image: minio/mc:latest
+    # minio/mc was removed from Docker Hub (and quay.io). The server image ships
+    # the same `mc` binary (the healthcheck above already relies on it).
+    image: minio/minio:latest
     container_name: romulodm-minio-init
     env_file:
       - .env
@@ -92,37 +76,6 @@ services:
     networks:
       - romulodm-network
     restart: "no"
-
-  umami:
-    image: ghcr.io/umami-software/umami:postgresql-latest
-    container_name: romulodm-umami
-    env_file:
-      - .env
-    ports:
-      - '${UMAMI_PORT}:3000'
-    environment:
-      DATABASE_URL: postgresql://${UMAMI_POSTGRES_USER}:${UMAMI_POSTGRES_PASSWORD}@umami-db:5432/${UMAMI_DB}
-      APP_SECRET: ${APP_SECRET}
-      DEBUG: umami:*
-      REDIS_URL: redis://redis:6379
-    depends_on:
-      - umami-db
-      - redis
-    restart: unless-stopped
-    networks:
-      - romulodm-network
-
-  waha:
-    image: devlikeapro/waha
-    container_name: romulodm-waha
-    ports:
-      - "3002:3000"
-    volumes:
-      - ./waha-data:/app/.sessions
-    environment:
-      - WHATSAPP_DEFAULT_ENGINE=WEBJS
-    networks:
-      - romulodm-network
 
   redis:
     image: redis:7-alpine
@@ -149,10 +102,44 @@ services:
     networks:
       - romulodm-network
 
+  search-go:
+    build:
+      context: ./search
+      dockerfile: Dockerfile
+    container_name: romulodm-search
+    restart: unless-stopped
+    environment:
+      PORT: 8080
+      SNAPSHOT_PATH: /data/documents.json
+      SEARCH_INTERNAL_SECRET: ${SEARCH_INTERNAL_SECRET:-}
+    ports:
+      - "8080:8080"
+    volumes:
+      - search_data:/data
+    networks:
+      - romulodm-network
+
   app:
     build:
       context: .
       dockerfile: portfolio/Dockerfile
+      # As NEXT_PUBLIC_* são inlinadas em BUILD time pelo Next — inclusive no
+      # bundle de servidor. Sem passá-las como args aqui, o `env_file` abaixo
+      # não adianta: o valor já foi congelado como "" durante o build, e o
+      # código lê string vazia em runtime. Foi o que fazia
+      # `GET /api/newsletter/unsubscribe/<token>` responder 500 em dev
+      # (NextResponse.redirect("")) e funcionar em produção, onde o
+      # docker-compose.prod.yml passa os mesmos args.
+      args:
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-}
+        NEXT_PUBLIC_SITE_NAME: ${NEXT_PUBLIC_SITE_NAME:-}
+        NEXT_PUBLIC_SITE_DESCRIPTION: ${NEXT_PUBLIC_SITE_DESCRIPTION:-}
+        NEXT_PUBLIC_APP_NAME: ${NEXT_PUBLIC_APP_NAME:-}
+        NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-}
+        NEXT_PUBLIC_GA4_MEASUREMENT_ID: ${NEXT_PUBLIC_GA4_MEASUREMENT_ID:-}
+        NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY:-}
+        NEXT_PUBLIC_WALLET_ADDRESS: ${NEXT_PUBLIC_WALLET_ADDRESS:-}
+        NEXT_PUBLIC_ENCRYPTION_PUBLIC_KEY: ${NEXT_PUBLIC_ENCRYPTION_PUBLIC_KEY:-}
     container_name: romulodm-app
     env_file:
       - .env
@@ -183,8 +170,18 @@ services:
         nginx -g 'daemon off;'
       "
     volumes:
-      - ./nginx/conf.d/app.dev.conf:/etc/nginx/templates/app.dev.conf:ro
+      # Fica em nginx/templates/, fora de conf.d/, porque não é config válida
+      # até o envsubst rodar. Enquanto morava em conf.d/ ele casava com o
+      # `include conf.d/*.conf` do nginx.conf e derrubava o nginx em produção
+      # com `[emerg] invalid port in upstream "romulodm-app:${NEXT_PORT}"`.
+      - ./nginx/templates/app.dev.conf:/etc/nginx/templates/app.dev.conf:ro
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      # Montado individualmente, e não a conf.d inteira, por dois motivos:
+      # o entrypoint precisa ESCREVER o default.conf gerado ali dentro (um
+      # mount `:ro` da pasta impediria), e dev não deve carregar o
+      # security-headers.inc, que depende do $robots_tag definido só quando há
+      # TLS. A extensão .inc mantém o arquivo fora do `include conf.d/*.conf`.
+      - ./nginx/conf.d/proxy-params.inc:/etc/nginx/conf.d/proxy-params.inc:ro
     depends_on:
       - app
       - minio
@@ -193,9 +190,9 @@ services:
 
 volumes:
   postgres_data:
-  umami_postgres_data:
   minio_data:
   redis_data:
+  search_data:
 
 networks:
   romulodm-network:

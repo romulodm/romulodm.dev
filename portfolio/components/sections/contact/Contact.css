@@ -10,6 +10,8 @@
     --color-github-rgb: 51, 51, 51;
     --color-discord: #7289da;
     --color-discord-rgb: 114, 137, 218;
+    --color-lattes: #00549f;
+    --color-lattes-rgb: 0, 84, 159;
     --color-instagram: #c13584;
     --color-instagram-rgb: 193, 53, 132;
 
@@ -74,6 +76,12 @@
     color: var(--color-discord);
     border-color: var(--color-discord);
     filter: drop-shadow(0 0.15rem 0 rgba(var(--color-discord-rgb), 1)) drop-shadow(0 0.2rem 0 rgba(var(--color-discord-rgb), 0.3)) drop-shadow(0 0.4rem 0 rgba(var(--color-discord-rgb), 0.2)) drop-shadow(0 0.6rem 0 rgba(var(--color-discord-rgb), 0.1))
+}
+
+#lattes:hover {
+    color: var(--color-lattes);
+    border-color: var(--color-lattes);
+    filter: drop-shadow(0 0.15rem 0 rgba(var(--color-lattes-rgb), 1)) drop-shadow(0 0.2rem 0 rgba(var(--color-lattes-rgb), 0.3)) drop-shadow(0 0.4rem 0 rgba(var(--color-lattes-rgb), 0.2)) drop-shadow(0 0.6rem 0 rgba(var(--color-lattes-rgb), 0.1))
 }
 
 #instagram:hover {

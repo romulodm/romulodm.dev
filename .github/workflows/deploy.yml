@@ -1,62 +1,576 @@
-name: Deploy to production
+name: Deploy
+
+# Two VPSs, two environments, one workflow.
+#
+#   branch staging  ->  staging.romulodm.dev   (staging VPS)
+#   branch main     ->  romulodm.dev           (production VPS)
+#
+# The path is always the same: CI validates, the images are built on the runner
+# and pushed to GHCR tagged with the commit SHA, and the VPS only pulls. The
+# build never happens on the VPS — it would compete for CPU and RAM with the
+# live site, leave no versioned artifact (so no rollback), and take the machine
+# down in an inconsistent state whenever it failed.
+#
+# WHY STAGING IS A MEANINGFUL REHEARSAL:
+# both environments use the SAME docker-compose.prod.yml, the SAME nginx
+# template and THIS SAME workflow. Everything that differs lives in variables
+# and in GitHub Environment secrets. There is no second deployment path that
+# could work in one environment and fail in the other.
+#
+# PREREQUISITE — THE FIRST BRING-UP IS MANUAL:
+# this workflow only replaces the app, worker and search containers. Postgres,
+# Redis, MinIO and nginx have to already be running, brought up once by hand on
+# a fresh VPS:
+#
+#   cd ~/app && docker compose -f docker-compose.prod.yml up -d
+#
+# Running that once is also what creates the volumes and the TLS certificates.
 
 on:
-  push:
-    branches: [main]
-  workflow_dispatch: # allows manual runs from the GitHub UI
+  # DISABLED WHILE THE VPSs DO NOT EXIST.
+  #
+  # With the trigger active, the first `git push` tries to SSH into a server
+  # that has not been provisioned yet: the job fails, the run goes red, and you
+  # start ignoring red — which is exactly how a genuinely broken deploy later
+  # goes unnoticed.
+  #
+  # Re-enable in two steps, in this order:
+  #   1. `branches: [staging]`        once the staging VPS is up
+  #   2. `branches: [staging, main]`  once production has been validated
+  #
+  # Note that the `staging` branch does not exist in this repository yet; it has
+  # to be created before either the trigger or the manual button can target it.
+  #
+  # If the staging VPS is ephemeral (powered on only to test something), leave
+  # staging out of the list for good and use the manual button below.
+  #
+  # push:
+  #   branches: [staging, main]
+
+  workflow_dispatch:
+    inputs:
+      target:
+        description: 'Where to deploy'
+        required: true
+        default: staging
+        type: choice
+        options:
+          - staging
+          - production
+
+# Least privilege by default; the jobs that need more widen it locally.
+permissions:
+  contents: read
+
+env:
+  REGISTRY: ghcr.io
+  APP_IMAGE: ghcr.io/${{ github.repository_owner }}/romulodm-app
+  WORKER_IMAGE: ghcr.io/${{ github.repository_owner }}/romulodm-worker
+  SEARCH_IMAGE: ghcr.io/${{ github.repository_owner }}/romulodm-search
+  MIGRATOR_IMAGE: ghcr.io/${{ github.repository_owner }}/romulodm-migrator
 
 jobs:
-  deploy:
-    name: Build & Deploy
+  # ── 0. Resolve the target ───────────────────────────────────────────────────
+  # A separate job because the `environment:` key of the jobs below cannot see
+  # the `env` context. It does accept `needs`, so the target has to arrive as an
+  # output.
+  setup:
+    name: Resolve target
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 5
+    outputs:
+      target: ${{ steps.t.outputs.target }}
+      tag: ${{ steps.t.outputs.tag }}
+      branch: ${{ steps.t.outputs.branch }}
+    steps:
+      - id: t
+        # Passed through env rather than interpolated into the script: `${{ }}`
+        # inside `run:` is textual substitution performed before the shell
+        # exists, so a value containing shell metacharacters would be executed.
+        env:
+          EVENT: ${{ github.event_name }}
+          INPUT_TARGET: ${{ inputs.target }}
+          REF_NAME: ${{ github.ref_name }}
+          SHA: ${{ github.sha }}
+        run: |
+          if [ "$EVENT" = "workflow_dispatch" ]; then
+            TARGET="$INPUT_TARGET"
+          elif [ "$REF_NAME" = "main" ]; then
+            TARGET="production"
+          else
+            TARGET="staging"
+          fi
+
+          # Each environment has ONE branch. The VPS runs `git reset --hard` on
+          # it to pick up the compose file, the nginx config and the cron
+          # definitions, while the image comes from the commit this run was
+          # triggered from. If those two diverge, the VPS ends up running one
+          # branch's nginx against another branch's app — and the deploy still
+          # reports success.
+          case "$TARGET" in
+            production) BRANCH="main" ;;
+            staging)    BRANCH="staging" ;;
+            *) echo "::error::Unknown target: $TARGET"; exit 1 ;;
+          esac
+
+          # Which is why the run has to be triggered FROM the target's branch.
+          # In the Actions UI that is the "Use workflow from" dropdown — and the
+          # classic mistake is leaving a feature branch there while picking
+          # `staging` as the target.
+          if [ "$BRANCH" != "$REF_NAME" ]; then
+            echo "::error::Target '$TARGET' requires branch '$BRANCH', but this run started from '$REF_NAME'. In Actions, set 'Use workflow from' to '$BRANCH'."
+            exit 1
+          fi
+
+          # The tag carries the environment because the images are NOT
+          # interchangeable: the NEXT_PUBLIC_* values are inlined into the
+          # bundle at build time, so the staging image has staging URLs baked
+          # inside it. Publishing one tag for both would make production serve
+          # staging links, or the other way round.
+          echo "target=$TARGET"        >> "$GITHUB_OUTPUT"
+          echo "branch=$BRANCH"        >> "$GITHUB_OUTPUT"
+          echo "tag=${SHA}-${TARGET}"  >> "$GITHUB_OUTPUT"
+          echo "Target: $TARGET (branch $BRANCH)"
+
+  # ── 1. Reuse the validation from ci.yml ─────────────────────────────────────
+  validate:
+    uses: ./.github/workflows/ci.yml
+    secrets: inherit
+
+  # ── 2. Build the images and push them to GHCR ───────────────────────────────
+  # `environment:` here is not a detail: it is what makes `secrets.NEXT_PUBLIC_*`
+  # resolve to that environment's values. Without it both builds would come out
+  # identical and the per-environment tagging above would be pointless.
+  build-images:
+    name: Build and push images (${{ needs.setup.outputs.target }})
+    needs: [setup, validate]
+    runs-on: ubuntu-latest
+    environment: ${{ needs.setup.outputs.target }}
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      packages: write # required to publish to GHCR
 
     steps:
-      # ── 1. Checkout ───────────────────────────────────────────
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      # ── 2. Connect and deploy to VPS ──────────────────────────
-      - name: Deploy via SSH
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          # The Action's automatic token — no secret needs to be created.
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push the app image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: portfolio/Dockerfile
+          target: runner
+          push: true
+          # Tagging by SHA + environment is what makes rollback possible;
+          # latest-<environment> is a convenience for bringing the stack up by
+          # hand.
+          tags: |
+            ${{ env.APP_IMAGE }}:${{ needs.setup.outputs.tag }}
+            ${{ env.APP_IMAGE }}:latest-${{ needs.setup.outputs.target }}
+          # The Dockerfile compiles four internal packages before Next.js runs.
+          # Without a cache every push rebuilds all of it from scratch. Scoped
+          # per environment so the two builds do not invalidate each other.
+          cache-from: type=gha,scope=app-${{ needs.setup.outputs.target }}
+          cache-to: type=gha,mode=max,scope=app-${{ needs.setup.outputs.target }}
+          build-args: |
+            NEXT_PUBLIC_SITE_URL=${{ secrets.NEXT_PUBLIC_SITE_URL }}
+            NEXT_PUBLIC_SITE_NAME=${{ secrets.NEXT_PUBLIC_SITE_NAME }}
+            NEXT_PUBLIC_SITE_DESCRIPTION=${{ secrets.NEXT_PUBLIC_SITE_DESCRIPTION }}
+            NEXT_PUBLIC_APP_NAME=${{ secrets.NEXT_PUBLIC_APP_NAME }}
+            NEXT_PUBLIC_APP_URL=${{ secrets.NEXT_PUBLIC_APP_URL }}
+            NEXT_PUBLIC_GA4_MEASUREMENT_ID=${{ secrets.NEXT_PUBLIC_GA4_MEASUREMENT_ID }}
+            NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=${{ secrets.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY }}
+            NEXT_PUBLIC_WALLET_ADDRESS=${{ secrets.NEXT_PUBLIC_WALLET_ADDRESS }}
+            NEXT_PUBLIC_ENCRYPTION_PUBLIC_KEY=${{ secrets.NEXT_PUBLIC_ENCRYPTION_PUBLIC_KEY }}
+            NEXT_PUBLIC_TURNSTILE_SITE_KEY=${{ secrets.NEXT_PUBLIC_TURNSTILE_SITE_KEY }}
+            NEXT_PUBLIC_TERMINAL_SECRET_PASSWORD=${{ secrets.NEXT_PUBLIC_TERMINAL_SECRET_PASSWORD }}
+            NEXT_PUBLIC_TERMINAL_SECRET_REWARD=${{ secrets.NEXT_PUBLIC_TERMINAL_SECRET_REWARD }}
+            NEXT_PUBLIC_SENTRY_DSN=${{ secrets.NEXT_PUBLIC_SENTRY_DSN }}
+            NEXT_PUBLIC_SENTRY_ENVIRONMENT=${{ needs.setup.outputs.target }}
+            NEXT_PUBLIC_SENTRY_RELEASE=${{ needs.setup.outputs.tag }}
+            NEXT_PUBLIC_SENTRY_TRACES_SAMPLE_RATE=${{ secrets.NEXT_PUBLIC_SENTRY_TRACES_SAMPLE_RATE }}
+            SENTRY_ORG=${{ secrets.SENTRY_ORG }}
+            SENTRY_PROJECT=${{ secrets.SENTRY_PROJECT }}
+          # As a build arg the token would be written into the layer history; as
+          # a secret it exists only for the duration of the `next build` RUN.
+          secrets: |
+            sentry_auth_token=${{ secrets.SENTRY_AUTH_TOKEN }}
+
+      # Runs `prisma migrate deploy` on the VPS before the app comes up.
+      #
+      # The `migrator` stage in the Dockerfile copies from the `builder` stage,
+      # so building it means building `builder` as well. Buildx keys its cache
+      # on the ARG values, which means this step MUST pass exactly the same
+      # build-args as the app image above — otherwise every ENV layer differs,
+      # the cache misses, and the runner executes a second full `next build`
+      # just to produce an image that contains only the Prisma CLI.
+      #
+      # There is deliberately no `cache-to` here: the app step already exported
+      # that scope, and this step only needs to read from it.
+      - name: Build and push the migrator image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: portfolio/Dockerfile
+          target: migrator
+          push: true
+          tags: |
+            ${{ env.MIGRATOR_IMAGE }}:${{ needs.setup.outputs.tag }}
+          cache-from: type=gha,scope=app-${{ needs.setup.outputs.target }}
+          build-args: |
+            NEXT_PUBLIC_SITE_URL=${{ secrets.NEXT_PUBLIC_SITE_URL }}
+            NEXT_PUBLIC_SITE_NAME=${{ secrets.NEXT_PUBLIC_SITE_NAME }}
+            NEXT_PUBLIC_SITE_DESCRIPTION=${{ secrets.NEXT_PUBLIC_SITE_DESCRIPTION }}
+            NEXT_PUBLIC_APP_NAME=${{ secrets.NEXT_PUBLIC_APP_NAME }}
+            NEXT_PUBLIC_APP_URL=${{ secrets.NEXT_PUBLIC_APP_URL }}
+            NEXT_PUBLIC_GA4_MEASUREMENT_ID=${{ secrets.NEXT_PUBLIC_GA4_MEASUREMENT_ID }}
+            NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=${{ secrets.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY }}
+            NEXT_PUBLIC_WALLET_ADDRESS=${{ secrets.NEXT_PUBLIC_WALLET_ADDRESS }}
+            NEXT_PUBLIC_ENCRYPTION_PUBLIC_KEY=${{ secrets.NEXT_PUBLIC_ENCRYPTION_PUBLIC_KEY }}
+            NEXT_PUBLIC_TURNSTILE_SITE_KEY=${{ secrets.NEXT_PUBLIC_TURNSTILE_SITE_KEY }}
+            NEXT_PUBLIC_TERMINAL_SECRET_PASSWORD=${{ secrets.NEXT_PUBLIC_TERMINAL_SECRET_PASSWORD }}
+            NEXT_PUBLIC_TERMINAL_SECRET_REWARD=${{ secrets.NEXT_PUBLIC_TERMINAL_SECRET_REWARD }}
+            NEXT_PUBLIC_SENTRY_DSN=${{ secrets.NEXT_PUBLIC_SENTRY_DSN }}
+            NEXT_PUBLIC_SENTRY_ENVIRONMENT=${{ needs.setup.outputs.target }}
+            NEXT_PUBLIC_SENTRY_RELEASE=${{ needs.setup.outputs.tag }}
+            NEXT_PUBLIC_SENTRY_TRACES_SAMPLE_RATE=${{ secrets.NEXT_PUBLIC_SENTRY_TRACES_SAMPLE_RATE }}
+            SENTRY_ORG=${{ secrets.SENTRY_ORG }}
+            SENTRY_PROJECT=${{ secrets.SENTRY_PROJECT }}
+          secrets: |
+            sentry_auth_token=${{ secrets.SENTRY_AUTH_TOKEN }}
+
+      # The worker declares no ARG and runs `npx tsx index.ts`: there is nothing
+      # to inline, hence no build-args. The image would be byte-identical across
+      # environments, but the tag still carries the environment so that a
+      # rollback moves the whole stack at once.
+      - name: Build and push the worker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: worker/Dockerfile
+          push: true
+          tags: |
+            ${{ env.WORKER_IMAGE }}:${{ needs.setup.outputs.tag }}
+            ${{ env.WORKER_IMAGE }}:latest-${{ needs.setup.outputs.target }}
+          # A single cache scope, unlike the app: with no build-args the two
+          # environments produce the same layers, so sharing the cache is a
+          # straight win rather than a source of cross-contamination.
+          cache-from: type=gha,scope=worker
+          cache-to: type=gha,mode=max,scope=worker
+
+      # The Go search engine. Its context is ./search — it does not depend on
+      # the npm workspace, only on its own go.mod. Statically linked, final
+      # image around 10 MB on top of alpine.
+      - name: Build and push the search image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./search
+          file: ./search/Dockerfile
+          push: true
+          tags: |
+            ${{ env.SEARCH_IMAGE }}:${{ needs.setup.outputs.tag }}
+            ${{ env.SEARCH_IMAGE }}:latest-${{ needs.setup.outputs.target }}
+          cache-from: type=gha,scope=search
+          cache-to: type=gha,mode=max,scope=search
+
+  # ── 3. Deploy onto the environment's VPS ────────────────────────────────────
+  deploy:
+    name: Deploy (${{ needs.setup.outputs.target }})
+    needs: [setup, build-images]
+    runs-on: ubuntu-latest
+    environment: ${{ needs.setup.outputs.target }}
+    timeout-minutes: 20
+
+    permissions:
+      contents: read
+      # GITHUB_TOKEN is handed to the VPS below so it can `docker login ghcr.io`
+      # and pull the images this run just pushed.
+      packages: read
+
+    # Two simultaneous deploys onto the same VPS trample each other. The one
+    # already running is not cancelled — a deploy interrupted halfway leaves
+    # half-swapped containers behind. The group is per environment: a staging
+    # deploy should not have to wait behind a production one.
+    concurrency:
+      group: deploy-${{ needs.setup.outputs.target }}
+      cancel-in-progress: false
+
+    steps:
+      - name: Deploy over SSH
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.VPS_IP }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.VPS_SSH_PORT || 22 }}
-          script_stop: true  # stops on first error
+          script_stop: true
+          # Every variable used in the script below has to be listed here — the
+          # action does not forward the runner's environment automatically.
+          envs: APP_TAG,GHCR_TOKEN,GHCR_USER,GHCR_OWNER,TARGET,TARGET_BRANCH
           script: |
-            set -e
+            set -eu
 
-            echo "📦 Updating code..."
+            COMPOSE="docker compose -f docker-compose.prod.yml"
+
             cd ~/app
-            git pull origin main
 
-            echo "🔑 Updating .env..."
-            # Rebuilds .env from secrets stored on the VPS
-            # (file lives at ~/app/.env, outside Git)
-            # To update a variable, do it manually via SSH
-            # or use the "Sync .env" step below
+            # The repository is still needed on the VPS: the compose file, the
+            # nginx config and the cron definitions come from it. Only the code
+            # build moved off the machine.
+            echo "Updating the repository..."
+            PREV_SHA="$(git rev-parse HEAD)"
+            git fetch origin
+            git checkout "$TARGET_BRANCH" 2>/dev/null || git checkout -b "$TARGET_BRANCH" "origin/$TARGET_BRANCH"
+            git reset --hard "origin/$TARGET_BRANCH"
 
-            echo "🐳 Rebuilding changed services..."
-            docker compose -f docker-compose.prod.yml pull --quiet
-            docker compose -f docker-compose.prod.yml up -d --build \
-              --no-deps \
-              app worker
+            # Whether nginx needs a full restart rather than a reload is decided
+            # here, while both SHAs are still known. See the nginx section below
+            # for why the distinction matters.
+            NGINX_CHANGED=0
+            if ! git diff --quiet "$PREV_SHA" HEAD -- nginx/; then
+              NGINX_CHANGED=1
+            fi
 
-            echo "🧹 Cleaning up old images..."
+            echo "Authenticating against GHCR..."
+            echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
+
+            # Both are exported because docker-compose.prod.yml interpolates
+            # them into every image reference. GHCR_OWNER has a default in the
+            # compose file, but pinning it here keeps the VPS pulling from the
+            # same account this run pushed to. Pinning APP_TAG guarantees the
+            # VPS brings up exactly the images this run built, rather than a
+            # `latest` that another run may have moved in the meantime.
+            export APP_TAG GHCR_OWNER
+
+            echo "Target: $TARGET — tag: $APP_TAG"
+
+            # `--profile tools` is needed for `migrate`, which is behind that
+            # profile in the compose file and would otherwise be reported as an
+            # unknown service.
+            $COMPOSE --profile tools pull app worker search-go migrate
+
+            # ── Migrations BEFORE the app ──────────────────────────────────
+            # In this order because the new app may depend on columns that do
+            # not exist yet. `migrate deploy` only applies what is pending and
+            # fails on drift, so running it on every deploy is cheap and safe.
+            # `run --rm` activates the `tools` profile on its own.
+            echo "Applying migrations..."
+            $COMPOSE run --rm migrate
+
+            $COMPOSE up -d --no-deps app worker search-go
+
+            # ── nginx ──────────────────────────────────────────────────────
+            # MANDATORY after `up -d`. nginx resolves the hostnames in its
+            # `upstream` blocks ONCE, when the config is loaded, and caches the
+            # IP. `up -d` recreates the app container, which gets a new IP — and
+            # nginx keeps dialling the old one, answering 502 to everything,
+            # forever. It does not recover on its own.
+            #
+            # Sometimes Docker hands back the same IP and the deploy passes by
+            # luck; that is precisely what makes the failure intermittent and
+            # hard to connect to the deploy.
+            #
+            # Reload vs restart: the nginx container generates its
+            # /etc/nginx/conf.d/default.conf by running envsubst over
+            # nginx/templates/app.conf in its entrypoint, at container start.
+            # A reload re-reads the generated file, so a change to the template
+            # itself is invisible until the container is recreated — which is
+            # why NGINX_CHANGED was computed above.
+            #
+            # `nginx -t` before a reload makes sure it is not applied on top of
+            # a broken config: in that case nginx silently keeps the old one and
+            # the deploy would report success it did not achieve.
+            if ! $COMPOSE ps --status running --services | grep -qx nginx; then
+              echo "::error::The nginx container is not running. Bring the full stack up once on the VPS: cd ~/app && $COMPOSE up -d"
+              exit 1
+            fi
+
+            if [ "$NGINX_CHANGED" = "1" ]; then
+              echo "nginx config changed in this commit — recreating the container so envsubst runs again..."
+              $COMPOSE up -d --force-recreate --no-deps nginx
+            else
+              echo "Reloading nginx (re-resolves the upstream IPs)..."
+              $COMPOSE exec -T nginx nginx -t
+              $COMPOSE exec -T nginx nginx -s reload
+            fi
+
+            echo "Pruning old images..."
             docker image prune -f
 
-            echo "✅ Deploy complete!"
+            docker logout ghcr.io
+        env:
+          APP_TAG: ${{ needs.setup.outputs.tag }}
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GHCR_USER: ${{ github.actor }}
+          GHCR_OWNER: ${{ github.repository_owner }}
+          TARGET: ${{ needs.setup.outputs.target }}
+          TARGET_BRANCH: ${{ needs.setup.outputs.branch }}
 
-      # ── 3. Health check after deploy ──────────────────────────
+      # WHAT THIS STEP ACTUALLY MEASURES:
+      # `/health` is a `return 200` INSIDE nginx — it never touches the app. On
+      # its own it goes green even with the entire application down (which is
+      # how the cached-IP bug went unnoticed). It only answers the question "is
+      # nginx up?".
+      #
+      # So the check runs in two stages: first the edge, then a route that
+      # travels all the way to Node. Only the second one proves the deploy
+      # worked.
       - name: Health check
+        env:
+          TARGET_URL: ${{ vars.SITE_URL }}
         run: |
-          echo "Waiting for app to start..."
-          sleep 10
-          STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://romulodm.dev/health)
-          if [ "$STATUS" != "200" ]; then
-            echo "❌ Health check failed! Status: $STATUS"
+          if [ -z "$TARGET_URL" ]; then
+            echo "::error::Set the SITE_URL variable in the '${{ needs.setup.outputs.target }}' GitHub Environment."
             exit 1
           fi
-          echo "✅ App responding with status $STATUS"
+
+          # ── Stage 1: is nginx answering? ────────────────────────────────
+          echo "Waiting for $TARGET_URL/health (edge)..."
+          EDGE_OK=0
+          for i in $(seq 1 20); do
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$TARGET_URL/health" || echo "000")
+            if [ "$STATUS" = "200" ]; then
+              echo "OK: nginx answered 200 after ${i} attempt(s)."
+              EDGE_OK=1
+              break
+            fi
+            echo "  attempt ${i}/20 — status ${STATUS}, waiting 5s..."
+            sleep 5
+          done
+
+          if [ "$EDGE_OK" != "1" ]; then
+            echo "::error::nginx did not answer within 100s. The problem is at the edge, not in the app."
+            exit 1
+          fi
+
+          # ── Stage 2: does the request reach the application? ────────────
+          # The home page, not /api/status: that route has
+          # `proxy_cache_use_stale`, so nginx would serve the stale copy during
+          # an outage and this check would pass with a dead app. `location /`
+          # has `proxy_no_cache`, so anything arriving here can only have come
+          # from Node.
+          #
+          # Accepts 2xx AND 3xx: the home page answers 308, redirecting to the
+          # locale (/pt, /en). Requiring 200 would fail every deploy of a site
+          # that is perfectly healthy — the point here is to separate "the
+          # application answered" from "nginx answered on its behalf", and any
+          # 2xx/3xx proves that. What fails is 5xx (nginx with no upstream, or a
+          # broken app) and 000 (no connection at all).
+          echo "Waiting for $TARGET_URL/ (application)..."
+          for i in $(seq 1 20); do
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$TARGET_URL/" || echo "000")
+            case "$STATUS" in
+              2??|3??)
+                echo "OK: the application answered ${STATUS} after ${i} attempt(s)."
+                exit 0
+                ;;
+            esac
+            echo "  attempt ${i}/20 — status ${STATUS}, waiting 5s..."
+            sleep 5
+          done
+
+          echo "::error::The edge is up, but the application did not answer within 100s."
+          echo "A 502 here is usually nginx pointing at a stale app IP."
+          echo "On the VPS, check:"
+          echo "  docker compose -f docker-compose.prod.yml exec nginx nginx -s reload"
+          echo "  docker logs romulodm-app --tail 50"
+          echo "Rollback: on the VPS, run"
+          echo "  APP_TAG=<previous-sha>-${{ needs.setup.outputs.target }} \\"
+          echo "    docker compose -f docker-compose.prod.yml up -d --no-deps app worker search-go"
+          exit 1
+
+  # ── 4. Tell the Telegram bot how it went ────────────────────────────────────
+  # The bot has understood a `deploy` payload since it was written, but nothing
+  # ever sent one — the type sat there as dead code while every deploy went
+  # unannounced.
+  #
+  # A separate job rather than a step inside `deploy`, for two reasons: a step
+  # appended to `deploy` never runs when the SSH step aborts the job, which is
+  # exactly the deploy you want to hear about; and this way the message also
+  # covers a run that died earlier, in `validate` or `build-images`, where
+  # `deploy` comes out as `skipped`.
+  #
+  # SECRETS (per GitHub Environment, staging and production):
+  #   TELEGRAM_BOT_URL         e.g. https://romulodm-bot.onrender.com
+  #   TELEGRAM_NOTIFY_SECRET   the same value as NOTIFY_SECRET on Render
+  # Missing either one, the job warns and passes. Not being told about a deploy
+  # is annoying; failing a green deploy over a chat message is worse.
+  notify:
+    name: Notify (${{ needs.setup.outputs.target }})
+    needs: [setup, deploy]
+    if: always() && !cancelled() && needs.setup.result == 'success'
+    runs-on: ubuntu-latest
+    environment: ${{ needs.setup.outputs.target }}
+    timeout-minutes: 5
+
+    permissions:
+      contents: read
+
+    steps:
+      # `github.event.head_commit` only exists on `push`. This workflow is
+      # normally started by hand, where that context is null — so the subject
+      # comes from git itself, which works for either trigger.
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Post the deploy status to the bot
+        env:
+          BOT_URL: ${{ secrets.TELEGRAM_BOT_URL }}
+          BOT_SECRET: ${{ secrets.TELEGRAM_NOTIFY_SECRET }}
+          DEPLOY_RESULT: ${{ needs.deploy.result }}
+          TARGET: ${{ needs.setup.outputs.target }}
+          BRANCH: ${{ needs.setup.outputs.branch }}
+          ACTOR: ${{ github.actor }}
+          SHA: ${{ github.sha }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          if [ -z "$BOT_URL" ] || [ -z "$BOT_SECRET" ]; then
+            echo "::warning::TELEGRAM_BOT_URL / TELEGRAM_NOTIFY_SECRET are not set in the '$TARGET' Environment — skipping."
+            exit 0
+          fi
+
+          if [ "$DEPLOY_RESULT" = "success" ]; then
+            STATUS=success
+          else
+            STATUS=failure
+          fi
+
+          # jq builds the JSON so a commit message containing quotes, newlines
+          # or backslashes cannot break out of the body.
+          PAYLOAD=$(jq -n \
+            --arg status        "$STATUS" \
+            --arg branch        "$BRANCH" \
+            --arg actor         "$ACTOR" \
+            --arg commitSha     "$SHA" \
+            --arg commitMessage "$(git log -1 --format=%s)" \
+            --arg runUrl        "$RUN_URL" \
+            --arg environment   "$TARGET" \
+            '{type: "deploy", status: $status, branch: $branch, actor: $actor,
+              commitSha: $commitSha, commitMessage: $commitMessage,
+              runUrl: $runUrl, environment: $environment}')
+
+          # The bot is on Render's free plan and sleeps when idle: the first
+          # call after a quiet spell pays a cold start of tens of seconds.
+          CODE=$(curl -sS -o /tmp/notify.out -w "%{http_code}" \
+            --max-time 90 --retry 2 --retry-delay 5 --retry-connrefused \
+            -X POST "$BOT_URL/notify" \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer $BOT_SECRET" \
+            -d "$PAYLOAD") || CODE=000
+
+          if [ "$CODE" = "200" ]; then
+            echo "Notified: $STATUS on $TARGET."
+          else
+            echo "::warning::The bot answered $CODE — $(head -c 300 /tmp/notify.out 2>/dev/null)"
+          fi

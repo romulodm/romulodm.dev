@@ -90,7 +90,7 @@ export function SupportersSidebar({ topDonors, recentDonors }: Props) {
             <div className="space-y-8">
                 {topDonors.length > 0 && (
                     <div className="rounded-xl border border-border bg-card p-6">
-                        <h2 className="font-bold text-foreground flex items-center gap-2 mb-4">
+                        <h2 className="type-h3 text-foreground flex items-center gap-2 mb-4">
                             <Trophy className="w-4 h-4 text-primary" />
                             {t('sidebar.topSupporters')}
                         </h2>
@@ -130,7 +130,7 @@ export function SupportersSidebar({ topDonors, recentDonors }: Props) {
 
                 {recentDonors.length > 0 && (
                     <div className="rounded-xl border border-border bg-card p-6">
-                        <h2 className="font-bold text-foreground flex items-center gap-2 mb-4">
+                        <h2 className="type-h3 text-foreground flex items-center gap-2 mb-4">
                             <Clock className="w-4 h-4 text-primary" />
                             {t('sidebar.recentSupport')}
                         </h2>

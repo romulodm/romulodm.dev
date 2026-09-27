@@ -5,6 +5,8 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { getLocale } from "next-intl/server";
 
+import { AVATAR_SELECT } from "@/lib/avatar";
+
 export type SortOrder = "score" | "newest" | "oldest";
 
 const PAGE_SIZE = 20;
@@ -16,7 +18,7 @@ const replyInclude = (depth: number): any => {
         replies: {
             orderBy: [{ score: "desc" as const }, { createdAt: "asc" as const }],
             include: {
-                author: { select: { id: true, username: true, image: true } },
+                author: { select: { id: true, ...AVATAR_SELECT } },
                 votes: { select: { userId: true, value: true } },
                 ...(depth > 1 ? replyInclude(depth - 1) : {}),
             },
@@ -49,7 +51,7 @@ export async function listPostComments({
         take: PAGE_SIZE + 1,
         ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
         include: {
-            author: { select: { id: true, username: true, image: true } },
+            author: { select: { id: true, ...AVATAR_SELECT } },
             votes: { select: { userId: true, value: true } },
             ...replyInclude(4),
         },
@@ -88,7 +90,7 @@ export async function getCommentById(id: string) {
     const comment = await prisma.comment.findUnique({
         where: { id },
         include: {
-            author: { select: { id: true, username: true, image: true } },
+            author: { select: { id: true, ...AVATAR_SELECT } },
             votes: { select: { userId: true, value: true } },
             post: {
                 select: {
@@ -103,19 +105,19 @@ export async function getCommentById(id: string) {
             },
             parent: {
                 include: {
-                    author: { select: { id: true, username: true, image: true } },
+                    author: { select: { id: true, ...AVATAR_SELECT } },
                     votes: { select: { userId: true, value: true } },
                 },
             },
             replies: {
                 orderBy: [{ score: "desc" as const }, { createdAt: "asc" as const }],
                 include: {
-                    author: { select: { id: true, username: true, image: true } },
+                    author: { select: { id: true, ...AVATAR_SELECT } },
                     votes: { select: { userId: true, value: true } },
                     replies: {
                         orderBy: [{ score: "desc" as const }, { createdAt: "asc" as const }],
                         include: {
-                            author: { select: { id: true, username: true, image: true } },
+                            author: { select: { id: true, ...AVATAR_SELECT } },
                             votes: { select: { userId: true, value: true } },
                         },
                     },

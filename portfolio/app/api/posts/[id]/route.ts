@@ -14,6 +14,7 @@ import {
 } from "@/lib/api-errors";
 import { getApiTranslator } from "@/lib/api-intl";
 import { slugify, uniqueSlug, generateExcerpt } from "@/lib/markdown";
+import { removePostFromSearch, syncPostToSearch } from "@/lib/search-sync";
 
 export async function GET(
   req: NextRequest,
@@ -229,6 +230,10 @@ export async function PATCH(
       },
     });
 
+    // Cobre os dois sentidos: publicar indexa, despublicar remove. Tambem
+    // reindexa quando so o conteudo mudou — titulo e resumo entram no indice.
+    await syncPostToSearch(params.id);
+
     return NextResponse.json(updated);
   } catch (error) {
     return internalErrorResponse("admin-posts-update", error, t("common.internalError"));
@@ -247,7 +252,19 @@ export async function DELETE(
       return unauthorizedResponse(t("common.unauthorized"));
     }
 
+    // Os locales precisam ser lidos ANTES do delete: as traducoes somem em
+    // cascata e depois nao ha como saber quais documentos remover do indice.
+    const translations = await prisma.postTranslation.findMany({
+      where: { postId: params.id },
+      select: { locale: true },
+    });
+
     await prisma.post.delete({ where: { id: params.id } });
+
+    await removePostFromSearch(
+      params.id,
+      translations.map((tr) => tr.locale),
+    );
 
     return NextResponse.json({ success: true });
   } catch (error) {

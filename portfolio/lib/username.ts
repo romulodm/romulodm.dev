@@ -1,7 +1,7 @@
 // lib/username.ts
 import { prisma } from "@romulo/database";
 
-export function normalizeUsername(input: string) {
+function normalizeUsername(input: string) {
     return input
         .toLowerCase()
         .trim()

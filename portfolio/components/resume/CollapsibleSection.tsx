@@ -28,11 +28,11 @@ export function CollapsibleSection({
       >
         <div className="flex items-center gap-2">
           {icon}
-          <h2 className="text-lg font-semibold text-foreground">{title}</h2>
+          <h2 className="type-h3 text-foreground">{title}</h2>
         </div>
         <ChevronDown
           className={cn(
-            'h-5 w-5 text-muted-foreground transition-transform duration-200',
+            'no-pdf h-5 w-5 text-muted-foreground transition-transform duration-200 print:hidden',
             isOpen && 'rotate-180'
           )}
         />

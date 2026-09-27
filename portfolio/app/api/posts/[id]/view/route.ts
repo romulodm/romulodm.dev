@@ -1,31 +1,30 @@
-﻿import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-import { badRequestResponse } from "@/lib/api-errors";
+import { notFoundResponse, rateLimitResponse } from "@/lib/api-errors";
 import { getApiTranslator } from "@/lib/api-intl";
-import { recordPostViewByIdentifier } from "@/lib/views";
+import { registerPostView } from "@/lib/views-internal";
 
 export async function POST(
   req: NextRequest,
   props: { params: Promise<{ id: string }> },
 ) {
   const t = await getApiTranslator(req);
-  const params = await props.params;
-  const postId = params.id;
+  const { id: postId } = await props.params;
 
-  let identifier: string | undefined;
+  // Nada é lido do body. O identificador de dedupe é resolvido dentro de
+  // registerPostView (sessão, senão cookie assinado emitido pelo servidor) —
+  // aceitá-lo do cliente permitia gerar chaves ilimitadas no Redis e queimar
+  // o cooldown de outro usuário.
+  const result = await registerPostView(postId);
 
-  try {
-    const body = await req.json();
-    identifier = body.userId || body.sessionId;
-  } catch {
-    return badRequestResponse(t("posts.invalidBody"));
+  if (result.reason === "invalid_post") {
+    return notFoundResponse(t("posts.notFound"));
   }
 
-  if (!identifier) {
-    return badRequestResponse(t("posts.identifierRequired"));
+  if (result.reason === "rate_limited") {
+    return rateLimitResponse(t("common.rateLimited"));
   }
 
-  const result = await recordPostViewByIdentifier(postId, identifier);
   return NextResponse.json(result);
 }
 

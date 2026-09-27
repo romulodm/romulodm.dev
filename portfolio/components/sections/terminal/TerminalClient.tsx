@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, type JSX } from "react";
+import { useRef, useState, type JSX, type ReactNode } from "react";
 import { IoAddOutline } from "react-icons/io5";
 import {
     VscChromeClose,
@@ -15,6 +15,7 @@ import TerminalExperience from "./TerminalExperience";
 import TerminalFunctional from "./TerminalFunctional";
 import {
     DefaultMessage,
+    EmptyPromptMessage,
     InitialMessage,
     HelpMessage,
     CatsMessage,
@@ -40,6 +41,22 @@ import {
     CoffeeMessage,
     JokeMessage,
 } from "./TerminalMessages";
+import {
+    BlogMessage,
+    CompletionsMessage,
+    CowsayMessage,
+    GitLogMessage,
+    HistoryMessage,
+    ManMessage,
+    NpmInstallMessage,
+    PapersMessage,
+    SeediconMessage,
+    SlMessage,
+    TopMessage,
+    VisitorsMessage,
+    WordmarkMessage,
+} from "./TerminalExtraMessages";
+import { suggestCommand } from "./catalog";
 import CustomTooltip from "./CustomTooltip";
 import { useTranslations } from "next-intl";
 
@@ -55,6 +72,19 @@ interface CommandsMap {
     [key: string]: CommandComponent;
 }
 
+function TopCommand(): JSX.Element {
+    return <TopMessage colorful={false} />;
+}
+
+function HtopCommand(): JSX.Element {
+    return <TopMessage colorful />;
+}
+
+/**
+ * Commands without arguments, looked up by the exact (lowercased) input.
+ * Commands that take arguments or need the terminal state are handled in
+ * `checkMessageEntered`.
+ */
 const commands: CommandsMap = {
     help: HelpMessage,
     initial: InitialMessage,
@@ -80,7 +110,45 @@ const commands: CommandsMap = {
     matrix: MatrixMessage,
     "hack bank": HackBankMessage,
     coffee: CoffeeMessage,
+
+    papers: PapersMessage,
+    visitors: VisitorsMessage,
+    top: TopCommand,
+    htop: HtopCommand,
+    sl: SlMessage,
 };
+
+const TAB_BASE_CLASS =
+    "dark:text-white flex px-3 ml-1.5 py-1 flex-row w-56 h-8 rounded-lg items-center justify-between";
+const TAB_ACTIVE_CLASS = "bg-neutral-300 dark:bg-neutral-800";
+const TAB_INACTIVE_CLASS =
+    "bg-neutral-200 hover:bg-neutral-300 dark:bg-neutral-900 dark:hover:bg-neutral-800/70";
+
+interface TerminalTabProps {
+    active: boolean;
+    onSelect: () => void;
+    /**
+     * Rendered next to the label. Kept outside the select button because a
+     * <button> inside another <button> is invalid HTML and breaks hydration.
+     */
+    trailing: ReactNode;
+}
+
+function TerminalTab({ active, onSelect, trailing }: TerminalTabProps): JSX.Element {
+    return (
+        <div className={`${TAB_BASE_CLASS} ${active ? TAB_ACTIVE_CLASS : TAB_INACTIVE_CLASS}`}>
+            <button
+                type="button"
+                onClick={onSelect}
+                className={`flex flex-1 h-full flex-row items-center gap-2 ${active ? "cursor-default" : "cursor-pointer"}`}
+            >
+                <VscTerminalPowershell />
+                <span>pwsh in romulodm</span>
+            </button>
+            {trailing}
+        </div>
+    );
+}
 
 interface ResumePageClientProps {
     data: ResumeData;
@@ -90,8 +158,7 @@ interface ResumePageClientProps {
 export default function TerminalClient({ data, locale }: ResumePageClientProps): JSX.Element {
     const t = useTranslations("terminal");
 
-    // ✅ antes você fez useState(...) mas guardou o tuple inteiro
-    const loadingTime = useMemo(() => Math.floor(Math.random() * 300), []);
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
 
     const [showTooltip, setShowTooltip] = useState<boolean>(true);
 
@@ -106,6 +173,7 @@ export default function TerminalClient({ data, locale }: ResumePageClientProps):
         InitialMessage,
     ]);
     const [textTypedByUser, setTextTypedByUser] = useState<string>("");
+    const [commandHistory, setCommandHistory] = useState<string[]>([]);
 
     function closeNavigationTab(): void {
         setDisplayedNavigationTab(0);
@@ -113,34 +181,64 @@ export default function TerminalClient({ data, locale }: ResumePageClientProps):
         setComponentsToShow([DefaultMessage, InitialMessage]);
     }
 
+    function pushOutput(component: CommandComponent): void {
+        setComponentsToShow((prev) => [...prev, component]);
+    }
+
+    function showCompletions(typed: string, options: string[]): void {
+        pushOutput(() => <CompletionsMessage typed={typed} options={options} />);
+    }
+
     function checkMessageEntered(): void {
-        const CommandComponent = commands[textTypedByUser];
+        const typed = textTypedByUser.trim();
+        const lower = typed.toLowerCase();
+        const head = lower.split(/\s+/)[0] ?? "";
+        // Argument with its original casing: seedicon seeds are case-sensitive.
+        const rest = typed.slice(head.length).trim();
 
-        const match = textTypedByUser.match(secretPassRegex);
+        const history = typed ? [...commandHistory, typed] : commandHistory;
+        if (typed) setCommandHistory(history);
 
-        if (textTypedByUser === "clear") {
+        // Own keys only: "constructor" or "toString" would otherwise resolve to
+        // Object.prototype members and be rendered as components.
+        const CommandComponent = Object.hasOwn(commands, lower) ? commands[lower] : undefined;
+        const match = typed.match(secretPassRegex);
+
+        if (typed === "") {
+            pushOutput(EmptyPromptMessage);
+        } else if (lower === "clear") {
             setComponentsToShow([]);
+        } else if (lower === "exit") {
+            closeNavigationTab();
+        } else if (lower === "history") {
+            pushOutput(() => <HistoryMessage entries={history} />);
+        } else if (lower === "git log" || lower === "git log --oneline") {
+            pushOutput(() => <GitLogMessage command={typed} oneline={lower.endsWith("--oneline")} />);
+        } else if (lower === "blog" || lower === "blog --latest") {
+            pushOutput(() => <BlogMessage command={typed} latestOnly={lower.endsWith("--latest")} />);
+        } else if (lower === "npm install" || lower === "npm i") {
+            pushOutput(() => <NpmInstallMessage command={typed} />);
+        } else if (head === "cowsay") {
+            pushOutput(() => <CowsayMessage command={typed} text={rest} />);
+        } else if (head === "seedicon") {
+            pushOutput(() => <SeediconMessage command={typed} text={rest} />);
+        } else if (head === "wordmark" || head === "woodmark") {
+            pushOutput(() => <WordmarkMessage command={typed} text={rest} />);
+        } else if (head === "man") {
+            pushOutput(() => <ManMessage command={typed} topic={rest.toLowerCase()} />);
         } else if (match) {
             const enteredPassword = match[1];
 
             if (enteredPassword === SECRET_PASSWORD) {
-                setComponentsToShow((prev) => [
-                    ...prev,
-                    () => <SecretCorrectMessage command={textTypedByUser} />,
-                ]);
+                pushOutput(() => <SecretCorrectMessage command={typed} />);
             } else {
-                setComponentsToShow((prev) => [
-                    ...prev,
-                    () => <SecretWrongMessage command={textTypedByUser} />,
-                ]);
+                pushOutput(() => <SecretWrongMessage command={typed} />);
             }
         } else if (CommandComponent) {
-            setComponentsToShow((prev) => [...prev, CommandComponent]);
+            pushOutput(CommandComponent);
         } else {
-            setComponentsToShow((prev) => [
-                ...prev,
-                () => <UnknowMessage command={textTypedByUser} />,
-            ]);
+            const suggestion = suggestCommand(typed);
+            pushOutput(() => <UnknowMessage command={typed} suggestion={suggestion} />);
         }
 
         setTextTypedByUser("");
@@ -157,45 +255,33 @@ export default function TerminalClient({ data, locale }: ResumePageClientProps):
         <div className="flex flex-col overflow-hidden rounded-lg shadow-xl pt-10">
             <div className="flex flex-row justify-between bg-gray-100 w-full border-t rounded-tl-lg rounded-tr-lg shadow-3xl dark:bg-neutral-700 dark:border-neutral-700">
                 <div className="flex flex-row items-center text-sm py-1.5">
-                    <button
-                        onClick={() => setDisplayedNavigationTab(0)}
-                        className={`${displayedNavigationTab === 0
-                            ? "bg-neutral-300 dark:bg-neutral-800"
-                            : "cursor-pointer bg-neutral-200 hover:bg-neutral-300 dark:bg-neutral-900 dark:hover:dark:bg-neutral-800/70"
-                            } dark:text-white flex cursor-default px-3 ml-1.5 py-1 flex-row w-56 h-8 rounded-lg items-center justify-between`}
-                    >
-                        <div className="flex flex-row items-center gap-2">
-                            <VscTerminalPowershell />
-                            <p>pwsh in romulodm</p>
-                        </div>
-                        <div className="flex flex-row items-center text-xs">
-                            <VscChromeClose />
-                        </div>
-                    </button>
+                    <TerminalTab
+                        active={displayedNavigationTab === 0}
+                        onSelect={() => setDisplayedNavigationTab(0)}
+                        trailing={
+                            // Decorative: the first tab cannot be closed.
+                            <span aria-hidden="true" className="flex flex-row items-center text-xs">
+                                <VscChromeClose />
+                            </span>
+                        }
+                    />
 
                     {showSecondNavigationTab ? (
                         <>
-                            <button
-                                onClick={() => setDisplayedNavigationTab(1)}
-                                className={`${displayedNavigationTab === 1
-                                    ? "bg-neutral-300 dark:bg-neutral-800"
-                                    : "cursor-pointer bg-neutral-200 hover:bg-neutral-300 dark:bg-neutral-900 dark:hover:dark:bg-neutral-800/70"
-                                    } dark:text-white flex cursor-default px-3 ml-1.5 py-1 flex-row w-56 h-8 rounded-lg items-center justify-between`}
-                            >
-                                <div className="flex flex-row items-center gap-2">
-                                    <VscTerminalPowershell />
-                                    <p>pwsh in romulodm</p>
-                                </div>
-                                <button
-                                    onClick={(event) => {
-                                        event.stopPropagation();
-                                        closeNavigationTab();
-                                    }}
-                                    className="flex flex-row items-center text-xs"
-                                >
-                                    <VscChromeClose />
-                                </button>
-                            </button>
+                            <TerminalTab
+                                active={displayedNavigationTab === 1}
+                                onSelect={() => setDisplayedNavigationTab(1)}
+                                trailing={
+                                    <button
+                                        type="button"
+                                        aria-label={t("close-tab")}
+                                        onClick={closeNavigationTab}
+                                        className="flex flex-row items-center text-xs cursor-pointer"
+                                    >
+                                        <VscChromeClose />
+                                    </button>
+                                }
+                            />
 
                             <button
                                 onClick={() => setShowSecondNavigationTab(true)}
@@ -240,15 +326,18 @@ export default function TerminalClient({ data, locale }: ResumePageClientProps):
                 </div>
             </div>
 
-            <div className="flex flex-row p-2 h-110 overflow-auto border dark:bg-neutral-900 dark:border-neutral-800 rounded-bl-lg rounded-br-lg default-scroll">
+            <div ref={scrollContainerRef} className="flex flex-row p-2 h-110 overflow-auto border dark:bg-neutral-900 dark:border-neutral-800 rounded-bl-lg rounded-br-lg terminal-scroll">
                 {displayedNavigationTab === 0 ? (
-                    <TerminalExperience loadingTime={loadingTime} data={data} />
+                    <TerminalExperience data={data} />
                 ) : (
                     <TerminalFunctional
                         componentsToShow={componentsToShow}
                         textTypedByUser={textTypedByUser}
                         setTextTypedByUser={setTextTypedByUser}
                         checkMessageEntered={checkMessageEntered}
+                        scrollContainerRef={scrollContainerRef}
+                        history={commandHistory}
+                        onShowCompletions={showCompletions}
                     />
                 )}
             </div>

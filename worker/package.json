@@ -4,13 +4,17 @@
   "private": true,
   "scripts": {
     "dev": "tsx watch index.ts",
+    "ga4:check": "tsx scripts/ga4-check.ts",
+    "ga4:payload": "tsx scripts/ga4-check.ts --payload",
     "build": "tsc",
+    "typecheck": "tsc --noEmit",
     "start": "node dist/index.js",
     "test:unit": "vitest run --config ../vitest.config.ts --dir .",
     "test:integration": "vitest run --config ../vitest.config.integration.ts --dir ."
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1032.0",
+    "@google-analytics/data": "^5.2.1",
     "@aws-sdk/client-ses": "^3.1021.0",
     "@aws-sdk/lib-storage": "^3.1032.0",
     "@romulo/database": "*",
@@ -22,13 +26,14 @@
     "dockerode": "^4.0.10",
     "dotenv": "^16.0.0",
     "ioredis": "^5.0.0",
-    "nodemailer": "^8.0.5",
-    "systeminformation": "^5.31.5"
+    "nodemailer": "^10.0.9",
+    "stripe": "^21.0.1",
+    "systeminformation": "^5.31.5",
+    "viem": "^2.55.11"
   },
   "devDependencies": {
     "@types/dockerode": "^3.3.38",
-    "@types/node": "^20.0.0",
-    "@types/nodemailer": "^6.4.0",
+    "@types/node": "^22.0.0",
     "prisma": "^5.0.0",
     "tsx": "^4.0.0",
     "typescript": "^5.0.0"

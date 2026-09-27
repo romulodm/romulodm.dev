@@ -24,17 +24,44 @@ export function PixView({ pixId, donationId, brCode, brCodeBase64, coffees, amou
 
     const amountBRL = (amount / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
 
-    useEffect(() => {
-        const interval = setInterval(async () => {
-            const res = await fetch(`/api/donations/pix/check?pixId=${pixId}&donationId=${donationId}`)
-            const { status } = await res.json()
-            if (status === 'PAID') {
-                clearInterval(interval)
-                onSuccess()
-            }
-        }, 3000)
+    const [expired, setExpired] = useState(false)
 
-        return () => clearInterval(interval)
+    useEffect(() => {
+        let cancelled = false
+        let inFlight = false
+
+        const poll = async () => {
+            if (inFlight || cancelled) return
+            inFlight = true
+            try {
+                const res = await fetch(
+                    `/api/donations/pix/check?pixId=${encodeURIComponent(pixId)}&donationId=${encodeURIComponent(donationId)}`,
+                )
+                if (!res.ok) return
+                const { status } = (await res.json()) as { status?: string }
+                if (cancelled) return
+
+                if (status === 'PAID') {
+                    clearInterval(interval)
+                    onSuccess()
+                } else if (status === 'EXPIRED') {
+                    clearInterval(interval)
+                    setExpired(true)
+                }
+            } catch {
+                // Falha transitoria de rede: silencia e tenta no proximo tick.
+            } finally {
+                inFlight = false
+            }
+        }
+
+        const interval = setInterval(poll, 3000)
+        void poll()
+
+        return () => {
+            cancelled = true
+            clearInterval(interval)
+        }
     }, [pixId, donationId, onSuccess])
 
     function handleCopy() {
@@ -74,11 +101,21 @@ export function PixView({ pixId, donationId, brCode, brCodeBase64, coffees, amou
 
                 {/* Title */}
                 <div>
-                    <h3 className="font-bold text-foreground mb-1">{t('pix.title')}</h3>
+                    <h3 className="type-h3 text-foreground mb-1">{t('pix.title')}</h3>
                     <p className="text-sm text-muted-foreground">
                         {t('pix.description')}
                     </p>
                 </div>
+
+                {/* QR vencido: sem isso o doador fica esperando indefinidamente */}
+                {expired && (
+                    <p
+                        role="status"
+                        className="rounded-lg border border-amber-500/30 bg-amber-500/5 px-3 py-2 text-sm text-amber-600 dark:text-amber-500"
+                    >
+                        {t('pix.expired')}
+                    </p>
+                )}
 
                 {/* QR Code */}
                 <div className="flex justify-center">

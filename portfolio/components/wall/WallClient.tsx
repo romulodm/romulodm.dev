@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { useTranslations } from "next-intl";
 import { useAuthGuard } from "@/hooks/auth-guard";
 import { MessageCard } from "./cards/MessageCard";
 import { ComposeCard } from "./cards/ComposeCard";
@@ -22,6 +23,7 @@ export function WallClient({
   hasPosted,
 }: WallClientProps) {
   const { guard } = useAuthGuard();
+  const t = useTranslations("wall");
 
   const [messages, setMessages] = useState<WallMsg[]>(initialMessages);
   const [cursor, setCursor] = useState<string | null>(
@@ -70,16 +72,13 @@ export function WallClient({
     >
       {/* ── Header ── */}
       <header className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-foreground mb-2">The wall remembers</h1>
-        <p className="text-muted-foreground max-w-md mx-auto">
-          Words that echo through time, leaving a mark here. Share your thoughts, memories, or just say hi!
+        <h1 className="type-h1 text-foreground mb-2">{t("page.title")}</h1>
+        <p className="type-body text-muted-foreground max-w-md mx-auto">
+          {t("page.description")}
         </p>
       </header>
 
-      {/* ── Grid ──
-           • Cards are intentionally tilted via CSS transform in MessageCard.
-           • We add overflow-visible + padding so the tilt shadow isn't clipped.
-      */}
+      {/* ── Grid ── */}
       <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3
                       gap-x-3 gap-y-6 [&>*]:transition-all [&>*]:min-w-0">
         {/* First slot: compose / sign-in / already-posted */}
@@ -111,9 +110,9 @@ export function WallClient({
                   <circle cx="12" cy="12" r="9" stroke="currentColor"
                     strokeWidth="2" strokeDasharray="20 40" />
                 </svg>
-                Loading…
+                {t("list.loading")}
               </span>
-            ) : "Load more"}
+            ) : t("list.loadMore")}
           </button>
         </div>
       )}

@@ -6,7 +6,7 @@ function internalAuthHeaders(): HeadersInit {
     return secret ? { Authorization: `Bearer ${secret}` } : {}
 }
 
-export interface GoSearchHit {
+interface GoSearchHit {
     slug: string
     title: string
     summary: string
@@ -25,22 +25,32 @@ export async function goSearch(query: string, locale: string, limit = 8) {
     }>
 }
 
+async function assertOk(res: Response, op: string) {
+    if (!res.ok) {
+        const body = await res.text().catch(() => '')
+        throw new Error(`search ${op} falhou: HTTP ${res.status} ${body.slice(0, 200)}`)
+    }
+}
+
 export async function goIndex(doc: {
     id: string; slug: string; locale: string;
     title: string; summary: string; excerpt: string;
     tags: string[]; publishedAt: number;
     coverImageUrl: string | null;
 }) {
-    await fetch(`${SEARCH_URL}/index`, {
+    const res = await fetch(`${SEARCH_URL}/index`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', ...internalAuthHeaders() },
         body: JSON.stringify(doc),
     })
+    await assertOk(res, `index ${doc.id}`)
 }
 
 export async function goRemove(docID: string) {
-    await fetch(`${SEARCH_URL}/index/${docID}`, {
+    const res = await fetch(`${SEARCH_URL}/index/${docID}`, {
         method: 'DELETE',
         headers: internalAuthHeaders(),
     })
+    if (res.status === 404) return
+    await assertOk(res, `remove ${docID}`)
 }

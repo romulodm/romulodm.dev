@@ -12,8 +12,9 @@ import rehypeSanitize from 'rehype-sanitize'
 import rehypeSlug from 'rehype-slug'
 import rehypeExternalLinks from 'rehype-external-links'
 import rehypeStringify from 'rehype-stringify'
+import { getLegalConfig, type LegalConfig } from '@/content/legal/config'
 
-export const LEGAL_DOCUMENTS = ['terms', 'privacy-policy'] as const
+const LEGAL_DOCUMENTS = ['terms', 'privacy-policy'] as const
 export type LegalDocumentSlug = (typeof LEGAL_DOCUMENTS)[number]
 
 /** Mapeia o locale da rota para o sufixo do arquivo Markdown. */
@@ -27,7 +28,7 @@ const FALLBACK_FILE_LOCALE = 'en-US'
 
 const LEGAL_DIR = path.join(process.cwd(), 'content', 'legal')
 
-export interface LegalDocument {
+interface LegalDocument {
   /** HTML sanitizado, pronto para injeção. */
   html: string
   /** Título extraído do primeiro `# ` do arquivo. */
@@ -52,9 +53,62 @@ async function readRaw(slug: LegalDocumentSlug, fileLocale: string) {
   return fs.readFile(filePath, 'utf8')
 }
 
+/**
+ * Replaces until the string stops changing. A single pass is not enough: removing
+ * one match can join the text around it into a new one (`<!<!-- x -->-- y -->`
+ * leaves `<!-- y -->` behind). The legal Markdown is committed content, not user
+ * input, so this is defence in depth, but it is what makes the result safe to
+ * render as HTML regardless of where the string came from.
+ */
+function replaceUntilStable(input: string, pattern: RegExp, replacement = ''): string {
+  let previous: string
+  let current = input
+  do {
+    previous = current
+    current = current.replace(pattern, replacement)
+  } while (current !== previous)
+  return current
+}
+
 /** Remove comentários HTML (blocos de personalização) antes de qualquer parsing. */
 function stripHtmlComments(markdown: string): string {
-  return markdown.replace(/<!--[\s\S]*?-->/g, '')
+  return replaceUntilStable(markdown, /<!--[\s\S]*?-->/g)
+}
+
+const PLACEHOLDER = /\{\{([A-Z_]+)\}\}/g
+
+/**
+ * Troca os marcadores {{CHAVE}} pelos valores de content/legal/config.ts.
+ *
+ * Falha alto e cedo se alguma chave não existir ou estiver vazia: é melhor a
+ * página de /legal quebrar em desenvolvimento do que ir para produção com
+ * "{{OWNER}}" impresso no meio de um documento jurídico.
+ */
+function applyConfig(
+  markdown: string,
+  config: LegalConfig,
+  documentName: string,
+): string {
+  const missing = new Set<string>()
+
+  const result = markdown.replace(PLACEHOLDER, (match, key: string) => {
+    const value = config[key as keyof LegalConfig]
+    if (typeof value !== 'string' || value.trim() === '') {
+      missing.add(key)
+      return match
+    }
+    return value
+  })
+
+  if (missing.size > 0) {
+    throw new Error(
+      `[legal] ${documentName}: valores ausentes em content/legal/config.ts — ` +
+        `${[...missing].sort().join(', ')}. ` +
+        `Preencha essas chaves antes de publicar os documentos legais.`,
+    )
+  }
+
+  return result
 }
 
 function extractTitle(markdown: string): string {
@@ -117,7 +171,11 @@ export async function getLegalDocument(
     raw = await readRaw(slug, fileLocale)
   }
 
-  const clean = stripHtmlComments(raw)
+  const clean = applyConfig(
+    stripHtmlComments(raw),
+    getLegalConfig(locale),
+    `${slug}.${fileLocale}`,
+  )
 
   return {
     html: await toHtml(stripFrontMatterBlock(clean)),
@@ -135,7 +193,7 @@ export function getLegalHeadings(html: string): LegalHeading[] {
   for (const match of html.matchAll(pattern)) {
     headings.push({
       id: match[1],
-      text: match[2].replace(/<[^>]+>/g, '').trim(),
+      text: replaceUntilStable(match[2], /<[^>]+>/g).trim(),
     })
   }
 

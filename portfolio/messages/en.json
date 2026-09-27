@@ -1,8 +1,29 @@
 {
-  "404": {
-    "error": "error",
-    "title": "Something went wrong.",
-    "button": "Try again"
+  "api": {
+    "common": {
+      "emailRequired": "Enter your email.",
+      "emailInvalid": "That email doesn't look valid.",
+      "invalidBody": "I couldn't read the data you sent.",
+      "invalidRequest": "Check the fields and try again.",
+      "internalError": "Something broke on my end. Try again in a moment.",
+      "rateLimited": "Too many tries in a row. Give it a minute before trying again.",
+      "unauthorized": "You need to sign in to do that.",
+      "forbidden": "You don't have access to this.",
+      "notFound": "I couldn't find that."
+    },
+    "contact": {
+      "rateLimited": "You've already sent a few messages. Try again later.",
+      "captchaFailed": "I couldn't send your message. Try again in a moment.",
+      "nameRequired": "Write your name.",
+      "messageTooShort": "Write a bit more in your message."
+    },
+    "newsletter": {
+      "subscribe": {
+        "success": "Subscription received. Check your email to confirm it.",
+        "rateLimited": "Too many sign-up attempts in a row. Give it a few minutes and try again.",
+        "internal": "I couldn't save your subscription right now. Try again in a moment."
+      }
+    }
   },
   "ResumePDFButton": {
     "view": "View",
@@ -28,11 +49,14 @@
     "github": {
       "continue": "Continue with GitHub"
     },
+    "password": {
+      "signIn": "Sign in with password",
+      "signUp": "Sign up with password"
+    },
     "login": {
       "emailPlaceholder": "Email",
       "passwordPlaceholder": "Password",
       "submit": "Sign in",
-      "invalidCredentials": "Incorrect email or password.",
       "forgotPassword": "Forgot your password?",
       "noAccount": "Don?t have an account?",
       "createNow": "Create now"
@@ -56,16 +80,6 @@
       "rememberedPassword": "Remembered your password?",
       "didntForgetPassword": "Didn?t forget your password?",
       "login": "Sign in"
-    },
-    "reset": {
-      "description": "Choose your new password.",
-      "passwordPlaceholder": "New password",
-      "confirmPasswordPlaceholder": "Confirm new password",
-      "submit": "Save new password",
-      "genericError": "Could not reset your password.",
-      "successTitle": "Password reset!",
-      "successDescription": "Your password has been updated successfully.",
-      "goToLogin": "Go to sign in"
     },
     "validation": {
       "emailInvalid": "Invalid email.",
@@ -96,47 +110,66 @@
     "action": "Sign in"
   },
   "wall": {
+    "page": {
+      "title": "The wall remembers",
+      "description": "Words that echo through time, leaving a mark here. Share your thoughts, memories, or just say hi!"
+    },
+    "signIn": {
+      "title": "“Join the wall…”",
+      "subtitle": "Sign in to leave your mark",
+      "cta": "Write a message…"
+    },
+    "posted": {
+      "title": "Your mark is on the wall ✓",
+      "subtitle": "Scroll down to find your message"
+    },
+    "list": {
+      "loadMore": "Load more",
+      "loading": "Loading…"
+    },
+    "actions": {
+      "copyLink": "Copy link",
+      "linkCopied": "Link copied",
+      "delete": "Delete message",
+      "confirmDelete": "Delete?",
+      "yes": "Yes",
+      "no": "No"
+    },
     "compose": {
-      "composing": "Composing…",
+      "title": "Leave your mark on the wall",
+      "cta": "Write a message"
+    },
+    "publish": {
+      "step": "Step {current} of {total}",
+      "writeTitle": "Leave your mark",
+      "writeDescription": "Up to 100 characters. Next you pick how the card looks.",
       "placeholder": "Type something nice…",
+      "continue": "Continue",
+      "styleTitle": "Pick the look",
+      "styleDescription": "The art is generated automatically from your text and your user ID: the same message always makes the same card. You choose the style; the colours come from the message. Changed your mind about the text? Go back and the card regenerates.",
+      "toneLabel": "Tone",
+      "styleLabel": "Style",
+      "tones": {
+        "dark": "Dark",
+        "light": "Light"
+      },
+      "styles": {
+        "mesh": "Mesh",
+        "rays": "Rays",
+        "truchet": "Truchet",
+        "terrain": "Terrain",
+        "lifehash": "LifeHash"
+      },
+      "now": "Now",
+      "back": "Back",
+      "publish": "Publish",
+      "publishing": "Publishing…",
       "alreadyPosted": "You already left a message!",
       "error": "Something went wrong. Please try again.",
       "success": "Message posted!"
     }
   },
-  "blog": {
-    "page-title": "Blog - Romulo de Moraes",
-    "title": "The opinions expressed here are personal reflections regarding my views on technology and other subjects; feel free to interact, share your ideas and send suggestions.",
-    "card-button": "Read more",
-    "filter": {
-      "search": "Search post",
-      "random": "Random post",
-      "filter": "Filter posts",
-      "filter-all": "All"
-    },
-    "newsletter": {
-      "title": "Want to receive new posts?",
-      "content": "Subscribe to our newsletter.",
-      "btn": "Subscribe",
-      "privacy": "Privacy policy"
-    },
-    "about-portfolio": {
-      "title": "Want to know how this site was built?",
-      "content": "Check out the post I wrote about the code and architecture behind it.",
-      "btn": "View post"
-    },
-    "suggestions": {
-      "title": "Want to suggest a topic?",
-      "content": "Send a suggestion about something in the field.",
-      "btn": "Send suggestion",
-      "privacy": "Privacy policy"
-    },
-    "not-found-title": "Well, this shouldn't have happened...",
-    "not-found-content": "I couldn't find any post matching your search criteria. Try searching by titles or topics...",
-    "metadata-description": "Articles about web development, JavaScript, TypeScript, and much more."
-  },
   "contact": {
-    "text": "Feel free to contact me if you have any questions or suggestions. I'm open to ideas and opportunities.",
     "modal-title": "Let's talk",
     "modal-subtitle": "Tell me about your idea, question, or opportunity.",
     "form-email": "Your email",
@@ -144,37 +177,32 @@
     "form-text": "What's on your mind?",
     "form-button": "Send",
     "sended-title": "Thank you for reaching out!",
-    "sended-content": "Your message has been sent successfully."
+    "sended-content": "Your message has been sent successfully.",
+    "topic-FULL_TIME": "Full-time role",
+    "topic-FREELANCE": "Freelance project",
+    "topic-SAYING_HI": "Just saying hi",
+    "topic-BUG_REPORT": "Bug report",
+    "topic-OTHER": "Other",
+    "error-generic": "I couldn't send your message. Please try again in a moment.",
+    "form-topic-placeholder": "Select a topic",
+    "privacy-notice": "Your details are used only to answer this message. They never become a mailing list and are never sold. Details in the <link>privacy policy</link>."
   },
-  "connect": {
-    "getInTouch": {
-      "titlePrefix": "Let's",
-      "titleHighlight": "keep in touch.",
-      "description": "Message me about <b>anything</b>: a project idea, a question about a post, or just to say hi. I usually reply fast."
-    },
-    "openSource": {
-      "titleHighlight": "Open source",
-      "joinThe": "and the",
-      "darkSide": "dark side",
-      "boldSide": "bold side",
-      "ofTheForce": "of the force.",
-      "description": "Almost everything I build ends up <b>public on GitHub</b>. Open source is the most honest way to learn: anyone can read it, disagree with it, and make it better."
-    },
+  "vision": {
     "software": {
       "titleHighlight": "Software",
-      "titleRest": "born from collaboration.",
       "description": "The best technical decisions I've made came out of <b>code review</b> and hard conversations, not solitary inspiration.",
       "cursorName": "Romulo",
       "frameOne": "Design.",
       "frameTwo": "Prototype.",
-      "frameThree": "Develop.",
+      "frameThree": "Build.",
       "frameFour": "Refine.",
       "productivityTitle": "Productivity at its best.",
-      "productivityBody": "With <b>quality</b> and <b>sustainability</b> at heart.",
+      "productivityBody": "With <b>quality</b> and <b>sustainability</b> at the core.",
       "commits": "{count, plural, one {# new commit} other {# new commits}}",
       "commentAuthor": "Manager",
       "commentTime": "2 hours ago",
-      "commentBody": "Don't forget the meeting, friend!",
+      "commentBody": "Don't forget the meeting, buddy!",
+      "walletCommentBody": "Don't trust, verify (and go buy some crypto).",
       "ctaSecurity": "Security",
       "ctaCollaborative": "Collaborative development",
       "ctaFlexibility": "Flexibility",
@@ -183,7 +211,7 @@
       "communityTitle": "Community",
       "communityBody": "Making people's lives easier.",
       "academiaTitle": "Academia",
-      "academiaBody": "Always at the state of the art.",
+      "academiaBody": "Always at the cutting edge.",
       "web3Title": "Web3",
       "web3Body": "Decentralization is the way.",
       "securityTitle": "Security",
@@ -191,171 +219,240 @@
       "performanceTitle": "Performance",
       "performanceBody": "Every millisecond counts.",
       "observabilityTitle": "Observability",
-      "observabilityBody": "Measure before trusting."
+      "observabilityBody": "Measure before you trust."
     },
     "lastConnect": {
-      "bubble": "Want to chat?",
-      "titlePrefix": "Let's",
-      "titleHighlight": "connect.",
+      "title": "Let's connect.",
       "formEmail": "Your email",
       "formName": "Your name",
       "formMessage": "Write your message...",
-      "surpriseButton": "Surprise me",
       "submitButton": "Send message",
       "sentButton": "Message sent",
-      "genericError": "Something went wrong sending that. Mind trying again in a moment?",
+      "genericError": "Something went wrong while sending. Mind trying again in a moment?",
       "thanksShort": "Thank you!",
       "thanksLong": "Thanks for reaching out!",
       "thanksBody": "I'll get back to you as soon as I can.",
-      "surprise1": "Hey Romulo! Landed here by accident and ended up reading the whole site. Really good.",
-      "surprise2": "I have a project idea I can't get out of my head. Up for hearing it?",
-      "surprise3": "Came for the blog, stayed for the engineering. Want to talk about it?"
-    }
-  },
-  "hero": {
-    "greeting-1": "Good morning",
-    "greeting-2": "Good afternoon",
-    "greeting-3": "Good evening",
-    "greeting-4": "Good night",
-    "visitor-1": "visitor!",
-    "visitor-2": "dear!",
-    "visitor-3": "dev :)",
-    "visitor-4": "person.",
-    "visitor-5": "visitor :)",
-    "visitor-6": "friend.",
-    "content": "My name is Romulo de Moraes, I decided to create this site to show a little of who I am, what I've done, what I've learned and what I plan to achieve as a full-stack developer and student.",
-    "star-title": "Give a star",
-    "star-content": "Access this site's repository.",
-    "resume-title": "View my resume",
-    "resume-content": "Dynamic, interactive and up to date.",
-    "view-more": "View more"
-  },
-  "about": {
-    "eyebrow": "About us",
-    "headline": "On a mission to empower remote teams",
-    "subheadline": "Aliquet nec orci mattis amet quisque ullamcorper neque, nibh sem. At arcu, sit dui mi, nibh dui, diam eget aliquam. Quisque id at vitae feugiat egestas.",
-    "missionTitle": "Our mission",
-    "missionParagraph1": "Faucibus commodo massa rhoncus, volutpat. Dignissim sed eget risus enim. Mattis mauris semper sed amet vitae sed turpis id. Id dolor praesent donec est. Odio penatibus risus viverra tellus varius sit neque erat velit. Faucibus commodo massa rhoncus, volutpat. Dignissim sed eget risus enim. Mattis mauris semper sed amet vitae sed turpis id.",
-    "missionParagraph2": "Et vitae blandit facilisi magna lacus commodo. Vitae sapien duis odio id et. Id blandit molestie auctor fermentum dignissim. Lacus diam tincidunt ac cursus in vel. Mauris varius vulputate et ultrices hac adipiscing egestas. Iaculis convallis ac tempor et ut. Ac lorem vel integer orci.",
-    "theNumbers": "The numbers",
-    "stats": {
-      "raised": "Raised",
-      "companies": "Companies",
-      "deals": "Deals Closed",
-      "leads": "Leads Generated",
-      "yearsCoding": "Years coding",
-      "usersImpacted": "Users impacted",
-      "projectsShipped": "Projects shipped",
-      "articlesPublished": "Articles published"
-    },
-    "command": "romulo.exe --about",
-    "location": "Rio Grande, RS - Brazil",
-    "availability": "Open to opportunities",
-    "buttons": {
-      "projects": "View projects",
-      "contact": "Contact"
-    },
-    "images": {
-      "whiteboardAlt": "Team whiteboard session",
-      "collaborationAlt": "Team collaboration",
-      "memberAlt": "Team member",
-      "workspaceAlt": "Coworking space",
-      "extraAlt": "Additional team photo"
+      "statusTimezone": "Rio Grande · UTC−3",
+      "statusWorkHours": "working hours here",
+      "statusOffHours": "after hours here",
+      "statusLateNight": "it's the middle of the night here, I may take a while to reply",
+      "responseLabel": "Average reply",
+      "responseValue": "~1 day",
+      "responseNote": "I'll reply as soon as I can",
+      "uplinkReady": "ready to transmit your message"
     }
   },
   "home": {
-    "page-title": "Romulo de Moraes",
+    "hero": {
+      "greeting": "Hello,",
+      "greetingMorning": "Good morning, visitor!",
+      "greetingAfternoon": "Good afternoon, visitor!",
+      "greetingEvening": "Good evening, visitor!",
+      "intro": "I'm Romulo de Moraes. I built this site to show a bit of who I am, what I've done, what I've learned and what I plan to achieve as a full-stack developer and student."
+    },
     "profile": {
-      "title": "Overview of",
-      "title-colored": "Profile",
+      "title": "Who is behind the code.",
       "link-title": "Want to see my resume?",
       "link-content": "I summarized my experiences and made it available for download.",
-      "link-button": "View online resume"
+      "link-button": "View online resume",
+      "eyebrow": "Profile",
+      "description": "Experience, education and the path that got me here — in chronological order."
     },
     "projects": {
-      "title": "Some",
-      "title-colored": "Projects",
+      "title": "From draft to deploy.",
       "code": "Code",
       "preview": "Visit",
       "public": "public repositories",
-      "link-title": "Interested?",
-      "link-content": "You can see more of my projects and experiments.",
-      "link-button": "See more projects"
+      "eyebrow": "Projects",
+      "description": "Things I built alone, with a team and out of pure curiosity. Open source whenever possible.",
+      "downloadsWeek": "/week"
+    },
+    "built": {
+      "eyebrow": "What I've built",
+      "headline": "So far, I've",
+      "items": [
+        "published seedicon.",
+        "classified farm GPS.",
+        "moved an API to FastAPI.",
+        "wrote an on-chain lottery.",
+        "built chess in Go.",
+        "rebuilt Pac-Man.",
+        "took a Best Paper.",
+        "taught a Git course.",
+        "shipped this site."
+      ],
+      "lede": {
+        "before": "None of it started finished:",
+        "highlight": "each one began as an empty file",
+        "after": "and a problem I did not yet know how to solve. Open source whenever possible."
+      },
+      "cards": [
+        {
+          "label": "Working",
+          "title": "Developer",
+          "subtitle": "Agrifence · Rio Grande"
+        },
+        {
+          "label": "Building",
+          "title": "seedicon",
+          "subtitle": "Deterministic SVG avatars"
+        },
+        {
+          "label": "Writing",
+          "title": "Engineering blog",
+          "subtitle": "Decisions, mistakes, infra"
+        }
+      ],
+      "presence": {
+        "statusLabel": "Status",
+        "statusFree": "Available",
+        "statusFreeHint": "no status set",
+        "statusUntil": "until {time}, set on Telegram",
+        "musicLabel": "Listening to",
+        "musicLastLabel": "Last played",
+        "commitEmptyHint": "nothing public in the last few days",
+        "commitEmpty": "No recent commit",
+        "musicEmptyHint": "Spotify is quiet",
+        "musicEmpty": "Nothing playing",
+        "commitLabel": "Latest commit",
+        "commitsLabel": "Commits · {days} days",
+        "commitsHint": "public and private",
+        "visitorsLabel": "On the site now",
+        "visitorsUnit": "{count, plural, one {person} other {people}}",
+        "visitorsHint": "including you"
+      },
+      "reach": {
+        "label": "Reach out",
+        "button": "Start a conversation"
+      }
     },
     "vision": {
       "title": "Vision on",
-      "title-colored": "Software",
       "link-title": "Want to know more?",
       "link-content": "You can read more about what I think on my blog.",
       "link-button": "View posts"
     },
     "contact": {
-      "title": "Get in",
-      "title-colored": "Touch"
+      "title": "Get in"
     },
     "showcase": {
       "eyebrow": "Technologies",
       "title": "Works with everything.",
       "description": "Frontend, backend, databases, DevOps, blockchain, embedded systems, payment gateways, APIs, and more.",
       "highlight": "Yes."
+    },
+    "software": {
+      "eyebrow": "Vision",
+      "title": "Software born from collaboration.",
+      "description": "The best technical decisions I ever made came from code review and hard conversations, not from solitary inspiration."
+    },
+    "faq": {
+      "eyebrow": "FAQ",
+      "title": "Questions that always come up.",
+      "description": "How I work, what I use and the best way to bring me into a project.",
+      "contact": "Something not quite clear? Send me a <link>message</link>."
+    },
+    "about": {
+      "eyebrow": "About",
+      "headline": "So far, I've worked on",
+      "builds": [
+        "telemetry for tractors.",
+        "IoT for water treatment.",
+        "conveyor belt monitoring.",
+        "a women's health app.",
+        "prize-linked savings.",
+        "on-chain lotteries.",
+        "an npm package.",
+        "custom-built solutions."
+      ],
+      "lede": "Developer at Agrifence and master's student in Computer Engineering at FURG. By day I turn raw GPS from agricultural machinery into something a farmer can act on; the rest of the time I research smart contracts and distributed systems, mostly how to make randomness on a public blockchain fair enough to run a lottery on.",
+      "whyTitle": "Why this site exists",
+      "whyProblems": "This blog is where I write about the problem behind the code: the assumptions that seemed obvious until production proved them wrong, what it takes to select a fair winner on a public blockchain, and the shortcuts whose cost only showed up months later.",
+      "whyProjects": "It's also where the projects I haven't built yet live. Some will turn into posts, some into repos, some will stay ideas, but they'll be public either way.",
+      "location": "Rio Grande, RS - Brazil",
+      "available": "Open to opportunities",
+      "viewProjects": "View Projects",
+      "github": "GitHub",
+      "contact": "Contact",
+      "statsTitle": "The numbers",
+      "stats": {
+        "years": "Years coding",
+        "users": "Users impacted",
+        "projects": "Projects shipped",
+        "articles": "Article published"
+      }
     }
   },
-  "profile": {
-    "link-title": "Want to see my resume?",
-    "link-content": "I summarized my experiences and made it available for download.",
-    "link-button": "View online resume"
-  },
   "navigation": {
+    "login": "Sign in",
+    "tooltip": {
+      "search": "Search posts",
+      "language": "Change language",
+      "theme": "Change theme",
+      "rss": "RSS feed"
+    },
+    "themeOptions": {
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System"
+    },
     "home": "Home",
-    "resume": "Resume",
-    "settings": "Settings",
     "theme": "Theme",
     "language": "Language",
-    "user": "User",
     "modal": {
       "profile": "Profile",
       "logout": "Logout"
     }
   },
-  "post": {
-    "comment-title": "Leave a comment",
-    "comment-placeholder": "Write your comment here...",
-    "comment-button": "Post comment",
-    "comments-empty": "No comments yet."
-  },
-  "resume": {
-    "page-title": "Online Resume - Romulo de Moraes",
-    "linkedin": "LinkedIn Profile",
-    "github": "GitHub Profile",
-    "titles": {
-      "xp": "Experience",
-      "education": "Education",
-      "lang": "Languages"
-    }
-  },
   "terminal": {
     "xp": "experience",
     "loading-xp-title": "Looking for experience...",
-    "loading-xp": "Loading system experience took ",
+    "loading-xp": "Loading system experience took {years, plural, one {# year} other {# years}}.",
     "education": "education",
     "loading-education-title": "Looking for education...",
-    "loading-education": "Loading education took ",
+    "loading-education": "Loading education took {years, plural, one {# year} other {# years}}.",
     "visitor": "visitor",
     "tooltip": "You can use this terminal",
-    "loading": "Loading the follow-up message took ",
     "not-found-first": "Command not found, type ",
     "not-found-second": " for a list of commands.",
     "loadings": {
-      "help": "Loading the help message took ",
-      "initial": "Loading the initial message took ",
-      "follow": "Loading social networks took ",
-      "who": "Loading this useless info took ",
-      "who-years": " years",
-      "whoami": "Loading this pill took ",
-      "cats": "Loading these amazing cats took ",
-      "inter": "Loading SC Internacional's logo took ",
-      "spotify": "Loading this awesome playlist took ",
-      "secret": "Loading this riddle took "
+      "help": "Loading the help message took {ms} ms.",
+      "initial": "Loading the initial message took {ms} ms.",
+      "follow": "Loading social networks took {ms} ms.",
+      "who": "Loading this useless info took {age} years.",
+      "whoami": "Loading this pill took {ms} ms.",
+      "cats": "Convincing these cats to pose took {ms} ms.",
+      "inter": "Loading SC Internacional's logo took {ms} ms.",
+      "spotify": "Loading this awesome playlist took {ms} ms.",
+      "secret": "Loading this riddle took {ms} ms.",
+      "secret-hint": "Coming up with this hint took {ms} ms. Don't expect much from it.",
+      "secret-wrong": "Checking the password took {ms} ms. That's not it.",
+      "secret-correct": "Cracking the vault took {ms} ms.",
+      "unknown": "Searching the whole system for that command took {ms} ms.",
+      "weather": "Looking out the window took {ms} ms.",
+      "quote": "Consulting the Stoics took {ms} ms.",
+      "ping": "64 bytes from romulo: icmp_seq=1 ttl=64 time={ms} ms",
+      "sudo": "Denying your access took {ms} ms. No second thoughts.",
+      "date": "Checking the clock took {ms} ms.",
+      "neofetch": "Collecting info about me took {ms} ms.",
+      "uptime": "Counting the seconds since the first commit took {ms} ms.",
+      "matrix": "Taking the red pill took {ms} ms.",
+      "hack-bank": "Finding a vulnerable bank took {ms} ms.",
+      "coffee": "Heating the water took {ms} ms.",
+      "joke": "Coming up with this joke took {ms} ms. It should have taken longer.",
+      "papers": "Looking up my papers on Google Scholar took {ms} ms.",
+      "blog": "Fetching the posts from the database took {ms} ms.",
+      "git-log": "Running git log across all my repositories took {ms} ms.",
+      "visitors": "Counting who is here took {ms} ms.",
+      "top": "Listing my processes took {ms} ms.",
+      "npm-install": "Resolving the dependency tree took {ms} ms.",
+      "sl": "Calling the train took {ms} ms.",
+      "cowsay": "Waking up the cow took {ms} ms.",
+      "seedicon": "Generating the avatars took {ms} ms. No network, just your text.",
+      "man": "Opening the manual took {ms} ms. Nobody reads it anyway.",
+      "history": "Remembering what you did took {ms} ms.",
+      "completions": "Guessing what you meant took {ms} ms.",
+      "wordmark": "Lighting every pixel by hand took {ms} ms."
     },
     "commands": {
       "help": "List of commands",
@@ -367,14 +464,39 @@
       "cats": "Wonderful cat art",
       "inter": "The greatest football club in the world",
       "spotify": "One of my playlists",
-      "secret": "Simple riddle, what's the password?"
+      "secret": "Simple riddle, what's the password?",
+      "weather": "Current weather in Rio Grande - RS",
+      "quote": "Stoic quote + reflection",
+      "ping": "Checks whether I'm awake",
+      "joke": "Programmer joke",
+      "sudo": "Try something forbidden",
+      "date": "Current date and time",
+      "neofetch": "System info (me)",
+      "uptime": "Time since the system started",
+      "matrix": "Hacker mode",
+      "hack-bank": "Totally legal simulation",
+      "coffee": "Brew coffee to code",
+      "papers": "Published papers I have authored",
+      "blog": "Latest blog posts",
+      "git-log": "My latest public commits",
+      "visitors": "How many people are on the site now",
+      "top": "My processes, live",
+      "htop": "top, but colorful",
+      "npm-install": "Installs everything you don't need",
+      "sl": "A train. That's it.",
+      "cowsay": "A cow repeats what you say",
+      "seedicon": "Generates avatars from any text",
+      "man": "A command's manual",
+      "history": "Commands you have typed",
+      "exit": "Closes this tab",
+      "wordmark": "Writes some text in flickering pixels"
     },
     "initial": {
       "content": "For a list of available commands, type "
     },
     "who": {
       "so": "So...",
-      "about": "I'm 20 years old, just a student and tech enthusiast who likes to play games, read books and do other nerdy stuff. 🤓"
+      "about": "I'm {age} years old, just a student and tech enthusiast who likes to play games, read books and do other nerdy stuff. 🤓"
     },
     "whoami": {
       "title": "Life is not a mystery to be solved, but an experience to be lived.",
@@ -391,48 +513,180 @@
       "how-try": "your attempt",
       "how-second": ", your attempt being a four-digit number.",
       "how-hint": "To see a hint, type ",
-      "hint-time": "Come on, man, these messages don't take long to show up...",
       "hint": "The hint is: it's a year 🤯 wow, amazing hint! One more — this year appears in a message here in the terminal...",
-      "wrong": "This check took no time at all.",
       "reward": "Correct! Your reward here: "
+    },
+    "close-tab": "Close tab",
+    "weather": {
+      "wind": "Wind",
+      "temperature": "Temperature",
+      "condition": "Condition",
+      "cloudy": "Cloudy"
+    },
+    "quote": {
+      "translation": "Bear and forbear.",
+      "reflection": "The idea is simple but powerful: endure what is outside our control and avoid reacting impulsively to what affects us. In a world full of distractions and pressure, that has become almost a \"rare skill\"."
+    },
+    "ping": {
+      "online": "🟢 online",
+      "maybe": "🟡 maybe online",
+      "offline": "🔴 offline",
+      "morning": "Probably starting the day with coffee ☕",
+      "afternoon": "Working / coding 🚀",
+      "evening": "Maybe relaxing or studying 📚",
+      "night": "Sleeping 😴 (or should be)",
+      "timezone": "timezone",
+      "hour": "hour"
+    },
+    "sudo": {
+      "denied": "Permission denied: you are not root 😎",
+      "reported": "This incident will be reported."
+    },
+    "date": {
+      "night": "🌙 Time to rest...",
+      "morning": "☀️ Let's code!",
+      "afternoon": "🚀 Productivity in progress",
+      "evening": "🌆 Time to slow down"
+    },
+    "neofetch": {
+      "uptime": "{age} years",
+      "name": "Name",
+      "age": "Age",
+      "location": "Location",
+      "stack": "Stack",
+      "stack-value": "Next.js, Go, Kafka, Redis and more",
+      "interests": "Interests",
+      "interests-value": "Distributed systems, backend, Web3",
+      "status": "Status",
+      "status-value": "Always building something"
+    },
+    "uptime": {
+      "loading": "Looking for the first commit...",
+      "error": "GitHub didn't answer right now. Try again in a bit.",
+      "value": "up {days}d {hours}h {minutes}m {seconds}s"
+    },
+    "hack-bank": {
+      "initializing": "Initializing...",
+      "accessing": "Accessing server...",
+      "injecting": "Injecting payload...",
+      "bypassing": "Bypassing firewall...",
+      "done": "💰 Transfer complete in {seconds} seconds.",
+      "disclaimer": "Amount transferred: $0.00. No banks were harmed in this simulation."
+    },
+    "coffee": {
+      "brewing": "Brewing coffee",
+      "done": "The coffee took {seconds} seconds to be ready.",
+      "ready": "☕ Coffee ready. Now you can code."
+    },
+    "joke": {
+      "items": [
+        "Why do programmers code in the dark? Because light attracts bugs. 🥁",
+        "There are 10 kinds of people: those who understand binary and those who don't.",
+        "It works on my machine. Fine, then we'll ship my machine to the client.",
+        "A SQL query walks into a bar, goes up to two tables and asks: can I join you?",
+        "I solved a problem with regex. Now I have two problems."
+      ]
+    },
+    "suggestion": "Did you mean <cmd>{command}</cmd>?",
+    "args": {
+      "text": "text",
+      "command": "command"
+    },
+    "papers": {
+      "award": "🏆 {award}",
+      "note": "These are only the published papers I have authored. I have others submitted and under review, and I keep writing."
+    },
+    "blog": {
+      "empty": "No posts published yet. Check back soon.",
+      "error": "The database didn't answer right now. Try again in a bit.",
+      "reading": "{minutes} min read",
+      "all": "All posts:"
+    },
+    "git-log": {
+      "empty": "No recent public commits.",
+      "error": "fatal: GitHub didn't answer right now. Try again in a bit."
+    },
+    "visitors": {
+      "count": "👀 {count, plural, one {# person} other {# people}} on the site right now, including you.",
+      "error": "Couldn't count right now, but at least you're here."
+    },
+    "top": {
+      "tasks": "Tasks: {total} total, {running} running, 1 barely sleeping",
+      "processes": [
+        "coffee.exe",
+        "thesis.tex",
+        "agrifence-api",
+        "isys-paper.tex",
+        "spotify",
+        "next-server",
+        "inter-1909",
+        "sleep.sh"
+      ]
+    },
+    "npm-install": {
+      "done": "added {count} packages, 0 of which you need, in {seconds}s",
+      "funding": "{count} packages are looking for funding. This site included."
+    },
+    "sl": {
+      "passed": "🚂 The train went by in {seconds} seconds. Did you mean ls?"
+    },
+    "cowsay": {
+      "default": "Moo! Type cowsay followed by some text."
+    },
+    "seedicon": {
+      "usage": "Usage: seedicon followed by some text. Example: <cmd>seedicon romulo</cmd>",
+      "same": "Same text, same avatar, on any machine.",
+      "install": "To use it in your project:"
+    },
+    "man": {
+      "what": "What manual page do you want?",
+      "example": "For example, try <cmd>man man</cmd>.",
+      "missing": "No manual entry for {command}.",
+      "name": "NAME",
+      "synopsis": "SYNOPSIS",
+      "description": "DESCRIPTION",
+      "bugs": "BUGS",
+      "pages": {
+        "help": "Lists more commands than fit on the screen.",
+        "clear": "Clears the terminal, not your conscience.",
+        "initial": "The © 2024 was never updated.",
+        "who": "Age is computed live; the author gets older without notice.",
+        "whoami": "Answers a simple question with a philosophy essay.",
+        "follow": "Following does not guarantee a follow back.",
+        "papers": "Reviewer 2 is still not satisfied.",
+        "blog": "Posts come out less often than promised.",
+        "git-log": "Messages like 'fix' and 'now it works' are intentional.",
+        "visitors": "Counts you twice if you open two tabs.",
+        "weather": "The data is hardcoded; look out the window for the live version.",
+        "quote": "Reading the Stoics does not stop anyone from getting mad at CI.",
+        "ping": "Sometimes reports online while the author is asleep.",
+        "cats": "No cats were consulted about the use of their likeness.",
+        "inter": "Accepts no counterarguments.",
+        "spotify": "Musical taste not covered by warranty.",
+        "joke": "Jokes do not improve with repetition.",
+        "sudo": "Only works for root. You are not root.",
+        "date": "Cannot go back in time, despite requests.",
+        "neofetch": "The coffee-driven kernel has no stable release.",
+        "top": "sleep.sh never gets enough CPU.",
+        "htop": "Same as top, with more colors and the same lack of sleep.",
+        "uptime": "Measures time since a chess repository, for historical reasons.",
+        "matrix": "There is no spoon.",
+        "hack-bank": "No money was moved. The author checked his own balance.",
+        "coffee": "Does not serve actual coffee. Yet.",
+        "npm-install": "node_modules weighs more than the rest of the project.",
+        "sl": "Exists to punish people who mistype ls.",
+        "cowsay": "The cow repeats everything, unfiltered.",
+        "seedicon": "Complaints about the avatar are not accepted: your text picked it.",
+        "man": "Reading the manual is still optional, as always.",
+        "history": "Forgets everything on reload. Sometimes that is for the best.",
+        "secret": "The hint is worse than the riddle.",
+        "exit": "Closes the tab, but you can always come back.",
+        "wordmark": "The flickering pixels are not a bug, but nobody has proven otherwise."
+      }
+    },
+    "history": {
+      "empty": "No commands yet."
     }
-  },
-  "vision": {
-    "link-title": "Want to know more?",
-    "link-content": "You can read more about what I think on my blog.",
-    "link-button": "View posts",
-    "icons": {
-      "first-title": "Innovation",
-      "first-content": "Defining tomorrow's rules.",
-      "second-title": "Community",
-      "second-content": "Making people's lives easier."
-    },
-    "frame": {
-      "one": "Design.",
-      "two": "Prototype.",
-      "three": "Develop.",
-      "four": "Improve."
-    },
-    "productivity": {
-      "title": "Productivity at its best.",
-      "word-1": "With ",
-      "bold-1": "quality ",
-      "word-2": "and ",
-      "bold-2": "sustainability ",
-      "word-3": "at heart."
-    },
-    "development": {
-      "left": "Security",
-      "center": "Collaborative development",
-      "right": "Flexibility"
-    },
-    "comment": {
-      "time": "2 hours ago",
-      "content": "Don't forget the meeting, friend!"
-    }
-  },
-  "announcement": {
-    "content": "Hey, this portfolio is still under development, ok? 🤠"
   },
   "footer": {
     "cta": {
@@ -442,9 +696,7 @@
     },
     "newsletter": {
       "title": "Stay Updated",
-      "subtitle": "Get notified about new posts, projects, and ideas straight to your inbox.",
-      "placeholder": "Enter your email",
-      "subscribe": "Subscribe"
+      "subtitle": "Get notified about new posts, projects, and ideas straight to your inbox."
     },
     "nav": {
       "resources": {
@@ -463,16 +715,14 @@
         "links": {
           "about": "About",
           "login": "Sign in",
-          "logout": "Sign out",
-          "privacy": "Privacy policy"
+          "logout": "Sign out"
         }
       },
       "legal": {
         "title": "Legal",
         "links": {
           "privacy": "Privacy policy",
-          "terms": "Terms of service",
-          "notices": "Legal notices"
+          "terms": "Terms of service"
         }
       },
       "about": {
@@ -531,69 +781,21 @@
       }
     ]
   },
-  "blogPost": {
-    "notFoundTitle": "Post not found",
-    "videoTitle": "Post video",
-    "published": "Published {time}",
-    "readingTime": "{minutes} min read",
-    "originallyPublishedAt": "Originally published at:"
-  },
-  "commentsPage": {
-    "metadataNotFound": "Comment not found",
-    "metadataTitle": "Comment by @{username} on \"{postTitle}\"",
-    "comment": "Comment",
-    "replyingTo": "Replying to @{username}",
-    "backToPost": "Go to \"{title}\""
-  },
-  "newsletterFlow": {
-    "confirm": {
-      "loadingTitle": "Confirming...",
-      "successTitle": "All set!",
-      "errorTitle": "Oops! Something went wrong",
-      "successDefaultMessage": "Subscription confirmed!",
-      "errorDefaultMessage": "Could not confirm subscription.",
-      "networkError": "Connection error. Please try again later.",
-      "successListTitle": "From now on you?ll receive:",
-      "successItems": {
-        "posts": "New posts as soon as they are published",
-        "exclusive": "Tips and exclusive content",
-        "updates": "News and projects"
-      },
-      "errorListTitle": "Possible causes:",
-      "errorItems": {
-        "expired": "The link expired (valid for 24h)",
-        "alreadyConfirmed": "This email was already confirmed",
-        "incorrect": "The link is incorrect"
-      },
-      "backHome": "Go home",
-      "persistentProblem": "Still having trouble?",
-      "subscribeAgain": "Subscribe again"
+  "bento": {
+    "guestbook": {
+      "eyebrow": "Guestbook",
+      "title": "Leave a note on the wall."
     },
-    "unsubscribe": {
-      "confirmTitle": "Unsubscribe?",
-      "loadingTitle": "Processing...",
-      "successTitle": "Subscription canceled",
-      "errorTitle": "Oops! Something went wrong",
-      "successDefaultMessage": "Subscription canceled successfully.",
-      "errorDefaultMessage": "Could not cancel subscription.",
-      "networkError": "Connection error. Please try again.",
-      "description": "You will no longer receive new posts and updates by email. You can subscribe again at any time.",
-      "confirmButton": "Yes, unsubscribe",
-      "stayButton": "No, keep me subscribed",
-      "farewellTitle": "We?ll miss you!",
-      "farewellDescription": "You can subscribe again at any time.",
-      "backHome": "Go home"
+    "location": {
+      "eyebrow": "Where I am",
+      "title": "Rio Grande, Brazil. Working from anywhere.",
+      "base": "Rio Grande, BR",
+      "global": "Remote"
+    },
+    "newsletter": {
+      "eyebrow": "Newsletter",
+      "title": "Get new posts by email."
     }
-  },
-  "newsletterForm": {
-    "title": "Receive new posts in your email",
-    "subtitle": "Subscribe to the newsletter and get notified when new articles are published",
-    "placeholder": "you@email.com",
-    "subscribe": "Subscribe",
-    "subscribing": "Subscribing...",
-    "successDefault": "Thanks for subscribing!",
-    "errorDefault": "Something went wrong. Please try again.",
-    "networkError": "Could not subscribe. Please try again."
   },
   "support": {
     "metadata": {
@@ -615,8 +817,7 @@
       "genericError": "Something went wrong. Please try again.",
       "methods": {
         "pix": "PIX",
-        "card": "Card",
-        "eth": "ETH"
+        "card": "Card"
       }
     },
     "pix": {
@@ -631,13 +832,7 @@
       "expired": "This QR code has expired. Close and generate a new charge."
     },
     "crypto": {
-      "back": "Back",
-      "wallet": "Wallet:",
-      "waiting": "Waiting for MetaMask...",
-      "send": "Send with MetaMask",
       "genericError": "Error processing ETH.",
-      "verifyError": "Could not verify transaction.",
-      "missingWallet": "MetaMask not found. Install it at metamask.io",
       "coffees": "{count} coffee(s)"
     },
     "stripe": {
@@ -673,131 +868,6 @@
       "button": "Support"
     }
   },
-  "api": {
-    "common": {
-      "invalidRequest": "Invalid request data.",
-      "invalidBody": "Invalid request body.",
-      "unauthorized": "Authentication required.",
-      "forbidden": "Access denied.",
-      "notFound": "Resource not found.",
-      "conflict": "Could not complete the request.",
-      "rateLimited": "Too many attempts. Please try again later.",
-      "internalError": "Internal error.",
-      "internalRetry": "Internal error. Please try again.",
-      "emailRequired": "Email is required.",
-      "emailInvalid": "Invalid email address."
-    },
-    "auth": {
-      "forgot": {
-        "rateLimited": "Too many attempts. Please try again in 10 minutes.",
-        "success": "If this email is registered, you will receive a link shortly.",
-        "internal": "Internal error."
-      },
-      "register": {
-        "rateLimited": "Too many sign-up attempts. Please try again later.",
-        "conflict": "Could not complete sign-up with the provided data.",
-        "conflictRetry": "Could not complete sign-up. Please try again.",
-        "passwordRequired": "Password is required.",
-        "passwordMin": "Password must be at least 8 characters.",
-        "passwordMax": "Password must be at most 128 characters."
-      }
-    },
-    "comments": {
-      "postIdRequired": "postId is required.",
-      "empty": "Comment cannot be empty.",
-      "tooLong": "Comment is too long (max. 2000 characters).",
-      "rateLimited": "Too many comments in a short time. Please wait a moment.",
-      "cannotComment": "You cannot comment.",
-      "postNotFound": "Post not found.",
-      "parentNotFound": "Parent comment not found.",
-      "commentNotFound": "Comment not found.",
-      "invalidVote": "Invalid vote value."
-    },
-    "newsletter": {
-      "subscribe": {
-        "rateLimited": "Too many attempts. Please try again in a few minutes.",
-        "success": "Check your email to confirm your subscription.",
-        "internal": "Internal error. Please try again."
-      },
-      "confirm": {
-        "missingToken": "Missing token.",
-        "invalidToken": "Invalid or expired token. Please request a new subscription.",
-        "success": "Subscription confirmed successfully! Welcome.",
-        "internal": "Internal error."
-      },
-      "unsubscribe": {
-        "missingToken": "Missing token.",
-        "invalidToken": "Invalid token.",
-        "success": "You have been removed from the newsletter successfully.",
-        "internal": "Internal error."
-      },
-      "requestUnsubscribe": {
-        "rateLimited": "Too many attempts. Please try again in a few minutes.",
-        "success": "Check your email to confirm the unsubscribe request.",
-        "internal": "Internal error. Please try again."
-      }
-    },
-    "donations": {
-      "eth": {
-        "invalidTransaction": "Invalid transaction."
-      },
-      "pix": {
-        "notAvailableInProduction": "Not available in production.",
-        "missingDonationId": "Missing donationId.",
-        "chargeDescription": "{count}x coffee for the blog",
-        "internal": "Could not create the PIX charge. Please try again.",
-        "checkFailed": "Could not verify the payment. Retrying...",
-        "expired": "This QR code has expired. Please generate a new charge."
-      },
-      "stripe": {
-        "missingSignature": "Missing signature.",
-        "invalidSignature": "Invalid signature.",
-        "internal": "Could not create the Stripe payment intent. Please try again."
-      },
-      "invalidCoffeeCount": "Invalid coffee amount."
-    },
-    "posts": {
-      "noPosts": "No posts.",
-      "notFound": "Post not found.",
-      "internalError": "Internal server error.",
-      "missingRequiredFields": "Missing required fields.",
-      "invalidBody": "Invalid body.",
-      "identifierRequired": "Identifier is required.",
-      "queueOnly": "View flushing now runs exclusively through the worker-backed queue path."
-    },
-    "uploads": {
-      "missingFields": "Missing required fields: filename, contentType, kind.",
-      "invalidKind": "Invalid kind. It must be \"cover\" or \"inline\".",
-      "invalidContentType": "Unsupported file type.",
-      "fileTooLarge": "File is too large.",
-      "internal": "Could not prepare the upload. Please try again."
-    },
-    "admin": {
-      "newsletterCampaigns": {
-        "subjectRequired": "Subject is required.",
-        "postIdRequired": "postId is required for post-based campaigns.",
-        "postNotFound": "Post not found.",
-        "postMustBePublished": "You can only create campaigns for published posts.",
-        "missingPortugueseTranslation": "The post needs a Portuguese translation first.",
-        "customContentRequired": "Content is required for custom campaigns.",
-        "readArticle": "Read article ->",
-        "notFound": "Campaign not found.",
-        "draftOnlyEdit": "Only draft campaigns can be edited.",
-        "invalidPost": "Invalid or unpublished post.",
-        "cannotDeleteSending": "You cannot delete a campaign that is being sent.",
-        "deleted": "Campaign deleted.",
-        "draftOnlySend": "Only draft campaigns can be sent.",
-        "invalidScheduledAt": "Invalid scheduledAt value.",
-        "futureScheduledAt": "scheduledAt must be a future date.",
-        "scheduled": "Campaign scheduled successfully.",
-        "queued": "Campaign queued for sending.",
-        "dispatchFailed": "Failed to dispatch campaign."
-      },
-      "suspiciousComments": {
-        "notFound": "Suspicious comment not found."
-      }
-    }
-  },
   "admin": {
     "sidebar": {
       "toggleTheme": "Toggle theme",
@@ -822,7 +892,8 @@
         "system": "System",
         "search": "Search engine",
         "backups": "Backups",
-        "blog": "Blog"
+        "blog": "Blog",
+        "contact": "Contact"
       }
     },
     "dashboard": {
@@ -1088,7 +1159,6 @@
       "description": "Manage users who cannot comment.",
       "loading": "Loading...",
       "empty": "No banned users.",
-      "bannedAt": "Banned on {date}",
       "unban": "Unban",
       "searchPlaceholder": "Search by username or email",
       "viewReason": "View reason",
@@ -1290,8 +1360,6 @@
       "template": {
         "previewLabel": "Template preview",
         "hideHtml": "Hide",
-        "showHtml": "View HTML",
-        "readArticle": "Read article ->",
         "showPreview": "Show preview"
       },
       "subject": {
@@ -1406,6 +1474,52 @@
         "confirm": "Confirm ban",
         "banning": "Banning..."
       }
+    },
+    "contact": {
+      "title": "Contact messages",
+      "description": "Everything that came through the site's form.",
+      "unreadCount": "{count} unread",
+      "searchPlaceholder": "Search by name, email or text…",
+      "loading": "Loading…",
+      "empty": "No messages here.",
+      "linkMissing": "That message no longer exists — the link points to something that was deleted.",
+      "dismiss": "Dismiss",
+      "openMessage": "Open",
+      "markAs": "Mark as",
+      "delete": "Delete",
+      "filters": {
+        "status": "Filter by status",
+        "topic": "Filter by topic",
+        "allStatuses": "All statuses",
+        "allTopics": "All topics"
+      },
+      "status": {
+        "RECEIVED": "Received",
+        "READ": "Read",
+        "REPLIED": "Replied",
+        "CLOSED": "Closed",
+        "SPAM": "Spam"
+      },
+      "topic": {
+        "FULL_TIME": "Full-time role",
+        "FREELANCE": "Freelance project",
+        "SAYING_HI": "Just saying hi",
+        "BUG_REPORT": "Bug report",
+        "OTHER": "Other"
+      },
+      "table": {
+        "from": "From",
+        "topic": "Topic",
+        "message": "Message",
+        "status": "Status",
+        "received": "Received",
+        "actions": "Actions"
+      },
+      "pagination": {
+        "showing": "Showing {from}–{to} of {total}",
+        "previous": "Previous",
+        "next": "Next"
+      }
     }
   },
   "blogUi": {
@@ -1432,6 +1546,11 @@
       "empty": "No posts found.",
       "loadMore": "Load more",
       "loadingMore": "Loading..."
+    },
+    "card": {
+      "published": "Published at {date}",
+      "readingTime": "{minutes} min read",
+      "readMore": "Read more"
     },
     "carousel": {
       "previousSlide": "Previous slide",
@@ -1533,21 +1652,6 @@
       }
     }
   },
-  "footerNewsletter": {
-    "title": "Stay in the loop",
-    "description": "Get updates about posts, projects, and ideas straight to your inbox.",
-    "placeholder": "Enter your email",
-    "submit": "Subscribe",
-    "submitting": "Sending...",
-    "success": {
-      "title": "Check your email!",
-      "description": "We sent you a confirmation link."
-    },
-    "errors": {
-      "generic": "Something went wrong.",
-      "connection": "Connection error. Please try again."
-    }
-  },
   "common": {
     "dialog": {
       "close": "Close"
@@ -1561,45 +1665,60 @@
       "prefix": "Loved by",
       "suffix": "{count, plural, one {subscriber} other {subscribers}}."
     },
+    "privacy": {
+      "prefix": "No spam, ever.",
+      "suffix": "You can check the privacy policy <link>here</link>."
+    }
+  },
+  "newsletterForm": {
     "emailLabel": "Email",
     "emailPlaceholder": "your@email.com",
     "submit": "Subscribe",
-    "privacy": {
-      "prefix": "No spam, ever.",
-      "suffix": "You can check the privacy policy here."
-    },
     "success": {
       "title": "Check your email!",
-      "description": "We sent you a confirmation link to activate your subscription.",
-      "useAnotherEmail": "Use another email"
+      "description": "We sent you a confirmation link to activate your subscription."
+    },
+    "error": {
+      "title": "I couldn't complete your subscription"
     },
     "errors": {
       "generic": "Something went wrong. Please try again.",
-      "connection": "Connection error. Please try again."
+      "connection": "Connection error. Check your internet and try again."
     }
   },
-  "unsubscribeModal": {
-    "trigger": "Unsubscribe",
-    "title": "Unsubscribe from the newsletter",
-    "description": "Enter your email to receive a confirmation link.",
-    "emailLabel": "Email",
-    "emailPlaceholder": "your@email.com",
-    "cancel": "Cancel",
-    "submit": "Send confirmation",
-    "close": "Close",
-    "success": {
-      "message": "Confirmation email sent successfully! Check your inbox and click the link to finish unsubscribing."
+  "newsletterPage": {
+    "meta": {
+      "title": "Newsletter",
+      "description": "Writing on web development, TypeScript and software engineering. Straight to your inbox."
     },
-    "errors": {
-      "generic": "Could not process your request.",
-      "connection": "Connection error. Please try again later."
+    "hero": {
+      "title": "{count, plural, =0 {Be the first to subscribe} one {Join # subscribed reader} other {Join # subscribed readers}}",
+      "description": "Get posts on development, architecture, career, academic life and more, straight to your inbox.",
+      "note": "No spam, unsubscribe anytime. Your email is never shared.",
+      "benefits": {
+        "newPosts": "New articles as soon as they're published",
+        "tips": "Exclusive tips and technical content",
+        "projects": "First look at projects and news"
+      }
+    },
+    "stats": {
+      "posts": "Published posts",
+      "views": "Total views",
+      "likes": "Post likes",
+      "comments": "Comments"
+    },
+    "recent": {
+      "title": "Recent posts",
+      "viewAll": "View all",
+      "empty": "No posts published yet.",
+      "readingTime": "{minutes} min"
     }
   },
   "cookieBanner": {
     "ariaLabel": "Cookie consent banner",
     "title": "Allow cookies?",
     "safeExperience": "We use cookies to provide a safer, more personalized browsing experience.",
-    "descriptionPrefix": "Learn more about how we use cookies in our",
+    "descriptionPrefix": "Learn more in ",
     "policyLink": "Cookie Policy",
     "accept": "Allow",
     "decline": "Decline"
@@ -1635,37 +1754,6 @@
           "body": "Most browsers allow you to control cookies through preference settings. Limiting cookies may affect your browsing experience and prevent the website from remembering personalized settings."
         }
       }
-    },
-    "terms": {
-      "title": "Terms and Conditions",
-      "updatedAt": "Last updated: February 2026",
-      "close": "Close",
-      "sections": {
-        "network": {
-          "title": "Important - Check the network",
-          "body": "Before buying a ticket, make sure the lottery is running on the same network as your wallet. Purchases made on the wrong network are not refundable and are not the platform's responsibility."
-        },
-        "service": {
-          "title": "1. Nature of the service",
-          "body": "This platform is a decentralized lottery operating on the blockchain, designed to provide transparency and fairness in every drawing. The service is currently in a testing period on the Sepolia network."
-        },
-        "testing": {
-          "title": "2. Testing period",
-          "body": "During validation, all transactions use test tokens (Sepolia ETH) that have no real economic value. No real monetary value is involved during this phase."
-        },
-        "fairness": {
-          "title": "3. Fairness and transparency",
-          "body": "All drawings are performed transparently on the blockchain. Results can be verified by anyone through the smart contract. The platform uses verifiable randomness sources to keep drawings fair."
-        },
-        "userResponsibility": {
-          "title": "4. User responsibility",
-          "body": "Users are responsible for ensuring they are connected to the correct network before making any transaction. The platform is not responsible for losses caused by user mistakes, including sending funds to incorrect addresses."
-        },
-        "changes": {
-          "title": "5. Changes to the terms",
-          "body": "The platform reserves the right to modify these terms at any time. Changes will be communicated through the platform. Continued use of the service after changes means acceptance of the updated terms."
-        }
-      }
     }
   },
   "profilePage": {
@@ -1683,5 +1771,57 @@
     "loadMore": "Load more",
     "commentingOn": "Commenting on",
     "viewComment": "View comment ->"
+  },
+  "seo": {
+    "home": {
+      "title": "Romulo de Moraes — Software Engineer",
+      "description": "Romulo de Moraes' portfolio and blog. Projects, articles and notes on software engineering, backend and infrastructure."
+    },
+    "blog": {
+      "title": "Blog",
+      "description": "Articles on software development, architecture, infrastructure and the things I learn building products."
+    },
+    "resume": {
+      "title": "Resume",
+      "description": "Professional experience, education and tech stack of Romulo de Moraes."
+    },
+    "wall": {
+      "title": "Wall",
+      "description": "Leave a message on the wall and see what other people wrote."
+    },
+    "support": {
+      "title": "Support the blog",
+      "description": "Buy me a coffee and help keep the blog online. Donations via PIX, card or crypto."
+    },
+    "status": {
+      "title": "Status",
+      "description": "Public metrics and health of the services keeping this site online."
+    },
+    "feed": {
+      "title": "RSS feed",
+      "description": "Subscribe to the RSS feed to get new blog posts."
+    }
+  },
+  "error": {
+    "title": "Something broke here.",
+    "description": "The error was logged and I will look into it. You can try again or head back home.",
+    "retry": "Try again",
+    "home": "Back home",
+    "digest": "Error code"
+  },
+  "notFound": {
+    "title": "Page not found.",
+    "description": "The link may be broken or the page may have been moved.",
+    "home": "Back home",
+    "blog": "Go to the blog"
+  },
+  "experienceList": {
+    "duration": {
+      "years": "{count, plural, one {# year} other {# years}}",
+      "months": "{count, plural, one {# month} other {# months}}",
+      "both": "{years} {months}"
+    },
+    "showMore": "Show more",
+    "showLess": "Show less"
   }
 }

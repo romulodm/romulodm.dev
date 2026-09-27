@@ -30,7 +30,7 @@ export function PrivacyPolicyModal({ open, onOpenChange }: Props) {
 
                 {/* PIX */}
                 <section className="border-border border-t px-4 pt-5 space-y-3">
-                    <h3 className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                    <h3 className="type-small font-semibold flex items-center gap-2 text-foreground">
                         <QrCode className="w-4 h-4 text-muted-foregrou shrink-0" />
                         PIX — processado pela AbacatePay
                     </h3>
@@ -60,7 +60,7 @@ export function PrivacyPolicyModal({ open, onOpenChange }: Props) {
 
                 {/* Card */}
                 <section className="border-border border-t px-4 pt-5 space-y-3">
-                    <h3 className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                    <h3 className="type-small font-semibold flex items-center gap-2 text-foreground">
                         <CreditCard className="w-4 h-4 text-muted-foregrou shrink-0" />
                         Cartão — processado pela Stripe
                     </h3>
@@ -90,7 +90,7 @@ export function PrivacyPolicyModal({ open, onOpenChange }: Props) {
 
                 {/* What we store */}
                 <section className="border-border border-t px-4 pt-5 space-y-3">
-                    <h3 className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                    <h3 className="type-small font-semibold flex items-center gap-2 text-foreground">
                         <Lock className="w-4 h-4 text-muted-foreground shrink-0" />
                         O que armazenamos
                     </h3>

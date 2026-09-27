@@ -23,17 +23,17 @@ function requireEnv(name: string): string {
   return value;
 }
 
-export function getBackupBucket(): string {
+function getBackupBucket(): string {
   return requireEnv("BACKUP_S3_BUCKET");
 }
 
-export function getBackupPrefix(): string {
+function getBackupPrefix(): string {
   return process.env.BACKUP_S3_PREFIX ?? "postgres/";
 }
 
 // ── Cliente S3 ────────────────────────────────────────────────────────────────
 
-export function getBackupS3(): S3Client {
+function getBackupS3(): S3Client {
   if (!_client) {
     const accessKeyId = requireEnv("BACKUP_S3_ACCESS_KEY");
     const secretAccessKey = requireEnv("BACKUP_S3_SECRET_KEY");

@@ -1,13 +1,35 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@romulo/database";
+import { AVATAR_SELECT } from "@/lib/avatar";
 import { WallClient } from "@/components/wall/WallClient";
 import { Footer } from "@/components/Footer";
 import Navbar from "@/components/navigation/Navbar";
+import type { Metadata } from 'next'
+import { getTranslations } from 'next-intl/server'
+import { buildPageMetadata } from '@/lib/seo'
 
-export const metadata = {
-  title: "Guestbook | Leave Your Mark",
-};
+// Le a sessao do visitante no render (getServerSession, mais abaixo). Conteudo
+// por usuario nao pode ser cacheado, e sem esta linha o Next tentaria gerar a
+// pagina em contexto estatico — ler cookie ali aborta com DYNAMIC_SERVER_USAGE
+// e devolve 500, que foi o bug de /blog/[slug].
+export const dynamic = 'force-dynamic'
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>
+}): Promise<Metadata> {
+  const { locale } = await params
+  const t = await getTranslations({ locale, namespace: 'seo.wall' })
+
+  return buildPageMetadata({
+    locale,
+    path: 'wall',
+    title: t('title'),
+    description: t('description'),
+  })
+}
 
 export default async function WallPage() {
   const session = await getServerSession(authOptions);
@@ -17,13 +39,20 @@ export default async function WallPage() {
     prisma.wallMessage.findMany({
       take: 21,
       orderBy: { createdAt: "desc" },
-      include: { author: { select: { id: true, username: true, image: true } } },
+      include: { author: { select: { id: true, ...AVATAR_SELECT } } },
     }),
     userId
       ? prisma.wallMessage.findFirst({ where: { authorId: userId } }).then(Boolean)
       : Promise.resolve(false),
+    // Os campos de avatar do visitante saem daqui, e nao da sessao: o JWT do
+    // NextAuth e cacheado e ficaria velho no instante seguinte a uma troca de
+    // avatar, obrigando o cliente a chamar session.update(). Esta query ja
+    // existia para buscar `admin`, entao os campos extras custam zero.
     userId
-      ? prisma.user.findUnique({ where: { id: userId }, select: { admin: true } })
+      ? prisma.user.findUnique({
+        where: { id: userId },
+        select: { id: true, admin: true, ...AVATAR_SELECT },
+      })
       : Promise.resolve(null),
   ]);
 
@@ -33,15 +62,7 @@ export default async function WallPage() {
       <main className="mx-auto px-4 py-24">
         <WallClient
           initialMessages={JSON.parse(JSON.stringify(initialMessages))}
-          currentUser={
-            session?.user
-              ? {
-                id: userId!,
-                username: (session.user.name ?? session.user.email ?? "You") as string,
-                image: (session.user.image ?? null) as string | null,
-              }
-              : null
-          }
+          currentUser={dbUser ?? null}
           isAdmin={dbUser?.admin ?? false}
           hasPosted={hasPosted as boolean}
         />

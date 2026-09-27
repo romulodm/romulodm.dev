@@ -1,17 +1,27 @@
 /**
  * notification.worker.ts
  *
- * Handles all jobs on the QUEUE_NOTIFICATIONS queue. Currently three job types
- * are supported:
+ * Handles all jobs on the QUEUE_NOTIFICATIONS queue. The name is historical:
+ * only three of these job types end in a message. The rest are periodic work
+ * that rides the same queue because this worker already owns its processor.
  *
- *   "comment"      — Sends a WhatsApp notification when a new comment is posted.
- *   "daily-status" — Sends a daily blog stats summary via WhatsApp at 08:00 BRT.
- *                    Scheduled as a repeatable cron job via `scheduleDailyStatus`.
- *   "flush-views"  — Drains the Redis view-count buffer into Postgres.
- *                    Scheduled as a repeatable interval job via `scheduleViewsFlush`
- *                    (in views.worker.ts). The actual flush logic lives in
- *                    `flushViewsBuffer` (views.worker.ts) and is called here
- *                    because this worker owns the queue processor.
+ * Delivery is Telegram, not WhatsApp — the WhatsApp path was replaced and the
+ * docs here had not caught up.
+ *
+ *   "comment"              — Telegram alert when a reader posts a comment.
+ *   "contact"              — Telegram alert for a new contact-form message.
+ *   "contact-flood"        — One-off warning that the hourly cap was reached.
+ *   "daily-status"         — Previous day's blog stats at 08:00 BRT.
+ *                            Repeatable, via `scheduleDailyStatus` below.
+ *   "flush-views"          — Drains the Redis view-count buffer into Postgres.
+ *                            Repeatable, via `scheduleViewsFlush` (views.worker.ts);
+ *                            the logic lives in `flushViewsBuffer` there.
+ *   "retry-onchain"        — Retries pending on-chain donations.
+ *   "reconcile-donations"  — Safety net for a PIX/Stripe webhook that never arrived.
+ *   "audit-donations"      — Previous day's two-way settlement check.
+ *   "retry-transactional-email" — Retries transactional email jobs still failed after
+ *                            the BullMQ retry burst. Repeatable, via
+ *                            `scheduleTransactionalEmailSweep` (email.worker.ts).
  *
  * Like the other workers, nothing is instantiated at module level.
  * Call `startNotificationWorker(redis)` and `scheduleDailyStatus(redis)`
@@ -31,11 +41,16 @@ import {
   type NotificationJob,
 } from "@romulo/queues";
 
-//import { notifyComment, sendDailyStatus } from "../lib/whatsapp";
-import { notifyComment, sendDailyStatus } from "../lib/telegram";
+import {
+  notifyComment,
+  notifyContact,
+  notifyContactFlood,
+  sendDailyStatus,
+} from "../lib/telegram";
 import { flushViewsBuffer } from "./views.worker";
 import { retryPendingOnchain } from "./onchain.worker";
 import { auditDonations, reconcilePendingDonations } from "./donations.worker";
+import { sweepFailedTransactionalEmails } from "./email.worker";
 
 // ── Worker factory ────────────────────────────────────────────────────────────
 
@@ -43,7 +58,7 @@ import { auditDonations, reconcilePendingDonations } from "./donations.worker";
  * Creates and returns the notification BullMQ worker.
  *
  * The worker processes one job type at a time (concurrency is typically 1
- * for notifications to avoid duplicate WhatsApp messages). It receives the
+ * for notifications to avoid duplicate Telegram messages). It receives the
  * shared `redis` connection from the caller so the app controls its lifecycle.
  *
  * @param redis - Shared ioredis connection from index.ts.
@@ -55,12 +70,12 @@ export function startNotificationWorker(redis: Redis) {
       console.log(`[NotificationWorker] Processing: ${job.data.type} (id: ${job.id})`);
 
       switch (job.data.type) {
-        // Fired when a reader posts a comment — triggers a WhatsApp alert
+        // Fired when a reader posts a comment — triggers a Telegram alert
         case "comment":
           await notifyComment(job.data);
           break;
 
-        // Fired by the daily cron at 08:00 BRT — sends blog stats via WhatsApp
+        // Fired by the daily cron at 08:00 BRT — sends the previous day's stats
         case "daily-status":
           await sendDailyStatus();
           break;
@@ -91,6 +106,26 @@ export function startNotificationWorker(redis: Redis) {
           await auditDonations();
           break;
 
+        // Rede de seguranca do email transacional: tenta de novo os jobs que
+        // ja esgotaram os 3 retries do BullMQ mas ainda estao dentro da
+        // janela do sweep. Ver sweepFailedTransactionalEmails em email.worker.ts.
+        case "retry-transactional-email":
+          await sweepFailedTransactionalEmails(redis);
+          break;
+
+        // Mensagem nova no formulario de contato. A mensagem ja esta no
+        // Postgres quando este job roda — a notificacao e conveniencia, e
+        // falhar aqui nunca perde o contato.
+        case "contact":
+          await notifyContact(job.data);
+          break;
+
+        // O teto global por hora foi atingido: ou e ataque, ou algo seu
+        // viralizou. Nos dois casos voce quer saber, e uma vez so.
+        case "contact-flood":
+          await notifyContactFlood(job.data);
+          break;
+
         default:
           throw new Error(
             `[NotificationWorker] Unknown job type: ${(job.data as { type: string }).type}`,
@@ -101,7 +136,7 @@ export function startNotificationWorker(redis: Redis) {
     },
     {
       connection: redis,
-      // Low concurrency is intentional: WhatsApp notifications must not be
+      // Low concurrency is intentional: Telegram notifications must not be
       // sent in parallel to avoid rate limits and duplicate messages.
       concurrency: queueRuntimeConfig.notificationWorkerConcurrency,
     },

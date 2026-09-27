@@ -5,6 +5,8 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@romulo/database';
 import packageJson from '@/package.json';
 
+import { cached } from '@/lib/status-cache';
+
 export const dynamic = 'force-dynamic';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -344,15 +346,50 @@ async function getAppStats() {
     };
 }
 
-// ─── Route handler ────────────────────────────────────────────────────────────
+// ─── Cache ────────────────────────────────────────────────────────────────────
+//
+// A rota e publica e cada execucao completa custa ~24 round trips no Postgres
+// (3x SELECT 1, version(), pg_stat_activity, tamanhos de tabela e 17
+// agregacoes). Sem cache, isso e um endpoint anonimo que multiplica carga de
+// banco por request.
+//
+// Duas camadas, com TTLs diferentes porque os dados tem naturezas diferentes:
+//
+//   payload (30s)  — inclui o health check. Curto o bastante para uma queda
+//                    aparecer rapido na pagina.
+//   statistics(5m) — agregacoes de 60 dias. Nao mudam de forma perceptivel em
+//                    5 minutos e respondem por 17 das 24 queries.
+//
+// Em regime, 1 req/s na rota passa de ~24 queries/s para ~7 queries a cada
+// 30s. O single-flight garante que uma rajada no momento da expiracao dispare
+// um recalculo, nao um por request.
 
-export async function GET() {
+const PAYLOAD_CACHE_KEY = 'status:payload';
+const PAYLOAD_TTL_SECONDS = 30;
+const PAYLOAD_STALE_SECONDS = 120;
+
+// Estado ruim expira rapido: nao faz sentido congelar "unhealthy" por 30s
+// depois que o banco ja voltou.
+const UNHEALTHY_TTL_SECONDS = 5;
+
+const STATS_CACHE_KEY = 'status:statistics';
+const STATS_TTL_SECONDS = 300;
+const STATS_STALE_SECONDS = 600;
+
+async function buildPayload() {
     const start = Date.now();
 
     const [database, webServer, stats] = await Promise.all([
         checkDatabase(),
         checkWebServer(),
-        getAppStats(),
+        cached(
+            {
+                key: STATS_CACHE_KEY,
+                ttlSeconds: STATS_TTL_SECONDS,
+                staleSeconds: STATS_STALE_SECONDS,
+            },
+            getAppStats,
+        ).then((result) => result.data),
     ]);
 
     const overallStatus =
@@ -360,20 +397,41 @@ export async function GET() {
             ? 'unhealthy'
             : 'healthy';
 
-    return NextResponse.json(
+    return {
+        updated_at: new Date().toISOString(),
+        status: overallStatus,
+        version: packageJson.version,
+        apiLatencyMs: Date.now() - start,
+        dependencies: { database, webServer },
+        statistics: stats,
+    };
+}
+
+// ─── Route handler ────────────────────────────────────────────────────────────
+
+export async function GET() {
+    const { data: payload, computedAt, source } = await cached(
         {
-            updated_at: new Date().toISOString(),
-            status: overallStatus,
-            version: packageJson.version,
-            apiLatencyMs: Date.now() - start,
-            dependencies: { database, webServer },
-            statistics: stats,
+            key: PAYLOAD_CACHE_KEY,
+            ttlSeconds: PAYLOAD_TTL_SECONDS,
+            staleSeconds: PAYLOAD_STALE_SECONDS,
+            ttlForResult: (result) =>
+                result.status === 'unhealthy'
+                    ? UNHEALTHY_TTL_SECONDS
+                    : PAYLOAD_TTL_SECONDS + PAYLOAD_STALE_SECONDS,
         },
-        {
-            status: overallStatus === 'unhealthy' ? 503 : 200,
-            headers: {
-                'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=10',
-            },
-        },
+        buildPayload,
     );
+
+    return NextResponse.json(payload, {
+        status: payload.status === 'unhealthy' ? 503 : 200,
+        headers: {
+            // s-maxage vale para cache compartilhado (Cloudflare / proxy). Hoje
+            // ninguem honra: o nginx tem proxy_no_cache em /api/, exceto no
+            // location dedicado de /api/status. Ver nginx/conf.d/app.conf.
+            'Cache-Control': `public, s-maxage=${PAYLOAD_TTL_SECONDS}, stale-while-revalidate=${PAYLOAD_STALE_SECONDS}`,
+            'X-Cache-Source': source,
+            'X-Cache-Age': String(Math.max(0, Math.round((Date.now() - computedAt) / 1000))),
+        },
+    });
 }

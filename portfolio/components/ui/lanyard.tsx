@@ -1,7 +1,7 @@
-/* eslint-disable react/no-unknown-property */
+ 
 'use client';
-import { useEffect, useRef, useState } from 'react';
-import { Canvas, extend, useFrame } from '@react-three/fiber';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Canvas, extend, useFrame, useThree, events as createPointerEvents } from '@react-three/fiber';
 import { useGLTF, useTexture, Environment, Lightformer } from '@react-three/drei';
 import {
     BallCollider,
@@ -23,8 +23,9 @@ const cardGLB = '/card.glb';
 
 extend({ MeshLineGeometry, MeshLineMaterial });
 
-// Pre-load the GLB model to reduce initial loading time
+// Warm both suspending assets as early as the module is evaluated
 useGLTF.preload(cardGLB);
+useTexture.preload(lanyardTexture);
 
 interface LanyardProps {
     position?: [number, number, number];
@@ -32,8 +33,65 @@ interface LanyardProps {
     fov?: number;
     transparent?: boolean;
     containerClassName?: string;
-    cardTextureUrl?: string;
+    /** Canvas produced by CardTemplate — uploaded straight to the GPU. */
+    cardTexture?: HTMLCanvasElement | null;
     canvasRef?: React.Ref<HTMLCanvasElement>;
+    /** Fires on the first frame after the GLB and strap texture are resolved. */
+    onReady?: () => void;
+    /**
+     * Elemento que recebe os eventos de ponteiro no lugar do canvas. Permite
+     * arrastar o cracha mesmo com o canvas em `pointer-events: none` por cima
+     * de outros elementos clicaveis (o raycast so pega quando o cursor esta no cracha).
+     */
+    eventSource?: React.RefObject<HTMLElement | null>;
+    /**
+     * Altura (px) do quadro de referencia da camera. Quando o canvas e mais alto
+     * que isso, a cena mantem escala e alinhamento pelo topo e o canvas so ganha
+     * area extra para baixo — o cracha pode ser arrastado sem ser cortado.
+     */
+    frameHeight?: () => number;
+}
+
+/**
+ * Eventos com `eventSource` externo: calcula o ponteiro a partir do rect atual do
+ * canvas em cada evento. O padrao do r3f usa um rect medido com debounce, que fica
+ * desatualizado durante o scroll e desalinha o raycast.
+ */
+const liveRectEvents: typeof createPointerEvents = (store) => {
+    const base = createPointerEvents(store);
+    return {
+        ...base,
+        compute(event, state) {
+            const rect = state.gl.domElement.getBoundingClientRect();
+            state.pointer.set(
+                ((event.clientX - rect.left) / rect.width) * 2 - 1,
+                -((event.clientY - rect.top) / rect.height) * 2 + 1
+            );
+            state.raycaster.setFromCamera(state.pointer, state.camera);
+        },
+    };
+};
+
+/** Estende o frustum para baixo mantendo o enquadramento de um quadro `frameHeight`. */
+function ViewFrame({ frameHeight }: { frameHeight: () => number }) {
+    const camera = useThree((s) => s.camera) as THREE.PerspectiveCamera;
+    const size = useThree((s) => s.size);
+
+    useFrame(() => {
+        const W = size.width;
+        const H = frameHeight();
+        if (!W || !H) return;
+        // Impede o r3f de sobrescrever aspect/projecao no resize.
+        (camera as THREE.PerspectiveCamera & { manual?: boolean }).manual = true;
+        const v = camera.view;
+        const aspect = W / H;
+        if (camera.aspect !== aspect || !v || v.fullWidth !== W || v.fullHeight !== H || v.height !== size.height) {
+            camera.aspect = aspect;
+            camera.setViewOffset(W, H, 0, 0, W, size.height);
+        }
+    });
+
+    return null;
 }
 
 export default function Lanyard({
@@ -42,8 +100,11 @@ export default function Lanyard({
     fov = 20,
     transparent = true,
     containerClassName,
-    cardTextureUrl,
-    canvasRef
+    cardTexture,
+    canvasRef,
+    onReady,
+    eventSource,
+    frameHeight
 }: LanyardProps) {
     const [isMobile, setIsMobile] = useState<boolean>(() => typeof window !== 'undefined' && window.innerWidth < 768);
 
@@ -58,14 +119,17 @@ export default function Lanyard({
             className={clsx(containerClassName || "relative z-0 w-full h-screen flex justify-center items-center transform scale-100 origin-center")}>
             <Canvas
                 ref={canvasRef}
+                eventSource={eventSource as React.RefObject<HTMLElement> | undefined}
+                events={eventSource ? liveRectEvents : undefined}
                 camera={{ position, fov }}
                 dpr={[1, isMobile ? 1.5 : 2]}
                 gl={{ alpha: transparent, preserveDrawingBuffer: true }}
                 onCreated={({ gl }) => gl.setClearColor(new THREE.Color(0x000000), transparent ? 0 : 1)}
             >
+                {frameHeight && <ViewFrame frameHeight={frameHeight} />}
                 <ambientLight intensity={Math.PI} />
                 <Physics gravity={gravity} timeStep={isMobile ? 1 / 30 : 1 / 60}>
-                    <Band isMobile={isMobile} cardTextureUrl={cardTextureUrl} />
+                    <Band isMobile={isMobile} cardTexture={cardTexture} onReady={onReady} />
                 </Physics>
                 <Environment blur={0.75}>
                     <Lightformer
@@ -106,10 +170,11 @@ interface BandProps {
     maxSpeed?: number;
     minSpeed?: number;
     isMobile?: boolean;
-    cardTextureUrl?: string;
+    cardTexture?: HTMLCanvasElement | null;
+    onReady?: () => void;
 }
 
-function Band({ maxSpeed = 50, minSpeed = 0, isMobile = false, cardTextureUrl }: BandProps) {
+function Band({ maxSpeed = 50, minSpeed = 0, isMobile = false, cardTexture, onReady }: BandProps) {
     // Using "any" for refs since the exact types depend on Rapier's internals
     const band = useRef<any>(null);
     const fixed = useRef<any>(null);
@@ -134,28 +199,25 @@ function Band({ maxSpeed = 50, minSpeed = 0, isMobile = false, cardTextureUrl }:
     const { nodes, materials } = useGLTF(cardGLB) as any;
     const texture = useTexture(lanyardTexture) as THREE.Texture;
 
-    // Load custom card texture if provided - use state to handle async loading
-    const [customCardTexture, setCustomCardTexture] = useState<THREE.Texture | null>(null);
+    // The card texture is a live canvas: no encode/decode round trip, it goes
+    // straight to the GPU on the frame it is handed over.
+    const customCardTexture = useMemo(() => {
+        if (!cardTexture) return null;
+        const tex = new THREE.CanvasTexture(cardTexture);
+        tex.flipY = false;
+        tex.colorSpace = THREE.SRGBColorSpace;
+        return tex;
+    }, [cardTexture]);
 
+    useEffect(() => () => customCardTexture?.dispose(), [customCardTexture]);
+
+    // Band only mounts once the GLB and the strap texture have resolved.
     useEffect(() => {
-        if (!cardTextureUrl) {
-            setCustomCardTexture(null);
-            return;
-        }
+        if (!onReady) return;
+        const frame = requestAnimationFrame(() => onReady());
+        return () => cancelAnimationFrame(frame);
+    }, [onReady]);
 
-        const loader = new THREE.TextureLoader();
-        loader.load(cardTextureUrl, (loadedTexture) => {
-            loadedTexture.flipY = false;
-            loadedTexture.colorSpace = THREE.SRGBColorSpace;
-            setCustomCardTexture(loadedTexture);
-        });
-
-        return () => {
-            if (customCardTexture) {
-                customCardTexture.dispose();
-            }
-        };
-    }, [cardTextureUrl]);
     const [curve] = useState(
         () =>
             new THREE.CatmullRomCurve3([new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()])
@@ -179,6 +241,17 @@ function Band({ maxSpeed = 50, minSpeed = 0, isMobile = false, cardTextureUrl }:
             };
         }
     }, [hovered, dragged]);
+
+    // Arrastar o cracha por cima de texto nao pode selecionar o texto de baixo.
+    useEffect(() => {
+        if (!dragged) return;
+        window.getSelection()?.removeAllRanges();
+        const prev = document.body.style.userSelect;
+        document.body.style.userSelect = 'none';
+        return () => {
+            document.body.style.userSelect = prev;
+        };
+    }, [dragged]);
 
     useFrame((state, delta) => {
         if (dragged && typeof dragged !== 'boolean') {
@@ -251,7 +324,7 @@ function Band({ maxSpeed = 50, minSpeed = 0, isMobile = false, cardTextureUrl }:
                     >
                         <mesh geometry={nodes.card.geometry}>
                             <meshPhysicalMaterial
-                                map={cardTextureUrl && customCardTexture ? customCardTexture : materials.base.map}
+                                map={customCardTexture ?? materials.base.map}
                                 map-anisotropy={16}
                                 clearcoat={isMobile ? 0 : 1}
                                 clearcoatRoughness={0.15}
@@ -272,6 +345,8 @@ function Band({ maxSpeed = 50, minSpeed = 0, isMobile = false, cardTextureUrl }:
                     resolution={isMobile ? [1000, 2000] : [1000, 1000]}
                     useMap
                     map={texture}
+                    // Coupled to /lanyard.png's width: a 1459px tile repeated 4x
+                    // covers the strap. Change one and the mark stretches.
                     repeat={[-4, 1]}
                     lineWidth={0.6}
                 />

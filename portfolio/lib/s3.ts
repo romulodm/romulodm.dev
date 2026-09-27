@@ -13,7 +13,7 @@ const s3Client = new S3Client({
   responseChecksumValidation: 'WHEN_REQUIRED',
 })
 
-export interface PresignedUploadResult {
+interface PresignedUploadResult {
   uploadUrl: string
   publicUrl: string
   key: string
@@ -55,7 +55,7 @@ export async function generatePresignedUpload(
   }
 }
 
-export const ALLOWED_IMAGE_TYPES = [
+const ALLOWED_IMAGE_TYPES = [
   'image/jpeg',
   'image/jpg',
   'image/png',
@@ -63,7 +63,7 @@ export const ALLOWED_IMAGE_TYPES = [
   'image/webp',
 ]
 
-export const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB
+const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB
 
 export function validateFileUpload(contentType: string, size?: number) {
   const allowedTypes = [...ALLOWED_IMAGE_TYPES]

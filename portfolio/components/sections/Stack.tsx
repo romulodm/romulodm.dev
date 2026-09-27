@@ -1,3 +1,7 @@
+import type { CSSProperties } from "react"
+
+import { useTranslations } from "next-intl"
+
 import BlogList from "@/components/sections/posts/BlogList"
 
 type Logo = {
@@ -164,11 +168,80 @@ const RIGHT: Column[] = [
 
 const allColumns = [...LEFT, ...CENTER, ...RIGHT]
 
-// ─── LogoTile ─────────────────────────────────────────────────────────────────
+// ─── Mobile carousel layout ───────────────────────────────────────────────────
+// Mesmos icones do arco, so que divididos em 2 faixas que rolam em loop:
+// a de cima vai, a de baixo volta. A ordem segue os grupos da lista
+// (frontend -> backend -> infra -> etc).
 
-function LogoTile({ logo }: { logo: Logo }) {
+const MOBILE_ROW_SPLIT = Math.ceil(logos.length / 2)
+
+const MOBILE_ROWS: Logo[][] = [
+    logos.slice(0, MOBILE_ROW_SPLIT),
+    logos.slice(MOBILE_ROW_SPLIT),
+]
+
+// Duracoes proporcionais ao tamanho de cada faixa, para as duas andarem
+// na mesma velocidade aparente mesmo com contagens diferentes de icones.
+const MOBILE_ROW_DURATIONS = MOBILE_ROWS.map((row) => `${Math.round(row.length * 2.4)}s`)
+
+// ─── LogoIcon ─────────────────────────────────────────────────────────────────
+// Renderiza o icone em si (img do simpleicons ou SVG inline), com variante dark.
+
+function LogoIcon({ logo }: { logo: Logo }) {
     const hasDarkVariant = !!(logo.srcDark || logo.svgDark)
 
+    if (logo.svgLight) {
+        return (
+            <>
+                {/* Inline SVG — light */}
+                <div
+                    className={`h-[65%] w-[65%] [&>svg]:h-full [&>svg]:w-full ${hasDarkVariant ? 'dark:hidden' : ''}`}
+                    dangerouslySetInnerHTML={{ __html: logo.svgLight }}
+                />
+                {/* Inline SVG — dark */}
+                {logo.svgDark && (
+                    <div
+                        className="h-[65%] w-[65%] [&>svg]:h-full [&>svg]:w-full hidden dark:block"
+                        dangerouslySetInnerHTML={{ __html: logo.svgDark }}
+                    />
+                )}
+            </>
+        )
+    }
+
+    return (
+        <>
+            {/* Simpleicons img — light */}
+            <img
+                className={`h-[65%] w-[65%] object-contain ${hasDarkVariant ? 'dark:hidden' : ''}`}
+                src={logo.src}
+                alt={logo.name}
+                loading="lazy"
+            />
+            {/* Simpleicons img — dark */}
+            {logo.srcDark && (
+                <img
+                    className="h-[65%] w-[65%] object-contain hidden dark:block"
+                    src={logo.srcDark}
+                    alt={logo.name}
+                    loading="lazy"
+                />
+            )}
+        </>
+    )
+}
+
+const CARD_CLASS = `
+    flex items-center justify-center rounded-2xl
+    border transition-transform duration-200 ease-out
+    border-black/10 bg-white/75 backdrop-blur-2xl 
+    dark:border-white/10 dark:bg-[rgba(23,23,23,0.85)]
+`
+
+// ─── LogoTile (arco — telas medias/grandes) ───────────────────────────────────
+// Aqui o nome aparece em tooltip no hover.
+
+function LogoTile({ logo }: { logo: Logo }) {
     return (
         <div className="group relative flex-shrink-0 pointer-events-auto">
 
@@ -194,50 +267,25 @@ function LogoTile({ logo }: { logo: Logo }) {
             </div>
 
             {/* Card */}
-            <div className="
-                flex items-center justify-center rounded-2xl
-                border transition-transform duration-200 ease-out
-                group-hover:-translate-y-1
-                w-16 h-16
-                md:w-20 md:h-20
-                xl:w-[100px] xl:h-[100px]
-                bg-white/90 border-border shadow-md backdrop-blur-xl
-                dark:bg-[#1a1a1f] dark:border-[#2e2e38] dark:shadow-[0_2px_12px_rgba(0,0,0,0.4)]
-            ">
-                {logo.svgLight ? (
-                    <>
-                        {/* Inline SVG — light */}
-                        <div
-                            className={`h-[65%] w-[65%] [&>svg]:h-full [&>svg]:w-full ${hasDarkVariant ? 'dark:hidden' : ''}`}
-                            dangerouslySetInnerHTML={{ __html: logo.svgLight }}
-                        />
-                        {/* Inline SVG — dark */}
-                        {logo.svgDark && (
-                            <div
-                                className="h-[65%] w-[65%] [&>svg]:h-full [&>svg]:w-full hidden dark:block"
-                                dangerouslySetInnerHTML={{ __html: logo.svgDark }}
-                            />
-                        )}
-                    </>
-                ) : (
-                    <>
-                        {/* Simpleicons img — light */}
-                        <img
-                            className={`h-[65%] w-[65%] object-contain ${hasDarkVariant ? 'dark:hidden' : ''}`}
-                            src={logo.src}
-                            alt={logo.name}
-                        />
-                        {/* Simpleicons img — dark */}
-                        {logo.srcDark && (
-                            <img
-                                className="h-[65%] w-[65%] object-contain hidden dark:block"
-                                src={logo.srcDark}
-                                alt={logo.name}
-                            />
-                        )}
-                    </>
-                )}
+            <div className={`${CARD_CLASS} group-hover:-translate-y-1 w-16 h-16 md:w-20 md:h-20 xl:w-[100px] xl:h-[100px]`}>
+                <LogoIcon logo={logo} />
             </div>
+        </div>
+    )
+}
+
+// ─── CarouselTile (celular) ───────────────────────────────────────────────────
+// Sem tooltip: o nome fica fixo embaixo do card, porque em touch nao ha hover.
+
+function CarouselTile({ logo }: { logo: Logo }) {
+    return (
+        <div className="flex w-[84px] flex-shrink-0 flex-col items-center gap-2">
+            <div className={`${CARD_CLASS} h-16 w-16`}>
+                <LogoIcon logo={logo} />
+            </div>
+            <span className="w-full truncate text-center text-xs font-medium leading-none text-neutral-500 dark:text-neutral-400">
+                {logo.name}
+            </span>
         </div>
     )
 }
@@ -245,12 +293,21 @@ function LogoTile({ logo }: { logo: Logo }) {
 // ─── Section ──────────────────────────────────────────────────────────────────
 
 export default function Stack() {
+    const t = useTranslations("home.showcase")
+
     return (
-        <section className="relative -mt-16 flex flex-col items-center overflow-hidden pt-4 px-4 sm:px-6">
+        /*
+         * Esta secao nao e marcada com `data-st-03`. A transicao que a entrega
+         * e feita pelo <Built />, o irmao anterior, em modo `cover` — cada
+         * secao cobre a si mesma com a cor da seguinte, encadeado. O modo
+         * `reveal` ancoraria a grade no rodape desta secao, que fica a milhares
+         * de pixels da emenda.
+         */
+        <section className="relative -mt-16 flex flex-col items-center overflow-hidden pt-10 md:pt-4 px-4 sm:px-6">
 
             {/* Arc container */}
             <div
-                className="relative w-full pointer-events-none"
+                className="relative hidden w-full pointer-events-none md:block"
                 style={{ height: 380, marginBottom: -160 }}
             >
                 <div
@@ -274,19 +331,58 @@ export default function Stack() {
                 </div>
             </div>
 
-            {/* Text content */}
-            <div className="relative mt-5 z-10 mx-auto max-w-xl text-center">
-                <p className="mx-auto mt-4 max-w-lg text-pretty text-base leading-relaxed text-neutral-500 dark:text-neutral-400 sm:text-lg">
-                    {"Frontend, backend, databases, DevOps, blockchain, embedded systems, payment gateways, APIs, and more. "}
-                    <strong className="font-semibold text-neutral-900 dark:text-neutral-100">Yes.</strong>
+            {/* Carrossel — mesmos icones do arco, em 2 faixas: uma indo e outra
+                vindo. Sai de cena a partir de md, onde o arco assume. */}
+            <div className="relative w-full md:hidden">
+                {/* Fade nas bordas */}
+                <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-10 bg-gradient-to-r from-background to-transparent" />
+                <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-10 bg-gradient-to-l from-background to-transparent" />
+
+                <div className="flex flex-col gap-4 py-2">
+                    {MOBILE_ROWS.map((row, rowIdx) => (
+                        <div key={rowIdx} className="overflow-hidden py-1">
+                            <div
+                                className={`
+                                    flex w-max animate-stack-marquee
+                                    motion-reduce:animate-none
+                                    ${rowIdx % 2 === 1 ? '[animation-direction:reverse]' : ''}
+                                `}
+                                style={{ "--marquee-duration": MOBILE_ROW_DURATIONS[rowIdx] } as CSSProperties}
+                            >
+                                {/* Duas copias identicas: o keyframe anda -50%, entao o loop
+                                    volta exatamente para o inicio da segunda copia. */}
+                                {[0, 1].map((copy) => (
+                                    <div
+                                        key={copy}
+                                        className="flex flex-shrink-0 gap-3 pr-3"
+                                        aria-hidden={copy === 1}
+                                    >
+                                        {row.map((logo, logoIdx) => (
+                                            <CarouselTile key={`${logo.name}-${copy}-${logoIdx}`} logo={logo} />
+                                        ))}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* O cabecalho e igual ao das outras secoes, linha inclusive — ela
+                cai por cima do arco, que ja esta esmaecido no fundo. */}
+            <div className="relative z-10 mx-auto mt-6 max-w-xl text-center">
+                <p className="mx-auto mt-3 max-w-lg text-pretty text-base leading-relaxed text-neutral-500 dark:text-neutral-400 sm:text-lg">
+                    {t("description")}
+
+                    <>
+                        {' '}
+                        <strong className="font-semibold text-neutral-900 dark:text-neutral-100">
+                            {t("highlight")}
+                        </strong>
+                    </>
+
                 </p>
-                <a
-                    href="#"
-                    className="mt-6 inline-flex items-center gap-1 text-base font-medium text-neutral-400 transition-colors hover:text-neutral-900 dark:hover:text-neutral-100"
-                >
-                    {"Explore my projects "}
-                    <span aria-hidden="true">&rarr;</span>
-                </a>
+
             </div>
 
             <BlogList />

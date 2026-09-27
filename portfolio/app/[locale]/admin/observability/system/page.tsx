@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from 'react';
 import {
     Cpu, RefreshCw, Container, ArrowDown, ArrowUp,
     MemoryStick, AlertTriangle, Server, HardDrive,
-    Database, Image as ImageIcon, Copy, Check, Layers,
+    Database, Image as ImageIcon, Copy, Check,
 } from 'lucide-react';
 import {
     AreaChart, Area, XAxis, YAxis, CartesianGrid,
@@ -490,7 +490,11 @@ function LogDetailModal({ log, onClose }: { log: WorkerLog | null; onClose: () =
             await navigator.clipboard.writeText(JSON.stringify(log, null, 2));
             setCopied(true);
             setTimeout(() => setCopied(false), 1500);
-        } catch { }
+        } catch {
+            // Clipboard indisponivel (contexto sem HTTPS ou permissao negada).
+            // Copiar log e conveniencia; falhar em silencio e melhor do que
+            // interromper a tela de observabilidade com um erro.
+        }
     }
 
     const extras = log

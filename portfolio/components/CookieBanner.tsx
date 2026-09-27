@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { Cookie, ShieldCheck } from 'lucide-react';
+import { Cookie } from 'lucide-react';
 import { CookiePolicyModal } from './modals/CookiePolicyModal';
 
 const CONSENT_COOKIE_NAME = 'cookie_consent';
@@ -81,29 +81,24 @@ export function CookieBanner({ onAccept, onDecline }: CookieBannerProps) {
         ].join(' ')}
       >
         {/* Header */}
-        <div className="flex items-start gap-3 mb-2">
+        <div className="flex items-start gap-3 mb-4">
           <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10">
             <Cookie className="h-4 w-4 text-primary" />
           </div>
           <div>
             <p className="text-sm font-semibold text-foreground">{t('title')}</p>
             <p className="mt-0.5 text-xs leading-relaxed text-muted-foreground">
-              {t('safeExperience')}
+              {t('safeExperience')} {t('descriptionPrefix')}{' '}
+              <button
+                onClick={() => setPolicyOpen(true)}
+                className="font-medium text-primary underline underline-offset-2 hover:opacity-80 transition-opacity"
+              >
+                {t('policyLink')}
+              </button>
+              .
             </p>
           </div>
         </div>
-
-        {/* Description */}
-        <p className="mb-4 text-xs leading-relaxed text-muted-foreground">
-          {t('descriptionPrefix')}{' '}
-          <button
-            onClick={() => setPolicyOpen(true)}
-            className="font-medium text-primary underline underline-offset-2 hover:opacity-80 transition-opacity"
-          >
-            {t('policyLink')}
-          </button>
-          .
-        </p>
 
         {/* Actions */}
         <div className="flex gap-2">

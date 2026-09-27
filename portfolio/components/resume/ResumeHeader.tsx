@@ -10,13 +10,13 @@ export function ResumeHeader({ data }: ResumeHeaderProps) {
   return (
     <header className="flex flex-col gap-3">
       <div className="flex flex-col gap-1">
-        <h1 className="text-3xl font-bold text-foreground tracking-tight text-balance">
+        <h1 className="type-h1 text-foreground text-balance">
           {infos.name}
         </h1>
         <p className="text-lg font-semibold text-muted-foreground">{infos.position}</p>
       </div>
       <p className="text-sm text-muted-foreground leading-relaxed">{infos.bio}</p>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-2 border-t border-border">
+      <div className="flex flex-wrap gap-x-10 gap-y-3 pt-3 border-t border-border">
         <ContactItem
           label={labels.address}
           value={contact.address}
@@ -36,6 +36,12 @@ export function ResumeHeader({ data }: ResumeHeaderProps) {
           label={labels.githubLabel}
           value={labels.githubText}
           href={contact.github}
+          external
+        />
+        <ContactItem
+          label={labels.portfolioLabel}
+          value={labels.portfolioText}
+          href={contact.portfolio}
           external
         />
       </div>
@@ -64,7 +70,7 @@ function ContactItem({
           href={href}
           target={external ? '_blank' : undefined}
           rel={external ? 'noopener noreferrer' : undefined}
-          className="text-sm text-chart-1 underline text-blue-500 dark:text-blue-400"
+          className="text-sm text-chart-1 underline text-blue-500 dark:text-blue-400 break-all"
         >
           {value}
         </a>

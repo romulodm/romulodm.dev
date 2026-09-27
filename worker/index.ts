@@ -25,7 +25,7 @@ import {
 } from "./lib/worker-observability";
 
 // Factory functions — nothing is instantiated until called inside main()
-import { startEmailWorkers } from "./workers/email.worker";
+import { startEmailWorkers, scheduleTransactionalEmailSweep } from "./workers/email.worker";
 import { startNotificationWorker, scheduleDailyStatus } from "./workers/notification.worker";
 import { scheduleViewsFlush } from "./workers/views.worker";
 import { startSearchConsumer, reindexAll } from "./workers/search.worker";
@@ -104,6 +104,7 @@ async function main() {
   await scheduleOnchainRetry(redis);
   await scheduleDonationsReconcile(redis);
   await scheduleDonationsAudit(redis);
+  await scheduleTransactionalEmailSweep(redis);
 
   // ── Structured logging ────────────────────────────────────────────────────
   attachLogger(transactionalWorker, QUEUE_TRANSACTIONAL);

@@ -1,27 +1,32 @@
 {
   "name": "romulodm",
   "private": true,
+  "license": "MIT",
   "workspaces": [
     "packages/*",
     "portfolio",
     "worker"
   ],
   "scripts": {
-    "lint:portfolio": "npm --prefix portfolio run lint",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "ga4:check": "npm --prefix worker run ga4:check",
+    "ga4:payload": "npm --prefix worker run ga4:payload",
+    "typecheck": "npm run typecheck:portfolio && npm run typecheck:worker",
+    "typecheck:portfolio": "npm --prefix portfolio run typecheck",
+    "typecheck:worker": "npm --prefix worker run typecheck",
     "build:portfolio": "npm --prefix portfolio run build",
-    "lint:frontend": "npm --prefix frontend run lint",
-    "build:frontend": "npm --prefix frontend run build",
     "build:database": "npm --prefix packages/database run generate && npm --prefix packages/database run build",
     "build:queues": "npm --prefix packages/queues run build",
     "build:web3": "npm --prefix packages/web3 run build",
     "build:templates": "npm --prefix packages/templates run build",
     "build:worker": "npm --prefix worker run build",
-    "ci:packages": "npm run build:database && npm run build:queues",
-    "ci:portfolio": "npm run lint:portfolio && npm run build:portfolio",
+    "ci:packages": "npm run build:database && npm run build:queues && npm run build:templates && npm run build:web3",
+    "ci:portfolio": "npm run lint && npm run typecheck && npm run build:portfolio",
+    "_comment:ci": "`npm run ci` deve ser identico ao .github/workflows/ci.yml. Se divergirem, o script perde a razao de existir. ci:worker ficou de fora de propósito: `build:worker` emite dist/ que a imagem nunca usa (o Dockerfile roda `npx tsx index.ts`), e `typecheck` ja cobre o worker via tsc --noEmit.",
     "ci:worker": "npm run build:worker",
-    "ci:frontend": "npm run lint:frontend && npm run build:frontend",
-    "ci:phase1": "npm run ci:packages && npm run ci:worker && npm run lint:portfolio && npm run lint:frontend",
-    "ci": "npm run ci:phase1 && npm run build:portfolio && npm run build:frontend",
+    "ci:phase1": "npm run ci:packages && npm run lint && npm run typecheck",
+    "ci": "npm run ci:phase1 && npm run test:unit && npm run build:portfolio",
     "test:unit": "vitest run --config vitest.config.ts",
     "test:integration": "vitest run --config vitest.config.integration.ts",
     "test:e2e": "npm --prefix portfolio run test:e2e",
@@ -36,17 +41,25 @@
     "test:integration:queues": "npm --prefix packages/queues run test:integration"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.0",
+    "@next/eslint-plugin-next": "^16.0.0",
+    "eslint": "^9.39.0",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.0.0",
     "eslint-plugin-unused-imports": "^4.4.1",
+    "globals": "^16.5.0",
     "jsdom": "^26.1.0",
-    "vitest": "^3.2.4"
+    "typescript-eslint": "^8.46.0",
+    "vitest": "^5.0.0"
   },
   "overrides": {
+    "@types/node": "^22",
     "picomatch": "^4.0.2",
     "yaml": "^2.8.3",
-    "nodemailer": "^8.0.5",
-    "basic-ftp": "^5.2.2"
-  },
-  "dependencies": {
-    "@aws-sdk/s3-request-presigner": "^3.1032.0"
+    "nodemailer": "^10.0.9",
+    "basic-ftp": "^5.2.2",
+    "next": "^16.3.0",
+    "typescript": "^5.9.3",
+    "uuid": "^11.1.1"
   }
 }

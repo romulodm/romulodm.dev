@@ -1,6 +1,11 @@
 // src/lib/email/email.service.ts
 //
-// Selects the provider via EMAIL_PROVIDER=ses|smtp (default: smtp).
+// Selects the provider via EMAIL_PROVIDER=ses|smtp|resend|fallback (default: smtp).
+//
+//   fallback — Resend as primary (free tier), SES as paid fallback once
+//     Resend's quota is exhausted. See FallbackProvider for the cooldown
+//     logic that keeps it from retrying Resend on every single send after
+//     the cap is hit.
 //
 // Two isolated service instances are exported:
 //
@@ -24,6 +29,8 @@
 import type { EmailProvider, SendEmailOptions } from "./providers/base.provider";
 import { SmtpProvider, type SmtpMode } from "./providers/smtp.provider";
 import { SesProvider } from "./providers/ses.provider";
+import { ResendProvider } from "./providers/resend.provider";
+import { FallbackProvider } from "./providers/fallback.provider";
 
 // ── Provider factory ──────────────────────────────────────────────────────────
 
@@ -39,6 +46,14 @@ function createProvider(mode: SmtpMode): EmailProvider {
   const chosen = (process.env.EMAIL_PROVIDER ?? "smtp").toLowerCase();
 
   switch (chosen) {
+    case "fallback":
+      // Resend na cota grátis como primário, SES como fallback pago quando a
+      // cota da Resend esgota. Ambos não têm pool local (HTTP puro), então um
+      // único par de instâncias serve os dois modos, como o SES sozinho já
+      // fazia abaixo.
+      return new FallbackProvider(new ResendProvider(), new SesProvider());
+    case "resend":
+      return new ResendProvider();
     case "ses":
       // SES has no local pool — AWS enforces rate limits server-side.
       // A single SesProvider constructor is sufficient for both modes.
