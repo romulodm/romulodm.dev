@@ -53,9 +53,26 @@ async function readRaw(slug: LegalDocumentSlug, fileLocale: string) {
   return fs.readFile(filePath, 'utf8')
 }
 
+/**
+ * Replaces until the string stops changing. A single pass is not enough: removing
+ * one match can join the text around it into a new one (`<!<!-- x -->-- y -->`
+ * leaves `<!-- y -->` behind). The legal Markdown is committed content, not user
+ * input, so this is defence in depth, but it is what makes the result safe to
+ * render as HTML regardless of where the string came from.
+ */
+function replaceUntilStable(input: string, pattern: RegExp, replacement = ''): string {
+  let previous: string
+  let current = input
+  do {
+    previous = current
+    current = current.replace(pattern, replacement)
+  } while (current !== previous)
+  return current
+}
+
 /** Remove comentários HTML (blocos de personalização) antes de qualquer parsing. */
 function stripHtmlComments(markdown: string): string {
-  return markdown.replace(/<!--[\s\S]*?-->/g, '')
+  return replaceUntilStable(markdown, /<!--[\s\S]*?-->/g)
 }
 
 const PLACEHOLDER = /\{\{([A-Z_]+)\}\}/g
@@ -176,7 +193,7 @@ export function getLegalHeadings(html: string): LegalHeading[] {
   for (const match of html.matchAll(pattern)) {
     headings.push({
       id: match[1],
-      text: match[2].replace(/<[^>]+>/g, '').trim(),
+      text: replaceUntilStable(match[2], /<[^>]+>/g).trim(),
     })
   }
 
