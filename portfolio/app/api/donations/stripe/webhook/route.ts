@@ -11,6 +11,7 @@ import {
 
 import { badRequestResponse, internalErrorResponse, logApiError } from "@/lib/api-errors";
 import { getApiTranslator } from "@/lib/api-intl";
+import { revalidateDonationViews } from "@/lib/payments/revalidate-donations";
 import { getStripe } from "@/lib/payments/stripe";
 import { finalizeWebhookEvent, recordWebhookEvent } from "@/lib/payments/webhook-events";
 
@@ -71,6 +72,8 @@ export async function POST(req: NextRequest) {
         await finalizeWebhookEvent(eventRowId, "FAILED", { error: describeOutcome(outcome) });
         return NextResponse.json({ ok: true, warning: outcome.kind });
       }
+
+      if (outcome.kind === "completed") revalidateDonationViews();
 
       await finalizeWebhookEvent(eventRowId, "PROCESSED", {
         donationId: "donationId" in outcome ? outcome.donationId : null,

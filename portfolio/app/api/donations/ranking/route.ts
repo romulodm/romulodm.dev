@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server'
 import { unstable_cache } from 'next/cache'
 import { prisma } from '@romulo/database'
 
+import { DONATION_RANKING_TAG } from '@/lib/payments/revalidate-donations'
+
 export const dynamic = 'force-dynamic'
 
 const DONATION_RANKING_REVALIDATE_SECONDS = 300
@@ -25,8 +27,11 @@ const getCachedDonationRanking = unstable_cache(
 
         return { top, recent }
     },
-    ['donation-ranking'],
-    { revalidate: DONATION_RANKING_REVALIDATE_SECONDS },
+    [DONATION_RANKING_TAG],
+    // The key parts above only name the entry; `tags` is what revalidateTag
+    // matches against. Without it, confirming a donation could not clear this
+    // cache and the ranking would lag by up to the revalidate window.
+    { revalidate: DONATION_RANKING_REVALIDATE_SECONDS, tags: [DONATION_RANKING_TAG] },
 )
 
 export async function GET() {

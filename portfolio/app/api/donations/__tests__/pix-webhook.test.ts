@@ -11,6 +11,7 @@
  *   8. Divergência de liquidação responde 200 mas registra falha, em vez de
  *      responder "ok" silenciosamente
  *   9. billing.expired marca a doação como EXPIRED
+ *  10. Só uma promoção real invalida o cache da página /support
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { NextRequest } from 'next/server'
@@ -22,6 +23,7 @@ const markDonationExpired = vi.fn()
 const recordWebhookEvent = vi.fn()
 const finalizeWebhookEvent = vi.fn()
 const logApiError = vi.fn()
+const revalidateDonationViews = vi.fn()
 
 vi.mock('@romulo/database', () => ({
   markDonationCompleted: (...args: unknown[]) => markDonationCompleted(...args),
@@ -36,6 +38,12 @@ vi.mock('@/lib/payments/webhook-events', () => ({
   recordWebhookEvent: (...args: unknown[]) => recordWebhookEvent(...args),
   finalizeWebhookEvent: (...args: unknown[]) => finalizeWebhookEvent(...args),
   buildAbacateEventId: (type: string, charge?: string) => `${type}:${charge ?? 'unknown'}`,
+}))
+
+// revalidatePath/revalidateTag need a Next request store that does not exist
+// under vitest; the helper is replaced so the tests can assert when it runs.
+vi.mock('@/lib/payments/revalidate-donations', () => ({
+  revalidateDonationViews: (...args: unknown[]) => revalidateDonationViews(...args),
 }))
 
 vi.mock('@/lib/api-intl', () => ({
@@ -139,6 +147,16 @@ describe('POST /api/donations/pix/webhook', () => {
     expect(finalizeWebhookEvent).toHaveBeenCalledWith('evt-row-1', 'PROCESSED', {
       donationId: 'donation-42',
     })
+    expect(revalidateDonationViews).toHaveBeenCalledTimes(1)
+  })
+
+  it('doação que já estava confirmada não invalida o cache de novo', async () => {
+    markDonationCompleted.mockResolvedValue({ kind: 'already_completed', donationId: 'donation-42' })
+
+    const res = await POST(makeRequest(billingPaidEvent('donation-42', 500), authHeader))
+
+    expect(res.status).toBe(200)
+    expect(revalidateDonationViews).not.toHaveBeenCalled()
   })
 
   it('retorna 400 quando billing.paid não tem donationId', async () => {
@@ -196,6 +214,7 @@ describe('POST /api/donations/pix/webhook', () => {
     expect(res.status).toBe(200)
     await expect(res.json()).resolves.toMatchObject({ warning: 'amount_mismatch' })
     expect(logApiError).toHaveBeenCalled()
+    expect(revalidateDonationViews).not.toHaveBeenCalled()
   })
 
   it('billing.expired marca a doação como EXPIRED', async () => {

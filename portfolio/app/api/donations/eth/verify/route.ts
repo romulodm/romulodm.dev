@@ -8,6 +8,7 @@ import {
   rateLimitResponse,
 } from "@/lib/api-errors";
 import { getApiTranslator } from "@/lib/api-intl";
+import { revalidateDonationViews } from "@/lib/payments/revalidate-donations";
 import { getRequestIp, rateLimit } from "@/lib/rate-limit";
 
 /** Hash de transação Ethereum: 0x seguido de 64 hex. */
@@ -74,6 +75,8 @@ export async function POST(req: NextRequest) {
         status: "COMPLETED",
       },
     });
+
+    revalidateDonationViews();
 
     return NextResponse.json({ ok: true });
   } catch (error) {

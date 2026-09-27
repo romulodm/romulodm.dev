@@ -26,6 +26,12 @@ vi.mock('@/lib/rate-limit', () => ({
   getRequestIp: vi.fn(() => '127.0.0.1'),
 }))
 
+// revalidatePath/revalidateTag need a Next request store that does not exist
+// under vitest.
+vi.mock('@/lib/payments/revalidate-donations', () => ({
+  revalidateDonationViews: vi.fn(),
+}))
+
 vi.mock('@/lib/api-intl', () => ({
   getApiTranslator: vi.fn(() => (key: string) => key),
 }))

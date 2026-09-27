@@ -385,6 +385,7 @@
   },
   "navigation": {
     "login": "Sign in",
+    "announcement": "New features coming soon!",
     "tooltip": {
       "search": "Search posts",
       "language": "Change language",
@@ -807,6 +808,7 @@
       "description": "Each coffee helps me keep writing and maintaining the blog. Thanks for the support!",
       "supporters": "{count} supporters"
     },
+    "trustNote": "Secure payment. Your bank and card details never pass through this site. You can check the privacy policy <link>here</link>.",
     "widget": {
       "namePlaceholder": "Name or @social",
       "messagePlaceholder": "Leave a message...",
@@ -829,7 +831,8 @@
       "simulate": "Simulate payment (dev)",
       "simulating": "Simulating...",
       "alreadyPaid": "I already paid",
-      "expired": "This QR code has expired. Close and generate a new charge."
+      "expired": "This QR code has expired. Go back and generate a new charge.",
+      "back": "Back"
     },
     "crypto": {
       "genericError": "Error processing ETH.",

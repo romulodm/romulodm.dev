@@ -3,8 +3,7 @@
 import { useState } from 'react'
 import { useStripe, useElements, PaymentElement } from '@stripe/react-stripe-js'
 import { useTranslations } from 'next-intl'
-import { ShieldCheck, Coffee } from 'lucide-react'
-import { PrivacyPolicyModal } from '@/components/modals/PrivacyPolicyModal'
+import { Coffee } from 'lucide-react'
 
 interface Props {
     coffees: number
@@ -19,7 +18,6 @@ export function StripeForm({ coffees, amount, onBack, onSuccess }: Props) {
     const elements = useElements()
     const [message, setMessage] = useState('')
     const [isProcessing, setIsProcessing] = useState(false)
-    const [privacyOpen, setPrivacyOpen] = useState(false)
 
     const amountBRL = (amount / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
 
@@ -51,76 +49,53 @@ export function StripeForm({ coffees, amount, onBack, onSuccess }: Props) {
     }
 
     return (
-        <>
-            <div className="rounded-xl border border-border bg-card p-6 shadow-sm space-y-4">
+        <div className="rounded-xl border border-border bg-card p-6 shadow-sm space-y-4">
 
-                {/* Back */}
-                <button
-                    type="button"
-                    onClick={onBack}
-                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                >
-                    ← {t('stripe.back')}
-                </button>
+            {/* Back */}
+            <button
+                type="button"
+                onClick={onBack}
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+                ← {t('stripe.back')}
+            </button>
 
-                {/* Payment summary */}
-                <div className="rounded-lg bg-muted/40 border border-border px-4 py-3 flex items-center justify-between text-sm">
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                        <Coffee className="w-4 h-4" />
-                        <span>
-                            {coffees} {coffees === 1 ? 'café' : 'cafés'}
-                        </span>
-                    </div>
-                    <span className="font-semibold text-foreground">{amountBRL}</span>
+            {/* Payment summary */}
+            <div className="rounded-lg bg-muted/40 border border-border px-4 py-3 flex items-center justify-between text-sm">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                    <Coffee className="w-4 h-4" />
+                    <span>
+                        {coffees} {coffees === 1 ? 'café' : 'cafés'}
+                    </span>
                 </div>
-
-                {/* Stripe form */}
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    <div className="min-h-[200px]">
-                        <PaymentElement options={{ layout: 'tabs' }} />
-                    </div>
-
-                    {message && <p className="text-sm text-red-500">{message}</p>}
-
-                    {/* Security note */}
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted/30 rounded-lg px-3 py-2.5">
-                        <span>
-                            Dados do cartão processados diretamente pela <a href="https://stripe.com" target="_blank" rel="noopener noreferrer" className="underline hover:text-foreground">
-                                <strong className="text-foreground">Stripe</strong>
-                            </a> (PCI-DSS nível 1). Nunca passam pelo nosso servidor.
-                        </span>
-                    </div>
-
-                    <button
-                        type="submit"
-                        disabled={isProcessing || !stripe || !elements}
-                        className="w-full py-3 rounded-lg bg-primary text-primary-foreground font-bold hover:opacity-90 transition disabled:opacity-50"
-                    >
-                        {isProcessing ? t('stripe.processing') : `${t('stripe.pay')} · ${amountBRL}`}
-                    </button>
-                </form>
-
-                {/* Security badge + privacy link */}
-                <div className="space-y-2 text-center">
-                    <div className="flex items-center justify-center gap-1.5 text-xs text-muted-foreground">
-                        <ShieldCheck className="w-3.5 h-3.5 text-green-500" />
-                        <span>Pagamento seguro via Stripe · SSL/TLS criptografado</span>
-                    </div>
-                    <p className="text-xs text-muted-foreground">
-                        Você pode checar a política de privacidade{' '}
-                        <button
-                            type="button"
-                            onClick={() => setPrivacyOpen(true)}
-                            className="underline underline-offset-2 hover:text-foreground transition-colors"
-                        >
-                            aqui
-                        </button>
-                        .
-                    </p>
-                </div>
+                <span className="font-semibold text-foreground">{amountBRL}</span>
             </div>
 
-            <PrivacyPolicyModal open={privacyOpen} onOpenChange={setPrivacyOpen} />
-        </>
+            {/* Stripe form */}
+            <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="min-h-[200px]">
+                    <PaymentElement options={{ layout: 'tabs' }} />
+                </div>
+
+                {message && <p className="text-sm text-red-500">{message}</p>}
+
+                {/* Security note */}
+                <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted/30 rounded-lg px-3 py-2.5">
+                    <span>
+                        Dados do cartão processados diretamente pela <a href="https://stripe.com" target="_blank" rel="noopener noreferrer" className="underline hover:text-foreground">
+                            <strong className="text-foreground">Stripe</strong>
+                        </a> (PCI-DSS nível 1). Nunca passam pelo nosso servidor.
+                    </span>
+                </div>
+
+                <button
+                    type="submit"
+                    disabled={isProcessing || !stripe || !elements}
+                    className="w-full py-3 rounded-lg bg-primary text-primary-foreground font-bold hover:opacity-90 transition disabled:opacity-50"
+                >
+                    {isProcessing ? t('stripe.processing') : `${t('stripe.pay')} · ${amountBRL}`}
+                </button>
+            </form>
+        </div>
     )
 }

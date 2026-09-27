@@ -15,6 +15,7 @@ import {
   unauthorizedResponse,
 } from "@/lib/api-errors";
 import { getApiTranslator } from "@/lib/api-intl";
+import { revalidateDonationViews } from "@/lib/payments/revalidate-donations";
 import {
   buildAbacateEventId,
   finalizeWebhookEvent,
@@ -90,6 +91,8 @@ export async function POST(req: NextRequest) {
 
         return NextResponse.json({ ok: true, warning: outcome.kind });
       }
+
+      if (outcome.kind === "completed") revalidateDonationViews();
 
       await finalizeWebhookEvent(eventRowId, "PROCESSED", { donationId });
       return NextResponse.json({ ok: true });
