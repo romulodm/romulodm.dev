@@ -41,6 +41,11 @@ export default tseslint.config(
       'packages/*/index.js',
       'packages/*/*.js',
       'packages/**/*.js.map',
+      // Minified MapLibre bundles copied out of node_modules by
+      // portfolio/scripts/copy-maplibre-worker.mjs on predev/prebuild. Not
+      // committed (see portfolio/.gitignore), so a fresh CI checkout never has
+      // them, but any machine that has run `dev` or `build` does.
+      'portfolio/public/maplibre/**',
     ],
   },
 
