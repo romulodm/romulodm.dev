@@ -28,6 +28,11 @@ concurrency:
 jobs:
   codeql:
     name: CodeQL (${{ matrix.language }})
+    # Code scanning on a private repository requires GitHub Advanced Security
+    # (paid). Without it the analysis runs for minutes and then fails at the
+    # SARIF upload with "Code scanning is not enabled". Skipped while the
+    # repository is private; runs as soon as it is made public.
+    if: ${{ !github.event.repository.private }}
     runs-on: ubuntu-latest
     timeout-minutes: 45
 
@@ -58,11 +63,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: github/codeql-action/init@v3
-        with:
-          languages: ${{ matrix.language }}
-          build-mode: ${{ matrix.build-mode }}
-
+      # BEFORE init, not after: init puts a tracing wrapper for `go` first on
+      # PATH so it can observe the build. Running setup-go afterwards put the
+      # real toolchain in front of that wrapper, the build went unobserved and
+      # the Go analysis failed with "didn't build any of it".
       - name: Set up Go
         if: matrix.language == 'go'
         uses: actions/setup-go@v5
@@ -70,7 +74,16 @@ jobs:
           # Matches the `go` directive in search/go.mod and the builder image in
           # search/Dockerfile.
           go-version: '1.22'
-          cache-dependency-path: search/go.sum
+          # No build cache here. With it, setup-go restores GOCACHE and
+          # `go build` finds every package already compiled, so the compiler
+          # never runs and CodeQL's tracer has nothing to observe: the analysis
+          # then fails with "could not process any code written in Go".
+          cache: false
+
+      - uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: ${{ matrix.build-mode }}
 
       # Has to sit between init and analyze: the extractor is only recording
       # during that window.

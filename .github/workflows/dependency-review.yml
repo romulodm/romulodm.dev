@@ -23,6 +23,10 @@ permissions:
 jobs:
   dependency-review:
     name: Review new dependencies
+    # Dependency review on a private repository requires GitHub Advanced
+    # Security; without it the action fails in seconds with "not supported on
+    # this repository". Skipped while private; runs once the repo is public.
+    if: ${{ !github.event.repository.private }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
