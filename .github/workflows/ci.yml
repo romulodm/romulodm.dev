@@ -89,7 +89,12 @@ jobs:
       # tsx), so the `tsc` above is its validation. Only the portfolio is built
       # here.
       - name: Build the portfolio
-        run: npm run build:portfolio
+        # The log is kept for the assertion step below. pipefail because the
+        # default shell here is `bash -e` without it, and a failing build piped
+        # into tee would otherwise report success.
+        run: |
+          set -o pipefail
+          npm run build:portfolio 2>&1 | tee build-portfolio.log
         env:
           # The build needs the NEXT_PUBLIC_* variables for the same reason the
           # image does: Next.js replaces those references with literal values at
@@ -126,17 +131,20 @@ jobs:
       # robots.ts starts answering "Disallow: /", and the site drops out of
       # Google's index with no visible signal.
       #
-      # Only the server bundle is scanned: third-party chunks under .next/static
-      # occasionally ship a literal localhost URL of their own, which would make
-      # this check flaky for no benefit.
-      - name: Assert the bundle has no localhost references
+      # It asserts on the warning seo.ts prints when it actually resolves to
+      # localhost in a production build, not on the string "localhost:3000" in
+      # the output. The string check could never pass: the fallback literal
+      # lives in seo.ts, so it is always present in the server chunks (as an
+      # unreachable `|| "http://localhost:3000"`) and in every source map that
+      # covers them, whether or not the variable reached the build.
+      - name: Assert SITE_URL reached the build
         run: |
-          if grep -rq "http://localhost:3000" portfolio/.next/server 2>/dev/null; then
-            echo "::error::Build produced localhost references — NEXT_PUBLIC_SITE_URL did not reach the build."
-            grep -rl "http://localhost:3000" portfolio/.next/server | head -20
+          if grep -q "SITE_URL ausente" build-portfolio.log; then
+            echo "::error::lib/seo.ts fell back to localhost during the build. NEXT_PUBLIC_SITE_URL did not reach it."
+            grep "SITE_URL ausente" build-portfolio.log | head -5
             exit 1
           fi
-          echo "OK: no localhost references in the build output."
+          echo "OK: SITE_URL resolved to a real origin during the build."
 
       # The check above did not catch robots.txt: it came out as "Disallow: /",
       # which contains no "localhost" string. robots.ts reads
