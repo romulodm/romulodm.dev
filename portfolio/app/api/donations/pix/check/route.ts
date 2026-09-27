@@ -20,6 +20,7 @@ import {
 } from "@/lib/api-errors";
 import { getApiTranslator } from "@/lib/api-intl";
 import { checkPixStatus } from "@/lib/payments/abacate";
+import { revalidateDonationViews } from "@/lib/payments/revalidate-donations";
 import { getRequestIp, rateLimit } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
@@ -84,6 +85,8 @@ export async function GET(req: NextRequest) {
             if (needsAttention(outcome)) {
                 logApiError("donations-pix-check", new Error(describeOutcome(outcome)));
             }
+
+            if (outcome.kind === "completed") revalidateDonationViews();
 
             const settled = outcome.kind === "completed" || outcome.kind === "already_completed";
             return NextResponse.json({
