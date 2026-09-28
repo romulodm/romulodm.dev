@@ -13,7 +13,6 @@ import {
   Search,
   X,
 } from 'lucide-react';
-import Image from 'next/image';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -295,7 +294,9 @@ export function BlogHeader({
                       className="w-full flex items-start gap-3 px-3 py-2.5 hover:bg-muted text-left transition-colors"
                     >
                       {hit.coverImageUrl && (
-                        <Image src={hit.coverImageUrl} alt="" width={36} height={36}
+                        // eslint-disable-next-line @next/next/no-img-element -- see SearchDialog
+                        <img src={hit.coverImageUrl} alt="" width={36} height={36}
+                          loading="lazy" decoding="async"
                           className="w-9 h-9 rounded-lg object-cover shrink-0 mt-0.5" />
                       )}
                       <div className="flex-1 min-w-0">

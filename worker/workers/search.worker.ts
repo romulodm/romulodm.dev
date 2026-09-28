@@ -4,6 +4,20 @@ import { redis } from "../lib/redis";
 
 const SEARCH_URL = process.env.SEARCH_GO_URL ?? "http://localhost:8080";
 
+// Every Go route except /health and /search requires this Bearer token.
+function authHeaders(): Record<string, string> {
+    const secret = process.env.SEARCH_INTERNAL_SECRET;
+    return secret ? { Authorization: `Bearer ${secret}` } : {};
+}
+
+// fetch() does not reject on HTTP errors; surface them so the caller logs them.
+async function ensureOk(res: Response, op: string) {
+    if (!res.ok) {
+        const body = await res.text().catch(() => "");
+        throw new Error(`search-go ${op} returned ${res.status}: ${body.slice(0, 200)}`);
+    }
+}
+
 // ── HTTP client para o serviço Go ─────────────────────────────────────────────
 
 async function goIndex(doc: {
@@ -11,17 +25,20 @@ async function goIndex(doc: {
     title: string; summary: string; excerpt: string;
     tags: string[]; publishedAt: number; coverImageUrl: string | null;
 }) {
-    await fetch(`${SEARCH_URL}/index`, {
+    const res = await fetch(`${SEARCH_URL}/index`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...authHeaders() },
         body: JSON.stringify(doc),
     });
+    await ensureOk(res, "POST /index");
 }
 
 async function goRemove(docId: string) {
-    await fetch(`${SEARCH_URL}/index/${encodeURIComponent(docId)}`, {
+    const res = await fetch(`${SEARCH_URL}/index/${encodeURIComponent(docId)}`, {
         method: "DELETE",
+        headers: authHeaders(),
     });
+    await ensureOk(res, "DELETE /index");
 }
 
 async function goReindex(docs: Array<{
@@ -29,11 +46,12 @@ async function goReindex(docs: Array<{
     title: string; summary: string; excerpt: string;
     tags: string[]; publishedAt: number; coverImageUrl: string | null;
 }>) {
-    await fetch(`${SEARCH_URL}/reindex`, {
+    const res = await fetch(`${SEARCH_URL}/reindex`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...authHeaders() },
         body: JSON.stringify(docs),
     });
+    await ensureOk(res, "POST /reindex");
 }
 
 // ── Indexador de posts ────────────────────────────────────────────────────────
