@@ -231,7 +231,7 @@ describe("PUT /api/comments/[id]/vote", () => {
     const abuser = await createTestUser();
     const post = await createPublishedPost(author.id);
 
-    const comments = [];
+    const comments: Awaited<ReturnType<typeof createComment>>[] = [];
     for (let i = 0; i < 6; i++) {
       comments.push(await createComment(author.id, post.id, `comment ${i}`));
     }
