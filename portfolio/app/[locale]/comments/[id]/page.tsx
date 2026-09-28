@@ -6,6 +6,7 @@ import { cache } from "react";
 import { getCommentById } from "@/lib/comments";
 import type { Metadata } from "next";
 import { Footer } from "@/components/Footer";
+import { getTranslations } from "next-intl/server";
 
 // getCommentById le a sessao para marcar o voto do visitante — conteudo por
 // usuario, nao cacheavel, e ler cookie em render estatico daria 500.
@@ -36,11 +37,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const { id } = await params;
 
     const comment = await getComment(id);
+    const t = await getTranslations("commentPage");
 
-    if (!comment) return { title: "Comentário não encontrado" };
+    if (!comment) return { title: t("notFound") };
 
     return {
-        title: `Comentário de @${comment.author.username} em "${comment.post.title}"`,
+        title: t("metaTitle", { username: comment.author.username, post: comment.post.title }),
     };
 }
 
@@ -51,6 +53,7 @@ export default async function CommentPage({ params }: PageProps) {
 
     if (!comment) notFound();
 
+    const t = await getTranslations("commentPage");
     const isReply = !!comment.parentId;
     const postId = comment.post.id;
 
@@ -62,7 +65,7 @@ export default async function CommentPage({ params }: PageProps) {
                 {/* Breadcrumb */}
                 <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-8 flex-wrap">
                     <Link href="/blog" className="hover:text-foreground transition-colors">
-                        Blog
+                        {t("breadcrumb.blog")}
                     </Link>
                     <span>/</span>
                     <Link
@@ -72,7 +75,7 @@ export default async function CommentPage({ params }: PageProps) {
                         {comment.post.title}
                     </Link>
                     <span>/</span>
-                    <span className="text-foreground">Comentário</span>
+                    <span className="text-foreground">{t("breadcrumb.comment")}</span>
                 </nav>
 
                 {/* Parent comment context (when this is a reply) */}
@@ -83,13 +86,14 @@ export default async function CommentPage({ params }: PageProps) {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                                     d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
                             </svg>
-                            Respondendo a @{comment.parent.author.username}
+                            {t("replyingTo", { username: comment.parent.author.username })}
                         </p>
                         <div className="rounded-lg border border-border/60 bg-accent/30 p-4 opacity-80 pointer-events-none select-none">
                             <CommentCard
                                 comment={comment.parent}
                                 postId={postId}
                                 depth={0}
+                                threadDepth={comment.depth - 1}
                                 showContext={false}
                             />
                         </div>
@@ -102,6 +106,7 @@ export default async function CommentPage({ params }: PageProps) {
                         comment={comment}
                         postId={postId}
                         depth={0}
+                        threadDepth={comment.depth}
                         showContext={!isReply}
                         onReplySuccess={undefined}
                     />
@@ -116,7 +121,7 @@ export default async function CommentPage({ params }: PageProps) {
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                         </svg>
-                        Ir para "{comment.post.title}"
+                        {t("backToPost", { title: comment.post.title })}
                     </Link>
                 </div>
             </main>

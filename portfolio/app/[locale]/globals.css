@@ -610,3 +610,167 @@
   color: inherit !important;
   border-color: #e5e7eb !important;
 }
+
+/* Announcement strip above the navbar (components/navigation/AnnouncementBar.tsx).
+ *
+ * Three blurred color blobs drift across a solid base while their colors cycle.
+ * Every color comes from the hero sky (Hero.tsx) and the footer sky (Footer.tsx),
+ * plus the #F9733D orange of the footer CTA, so the strip reads as part of the
+ * same palette in both themes.
+ *
+ * Positions and colors are typed custom properties (@property). Without the type
+ * declaration the browser treats them as strings and jumps between keyframes
+ * instead of interpolating. Browsers without @property still get the static
+ * first frame, which is a valid gradient on its own.
+ */
+@property --ann-a {
+  syntax: '<color>';
+  inherits: false;
+  initial-value: #d39794;
+}
+
+@property --ann-b {
+  syntax: '<color>';
+  inherits: false;
+  initial-value: #8e757b;
+}
+
+@property --ann-c {
+  syntax: '<color>';
+  inherits: false;
+  initial-value: #f9733d;
+}
+
+@property --ann-x1 {
+  syntax: '<percentage>';
+  inherits: false;
+  initial-value: 12%;
+}
+
+@property --ann-x2 {
+  syntax: '<percentage>';
+  inherits: false;
+  initial-value: 50%;
+}
+
+@property --ann-x3 {
+  syntax: '<percentage>';
+  inherits: false;
+  initial-value: 88%;
+}
+
+.announcement-bar {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background-color: #dce1e5;
+  color: #0a0a0a;
+}
+
+.dark .announcement-bar {
+  background-color: #1b2228;
+  color: #ffffff;
+}
+
+.announcement-bar::before {
+  content: '';
+  position: absolute;
+  /* Bleeds past the edges so the blur does not fade to the base color at the
+     sides of the strip. */
+  inset: -40% -10%;
+  z-index: 0;
+  background:
+    radial-gradient(40% 180% at var(--ann-x1) 50%, var(--ann-a), transparent 70%),
+    radial-gradient(40% 180% at var(--ann-x2) 50%, var(--ann-b), transparent 70%),
+    radial-gradient(40% 180% at var(--ann-x3) 50%, var(--ann-c), transparent 70%);
+  filter: blur(14px);
+  opacity: 0.9;
+  animation:
+    announcement-drift 16s ease-in-out infinite alternate,
+    announcement-colors-light 12s linear infinite;
+}
+
+/* The blobs sit under the text. In the dark theme they are slightly dimmer and
+   the text gets a soft shadow, so white text stays readable where it overlaps
+   the rose and orange tones. */
+.dark .announcement-bar::before {
+  opacity: 0.8;
+  animation:
+    announcement-drift 16s ease-in-out infinite alternate,
+    announcement-colors-dark 12s linear infinite;
+}
+
+.dark .announcement-bar p {
+  text-shadow: 0 1px 2px rgb(0 0 0 / 0.45);
+}
+
+@keyframes announcement-drift {
+  0% {
+    --ann-x1: 12%;
+    --ann-x2: 50%;
+    --ann-x3: 88%;
+  }
+
+  50% {
+    --ann-x1: 35%;
+    --ann-x2: 78%;
+    --ann-x3: 22%;
+  }
+
+  100% {
+    --ann-x1: 70%;
+    --ann-x2: 18%;
+    --ann-x3: 55%;
+  }
+}
+
+/* Dark: footer mauves, hero rose, CTA orange. */
+@keyframes announcement-colors-dark {
+  0%,
+  100% {
+    --ann-a: #d39794;
+    --ann-b: #8e757b;
+    --ann-c: #f9733d;
+  }
+
+  33% {
+    --ann-a: #f9733d;
+    --ann-b: #b08f93;
+    --ann-c: #6e5f65;
+  }
+
+  66% {
+    --ann-a: #6e5f65;
+    --ann-b: #d39794;
+    --ann-c: #b08f93;
+  }
+}
+
+/* Light: the pale rose and blue-gray end of both skies, same CTA orange. */
+@keyframes announcement-colors-light {
+  0%,
+  100% {
+    --ann-a: #e2aaa0;
+    --ann-b: #d6dee4;
+    --ann-c: #f9733d;
+  }
+
+  33% {
+    --ann-a: #f9733d;
+    --ann-b: #e8b4aa;
+    --ann-c: #e2c2be;
+  }
+
+  66% {
+    --ann-a: #e2c2be;
+    --ann-b: #e2aaa0;
+    --ann-c: #e8b4aa;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .announcement-bar::before,
+  .dark .announcement-bar::before {
+    animation: none;
+  }
+}

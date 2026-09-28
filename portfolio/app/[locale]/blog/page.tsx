@@ -102,6 +102,7 @@ export default async function BlogPage({
   setRequestLocale(rawLocale)
   const locale = SUPPORTED_LOCALES.find((l) => l.code === rawLocale)?.code ?? 'pt-BR'
   const { posts, allTags } = await getCachedBlogIndexData(locale)
+  const t = await getTranslations({ locale: rawLocale, namespace: 'blogUi' })
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-background">
@@ -109,9 +110,7 @@ export default async function BlogPage({
       <main className="max-w-7xl mx-auto px-4 py-12">
         <div className="text-center mt-10 mb-5 pb-5 border-b border-border">
           <p className="type-body text-gray-600 dark:text-muted-foreground max-w-2xl mx-auto">
-            The opinions expressed here are personal reflections that relate to my views on
-            technology and other matters; feel free to interact, share your ideas and send
-            suggestions.
+            {t('intro')}
           </p>
         </div>
         <BlogCarrousel />

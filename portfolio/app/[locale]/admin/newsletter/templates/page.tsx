@@ -1,6 +1,6 @@
 // portfolio/src/app/[locale]/admin/newsletter/templates/page.tsx
 import { redirect } from "next/navigation";
-import { getLocale } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { isAdminAuthenticated } from "@/lib/auth-helpers";
 import {
     confirmationTemplate,
@@ -24,21 +24,29 @@ const BRAND: BrandConfig = {
 
 // ─── Dummy recipient for preview ──────────────────────────────────────────────
 
-const PREVIEW_RECIPIENT: RecipientContext = {
-    displayName: "romulodm",
-    locale: "pt",
-};
+function previewRecipient(locale: string): RecipientContext {
+    return { displayName: "romulodm", locale: locale as RecipientContext["locale"] };
+}
 
 // ─── Sample previews ──────────────────────────────────────────────────────────
 
-function buildPreviews() {
+// Minimal signature satisfied by the `t` returned from getTranslations.
+type Translator = (key: string) => string;
+
+function buildPreviews(t: Translator, locale: string) {
     const base = BRAND.baseUrl;
+    const PREVIEW_RECIPIENT = previewRecipient(locale);
+    const networksPost = {
+        title: t("samples.networks.title"),
+        summary: t("samples.networks.summary"),
+        summaryShort: t("samples.networks.summaryShort"),
+    };
 
     return [
         {
             id: "confirmation",
-            label: "Confirmação de inscrição",
-            description: "Enviado após o usuário preencher o formulário de newsletter.",
+            label: t("items.confirmation.label"),
+            description: t("items.confirmation.description"),
             html: confirmationTemplate({
                 confirmationUrl: `${base}/newsletter/confirm?token=abc123`,
                 brand: BRAND,
@@ -48,8 +56,8 @@ function buildPreviews() {
         },
         {
             id: "welcome",
-            label: "Boas-vindas",
-            description: "Enviado após o usuário confirmar o e-mail.",
+            label: t("items.welcome.label"),
+            description: t("items.welcome.description"),
             html: welcomeTemplate({
                 unsubscribeUrl: `${base}/newsletter/unsubscribe?token=abc123`,
                 brand: BRAND,
@@ -59,8 +67,8 @@ function buildPreviews() {
         },
         {
             id: "unsubscribe",
-            label: "Confirmar cancelamento",
-            description: "Enviado quando o usuário solicita o cancelamento.",
+            label: t("items.unsubscribe.label"),
+            description: t("items.unsubscribe.description"),
             html: unsubscribeConfirmTemplate({
                 unsubscribeUrl: `${base}/newsletter/unsubscribe/confirm?token=abc123`,
                 brand: BRAND,
@@ -70,8 +78,8 @@ function buildPreviews() {
         },
         {
             id: "password-reset",
-            label: "Recuperação de senha",
-            description: "Enviado ao solicitar redefinição de senha.",
+            label: t("items.passwordReset.label"),
+            description: t("items.passwordReset.description"),
             html: passwordResetTemplate({
                 code: "482917",
                 expiresInMinutes: 15,
@@ -82,18 +90,17 @@ function buildPreviews() {
         },
         {
             id: "campaign-post",
-            label: "Newsletter — Post único",
-            description: "Campanha baseada em artigo do blog, com imagem, tags e resumo.",
+            label: t("items.campaignPost.label"),
+            description: t("items.campaignPost.description"),
             html: campaignTemplate({
-                subject: "Por que Todo Dev Deveria Aprender os Fundamentos de Redes",
+                subject: networksPost.title,
                 post: {
                     imageUrl: "https://romulodm.com.br/og/redes.png",
-                    title: "Por que Todo Dev Deveria Aprender os Fundamentos de Redes",
-                    summary:
-                        "Você já passou horas depurando um bug que, no fim, era só um problema de CORS? Entender redes muda a forma como você programa.",
+                    title: networksPost.title,
+                    summary: networksPost.summary,
                     tags: ["redes", "typescript", "backend"],
-                    url: `${base}/pt/blog/fundamentos-de-redes`,
-                    ctaLabel: "Ler artigo completo",
+                    url: `${base}/${locale}/blog/fundamentos-de-redes`,
+                    ctaLabel: t("samples.readMore"),
                 },
                 unsubscribeUrl: `${base}/newsletter/unsubscribe?token=abc123`,
                 brand: BRAND,
@@ -103,29 +110,29 @@ function buildPreviews() {
         },
         {
             id: "campaign-digest",
-            label: "Newsletter — Digest (múltiplos posts)",
-            description: "Compilado semanal/quinzenal com vários artigos em um só e-mail.",
+            label: t("items.campaignDigest.label"),
+            description: t("items.campaignDigest.description"),
             html: digestTemplate({
-                subject: "Novidades de maio — 3 artigos para você",
+                subject: t("samples.digestSubject"),
                 posts: [
                     {
-                        title: "Por que Todo Dev Deveria Aprender os Fundamentos de Redes",
-                        summary: "Você já passou horas depurando um bug que, no fim, era só um problema de CORS?",
+                        title: networksPost.title,
+                        summary: networksPost.summaryShort,
                         tags: ["redes", "backend"],
                         imageUrl: "https://romulodm.com.br/og/redes.png",
-                        url: `${base}/pt/blog/fundamentos-de-redes`,
+                        url: `${base}/${locale}/blog/fundamentos-de-redes`,
                     },
                     {
-                        title: "TypeScript: Tipos Condicionais na Prática",
-                        summary: "Como usar infer, extends e tipos condicionais para escrever código mais expressivo.",
+                        title: t("samples.typescript.title"),
+                        summary: t("samples.typescript.summary"),
                         tags: ["typescript"],
-                        url: `${base}/pt/blog/typescript-tipos-condicionais`,
+                        url: `${base}/${locale}/blog/typescript-tipos-condicionais`,
                     },
                     {
-                        title: "Clean Architecture em Node.js sem Complicar",
-                        summary: "Uma abordagem pragmática para separar responsabilidades sem criar burocracia desnecessária.",
+                        title: t("samples.cleanArchitecture.title"),
+                        summary: t("samples.cleanArchitecture.summary"),
                         tags: ["arquitetura", "nodejs"],
-                        url: `${base}/pt/blog/clean-architecture-nodejs`,
+                        url: `${base}/${locale}/blog/clean-architecture-nodejs`,
                     },
                 ],
                 unsubscribeUrl: `${base}/newsletter/unsubscribe?token=abc123`,
@@ -136,23 +143,23 @@ function buildPreviews() {
         },
         {
             id: "campaign-custom",
-            label: "Newsletter — HTML personalizado",
-            description: "Campanha com conteúdo HTML livre. Use o editor abaixo para visualizar o seu HTML em tempo real.",
+            label: t("items.campaignCustom.label"),
+            description: t("items.campaignCustom.description"),
             html: campaignTemplate({
-                subject: "Novidades de Maio 🌱",
+                subject: t("samples.custom.title"),
                 content: `
           <h2 style="margin:0 0 12px;font-family:'Inter',sans-serif;color:#1a1412;font-size:20px;font-weight:700;">
-            Novidades de Maio 🌱
+            ${t("samples.custom.title")}
           </h2>
           <p style="margin:0 0 14px;color:#6b6460;font-size:15px;line-height:1.65;">
-            Este mês foi recheado de lançamentos, artigos e aprendizados. Aqui está um resumo:
+            ${t("samples.custom.intro")}
           </p>
           <ul style="margin:0 0 14px;padding-left:20px;color:#6b6460;font-size:15px;line-height:1.9;">
-            <li>Publiquei 3 novos artigos sobre TypeScript</li>
-            <li>Lancei uma nova feature no portfólio</li>
-            <li>Contribuí para dois projetos open-source</li>
+            <li>${t("samples.custom.item1")}</li>
+            <li>${t("samples.custom.item2")}</li>
+            <li>${t("samples.custom.item3")}</li>
           </ul>
-          <p style="margin:0;color:#6b6460;font-size:15px;">Até o próximo mês!</p>
+          <p style="margin:0;color:#6b6460;font-size:15px;">${t("samples.custom.outro")}</p>
         `,
                 unsubscribeUrl: `${base}/newsletter/unsubscribe?token=abc123`,
                 brand: BRAND,
@@ -169,14 +176,15 @@ export default async function EmailTemplatesPage() {
     const locale = await getLocale();
     if (!(await isAdminAuthenticated())) redirect(`/${locale}`);
 
-    const previews = buildPreviews();
+    const t = await getTranslations("admin.emailTemplates");
+    const previews = buildPreviews(t, locale);
 
     return (
         <main className="p-8 space-y-8">
             <div>
-                <h1 className="text-2xl font-bold text-foreground">Templates de E-mail</h1>
+                <h1 className="text-2xl font-bold text-foreground">{t("title")}</h1>
                 <p className="text-sm text-muted-foreground mt-0.5">
-                    Visualização de todos os templates transacionais e de newsletter.
+                    {t("subtitle")}
                 </p>
             </div>
 
@@ -185,7 +193,7 @@ export default async function EmailTemplatesPage() {
                     preview.interactive ? (
                         <InteractiveCustomPreviewCard key={preview.id} {...preview} />
                     ) : (
-                        <TemplatePreviewCard key={preview.id} {...preview} />
+                        <TemplatePreviewCard key={preview.id} {...preview} iframeTitle={t("iframeTitle")} />
                     ),
                 )}
             </div>
@@ -200,11 +208,13 @@ function TemplatePreviewCard({
     label,
     description,
     html,
+    iframeTitle,
 }: {
     id: string;
     label: string;
     description: string;
     html: string;
+    iframeTitle: string;
 }) {
     return (
         <section className="space-y-3">
@@ -227,7 +237,7 @@ function TemplatePreviewCard({
                 </div>
                 <iframe
                     srcDoc={html}
-                    title="Email preview"
+                    title={iframeTitle}
                     className="w-full border-0"
                     style={{ height: "600px" }}
                     sandbox="allow-same-origin"

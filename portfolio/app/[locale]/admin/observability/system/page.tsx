@@ -16,6 +16,7 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
+import { useTranslations } from 'next-intl';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -71,6 +72,7 @@ interface WorkerLog {
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function AdminSystemPage() {
+    const t = useTranslations('admin.observability.system');
     const [data, setData] = useState<SystemMetrics | null>(null);
     const [history, setHistory] = useState<HistoryPoint[]>([]);
     const [loading, setLoading] = useState(true);
@@ -91,7 +93,7 @@ export default function AdminSystemPage() {
 
             if (!metricsRes.ok) {
                 const json = await metricsRes.json();
-                throw new Error(json.error ?? 'Unknown error');
+                throw new Error(json.error ?? t('unknownError'));
             }
             setData(await metricsRes.json());
 
@@ -125,7 +127,7 @@ export default function AdminSystemPage() {
         } finally {
             setLoading(false);
         }
-    }, []);
+    }, [t]);
 
     useEffect(() => {
         fetchAll();
@@ -140,9 +142,9 @@ export default function AdminSystemPage() {
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-2xl font-bold text-foreground">System Monitor</h1>
+                    <h1 className="text-2xl font-bold text-foreground">{t('title')}</h1>
                     <p className="mt-1 text-sm text-muted-foreground">
-                        Host and container resource usage · auto-refreshes every 30s
+                        {t('subtitle')}
                     </p>
                 </div>
                 <button
@@ -151,7 +153,7 @@ export default function AdminSystemPage() {
                     className="flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-muted"
                 >
                     <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-                    Refresh
+                    {t('refresh')}
                 </button>
             </div>
 
@@ -160,7 +162,7 @@ export default function AdminSystemPage() {
                 <div className="flex items-center gap-3 rounded-xl border border-red-200 bg-red-50 p-5 dark:border-red-900 dark:bg-red-900/20">
                     <AlertTriangle className="h-5 w-5 shrink-0 text-red-500" />
                     <div>
-                        <p className="font-medium text-red-700 dark:text-red-400">Could not load metrics</p>
+                        <p className="font-medium text-red-700 dark:text-red-400">{t('loadError')}</p>
                         <p className="text-sm text-red-600 dark:text-red-300">{error}</p>
                     </div>
                 </div>
@@ -170,42 +172,42 @@ export default function AdminSystemPage() {
             {data?.host && (
                 <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 xl:grid-cols-6">
                     <MetricCard
-                        label="CPU load"
+                        label={t('cards.cpu')}
                         value={`${data.host.cpuPercent}%`}
-                        sub="current load"
+                        sub={t('cards.cpuSub')}
                         accent={data.host.cpuPercent > 80 ? 'red' : data.host.cpuPercent > 50 ? 'amber' : 'emerald'}
                         icon={Cpu}
                     />
                     <MetricCard
-                        label="Memory used"
+                        label={t('cards.memory')}
                         value={`${data.host.memUsedMb} MB`}
-                        sub={`of ${data.host.memTotalMb} MB (${data.host.memPercent}%)`}
+                        sub={t('cards.memorySub', { total: data.host.memTotalMb, percent: data.host.memPercent })}
                         accent={data.host.memPercent > 85 ? 'red' : data.host.memPercent > 65 ? 'amber' : 'blue'}
                         icon={MemoryStick}
                     />
                     <MetricCard
-                        label="Host uptime"
+                        label={t('cards.uptime')}
                         value={formatUptime(data.host.uptime)}
-                        sub="since last restart"
+                        sub={t('cards.uptimeSub')}
                         accent="violet"
                         icon={Server}
                     />
                     <MetricCard
-                        label="Containers"
+                        label={t('cards.containers')}
                         value={String(data.containers.length)}
-                        sub="running"
+                        sub={t('cards.containersSub')}
                         accent="blue"
                         icon={Container}
                     />
                     <MetricCard
-                        label="Volumes"
+                        label={t('cards.volumes')}
                         value={String(data.docker?.volumeCount ?? '—')}
-                        sub="total volumes"
+                        sub={t('cards.volumesSub')}
                         accent="slate"
                         icon={Database}
                     />
                     <MetricCard
-                        label="Images"
+                        label={t('cards.images')}
                         value={String(data.docker?.imageCount ?? '—')}
                         sub={data.docker ? `${(data.docker.imageSizeMb / 1024).toFixed(1)} GB` : ''}
                         accent="slate"
@@ -217,7 +219,7 @@ export default function AdminSystemPage() {
             {/* ── History Charts ── */}
             {history.length > 1 && (
                 <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-                    <ChartCard title="CPU & Memory" sub="% over time">
+                    <ChartCard title={t('charts.cpuMemory')} sub={t('charts.percentOverTime')}>
                         <ResponsiveContainer width="100%" height={200}>
                             <AreaChart data={history} margin={{ top: 4, right: 8, left: -20, bottom: 0 }}>
                                 <defs>
@@ -235,13 +237,13 @@ export default function AdminSystemPage() {
                                 <YAxis tick={{ fontSize: 10 }} stroke="hsl(var(--muted-foreground))" domain={[0, 100]} unit="%" />
                                 <Tooltip contentStyle={tooltipStyle} formatter={(v) => [`${v ?? 0}%`]} />
                                 <Legend wrapperStyle={{ fontSize: 11 }} />
-                                <Area type="monotone" dataKey="cpuPercent" name="CPU" stroke="#f59e0b" fill="url(#gCpu)" strokeWidth={1.5} dot={false} />
-                                <Area type="monotone" dataKey="memPercent" name="Memory" stroke="#3b82f6" fill="url(#gMem)" strokeWidth={1.5} dot={false} />
+                                <Area type="monotone" dataKey="cpuPercent" name={t('series.cpu')} stroke="#f59e0b" fill="url(#gCpu)" strokeWidth={1.5} dot={false} />
+                                <Area type="monotone" dataKey="memPercent" name={t('series.memory')} stroke="#3b82f6" fill="url(#gMem)" strokeWidth={1.5} dot={false} />
                             </AreaChart>
                         </ResponsiveContainer>
                     </ChartCard>
 
-                    <ChartCard title="Memory usage" sub="MB over time">
+                    <ChartCard title={t('charts.memoryUsage')} sub={t('charts.mbOverTime')}>
                         <ResponsiveContainer width="100%" height={200}>
                             <AreaChart data={history} margin={{ top: 4, right: 8, left: -8, bottom: 0 }}>
                                 <defs>
@@ -254,12 +256,12 @@ export default function AdminSystemPage() {
                                 <XAxis dataKey="time" tick={{ fontSize: 10 }} stroke="hsl(var(--muted-foreground))" interval="preserveStartEnd" />
                                 <YAxis tick={{ fontSize: 10 }} stroke="hsl(var(--muted-foreground))" unit=" MB" />
                                 <Tooltip contentStyle={tooltipStyle} formatter={(v) => [`${v ?? 0} MB`]} />
-                                <Area type="monotone" dataKey="memUsedMb" name="Memory" stroke="#8b5cf6" fill="url(#gMemMb)" strokeWidth={1.5} dot={false} />
+                                <Area type="monotone" dataKey="memUsedMb" name={t('series.memory')} stroke="#8b5cf6" fill="url(#gMemMb)" strokeWidth={1.5} dot={false} />
                             </AreaChart>
                         </ResponsiveContainer>
                     </ChartCard>
 
-                    <ChartCard title="Network (aggregate)" sub="MB cumulative across containers">
+                    <ChartCard title={t('charts.network')} sub={t('charts.cumulative')}>
                         <ResponsiveContainer width="100%" height={200}>
                             <AreaChart data={history} margin={{ top: 4, right: 8, left: -8, bottom: 0 }}>
                                 <defs>
@@ -277,13 +279,13 @@ export default function AdminSystemPage() {
                                 <YAxis tick={{ fontSize: 10 }} stroke="hsl(var(--muted-foreground))" unit=" MB" />
                                 <Tooltip contentStyle={tooltipStyle} formatter={(v) => [`${v ?? 0} MB`]} />
                                 <Legend wrapperStyle={{ fontSize: 11 }} />
-                                <Area type="monotone" dataKey="netRxMb" name="RX" stroke="#10b981" fill="url(#gRx)" strokeWidth={1.5} dot={false} />
-                                <Area type="monotone" dataKey="netTxMb" name="TX" stroke="#f43f5e" fill="url(#gTx)" strokeWidth={1.5} dot={false} />
+                                <Area type="monotone" dataKey="netRxMb" name={t('series.rx')} stroke="#10b981" fill="url(#gRx)" strokeWidth={1.5} dot={false} />
+                                <Area type="monotone" dataKey="netTxMb" name={t('series.tx')} stroke="#f43f5e" fill="url(#gTx)" strokeWidth={1.5} dot={false} />
                             </AreaChart>
                         </ResponsiveContainer>
                     </ChartCard>
 
-                    <ChartCard title="Disk I/O (aggregate)" sub="MB cumulative across containers">
+                    <ChartCard title={t('charts.disk')} sub={t('charts.cumulative')}>
                         <ResponsiveContainer width="100%" height={200}>
                             <AreaChart data={history} margin={{ top: 4, right: 8, left: -8, bottom: 0 }}>
                                 <defs>
@@ -301,8 +303,8 @@ export default function AdminSystemPage() {
                                 <YAxis tick={{ fontSize: 10 }} stroke="hsl(var(--muted-foreground))" unit=" MB" />
                                 <Tooltip contentStyle={tooltipStyle} formatter={(v) => [`${v ?? 0} MB`]} />
                                 <Legend wrapperStyle={{ fontSize: 11 }} />
-                                <Area type="monotone" dataKey="ioReadMb" name="Read" stroke="#06b6d4" fill="url(#gRead)" strokeWidth={1.5} dot={false} />
-                                <Area type="monotone" dataKey="ioWriteMb" name="Write" stroke="#f97316" fill="url(#gWrite)" strokeWidth={1.5} dot={false} />
+                                <Area type="monotone" dataKey="ioReadMb" name={t('series.read')} stroke="#06b6d4" fill="url(#gRead)" strokeWidth={1.5} dot={false} />
+                                <Area type="monotone" dataKey="ioWriteMb" name={t('series.write')} stroke="#f97316" fill="url(#gWrite)" strokeWidth={1.5} dot={false} />
                             </AreaChart>
                         </ResponsiveContainer>
                     </ChartCard>
@@ -313,28 +315,28 @@ export default function AdminSystemPage() {
             {data?.containers && data.containers.length > 0 && (
                 <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
                     <div className="border-b border-border px-5 py-4">
-                        <h2 className="text-sm font-semibold text-foreground">Containers</h2>
+                        <h2 className="text-sm font-semibold text-foreground">{t('cards.containers')}</h2>
                     </div>
                     <div className="overflow-x-auto">
                         <table className="w-full text-sm">
                             <thead>
                                 <tr className="border-b border-border text-xs text-muted-foreground">
-                                    <th className="px-5 py-3 text-left font-medium">Name</th>
-                                    <th className="px-5 py-3 text-left font-medium">Status</th>
-                                    <th className="px-5 py-3 text-right font-medium">CPU</th>
-                                    <th className="px-5 py-3 text-right font-medium">Memory</th>
-                                    <th className="px-5 py-3 text-right font-medium">Mem %</th>
+                                    <th className="px-5 py-3 text-left font-medium">{t('table.name')}</th>
+                                    <th className="px-5 py-3 text-left font-medium">{t('table.status')}</th>
+                                    <th className="px-5 py-3 text-right font-medium">{t('series.cpu')}</th>
+                                    <th className="px-5 py-3 text-right font-medium">{t('series.memory')}</th>
+                                    <th className="px-5 py-3 text-right font-medium">{t('table.memPercent')}</th>
                                     <th className="px-5 py-3 text-right font-medium">
-                                        <ArrowDown className="inline h-3 w-3" /> RX
+                                        <ArrowDown className="inline h-3 w-3" /> {t('series.rx')}
                                     </th>
                                     <th className="px-5 py-3 text-right font-medium">
-                                        <ArrowUp className="inline h-3 w-3" /> TX
+                                        <ArrowUp className="inline h-3 w-3" /> {t('series.tx')}
                                     </th>
                                     <th className="px-5 py-3 text-right font-medium">
-                                        <HardDrive className="inline h-3 w-3" /> Read
+                                        <HardDrive className="inline h-3 w-3" /> {t('series.read')}
                                     </th>
                                     <th className="px-5 py-3 text-right font-medium">
-                                        <HardDrive className="inline h-3 w-3" /> Write
+                                        <HardDrive className="inline h-3 w-3" /> {t('series.write')}
                                     </th>
                                 </tr>
                             </thead>
@@ -384,7 +386,7 @@ export default function AdminSystemPage() {
             {/* ── Worker Logs ── */}
             <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
                 <div className="flex items-center justify-between border-b border-border px-5 py-4">
-                    <h2 className="text-sm font-semibold text-foreground">Worker Logs</h2>
+                    <h2 className="text-sm font-semibold text-foreground">{t('logs.title')}</h2>
                     <div className="flex gap-1">
                         {(['all', 'error', 'warn', 'info'] as const).map((l) => (
                             <button
@@ -441,14 +443,14 @@ export default function AdminSystemPage() {
                     ))}
 
                     {filteredLogs.length === 0 && (
-                        <p className="px-5 py-6 text-center text-muted-foreground">No logs yet</p>
+                        <p className="px-5 py-6 text-center text-muted-foreground">{t('logs.empty')}</p>
                     )}
                 </div>
             </div>
 
             {data && (
                 <p className="text-right text-xs text-muted-foreground">
-                    Collected at {new Date(data.collectedAt).toLocaleTimeString()}
+                    {t('collectedAt', { time: new Date(data.collectedAt).toLocaleTimeString() })}
                 </p>
             )}
 
@@ -482,6 +484,7 @@ function ChartCard({ title, sub, children }: { title: string; sub: string; child
 // ─── Log detail modal ─────────────────────────────────────────────────────────
 
 function LogDetailModal({ log, onClose }: { log: WorkerLog | null; onClose: () => void }) {
+    const t = useTranslations('admin.observability.system');
     const [copied, setCopied] = useState(false);
 
     async function copyJson() {
@@ -525,14 +528,14 @@ function LogDetailModal({ log, onClose }: { log: WorkerLog | null; onClose: () =
                             className="mt-3 flex shrink-0 items-center gap-1.5 rounded-lg border border-border px-2.5 py-1.5 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                         >
                             {copied ? <Check className="h-3 w-3 text-emerald-500" /> : <Copy className="h-3 w-3" />}
-                            {copied ? 'Copied' : 'Copy JSON'}
+                            {copied ? t('logs.copied') : t('logs.copy')}
                         </button>
                     </div>
                 </DialogHeader>
 
                 {extras.length > 0 && (
                     <div className="space-y-2">
-                        <p className="text-xs font-medium text-muted-foreground">Context</p>
+                        <p className="text-xs font-medium text-muted-foreground">{t('logs.context')}</p>
                         <div className="overflow-hidden rounded-lg border border-border">
                             <table className="w-full text-xs">
                                 <tbody className="divide-y divide-border">
@@ -553,7 +556,7 @@ function LogDetailModal({ log, onClose }: { log: WorkerLog | null; onClose: () =
                 )}
 
                 <div className="space-y-2">
-                    <p className="text-xs font-medium text-muted-foreground">Raw JSON</p>
+                    <p className="text-xs font-medium text-muted-foreground">{t('logs.raw')}</p>
                     <pre className="max-h-64 overflow-auto rounded-lg border border-border bg-muted/30 p-3 font-mono text-xs text-foreground">
                         {log && JSON.stringify(log, null, 2)}
                     </pre>

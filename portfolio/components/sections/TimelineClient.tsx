@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import type { ReactElement } from 'react';
 
 
@@ -23,6 +23,7 @@ interface TimelineEvent {
 
 export default function TimelineClient(): ReactElement {
     const locale = useLocale();
+    const t = useTranslations('home.timeline');
     const timelineObject: TimelineObject = getTimelineData(locale);
 
     const [currentItem, setCurrentItem] = useState<number>(0);
@@ -91,7 +92,7 @@ export default function TimelineClient(): ReactElement {
 
                 <div className="relative">
                     <header className="absolute left-0 -translate-x-1/2 text-xs font-semibold text-gray-400">
-                        Today
+                        {t('today')}
                     </header>
                     <div className="mt-6">
                         <section className="relative">

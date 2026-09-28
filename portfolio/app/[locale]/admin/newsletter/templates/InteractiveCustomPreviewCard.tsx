@@ -4,6 +4,7 @@
 
 import { useState } from "react";
 import { Code2, Eye } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface Props {
     id: string;
@@ -13,6 +14,7 @@ interface Props {
 }
 
 export function InteractiveCustomPreviewCard({ id, label, description, html }: Props) {
+    const t = useTranslations("admin.emailTemplates.interactive");
     const [mode, setMode] = useState<"preview" | "editor">("preview");
     const [customHtml, setCustomHtml] = useState(html);
 
@@ -47,7 +49,7 @@ export function InteractiveCustomPreviewCard({ id, label, description, html }: P
                                 }`}
                         >
                             <Eye className="w-3 h-3" />
-                            Preview
+                            {t("preview")}
                         </button>
                         <button
                             type="button"
@@ -58,7 +60,7 @@ export function InteractiveCustomPreviewCard({ id, label, description, html }: P
                                 }`}
                         >
                             <Code2 className="w-3 h-3" />
-                            HTML
+                            {t("html")}
                         </button>
                     </div>
                 </div>
@@ -67,7 +69,7 @@ export function InteractiveCustomPreviewCard({ id, label, description, html }: P
                     /* Live preview — atualiza enquanto o usuário digita no editor */
                     <iframe
                         srcDoc={customHtml}
-                        title="Custom email live preview"
+                        title={t("iframeTitle")}
                         className="w-full border-0"
                         style={{ height: "600px" }}
                         sandbox="allow-same-origin"
@@ -82,10 +84,10 @@ export function InteractiveCustomPreviewCard({ id, label, description, html }: P
                             rows={24}
                             spellCheck={false}
                             className="w-full px-5 py-4 text-sm font-mono bg-neutral-950 text-green-300 border-0 resize-none focus:outline-none focus:ring-0 leading-relaxed"
-                            placeholder="Cole ou escreva seu HTML aqui..."
+                            placeholder={t("placeholder")}
                         />
                         <div className="absolute bottom-3 right-4 text-xs text-neutral-600 font-mono">
-                            {customHtml.length.toLocaleString()} chars
+                            {t("chars", { count: customHtml.length })}
                         </div>
                     </div>
                 )}
@@ -93,7 +95,7 @@ export function InteractiveCustomPreviewCard({ id, label, description, html }: P
 
             {mode === "editor" && (
                 <p className="text-xs text-muted-foreground">
-                    Alterne para <strong>Preview</strong> para ver como o e-mail ficará no cliente de e-mail.
+                    {t.rich("hint", { strong: (chunks) => <strong>{chunks}</strong> })}
                 </p>
             )}
         </section>

@@ -35,7 +35,7 @@ export function MobileMenu({ onOpenLanguageModal }: MobileMenuProps) {
                     <DropdownMenuItem key={item.href} asChild>
                         <Link href={item.href} className="flex items-center gap-2 text-sm">
                             {item.icon}
-                            {item.label}
+                            {t(`links.${item.key}.label`)}
                         </Link>
                     </DropdownMenuItem>
                 ))}
@@ -51,7 +51,7 @@ export function MobileMenu({ onOpenLanguageModal }: MobileMenuProps) {
                             className="flex items-center gap-2 text-sm"
                         >
                             {item.icon}
-                            {item.label}
+                            {t(`links.${item.key}.label`)}
                         </Link>
                     </DropdownMenuItem>
                 ))}
@@ -78,7 +78,7 @@ export function MobileMenu({ onOpenLanguageModal }: MobileMenuProps) {
                         rel="noopener noreferrer"
                     >
                         <Rss className="h-4 w-4" />
-                        RSS
+                        {t("rss")}
                     </a>
                 </DropdownMenuItem>
             </DropdownMenuContent>

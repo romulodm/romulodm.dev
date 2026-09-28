@@ -82,9 +82,13 @@ export function StripeForm({ coffees, amount, onBack, onSuccess }: Props) {
                 {/* Security note */}
                 <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted/30 rounded-lg px-3 py-2.5">
                     <span>
-                        Dados do cartão processados diretamente pela <a href="https://stripe.com" target="_blank" rel="noopener noreferrer" className="underline hover:text-foreground">
-                            <strong className="text-foreground">Stripe</strong>
-                        </a> (PCI-DSS nível 1). Nunca passam pelo nosso servidor.
+                        {t.rich('stripe.securityNote', {
+                            link: (chunks) => (
+                                <a href="https://stripe.com" target="_blank" rel="noopener noreferrer" className="underline hover:text-foreground">
+                                    <strong className="text-foreground">{chunks}</strong>
+                                </a>
+                            ),
+                        })}
                     </span>
                 </div>
 

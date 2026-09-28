@@ -2,35 +2,16 @@
 // Layout compartilhado pelas páginas /legal/terms e /legal/privacy-policy.
 
 import Link from 'next/link'
+import { getTranslations } from 'next-intl/server'
 import Navbar from '@/components/navigation/Navbar'
 import { Footer } from '@/components/Footer'
 import { LegalToc } from '@/components/legal/LegalToc'
 import type { LegalDocumentSlug, LegalHeading } from '@/lib/legal'
 
-const TABS: { slug: LegalDocumentSlug; label: Record<string, string> }[] = [
-  {
-    slug: 'terms',
-    label: {
-      pt: 'Termos de Uso',
-      en: 'Terms of Use',
-      es: 'Términos de Uso',
-    },
-  },
-  {
-    slug: 'privacy-policy',
-    label: {
-      pt: 'Política de Privacidade',
-      en: 'Privacy Policy',
-      es: 'Política de Privacidad',
-    },
-  },
+const TABS: { slug: LegalDocumentSlug; labelKey: 'terms' | 'privacyPolicy' }[] = [
+  { slug: 'terms', labelKey: 'terms' },
+  { slug: 'privacy-policy', labelKey: 'privacyPolicy' },
 ]
-
-const TOC_LABEL: Record<string, string> = {
-  pt: 'Nesta página',
-  en: 'On this page',
-  es: 'En esta página',
-}
 
 /**
  * O plugin @tailwindcss/typography está configurado em tailwind.config.ts com
@@ -89,7 +70,7 @@ interface LegalPageProps {
   html: string
 }
 
-export function LegalPage({
+export async function LegalPage({
   locale,
   slug,
   title,
@@ -97,8 +78,8 @@ export function LegalPage({
   headings,
   html,
 }: LegalPageProps) {
-  const lang = locale in TOC_LABEL ? locale : 'en'
-  const tocLabel = TOC_LABEL[lang] ?? TOC_LABEL.en
+  const t = await getTranslations({ locale, namespace: 'legal.page' })
+  const tocLabel = t('toc')
 
   return (
     // `min-h-screen bg-background` é o mesmo wrapper usado por /blog, /wall,
@@ -112,7 +93,7 @@ export function LegalPage({
         <header className="mx-auto max-w-3xl text-center">
           {updatedAt && (
             <p className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold text-primary">
-              Current as of {updatedAt}
+              {t('updatedAt', { date: updatedAt })}
             </p>
           )}
 
@@ -123,7 +104,7 @@ export function LegalPage({
 
         {/* ── Alternador entre documentos ── */}
         <nav
-          aria-label="Legal documents"
+          aria-label={t('documentsNav')}
           className="mx-auto mt-8 flex w-fit gap-1 rounded-full border border-border bg-muted/40 p-1"
         >
           {TABS.map((tab) => {
@@ -140,7 +121,7 @@ export function LegalPage({
                     : 'text-muted-foreground hover:text-foreground',
                 ].join(' ')}
               >
-                {tab.label[lang] ?? tab.label.en}
+                {t(`tabs.${tab.labelKey}`)}
               </Link>
             )
           })}

@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation'
-import { setRequestLocale } from 'next-intl/server'
+import { getTranslations, setRequestLocale } from 'next-intl/server'
 import Image from 'next/image'
 import { prisma } from '@romulo/database'
 import { unstable_cache } from 'next/cache'
@@ -31,7 +31,7 @@ function extractYoutubeId(url: string): string | null {
   return match ? match[1] : null
 }
 
-function YoutubeEmbed({ url }: { url: string }) {
+function YoutubeEmbed({ url, title }: { url: string; title: string }) {
   const videoId = extractYoutubeId(url)
   if (!videoId) return null
   return (
@@ -39,7 +39,7 @@ function YoutubeEmbed({ url }: { url: string }) {
       <div className="aspect-video w-full rounded-xl overflow-hidden shadow-md">
         <iframe
           src={`https://www.youtube.com/embed/${videoId}`}
-          title="Vídeo do post"
+          title={title}
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
           className="w-full h-full"
@@ -132,14 +132,15 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { locale, slug } = await params // ✅ await params
+  const t = await getTranslations({ locale, namespace: 'blogPost' })
 
   const post = await getCachedPostBySlug(slug)
-  if (!post) return { title: 'Post não encontrado', robots: { index: false, follow: false } }
+  if (!post) return { title: t('notFound'), robots: { index: false, follow: false } }
 
   const translation =
     post.translations.find((t) => t.locale === locale) ?? post.translations[0]
   if (!translation) {
-    return { title: 'Post não encontrado', robots: { index: false, follow: false } }
+    return { title: t('notFound'), robots: { index: false, follow: false } }
   }
 
   const metadata = buildPageMetadata({
@@ -180,6 +181,7 @@ export default async function PostPage({ params }: PageProps) {
 
   // Requisito do next-intl para render estatico — ver app/[locale]/layout.tsx.
   setRequestLocale(locale)
+  const t = await getTranslations({ locale, namespace: 'blogPost' })
 
   const post = await getCachedPostBySlug(slug)
   if (!post) notFound()
@@ -314,7 +316,7 @@ export default async function PostPage({ params }: PageProps) {
                   {post.publishedAt && (
                     <>
                       <span className="h-1 w-1 bg-gray-300 dark:bg-neutral-700 rounded-full" />
-                      <span>Publicado {formatDistanceToNow(post.publishedAt)}</span>
+                      <span>{t('published', { time: formatDistanceToNow(post.publishedAt, locale) })}</span>
                     </>
                   )}
 
@@ -323,7 +325,7 @@ export default async function PostPage({ params }: PageProps) {
                       <span className="h-1 w-1 bg-gray-300 dark:bg-neutral-700 rounded-full" />
                       <span className="flex items-center gap-1">
                         <Clock className="w-3.5 h-3.5" />
-                        {post.readingTime} min de leitura
+                        {t('readingTime', { minutes: post.readingTime })}
                       </span>
                     </>
                   )}
@@ -343,7 +345,7 @@ export default async function PostPage({ params }: PageProps) {
                 />
               </div>
 
-              {post.youtubeUrl && <YoutubeEmbed url={post.youtubeUrl} />}
+              {post.youtubeUrl && <YoutubeEmbed url={post.youtubeUrl} title={t('videoTitle')} />}
 
               <div
                 className="prose prose-lg dark:prose-invert max-w-none
@@ -362,7 +364,7 @@ export default async function PostPage({ params }: PageProps) {
               {translation.canonicalUrl && (
                 <div className="mt-8 pt-8 border-t border-border">
                   <p className="text-sm text-muted-foreground">
-                    Publicado originalmente em:{' '}
+                    {t('originallyPublished')}{' '}
                     <a
                       href={translation.canonicalUrl}
                       target="_blank"

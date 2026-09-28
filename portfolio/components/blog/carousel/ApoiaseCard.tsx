@@ -142,7 +142,7 @@ const ApoiaseCard = () => {
                             </h2>
                             <img
                                 src="https://fonts.gstatic.com/s/e/notoemoji/latest/2764_fe0f/512.gif"
-                                alt="heart"
+                                alt=""
                                 width="24"
                                 height="24"
                             />

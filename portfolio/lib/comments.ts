@@ -6,6 +6,7 @@ import { authOptions } from "@/lib/auth";
 import { getLocale } from "next-intl/server";
 
 import { AVATAR_SELECT } from "@/lib/avatar";
+import { getCommentDepth } from "@/lib/comment-depth";
 
 export type SortOrder = "score" | "newest" | "oldest";
 
@@ -143,8 +144,11 @@ export async function getCommentById(id: string) {
     const result = attachVote(comment);
     if (result.parent) result.parent = attachVote(result.parent);
 
+    const depth = comment.parentId ? await getCommentDepth(comment.id) : 0;
+
     return {
         ...result,
+        depth,
         post: {
             id: result.post.id,
             slug: result.post.slug,

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef, type ReactNode } from "react";
 import { BookOpen, Rss, Home, Languages, LogIn } from "lucide-react";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
@@ -12,12 +12,14 @@ import { Dropdown } from "./Dropdown";
 import { MobileMenu } from "./MobileMenu";
 import { SearchDialog } from "../blog/SearchDialog";
 import { NavMore } from "./NavMore";
+import type { NavLinkKey } from "./moreItems";
 import { IconTooltip } from "./IconTooltip";
 import { ThemeToggle } from "./ThemeToggle";
+import { AnnouncementBar, useAnnouncementOffset } from "./AnnouncementBar";
 
-export const navItems = [
-    { label: "Home", href: "/", icon: <Home className="h-4 w-4" /> },
-    { label: "Blog", href: "/blog", icon: <BookOpen className="h-4 w-4" /> },
+export const navItems: { key: NavLinkKey; href: string; icon: ReactNode }[] = [
+    { key: "home", href: "/", icon: <Home className="h-4 w-4" /> },
+    { key: "blog", href: "/blog", icon: <BookOpen className="h-4 w-4" /> },
 ];
 
 const Navbar = () => {
@@ -36,6 +38,11 @@ const Navbar = () => {
 
     const isAdmin = !!data?.user?.admin;
 
+    const navRef = useRef<HTMLElement>(null);
+    const announcementRef = useRef<HTMLDivElement>(null);
+    const hasAnnouncement = t.has("navigation.announcement");
+    useAnnouncementOffset(navRef, announcementRef);
+
     useEffect(() => {
         const handler = () => setScrolled(window.scrollY > 50);
         window.addEventListener("scroll", handler);
@@ -44,8 +51,13 @@ const Navbar = () => {
 
     return (
         <>
+            {hasAnnouncement && <AnnouncementBar ref={announcementRef} />}
             <nav
-                className={`fixed top-0 left-0 right-0 z-50 ${scrolled ? "surface-elevated  backdrop-blur-xl bg-background/80" : ""}`}
+                ref={navRef}
+                // Fallback until useAnnouncementOffset runs: 2.25rem is the
+                // strip's single-line height (py-2 + 20px line).
+                style={{ top: `var(--announcement-offset, ${hasAnnouncement ? "2.25rem" : "0px"})` }}
+                className={`fixed left-0 right-0 z-50 ${scrolled ? "surface-elevated  backdrop-blur-xl bg-background/80" : ""}`}
             >
                 <div className="container max-w-7xl mx-auto flex items-center justify-between py-4 px-6">
                     <div className="flex items-center gap-5">
@@ -60,7 +72,7 @@ const Navbar = () => {
                                     href={item.href}
                                     className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                                 >
-                                    {item.label}
+                                    {t(`navigation.links.${item.key}.label`)}
                                 </Link>
                             ))}
 
@@ -70,7 +82,7 @@ const Navbar = () => {
 
                         {isAdmin && (
                             <Link href="/admin" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                                Admin
+                                {t("navigation.admin")}
                             </Link>
                         )}
 

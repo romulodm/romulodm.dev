@@ -81,7 +81,7 @@ export function Dropdown({ user, onOpenLanguageModal }: DropdownProps) {
                             <DropdownMenuItem key={item.href} asChild>
                                 <Link href={item.href} className="flex items-center gap-2 text-sm">
                                     {item.icon}
-                                    {item.label}
+                                    {tNav(`links.${item.key}.label`)}
                                 </Link>
                             </DropdownMenuItem>
                         ))}
@@ -97,7 +97,7 @@ export function Dropdown({ user, onOpenLanguageModal }: DropdownProps) {
                                     className="flex items-center gap-2 text-sm"
                                 >
                                     {item.icon}
-                                    {item.label}
+                                    {tNav(`links.${item.key}.label`)}
                                 </Link>
                             </DropdownMenuItem>
                         ))}

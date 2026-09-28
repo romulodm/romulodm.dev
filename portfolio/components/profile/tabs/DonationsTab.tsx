@@ -1,12 +1,9 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import type { LinkedDonation } from "../types";
 
-const PROVIDER_LABEL: Record<string, string> = {
-    PIX: "PIX",
-    STRIPE: "Cartão",
-    ETH: "Crypto",
-};
+const PROVIDERS = ["PIX", "STRIPE", "ETH"] as const;
 
 function formatAmount(d: LinkedDonation): string {
     if (d.currency === "ETH") return `${(d.amount / 1e18).toFixed(5)} ETH`;
@@ -21,15 +18,14 @@ interface Props {
 }
 
 export function DonationsTab({ donations, localeCode, isMe }: Props) {
+    const t = useTranslations("profilePage.donations");
     if (donations.length === 0) {
         return (
             <div className="text-center py-16 space-y-3">
                 <p className="text-4xl">☕</p>
-                <p className="text-sm font-medium text-foreground">Nenhuma doação vinculada</p>
+                <p className="text-sm font-medium text-foreground">{t("empty.title")}</p>
                 <p className="text-xs text-muted-foreground max-w-xs mx-auto">
-                    {isMe
-                        ? "Ao apoiar o blog estando logado, você pode vincular o apoio à sua conta para que ele apareça aqui."
-                        : "Este usuário ainda não vinculou nenhuma doação ao perfil."}
+                    {isMe ? t("empty.own") : t("empty.other")}
                 </p>
             </div>
         );
@@ -47,10 +43,12 @@ export function DonationsTab({ donations, localeCode, isMe }: Props) {
                     <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
                             <span className="text-sm font-semibold text-foreground">
-                                {d.coffees}x café
+                                {t("coffees", { count: d.coffees })}
                             </span>
                             <span className="text-xs text-muted-foreground">
-                                · {PROVIDER_LABEL[d.provider] ?? d.provider}
+                                · {(PROVIDERS as readonly string[]).includes(d.provider)
+                                    ? t(`providers.${d.provider as (typeof PROVIDERS)[number]}`)
+                                    : d.provider}
                             </span>
                         </div>
 
@@ -61,7 +59,7 @@ export function DonationsTab({ donations, localeCode, isMe }: Props) {
                         )}
                         {d.isPrivate && (
                             <p className="text-xs text-muted-foreground/60 mt-0.5 italic">
-                                Mensagem privada
+                                {t("privateMessage")}
                             </p>
                         )}
                     </div>

@@ -5,6 +5,7 @@ import { CommentCard, CommentData } from "@/components/comments/CommentCard";
 import { CommentComposer } from "@/components/comments/CommentComposer";
 import { listPostComments, SortOrder } from "@/lib/comments";
 import { ArrowUpDown, Clock, type LucideIcon, TrendingUp } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface CommentsSectionProps {
     postId: string;
@@ -14,10 +15,10 @@ interface CommentsSectionProps {
     initialSort?: SortOrder;
 }
 
-const SORT_OPTIONS: { value: SortOrder; label: string; icon: LucideIcon }[] = [
-    { value: "score", label: "Relevância", icon: TrendingUp },
-    { value: "newest", label: "Mais recentes", icon: Clock },
-    { value: "oldest", label: "Mais antigos", icon: ArrowUpDown },
+const SORT_OPTIONS: { value: SortOrder; icon: LucideIcon }[] = [
+    { value: "score", icon: TrendingUp },
+    { value: "newest", icon: Clock },
+    { value: "oldest", icon: ArrowUpDown },
 ];
 
 export function CommentsSection({
@@ -27,6 +28,7 @@ export function CommentsSection({
     totalCount,
     initialSort = "score",
 }: CommentsSectionProps) {
+    const t = useTranslations("commentsUi.section");
     const [comments, setComments] = useState<CommentData[]>(initialComments);
     const [nextCursor, setNextCursor] = useState<string | null>(initialNextCursor);
     const [loading, setLoading] = useState(initialComments.length === 0);
@@ -81,14 +83,14 @@ export function CommentsSection({
     return (
         <section className="mt-12 pt-8 border-t border-border">
             <div className="flex items-center justify-between mb-6 gap-4 flex-wrap">
-                <h2 className="type-h3">
+                <h2 id="comments" className="type-h3">
                     {totalCount > 0
-                        ? `${totalCount} comentário${totalCount !== 1 ? "s" : ""}`
-                        : "Comentários"}
+                        ? t("count", { count: totalCount })
+                        : t("title")}
                 </h2>
 
                 <div className="flex items-center gap-1 rounded-lg border border-border p-0.5 bg-gray-300/30 dark:bg-neutral-800/50">
-                    {SORT_OPTIONS.map(({ value, label, icon: Icon }) => (
+                    {SORT_OPTIONS.map(({ value, icon: Icon }) => (
                         <button
                             key={value}
                             onClick={() => handleSortChange(value)}
@@ -99,7 +101,7 @@ export function CommentsSection({
                                 }`}
                         >
                             <Icon className="w-3 h-3" />
-                            {label}
+                            {t(`sort.${value}`)}
                         </button>
                     ))}
                 </div>
@@ -118,7 +120,7 @@ export function CommentsSection({
 
                 {comments.length === 0 && !loading && (
                     <p className="text-sm text-muted-foreground py-10 text-center">
-                        Nenhum comentário ainda. Seja o primeiro!
+                        {t("empty")}
                     </p>
                 )}
 
@@ -145,7 +147,7 @@ export function CommentsSection({
                         onClick={loadMore}
                         className="px-5 py-2 border border-border rounded-md text-sm hover:bg-accent transition-colors"
                     >
-                        Carregar mais comentários
+                        {t("loadMore")}
                     </button>
                 </div>
             )}

@@ -80,6 +80,7 @@ export default async function SupportPage({
     // Requisito do next-intl para render estatico — ver app/[locale]/layout.tsx.
     const { locale } = await params
     setRequestLocale(locale)
+    const t = await getTranslations({ locale, namespace: 'support.page' })
 
     const { topDonors, recentDonors, stats } = await getStats()
     const totalSupporters = stats._count.id
@@ -89,14 +90,13 @@ export default async function SupportPage({
             <Navbar />
             <main className="max-w-5xl mx-auto px-4 py-24">
                 <div className="text-center mb-8">
-                    <h1 className="type-h1 text-foreground mb-2">Compre um café</h1>
+                    <h1 className="type-h1 text-foreground mb-2">{t('title')}</h1>
                     <p className="type-body text-muted-foreground max-w-md mx-auto">
-                        Cada café me ajuda a continuar escrevendo e mantendo o blog.
-                        Obrigado pelo apoio! ☕
+                        {t('description')} ☕
                     </p>
                     {totalSupporters > 0 && (
                         <div className="flex gap-6 justify-center mt-4 text-sm text-muted-foreground">
-                            <span><strong className="text-foreground">{totalSupporters}</strong> apoiadores</span>
+                            <span>{t.rich('supporters', { count: totalSupporters, strong: (chunks) => <strong className="text-foreground">{chunks}</strong> })}</span>
                         </div>
                     )}
                 </div>

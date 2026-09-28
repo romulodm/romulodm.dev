@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import type { WallMessageItem } from "../types";
 
 const THEME_ICONS = ["📝", "🔥", "⚡", "🚀", "💡", "🎯"];
@@ -13,24 +14,23 @@ interface Props {
 }
 
 export function WallTab({ messages, locale, localeCode, isMe }: Props) {
+    const t = useTranslations("profilePage.wall");
     if (messages.length === 0) {
         return (
             <div className="text-center py-16 space-y-3">
                 <p className="text-4xl">📝</p>
                 <p className="text-sm font-medium text-foreground">
-                    Nenhuma mensagem na Wall ainda
+                    {t("empty.title")}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                    {isMe
-                        ? "Você ainda não deixou nenhuma mensagem na wall pública."
-                        : "Este usuário ainda não deixou nenhuma mensagem na wall."}
+                    {isMe ? t("empty.own") : t("empty.other")}
                 </p>
                 {isMe && (
                     <Link
                         href={`/${locale}/wall`}
                         className="inline-block mt-2 text-sm text-primary hover:underline"
                     >
-                        Ir para a Wall →
+                        {t("goToWall")}
                     </Link>
                 )}
             </div>

@@ -7,36 +7,13 @@ export type RegisterValues = z.infer<typeof registerSchema>
 export type ForgotPasswordValues = z.infer<typeof forgotPasswordSchema>
 export type ResetPasswordValues = z.infer<typeof resetPasswordSchema>
 
-export const loginSchema = z.object({
-    email: z.string().email("E-mail inválido."),
-    password: z.string().min(1, "Senha obrigatória."),
-})
-
-export const registerSchema = z
-    .object({
-        username: z.string().min(2, "Username muito curto.").max(80),
-        email: z.string().email("E-mail inválido."),
-        password: z.string().min(8, "Mínimo 8 caracteres.").max(100),
-        confirmPassword: z.string(),
-    })
-    .refine((d) => d.password === d.confirmPassword, {
-        message: "As senhas não coincidem.",
-        path: ["confirmPassword"],
-    })
-
-export const forgotPasswordSchema = z.object({
-    email: z.string().email("E-mail inválido."),
-})
-
-export const resetPasswordSchema = z
-    .object({
-        password: z.string().min(8, "Mínimo 8 caracteres.").max(100),
-        confirmPassword: z.string(),
-    })
-    .refine((d) => d.password === d.confirmPassword, {
-        message: "As senhas não coincidem.",
-        path: ["confirmPassword"],
-    })
+/**
+ * Locale-free versions of the schemas, for use outside a component (tests).
+ * Each error message is the translation key itself; the forms build their
+ * schemas through the create*Schema factories with next-intl's `t`, so no
+ * user-facing copy lives in this file.
+ */
+const keyAsMessage: Translate = (key) => key
 
 export function createLoginSchema(t: Translate) {
     return z.object({
@@ -76,3 +53,8 @@ export function createResetPasswordSchema(t: Translate) {
             path: ["confirmPassword"],
         })
 }
+
+export const loginSchema = createLoginSchema(keyAsMessage)
+export const registerSchema = createRegisterSchema(keyAsMessage)
+export const forgotPasswordSchema = createForgotPasswordSchema(keyAsMessage)
+export const resetPasswordSchema = createResetPasswordSchema(keyAsMessage)

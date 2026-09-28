@@ -161,7 +161,7 @@ export function Footer() {
                 {/* ── Socials ── */}
                 <div className="flex justify-between items-center py-5 border-t border-white/10">
                     <div className="flex gap-2">
-                        <SocialBtn href="http://lattes.cnpq.br/0179162809960172" aria-label="Currículo Lattes">
+                        <SocialBtn href="http://lattes.cnpq.br/0179162809960172" aria-label={t('social.lattes')}>
                             <LattesIcon />
                         </SocialBtn>
                         <SocialBtn href="https://github.com/romulodm" aria-label="GitHub">
@@ -180,7 +180,7 @@ export function Footer() {
                 {/* ── Bottom bar ── */}
                 <div className="border-t border-white/10 py-[18px] pb-7 flex justify-between items-center flex-wrap gap-2.5">
                     <p className="text-xs text-white/25">
-                        Romulo {t('legal.copyright', { year: currentYear })}
+                        {t('legal.copyright', { year: currentYear })}
                     </p>
                     <p className="text-xs text-white/30 flex items-center">
                         {t('legal.madeWith')}

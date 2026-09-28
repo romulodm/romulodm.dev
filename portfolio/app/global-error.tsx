@@ -1,16 +1,28 @@
 'use client'
 
 import * as Sentry from '@sentry/nextjs'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import en from '@/messages/en.json'
+import pt from '@/messages/pt.json'
 
 /**
- * Ultima linha de defesa: pega erro lancado dentro do proprio root layout —
- * provider quebrado, falha no carregamento das mensagens de i18n, etc.
+ * Last line of defense: catches errors thrown inside the root layout itself —
+ * a broken provider, a failure loading the i18n messages, and so on.
  *
- * Como substitui o layout raiz inteiro, precisa renderizar <html> e <body>
- * proprios e nao pode depender de next-intl (o provider e justamente o que pode
- * ter falhado), por isso os textos aqui sao bilingues fixos.
+ * Because it replaces the whole root layout, it has to render its own <html>
+ * and <body> and cannot depend on next-intl (the provider is exactly what may
+ * have failed). The copy is imported straight from messages/*.json and picked
+ * by the locale prefix of the URL, bypassing the provider entirely.
  */
+const MESSAGES = { en: en.error, pt: pt.error } as const
+type Locale = keyof typeof MESSAGES
+
+function localeFromPath(): Locale {
+  if (typeof window === 'undefined') return 'pt'
+  const seg = window.location.pathname.split('/')[1]
+  return seg === 'en' ? 'en' : 'pt'
+}
+
 export default function GlobalError({
   error,
   reset,
@@ -24,8 +36,12 @@ export default function GlobalError({
     Sentry.captureException(error)
   }, [error])
 
+  const [locale, setLocale] = useState<Locale>('pt')
+  useEffect(() => setLocale(localeFromPath()), [])
+  const t = MESSAGES[locale]
+
   return (
-    <html lang="en">
+    <html lang={locale}>
       <body
         style={{
           margin: 0,
@@ -55,11 +71,11 @@ export default function GlobalError({
           </p>
 
           <h1 style={{ fontSize: '1.5rem', fontWeight: 600, margin: '0 0 0.75rem' }}>
-            Something went wrong
+            {t.title}
           </h1>
 
           <p style={{ color: '#a3a3a3', lineHeight: 1.6, margin: '0 0 1.75rem' }}>
-            Algo quebrou por aqui. O erro foi registrado e eu vou dar uma olhada.
+            {t.description}
           </p>
 
           <div
@@ -83,11 +99,11 @@ export default function GlobalError({
                 cursor: 'pointer',
               }}
             >
-              Tentar novamente
+              {t.retry}
             </button>
 
             <a
-              href="/"
+              href={`/${locale}`}
               style={{
                 border: '1px solid #333',
                 color: '#fafafa',
@@ -98,7 +114,7 @@ export default function GlobalError({
                 textDecoration: 'none',
               }}
             >
-              Voltar ao início
+              {t.home}
             </a>
           </div>
 

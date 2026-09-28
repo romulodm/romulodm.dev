@@ -331,7 +331,7 @@ export default function Reach({ step }: { step: number }) {
                   animate
                   src={config.src}
                   placeholder={config.min}
-                  alt="satellite"
+                  alt={t("satelliteAlt")}
                   style={{
                     ...style,
                     position: 'absolute',

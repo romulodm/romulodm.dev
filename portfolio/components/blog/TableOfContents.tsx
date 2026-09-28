@@ -11,11 +11,23 @@ interface Heading {
   level: number;
 }
 
-const EXCLUDED_TEXTS = /comentario|comment/i;
 const NAVBAR_HEIGHT = 90;
 
+/**
+ * The comments block lives inside <article>, so a plain `article h1, h2, h3`
+ * query also picks up headings rendered inside it. The only one the TOC wants
+ * from there is the section title, which carries a fixed `id="comments"` set by
+ * CommentsSection. Matching on that id instead of on the heading text keeps it
+ * working in every locale (the old /comentario|comment/ test missed the accent
+ * in "comentário") and gives the link a target React itself renders, so a
+ * re-render of the comments block cannot strip an id assigned here.
+ */
+const COMMENTS_CONTAINER = '#comments-section';
+
 function collectHeadings(): Heading[] {
-  const elements = Array.from(document.querySelectorAll('article h1, article h2, article h3')).filter((element) => !EXCLUDED_TEXTS.test(element.textContent ?? ''));
+  const elements = Array.from(document.querySelectorAll('article h1, article h2, article h3')).filter(
+    (element) => element.id === 'comments' || !element.closest(COMMENTS_CONTAINER),
+  );
 
   elements.forEach((element) => {
     if (!element.id) {

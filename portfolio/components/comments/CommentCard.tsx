@@ -13,6 +13,7 @@ import { UserAvatar } from "@/components/ui/UserAvatar";
 import { useAuthGuard } from "@/hooks/auth-guard";
 import type { AvatarUser } from "@/lib/avatar";
 import { getIntlLocaleCode } from "@/lib/locales";
+import { canReplyAtDepth } from "@/lib/comment-rules";
 
 export type CommentData = {
   id: string;
@@ -30,6 +31,12 @@ interface CommentCardProps {
   comment: CommentData;
   postId: string;
   depth?: number;
+  /**
+   * Real depth of this comment in its thread, used for the reply limit. Defaults
+   * to `depth`; the standalone comment page renders a nested comment at visual
+   * depth 0 and passes its real depth here.
+   */
+  threadDepth?: number;
   onReplySuccess?: () => void;
   showContext?: boolean;
 }
@@ -140,6 +147,7 @@ export function CommentCard({
   comment,
   postId,
   depth = 0,
+  threadDepth,
   onReplySuccess,
   showContext = false,
 }: CommentCardProps) {
@@ -148,7 +156,7 @@ export function CommentCard({
   const locale = useLocale();
   const t = useTranslations("commentsUi.card");
   const localeCode = getIntlLocaleCode(locale);
-  const [optimisticScore, setOptimisticScore] = useState(comment.score);
+  const [optimisticScore, setOptimisticScore] = useState(Math.max(0, comment.score));
   const [optimisticVote, setOptimisticVote] = useState(comment.userVote ?? 0);
   const [isPending, startTransition] = useTransition();
   const [collapsed, setCollapsed] = useState(false);
@@ -164,7 +172,8 @@ export function CommentCard({
   const isAdmin = sessionUser?.admin === true;
   const canEdit = isOwner;
   const canDelete = isOwner || isAdmin;
-  const maxDepth = 5;
+  const realDepth = threadDepth ?? depth;
+  const canReply = canReplyAtDepth(realDepth);
   const timeAgo = formatTimeAgo(new Date(comment.createdAt), localeCode, t);
   const totalReplies = countReplies(comment);
   const scoreColor = optimisticScore > 0
@@ -180,7 +189,16 @@ export function CommentCard({
     onReplySuccess?.();
   }
 
+  // Mirrors the server rules in app/api/comments/[id]/vote/route.ts: no voting
+  // on your own comment, and no downvote once the score is at 0 (removing your
+  // own downvote stays possible).
+  const canUpvote = !isOwner;
+  const canDownvote = !isOwner && (optimisticVote === -1 || optimisticScore > 0);
+  const upTitle = isOwner ? t("vote.own") : t("vote.up");
+  const downTitle = isOwner ? t("vote.own") : canDownvote ? t("vote.down") : t("vote.floor");
+
   function handleVote(value: 1 | -1) {
+    if (value === 1 ? !canUpvote : !canDownvote) return;
     guard(async () => {
       const newVote = optimisticVote === value ? 0 : value;
       const delta = newVote - optimisticVote;
@@ -198,6 +216,8 @@ export function CommentCard({
           if (!res.ok) {
             setOptimisticScore((score) => score - delta);
             setOptimisticVote(optimisticVote);
+            const data = await res.json().catch(() => null);
+            if (data?.error) toast.error(data.error);
           }
         } catch {
           setOptimisticScore((score) => score - delta);
@@ -285,9 +305,9 @@ export function CommentCard({
             </Link>
 
             <div className="hidden sm:flex flex-col items-center mt-0.5">
-              <VoteButton direction="up" active={optimisticVote === 1} disabled={isPending} onClick={() => handleVote(1)} title={t("vote.up")} />
+              <VoteButton direction="up" active={optimisticVote === 1} disabled={isPending} blocked={!canUpvote} onClick={() => handleVote(1)} title={upTitle} />
               <span className={`text-xs font-mono font-semibold leading-none my-0.5 ${scoreColor}`}>{optimisticScore}</span>
-              <VoteButton direction="down" active={optimisticVote === -1} disabled={isPending} onClick={() => handleVote(-1)} title={t("vote.down")} />
+              <VoteButton direction="down" active={optimisticVote === -1} disabled={isPending} blocked={!canDownvote} onClick={() => handleVote(-1)} title={downTitle} />
             </div>
 
             <div
@@ -374,12 +394,12 @@ export function CommentCard({
             {!editing && (
               <div className="flex items-center sm:gap-1 mt-2 flex-wrap">
                 <div className="flex sm:hidden items-center gap-0.5 mr-2">
-                  <VoteButton direction="up" active={optimisticVote === 1} disabled={isPending} onClick={() => handleVote(1)} title={t("vote.up")} />
+                  <VoteButton direction="up" active={optimisticVote === 1} disabled={isPending} blocked={!canUpvote} onClick={() => handleVote(1)} title={upTitle} />
                   <span className={`text-xs font-mono font-semibold min-w-[1.5ch] text-center ${scoreColor}`}>{optimisticScore}</span>
-                  <VoteButton direction="down" active={optimisticVote === -1} disabled={isPending} onClick={() => handleVote(-1)} title={t("vote.down")} />
+                  <VoteButton direction="down" active={optimisticVote === -1} disabled={isPending} blocked={!canDownvote} onClick={() => handleVote(-1)} title={downTitle} />
                 </div>
 
-                {depth < maxDepth && (
+                {canReply && (
                   <button
                     onClick={() => guard(() => setReplying((current) => !current))}
                     className={`flex items-center gap-1 sm:px-2 py-1 text-xs rounded transition-colors ${replying ? "text-foreground bg-accent" : "text-muted-foreground hover:text-foreground hover:bg-border"}`}
@@ -399,7 +419,7 @@ export function CommentCard({
               </div>
             )}
 
-            {replying && !editing && (
+            {canReply && replying && !editing && (
               <div className="mt-3">
                 <CommentComposer
                   postId={postId}
@@ -417,6 +437,7 @@ export function CommentCard({
                 comment={reply}
                 postId={postId}
                 depth={depth + 1}
+                threadDepth={realDepth + 1}
                 onReplySuccess={onReplySuccess}
               />
             ))}
@@ -427,16 +448,16 @@ export function CommentCard({
   );
 }
 
-function VoteButton({ direction, active, disabled, onClick, title }: {
-  direction: "up" | "down"; active: boolean; disabled: boolean; onClick: () => void; title: string;
+function VoteButton({ direction, active, disabled, blocked = false, onClick, title }: {
+  direction: "up" | "down"; active: boolean; disabled: boolean; blocked?: boolean; onClick: () => void; title: string;
 }) {
   const activeColor = direction === "up" ? "text-primary" : "text-blue-500";
   const hoverColor = direction === "up" ? "hover:text-primary" : "hover:text-blue-500";
   const path = direction === "up" ? "M5 15l7-7 7 7" : "M19 9l-7 7-7-7";
 
   return (
-    <button onClick={onClick} disabled={disabled} title={title}
-      className={`w-6 h-6 flex items-center justify-center rounded transition-colors ${active ? activeColor : `text-muted-foreground ${hoverColor}`}`}>
+    <button onClick={onClick} disabled={disabled || blocked} title={title} aria-label={title}
+      className={`w-6 h-6 flex items-center justify-center rounded transition-colors ${blocked ? "cursor-not-allowed opacity-40" : ""} ${active ? activeColor : `text-muted-foreground ${blocked ? "" : hoverColor}`}`}>
       <svg className="w-3.5 h-3.5" fill={active ? "currentColor" : "none"} viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
         <path strokeLinecap="round" strokeLinejoin="round" d={path} />
       </svg>
