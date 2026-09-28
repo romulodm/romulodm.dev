@@ -489,20 +489,24 @@ jobs:
           echo "    docker compose -f docker-compose.prod.yml up -d --no-deps app worker search-go"
           exit 1
 
-  # ── 4. Tell the Telegram bot how it went ────────────────────────────────────
-  # The bot has understood a `deploy` payload since it was written, but nothing
-  # ever sent one — the type sat there as dead code while every deploy went
-  # unannounced.
-  #
+  # ── 4. Tell Telegram how it went ────────────────────────────────────────────
   # A separate job rather than a step inside `deploy`, for two reasons: a step
   # appended to `deploy` never runs when the SSH step aborts the job, which is
-  # exactly the deploy you want to hear about; and this way the message also
+  # exactly the deploy worth hearing about; and this way the message also
   # covers a run that died earlier, in `validate` or `build-images`, where
   # `deploy` comes out as `skipped`.
   #
+  # The message goes straight to the Telegram Bot API from the runner, not
+  # through anything on the VPS. A failed deploy can leave the app or the
+  # worker down, and the announcement of that failure must not depend on them.
+  #
+  # Plain text, no parse_mode: MarkdownV2 would need every reserved character
+  # in the commit subject escaped from shell, and Telegram turns the run URL
+  # into a link on its own.
+  #
   # SECRETS (per GitHub Environment, staging and production):
-  #   TELEGRAM_BOT_URL         e.g. https://romulodm-bot.onrender.com
-  #   TELEGRAM_NOTIFY_SECRET   the same value as NOTIFY_SECRET on Render
+  #   TELEGRAM_BOT_TOKEN   the bot token from @BotFather
+  #   TELEGRAM_CHAT_ID     the chat that receives the message
   # Missing either one, the job warns and passes. Not being told about a deploy
   # is annoying; failing a green deploy over a chat message is worse.
   notify:
@@ -524,10 +528,10 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Post the deploy status to the bot
+      - name: Post the deploy status to Telegram
         env:
-          BOT_URL: ${{ secrets.TELEGRAM_BOT_URL }}
-          BOT_SECRET: ${{ secrets.TELEGRAM_NOTIFY_SECRET }}
+          TG_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TG_CHAT: ${{ secrets.TELEGRAM_CHAT_ID }}
           DEPLOY_RESULT: ${{ needs.deploy.result }}
           TARGET: ${{ needs.setup.outputs.target }}
           BRANCH: ${{ needs.setup.outputs.branch }}
@@ -535,42 +539,41 @@ jobs:
           SHA: ${{ github.sha }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
-          if [ -z "$BOT_URL" ] || [ -z "$BOT_SECRET" ]; then
-            echo "::warning::TELEGRAM_BOT_URL / TELEGRAM_NOTIFY_SECRET are not set in the '$TARGET' Environment — skipping."
+          if [ -z "$TG_TOKEN" ] || [ -z "$TG_CHAT" ]; then
+            echo "::warning::TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID are not set in the '$TARGET' Environment — skipping."
             exit 0
           fi
 
           if [ "$DEPLOY_RESULT" = "success" ]; then
-            STATUS=success
+            HEADLINE="✅ Deploy concluído — $TARGET"
           else
-            STATUS=failure
+            HEADLINE="❌ Deploy falhou — $TARGET"
           fi
+
+          # Only the subject line, cut at 80 characters: the body of a commit
+          # message would turn the notification into a wall of text.
+          SUBJECT=$(git log -1 --format=%s | cut -c1-80)
+
+          TEXT=$(printf '%s\n\n🌿 Branch: %s\n👤 Por: %s\n🔖 Commit: %s — %s\n\n%s' \
+            "$HEADLINE" "$BRANCH" "$ACTOR" "${SHA:0:7}" "$SUBJECT" "$RUN_URL")
 
           # jq builds the JSON so a commit message containing quotes, newlines
           # or backslashes cannot break out of the body.
-          PAYLOAD=$(jq -n \
-            --arg status        "$STATUS" \
-            --arg branch        "$BRANCH" \
-            --arg actor         "$ACTOR" \
-            --arg commitSha     "$SHA" \
-            --arg commitMessage "$(git log -1 --format=%s)" \
-            --arg runUrl        "$RUN_URL" \
-            --arg environment   "$TARGET" \
-            '{type: "deploy", status: $status, branch: $branch, actor: $actor,
-              commitSha: $commitSha, commitMessage: $commitMessage,
-              runUrl: $runUrl, environment: $environment}')
+          PAYLOAD=$(jq -n --arg chat "$TG_CHAT" --arg text "$TEXT" \
+            '{chat_id: $chat, text: $text, disable_web_page_preview: true}')
 
-          # The bot is on Render's free plan and sleeps when idle: the first
-          # call after a quiet spell pays a cold start of tens of seconds.
+          # The token is part of the URL. GitHub masks secrets in the log, but
+          # curl's stderr is discarded anyway so an error message that echoes
+          # the URL never depends on that masking; the failure branch prints
+          # only Telegram's own description.
           CODE=$(curl -sS -o /tmp/notify.out -w "%{http_code}" \
-            --max-time 90 --retry 2 --retry-delay 5 --retry-connrefused \
-            -X POST "$BOT_URL/notify" \
+            --max-time 30 --retry 2 --retry-delay 5 \
+            -X POST "https://api.telegram.org/bot$TG_TOKEN/sendMessage" \
             -H "Content-Type: application/json" \
-            -H "Authorization: Bearer $BOT_SECRET" \
-            -d "$PAYLOAD") || CODE=000
+            -d "$PAYLOAD" 2>/dev/null) || CODE=000
 
           if [ "$CODE" = "200" ]; then
-            echo "Notified: $STATUS on $TARGET."
+            echo "Notified: $DEPLOY_RESULT on $TARGET."
           else
-            echo "::warning::The bot answered $CODE — $(head -c 300 /tmp/notify.out 2>/dev/null)"
+            echo "::warning::Telegram answered $CODE — $(jq -r '.description // empty' /tmp/notify.out 2>/dev/null | head -c 300)"
           fi

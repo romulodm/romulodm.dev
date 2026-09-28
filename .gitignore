@@ -19,7 +19,6 @@ tmp
 
 *.tsbuildinfo
 **/*.tsbuildinfo
-
 .sentryclirc
 **/.sentryclirc
 .env.sentry-build-plugin
