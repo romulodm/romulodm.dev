@@ -5,7 +5,6 @@ import { PasswordResetTemplateOptions } from "../types";
 export function passwordResetTemplate(opts: PasswordResetTemplateOptions): string {
   const expires = opts.expiresInMinutes ?? 15;
   const s = getStrings(opts.recipient.locale);
-  const privacyUrl = opts.brand.privacyUrl ?? `${opts.brand.baseUrl}/privacy`;
 
   const body = `
   ${greetingRow(opts.recipient.displayName, opts.recipient.locale)}
@@ -44,5 +43,6 @@ export function passwordResetTemplate(opts: PasswordResetTemplateOptions): strin
     </td>
   </tr>`;
 
-  return wrapper(body, opts.brand, privacyUrl, opts.recipient.locale);
+  // null: an account email, not list mail — no unsubscribe link.
+  return wrapper(body, opts.brand, null, opts.recipient.locale);
 }
