@@ -292,7 +292,7 @@ export default function CampaignForm({
                     <span className="w-2.5 h-2.5 rounded-full bg-green-400/80" />
                     <span className="ml-2 text-xs text-gray-400 font-mono truncate">{selectedPost.title}</span>
                   </div>
-                  <iframe srcDoc={previewHtml} title="Email preview" className="w-full border-0 bg-[#f0ede8]" style={{ height: "520px" }} sandbox="allow-same-origin" loading="lazy" />
+                  <iframe srcDoc={previewHtml} title={t("builder.iframeTitle")} className="w-full border-0 bg-[#f0ede8]" style={{ height: "520px" }} sandbox="allow-same-origin" loading="lazy" />
                 </div>
               )}
             </div>
@@ -307,7 +307,7 @@ export default function CampaignForm({
           {selectedPostIds.length > 0 && (
             <div className="space-y-1.5">
               <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
-                Posts incluídos ({selectedPostIds.length}) — arraste para reordenar
+                {t("builder.selected", { count: selectedPostIds.length })}
               </p>
               <div className="space-y-2">
                 {selectedPostIds.map((id, index) => {
@@ -359,14 +359,14 @@ export default function CampaignForm({
           {/* Available posts to add */}
           <div className="space-y-1.5">
             <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-              {selectedPostIds.length === 0 ? "Selecione os posts" : "Adicionar mais posts"}
+              {selectedPostIds.length === 0 ? t("builder.selectPosts") : t("builder.addMore")}
               {selectedPostIds.length < 2 && (
-                <span className="ml-2 text-xs font-normal text-amber-500">mínimo 2</span>
+                <span className="ml-2 text-xs font-normal text-amber-500">{t("builder.minimum", { count: 2 })}</span>
               )}
             </label>
             {availablePosts.length === 0 ? (
               <p className="text-sm text-gray-500 dark:text-gray-400 italic">
-                Todos os posts foram adicionados.
+                {t("builder.allAdded")}
               </p>
             ) : (
               <div className="space-y-2 max-h-72 overflow-y-auto pr-1">
@@ -394,14 +394,14 @@ export default function CampaignForm({
           {selectedPostIds.length >= 2 && (
             <div className="space-y-2">
               <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
-                Preview da ordem
+                {t("builder.orderPreview")}
               </p>
               <div className="rounded-xl border border-gray-200 dark:border-neutral-700 overflow-hidden">
                 <div className="flex items-center gap-1.5 px-3 py-2 bg-gray-100 dark:bg-neutral-800 border-b border-gray-200 dark:border-neutral-700">
                   <span className="w-2.5 h-2.5 rounded-full bg-red-400/80" />
                   <span className="w-2.5 h-2.5 rounded-full bg-yellow-400/80" />
                   <span className="w-2.5 h-2.5 rounded-full bg-green-400/80" />
-                  <span className="ml-2 text-xs text-gray-400 font-mono">digest — {selectedPostIds.length} posts</span>
+                  <span className="ml-2 text-xs text-gray-400 font-mono">{t("builder.digestLabel", { count: selectedPostIds.length })}</span>
                 </div>
                 <div className="p-4 space-y-4 bg-[#f0ede8]">
                   {selectedPostIds.map((id, i) => {
@@ -440,8 +440,8 @@ export default function CampaignForm({
                 className="flex items-center gap-1 text-xs text-green-600 hover:text-green-700 font-medium"
               >
                 {showCustomPreview
-                  ? <><EyeOff className="w-3 h-3" /> Ocultar preview</>
-                  : <><Eye className="w-3 h-3" /> Ver preview</>}
+                  ? <><EyeOff className="w-3 h-3" /> {t("builder.hidePreview")}</>
+                  : <><Eye className="w-3 h-3" /> {t("builder.showPreview")}</>}
               </button>
             )}
           </div>
@@ -455,19 +455,19 @@ export default function CampaignForm({
                   <span className="w-2.5 h-2.5 rounded-full bg-red-400/80" />
                   <span className="w-2.5 h-2.5 rounded-full bg-yellow-400/80" />
                   <span className="w-2.5 h-2.5 rounded-full bg-green-400/80" />
-                  <span className="ml-2 text-xs text-gray-400 font-mono">custom HTML — preview</span>
+                  <span className="ml-2 text-xs text-gray-400 font-mono">{t("builder.customLabel")}</span>
                 </div>
                 <button
                   type="button"
                   onClick={() => setShowCustomPreview(false)}
                   className="text-xs text-gray-500 hover:text-gray-700 flex items-center gap-1"
                 >
-                  <Code2 className="w-3 h-3" /> Editar HTML
+                  <Code2 className="w-3 h-3" /> {t("builder.editHtml")}
                 </button>
               </div>
               <iframe
                 srcDoc={content}
-                title="Custom email preview"
+                title={t("builder.customIframeTitle")}
                 className="w-full border-0"
                 style={{ height: "600px" }}
                 sandbox="allow-same-origin"

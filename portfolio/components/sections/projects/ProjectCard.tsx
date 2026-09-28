@@ -1,6 +1,6 @@
 "use client";
 
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { IoIosCode } from "react-icons/io";
 import { FiDownload, FiExternalLink, FiGithub } from "react-icons/fi";
 import { AiTwotoneCode } from "react-icons/ai";
@@ -24,12 +24,11 @@ interface ProjectCardProps {
 
 export default function ProjectCard({ project }: ProjectCardProps) {
     const t = useTranslations("home");
-    const locale = useLocale();
 
-    // As descrições são escritas à mão em data.ts, em pt e en. Qualquer outro
-    // locale cai no inglês em vez de deixar o card sem texto.
-    const description =
-        locale === "pt" ? project.descriptions.pt : project.descriptions.en;
+    // Hand-written copy per project, under `home.projects.items` in messages.
+    const description = project.descriptionKey
+        ? t(`projects.items.${project.descriptionKey}`)
+        : "";
 
     // Para um pacote publicado, downloads semanais dizem o que forks não dizem.
     // `null` (projeto sem npm, ou API do npm fora do ar) mantém os forks.

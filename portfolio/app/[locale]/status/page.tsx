@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useLocale, useTranslations } from 'next-intl';
+import { getIntlLocaleCode } from '@/lib/locales';
 import {
     BarChart, Bar, XAxis, YAxis, Tooltip,
     ResponsiveContainer, CartesianGrid,
@@ -81,6 +83,8 @@ interface StatusData {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function StatusPage() {
+    const t = useTranslations('statusPage');
+    const intlLocale = getIntlLocaleCode(useLocale());
     const [data, setData] = useState<StatusData | null>(null);
     const [loading, setLoading] = useState(true);
 
@@ -102,7 +106,7 @@ export default function StatusPage() {
         return (
             <main className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
                 <h1 className="type-h1 mb-8 text-foreground">
-                    Estatisticas e Status do Site
+                    {t('title')}
                 </h1>
                 <div className="space-y-3">
                     {[100, 80, 100, 60, 80, 40].map((w, i) => (
@@ -122,43 +126,43 @@ export default function StatusPage() {
     return (
         <main className="mx-auto max-w-3xl px-4 py-12 sm:px-6 space-y-14">
             <h1 className="type-h1 text-foreground">
-                Estatisticas e Status do Site
+                {t('title')}
             </h1>
 
             {/* ── SECAO: Atividade de usuarios ── */}
-            <Section title="Atividade de Usuarios">
-                <StatChart title="Novos cadastros" data={stats.users} />
-                <StatChart title="Novos posts publicados" data={stats.posts} />
-                <StatChart title="Novos comentarios" data={stats.comments} />
-                <StatChart title="Novas respostas" data={stats.replies} />
-                <StatChart title="Votos em comentarios" data={stats.votes} />
+            <Section title={t('sections.activity')}>
+                <StatChart title={t('charts.signups')} data={stats.users} />
+                <StatChart title={t('charts.posts')} data={stats.posts} />
+                <StatChart title={t('charts.comments')} data={stats.comments} />
+                <StatChart title={t('charts.replies')} data={stats.replies} />
+                <StatChart title={t('charts.votes')} data={stats.votes} />
                 <StatChart
-                    title="Comentarios suspeitos detectados"
+                    title={t('charts.suspicious')}
                     data={stats.suspiciousComments}
                     color="#f97316"
                 />
             </Section>
 
             {/* ── SECAO: Engajamento ── */}
-            <Section title="Engajamento Geral">
+            <Section title={t('sections.engagement')}>
                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                    <StatTile label="Posts publicados" value={String(stats.engagement.totalPosts)} />
-                    <StatTile label="Media de comentarios" value={String(stats.engagement.avgComments)} />
-                    <StatTile label="Media de views" value={String(stats.engagement.avgViews)} />
-                    <StatTile label="Media de likes" value={String(stats.engagement.avgLikes)} />
+                    <StatTile label={t('engagement.posts')} value={String(stats.engagement.totalPosts)} />
+                    <StatTile label={t('engagement.avgComments')} value={String(stats.engagement.avgComments)} />
+                    <StatTile label={t('engagement.avgViews')} value={String(stats.engagement.avgViews)} />
+                    <StatTile label={t('engagement.avgLikes')} value={String(stats.engagement.avgLikes)} />
                 </div>
 
                 {stats.topPostsWeek.length > 0 && (
                     <div className="mt-4">
-                        <p className="mb-2 text-sm font-semibold text-foreground">Top posts (ultimos 7 dias)</p>
+                        <p className="mb-2 text-sm font-semibold text-foreground">{t('topPosts.title')}</p>
                         <div className="overflow-hidden rounded-lg border border-border">
                             <table className="w-full text-xs">
                                 <thead>
                                     <tr className="border-b border-border bg-muted/30 text-muted-foreground">
-                                        <th className="px-3 py-2 text-left font-medium">Titulo</th>
-                                        <th className="px-3 py-2 text-right font-medium">Views</th>
-                                        <th className="px-3 py-2 text-right font-medium">Likes</th>
-                                        <th className="px-3 py-2 text-right font-medium">Coments.</th>
+                                        <th className="px-3 py-2 text-left font-medium">{t('topPosts.columns.title')}</th>
+                                        <th className="px-3 py-2 text-right font-medium">{t('topPosts.columns.views')}</th>
+                                        <th className="px-3 py-2 text-right font-medium">{t('topPosts.columns.likes')}</th>
+                                        <th className="px-3 py-2 text-right font-medium">{t('topPosts.columns.comments')}</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-border">
@@ -167,7 +171,7 @@ export default function StatusPage() {
                                             <td className="px-3 py-2 text-foreground max-w-[200px] truncate">
                                                 {p.title}
                                             </td>
-                                            <td className="px-3 py-2 text-right tabular-nums text-muted-foreground">{p.views.toLocaleString('pt-BR')}</td>
+                                            <td className="px-3 py-2 text-right tabular-nums text-muted-foreground">{p.views.toLocaleString(intlLocale)}</td>
                                             <td className="px-3 py-2 text-right tabular-nums text-muted-foreground">{p.likes}</td>
                                             <td className="px-3 py-2 text-right tabular-nums text-muted-foreground">{p.commentsCount}</td>
                                         </tr>
@@ -180,14 +184,14 @@ export default function StatusPage() {
             </Section>
 
             {/* ── SECAO: Doacoes ── */}
-            <Section title="Doacoes">
+            <Section title={t('sections.donations')}>
                 <StatChart
-                    title="Doacoes concluidas por dia"
+                    title={t('charts.donations')}
                     data={stats.donationsPerDay}
                     color="#a855f7"
                 />
                 <StatChart
-                    title="Valor arrecadado por dia (BRL)"
+                    title={t('charts.donationAmount')}
                     data={stats.donationsPerDay.map((d) => ({ day: d.day, count: d.totalBrl }))}
                     color="#a855f7"
                     unit="R$"
@@ -195,32 +199,32 @@ export default function StatusPage() {
             </Section>
 
             {/* ── SECAO: Newsletter ── */}
-            <Section title="Newsletter">
+            <Section title={t('sections.newsletter')}>
                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                    <StatTile label="Total de inscritos" value={String(stats.newsletter.total)} />
-                    <StatTile label="Confirmados" value={String(stats.newsletter.confirmed)} accent="green" />
-                    <StatTile label="Pendentes" value={String(stats.newsletter.pending)} accent="amber" />
-                    <StatTile label="Taxa de confirmacao" value={`${stats.newsletter.confirmationRate}%`} accent="green" />
+                    <StatTile label={t('newsletter.total')} value={String(stats.newsletter.total)} />
+                    <StatTile label={t('newsletter.confirmed')} value={String(stats.newsletter.confirmed)} accent="green" />
+                    <StatTile label={t('newsletter.pending')} value={String(stats.newsletter.pending)} accent="amber" />
+                    <StatTile label={t('newsletter.confirmationRate')} value={`${stats.newsletter.confirmationRate}%`} accent="green" />
                 </div>
 
                 <StatChart
-                    title="Cancelamentos por dia"
+                    title={t('charts.unsubscribes')}
                     data={stats.unsubscribesPerDay}
                     color="#ef4444"
                 />
 
                 {stats.campaigns.length > 0 && (
                     <div className="mt-4">
-                        <p className="mb-2 text-sm font-semibold text-foreground">Ultimas campanhas enviadas</p>
+                        <p className="mb-2 text-sm font-semibold text-foreground">{t('campaigns.title')}</p>
                         <div className="overflow-hidden rounded-lg border border-border">
                             <table className="w-full text-xs">
                                 <thead>
                                     <tr className="border-b border-border bg-muted/30 text-muted-foreground">
-                                        <th className="px-3 py-2 text-left font-medium">Assunto</th>
-                                        <th className="px-3 py-2 text-right font-medium">Enviados</th>
-                                        <th className="px-3 py-2 text-right font-medium">Aberturas</th>
-                                        <th className="px-3 py-2 text-right font-medium">Taxa abert.</th>
-                                        <th className="px-3 py-2 text-right font-medium">Falhas</th>
+                                        <th className="px-3 py-2 text-left font-medium">{t('campaigns.columns.subject')}</th>
+                                        <th className="px-3 py-2 text-right font-medium">{t('campaigns.columns.sent')}</th>
+                                        <th className="px-3 py-2 text-right font-medium">{t('campaigns.columns.opens')}</th>
+                                        <th className="px-3 py-2 text-right font-medium">{t('campaigns.columns.openRate')}</th>
+                                        <th className="px-3 py-2 text-right font-medium">{t('campaigns.columns.failed')}</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-border">
@@ -251,23 +255,23 @@ export default function StatusPage() {
             </Section>
 
             {/* ── SECAO: Banco de Dados ── */}
-            <Section title="Banco de Dados">
+            <Section title={t('sections.database')}>
                 <div className="space-y-2 text-sm text-foreground">
-                    <Row label="Status">
+                    <Row label={t('common.status')}>
                         <Badge value={db.status} healthy={db.status === 'healthy'} />
                     </Row>
                     {db.availableConnections !== null && (
-                        <Row label="Conexoes disponiveis">
+                        <Row label={t('database.availableConnections')}>
                             <Badge value={String(db.availableConnections)} />
                         </Row>
                     )}
                     {db.openedConnections !== null && (
-                        <Row label="Conexoes abertas">
+                        <Row label={t('database.openConnections')}>
                             <Badge value={String(db.openedConnections)} />
                         </Row>
                     )}
                     {db.latencyMs.length > 0 && (
-                        <Row label="Latencia">
+                        <Row label={t('database.latency')}>
                             <span className="flex flex-wrap gap-1">
                                 {db.latencyMs.map((ms, i) => (
                                     <Badge key={i} value={`${ms}ms`} />
@@ -276,12 +280,12 @@ export default function StatusPage() {
                         </Row>
                     )}
                     {db.postgresVersion && (
-                        <Row label="Versao do PostgreSQL">
+                        <Row label={t('database.postgresVersion')}>
                             <Badge value={db.postgresVersion} />
                         </Row>
                     )}
                     {db.databaseSizeMb !== null && (
-                        <Row label="Tamanho do banco">
+                        <Row label={t('database.size')}>
                             <Badge value={`${db.databaseSizeMb} MB`} />
                         </Row>
                     )}
@@ -289,22 +293,22 @@ export default function StatusPage() {
 
                 {db.tableSizes.length > 0 && (
                     <div className="mt-4">
-                        <p className="mb-2 text-sm font-semibold text-foreground">Maiores tabelas</p>
+                        <p className="mb-2 text-sm font-semibold text-foreground">{t('tables.title')}</p>
                         <div className="overflow-hidden rounded-lg border border-border">
                             <table className="w-full text-xs">
                                 <thead>
                                     <tr className="border-b border-border bg-muted/30 text-muted-foreground">
-                                        <th className="px-3 py-2 text-left font-medium">Tabela</th>
-                                        <th className="px-3 py-2 text-right font-medium">Tamanho</th>
-                                        <th className="px-3 py-2 text-right font-medium">Linhas (estimado)</th>
+                                        <th className="px-3 py-2 text-left font-medium">{t('tables.columns.table')}</th>
+                                        <th className="px-3 py-2 text-right font-medium">{t('tables.columns.size')}</th>
+                                        <th className="px-3 py-2 text-right font-medium">{t('tables.columns.rows')}</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-border">
-                                    {db.tableSizes.map((t) => (
-                                        <tr key={t.name} className="hover:bg-muted/20">
-                                            <td className="px-3 py-2 font-mono text-foreground">{t.name}</td>
-                                            <td className="px-3 py-2 text-right tabular-nums text-muted-foreground">{t.sizeMb} MB</td>
-                                            <td className="px-3 py-2 text-right tabular-nums text-muted-foreground">{t.rowEstimate.toLocaleString('pt-BR')}</td>
+                                    {db.tableSizes.map((table) => (
+                                        <tr key={table.name} className="hover:bg-muted/20">
+                                            <td className="px-3 py-2 font-mono text-foreground">{table.name}</td>
+                                            <td className="px-3 py-2 text-right tabular-nums text-muted-foreground">{table.sizeMb} MB</td>
+                                            <td className="px-3 py-2 text-right tabular-nums text-muted-foreground">{table.rowEstimate.toLocaleString(intlLocale)}</td>
                                         </tr>
                                     ))}
                                 </tbody>
@@ -315,26 +319,26 @@ export default function StatusPage() {
             </Section>
 
             {/* ── SECAO: Servidor Web ── */}
-            <Section title="Servidor Web">
+            <Section title={t('sections.webServer')}>
                 <div className="space-y-2 text-sm text-foreground">
-                    <Row label="Status"><Badge value={web.status} healthy={web.status === 'healthy'} /></Row>
-                    {web.provider && <Row label="Provedor"><Badge value={web.provider} /></Row>}
-                    {web.environment && <Row label="Ambiente"><Badge value={web.environment} /></Row>}
-                    {web.awsRegion && <Row label="Regiao na AWS"><Badge value={web.awsRegion} /></Row>}
-                    {web.vercelRegion && <Row label="Regiao na Vercel"><Badge value={web.vercelRegion} /></Row>}
-                    {web.timezone && <Row label="Timezone"><Badge value={web.timezone} /></Row>}
-                    {web.commitAuthor && <Row label="Autor do ultimo commit"><Badge value={web.commitAuthor} /></Row>}
+                    <Row label={t('common.status')}><Badge value={web.status} healthy={web.status === 'healthy'} /></Row>
+                    {web.provider && <Row label={t('webServer.provider')}><Badge value={web.provider} /></Row>}
+                    {web.environment && <Row label={t('webServer.environment')}><Badge value={web.environment} /></Row>}
+                    {web.awsRegion && <Row label={t('webServer.awsRegion')}><Badge value={web.awsRegion} /></Row>}
+                    {web.vercelRegion && <Row label={t('webServer.vercelRegion')}><Badge value={web.vercelRegion} /></Row>}
+                    {web.timezone && <Row label={t('webServer.timezone')}><Badge value={web.timezone} /></Row>}
+                    {web.commitAuthor && <Row label={t('webServer.commitAuthor')}><Badge value={web.commitAuthor} /></Row>}
                     {web.commitSha && (
-                        <Row label="SHA do commit">
+                        <Row label={t('webServer.commitSha')}>
                             <Badge value={`${web.commitSha.slice(0, 19)}...`} title={web.commitSha} />
                         </Row>
                     )}
-                    {web.nodeVersion && <Row label="Versao do Node.js"><Badge value={web.nodeVersion} /></Row>}
+                    {web.nodeVersion && <Row label={t('webServer.nodeVersion')}><Badge value={web.nodeVersion} /></Row>}
                 </div>
             </Section>
 
             <p className="text-xs text-muted-foreground">
-                Atualizado em {new Date(data.updated_at).toLocaleString('pt-BR')}
+                {t('updatedAt', { date: new Date(data.updated_at).toLocaleString(intlLocale) })}
             </p>
         </main>
     );
@@ -364,6 +368,7 @@ function StatChart({
     color?: string;
     unit?: string;
 }) {
+    const t = useTranslations('statusPage');
     const chartData = data.map((d) => ({
         day: d.day.slice(5).replace('-', '/'),
         count: d.count,
@@ -374,7 +379,7 @@ function StatChart({
             <p className="mb-2 text-sm font-semibold text-foreground">{title}</p>
             {chartData.length === 0 ? (
                 <div className="flex h-[140px] items-center justify-center rounded border border-dashed border-border">
-                    <p className="text-sm text-muted-foreground">Sem dados nos ultimos 60 dias</p>
+                    <p className="text-sm text-muted-foreground">{t('noData')}</p>
                 </div>
             ) : (
                 <ResponsiveContainer width="100%" height={140}>
@@ -400,7 +405,7 @@ function StatChart({
                                 borderRadius: 6,
                                 fontSize: 12,
                             }}
-                            formatter={(value) => [`${unit ? unit + ' ' : ''}${value ?? 0}`, 'total']}
+                            formatter={(value) => [`${unit ? unit + ' ' : ''}${value ?? 0}`, t('tooltipTotal')]}
                         />
                         <Bar dataKey="count" fill={color} radius={[2, 2, 0, 0]} maxBarSize={20} />
                     </BarChart>

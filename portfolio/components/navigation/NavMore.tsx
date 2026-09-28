@@ -4,6 +4,7 @@ import { useState, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ChevronDown } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import { featuredItems, quickLinks } from "./moreItems";
 
@@ -12,6 +13,7 @@ interface MoreMenuProps {
 }
 
 export function NavMore({ onClose }: MoreMenuProps) {
+    const t = useTranslations("navigation");
     const [open, setOpen] = useState(false);
     const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -39,7 +41,7 @@ export function NavMore({ onClose }: MoreMenuProps) {
                     : "text-muted-foreground hover:text-foreground"
                     }`}
             >
-                More
+                {t("more")}
                 <ChevronDown
                     className={`h-3.5 w-3.5 transition-transform duration-200 ${open ? "rotate-180" : ""
                         }`}
@@ -61,7 +63,7 @@ export function NavMore({ onClose }: MoreMenuProps) {
                 <div className="relative bg-card border border-border rounded-xl shadow-2xl shadow-black/20 overflow-hidden p-3 grid grid-cols-[auto_auto] gap-3 items-stretch">
                     {/* Left: Featured cards */}
                     <div className="grid grid-cols-2 gap-2 self-stretch">
-                        {featuredItems.map(({ href, title, description, icon: Icon, accent, image }) => (
+                        {featuredItems.map(({ href, key, icon: Icon, accent, image }) => (
                             <Link
                                 key={href}
                                 href={href}
@@ -99,10 +101,10 @@ export function NavMore({ onClose }: MoreMenuProps) {
 
                                 <div className="relative">
                                     <p className="text-xs font-medium text-white">
-                                        {title}
+                                        {t(`links.${key}.label`)}
                                     </p>
                                     <p className="text-xs leading-snug text-white/75">
-                                        {description}
+                                        {t(`links.${key}.description`)}
                                     </p>
                                 </div>
                             </Link>
@@ -125,10 +127,10 @@ export function NavMore({ onClose }: MoreMenuProps) {
                                 </span>
                                 <div className="flex flex-col whitespace-nowrap">
                                     <p className="text-sm font-medium text-foreground leading-none">
-                                        {link.label}
+                                        {t(`links.${link.key}.label`)}
                                     </p>
                                     <p className="text-xs text-muted-foreground mt-1 leading-snug">
-                                        {link.description}
+                                        {t(`links.${link.key}.description`)}
                                     </p>
                                 </div>
                             </Link>

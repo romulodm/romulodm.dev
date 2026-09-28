@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useState, useTransition } from 'react';
+import { useLocale, useTranslations } from 'next-intl';
+import { formatDistanceToNow } from '@/lib/utils';
 import {
     Activity,
     Database,
@@ -35,6 +37,8 @@ interface SearchStatus {
 }
 
 export default function AdminSearchPage() {
+    const t = useTranslations('admin.observability.search');
+    const locale = useLocale();
     const [data, setData] = useState<SearchStatus | null>(null);
     const [loading, setLoading] = useState(true);
     const [reindexing, startReindex] = useTransition();
@@ -58,8 +62,8 @@ export default function AdminSearchPage() {
             setReindexResult({
                 ok: !!json.ok,
                 message: json.ok
-                    ? `Reindex complete — ${json.indexed} documents indexed`
-                    : (json.error ?? 'Unknown error'),
+                    ? t('reindex.success', { count: json.indexed })
+                    : (json.error ?? t('unknownError')),
             });
             setTimeout(fetchStatus, 1500);
         });
@@ -74,9 +78,9 @@ export default function AdminSearchPage() {
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-2xl font-bold text-foreground">Search Service</h1>
+                    <h1 className="text-2xl font-bold text-foreground">{t('title')}</h1>
                     <p className="mt-1 text-sm text-muted-foreground">
-                        Status and controls for the Go search microservice
+                        {t('subtitle')}
                     </p>
                 </div>
                 <div className="flex gap-2">
@@ -87,7 +91,7 @@ export default function AdminSearchPage() {
                         className="flex items-center gap-2 rounded-lg border border-border px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-muted"
                     >
                         <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-                        Refresh
+                        {t('refresh')}
                     </button>
 
                     <button
@@ -96,7 +100,7 @@ export default function AdminSearchPage() {
                         className="bg-primary/80 hover:bg-primary/90 dark:bg-primary/20 dark:hover:bg-primary/30 flex items-center gap-2 rounded-lg border border-border px-4 py-2 text-sm text-black dark:text-white transition-colors"
                     >
                         <Database className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-                        {reindexing ? 'Reindexing…' : 'Reindex now'}
+                        {reindexing ? t('reindex.running') : t('reindex.action')}
                     </button>
                 </div>
             </div>
@@ -116,7 +120,7 @@ export default function AdminSearchPage() {
                 <div className="flex items-center gap-3 rounded-xl border border-red-200 bg-red-50 p-5 dark:border-red-900 dark:bg-red-900/20">
                     <AlertTriangle className="h-5 w-5 shrink-0 text-red-500" />
                     <div>
-                        <p className="font-medium text-red-700 dark:text-red-400">Service unreachable</p>
+                        <p className="font-medium text-red-700 dark:text-red-400">{t('unreachable')}</p>
                         {data.details && (
                             <p className="mt-0.5 text-sm text-red-600 dark:text-red-300">{data.details}</p>
                         )}
@@ -129,7 +133,7 @@ export default function AdminSearchPage() {
                         {/* Status */}
                         <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
                             <div className="mb-3 flex items-start justify-between">
-                                <p className="text-xs font-medium text-muted-foreground">Status</p>
+                                <p className="text-xs font-medium text-muted-foreground">{t('cards.status')}</p>
                                 <div className={`flex h-8 w-8 items-center justify-center rounded-lg ${isHealthy ? 'bg-emerald-50 dark:bg-emerald-900/20' : 'bg-amber-50 dark:bg-amber-900/20'
                                     }`}>
                                     {isHealthy
@@ -140,13 +144,13 @@ export default function AdminSearchPage() {
                             <p className="text-2xl font-bold capitalize text-foreground">
                                 {data?.health?.status ?? '—'}
                             </p>
-                            <p className="mt-1 text-xs text-muted-foreground">current health</p>
+                            <p className="mt-1 text-xs text-muted-foreground">{t('cards.statusSub')}</p>
                         </div>
 
                         {/* Indexed documents */}
                         <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
                             <div className="mb-3 flex items-start justify-between">
-                                <p className="text-xs font-medium text-muted-foreground">Indexed documents</p>
+                                <p className="text-xs font-medium text-muted-foreground">{t('cards.indexed')}</p>
                                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 dark:bg-blue-900/20">
                                     <Database className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                                 </div>
@@ -154,13 +158,13 @@ export default function AdminSearchPage() {
                             <p className="text-2xl font-bold text-foreground">
                                 {data?.stats?.handler_docs?.toLocaleString() ?? '—'}
                             </p>
-                            <p className="mt-1 text-xs text-muted-foreground">across all locales</p>
+                            <p className="mt-1 text-xs text-muted-foreground">{t('cards.indexedSub')}</p>
                         </div>
 
                         {/* Uptime */}
                         <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
                             <div className="mb-3 flex items-start justify-between">
-                                <p className="text-xs font-medium text-muted-foreground">Uptime</p>
+                                <p className="text-xs font-medium text-muted-foreground">{t('cards.uptime')}</p>
                                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-violet-50 dark:bg-violet-900/20">
                                     <Activity className="h-4 w-4 text-violet-600 dark:text-violet-400" />
                                 </div>
@@ -170,13 +174,13 @@ export default function AdminSearchPage() {
                                     ? formatUptime(data.stats.uptime_seconds)
                                     : '—'}
                             </p>
-                            <p className="mt-1 text-xs text-muted-foreground">since last restart</p>
+                            <p className="mt-1 text-xs text-muted-foreground">{t('cards.uptimeSub')}</p>
                         </div>
 
                         {/* Snapshot size */}
                         <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
                             <div className="mb-3 flex items-start justify-between">
-                                <p className="text-xs font-medium text-muted-foreground">Snapshot size</p>
+                                <p className="text-xs font-medium text-muted-foreground">{t('cards.snapshotSize')}</p>
                                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-50 dark:bg-amber-900/20">
                                     <HardDrive className="h-4 w-4 text-amber-600 dark:text-amber-400" />
                                 </div>
@@ -186,7 +190,7 @@ export default function AdminSearchPage() {
                                     ? formatBytes(data.stats.snapshot.size_bytes)
                                     : '—'}
                             </p>
-                            <p className="mt-1 text-xs text-muted-foreground">on disk</p>
+                            <p className="mt-1 text-xs text-muted-foreground">{t('cards.snapshotSizeSub')}</p>
                         </div>
                     </div>
 
@@ -195,7 +199,7 @@ export default function AdminSearchPage() {
                         <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
                             <div className="mb-4 flex items-center gap-2">
                                 <Globe className="h-4 w-4 text-muted-foreground" />
-                                <h2 className="text-sm font-semibold text-foreground">Documents by locale</h2>
+                                <h2 className="text-sm font-semibold text-foreground">{t('byLocale')}</h2>
                             </div>
                             <div className="flex flex-wrap gap-4">
                                 {Object.entries(data.stats.languages).map(([lang, count]) => (
@@ -203,7 +207,7 @@ export default function AdminSearchPage() {
                                         <span className="rounded bg-muted px-2 py-0.5 font-mono text-xs font-bold text-foreground">
                                             {lang.toUpperCase()}
                                         </span>
-                                        <span className="text-sm text-muted-foreground">{count} docs</span>
+                                        <span className="text-sm text-muted-foreground">{t('docsCount', { count })}</span>
                                     </div>
                                 ))}
                             </div>
@@ -214,7 +218,7 @@ export default function AdminSearchPage() {
                     <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
                         <div className="mb-3 flex items-center gap-2">
                             <Save className="h-4 w-4 text-muted-foreground" />
-                            <h2 className="text-sm font-semibold text-foreground">Snapshot persistence</h2>
+                            <h2 className="text-sm font-semibold text-foreground">{t('snapshot.title')}</h2>
                         </div>
                         {data?.stats?.snapshot ? (
                             <div className="space-y-2">
@@ -228,14 +232,14 @@ export default function AdminSearchPage() {
                                     </span>
                                 </div>
                                 <p className="text-xs text-muted-foreground">
-                                    Last saved {formatTimeAgo(data.stats.snapshot.last_saved_at)}
+                                    {t('snapshot.lastSaved', { time: formatDistanceToNow(new Date(data.stats.snapshot.last_saved_at), locale) })}
                                     {' · '}
                                     {formatBytes(data.stats.snapshot.size_bytes)}
                                 </p>
                             </div>
                         ) : (
                             <p className="text-sm text-muted-foreground">
-                                No snapshot yet — will be created after the first reindex.
+                                {t('snapshot.empty')}
                             </p>
                         )}
                     </div>
@@ -244,7 +248,7 @@ export default function AdminSearchPage() {
 
             {data && !data.error && (
                 <p className="text-right text-xs text-muted-foreground">
-                    Fetched at {new Date(data.fetchedAt).toLocaleTimeString()}
+                    {t('fetchedAt', { time: new Date(data.fetchedAt).toLocaleTimeString() })}
                 </p>
             )}
         </main>
@@ -261,11 +265,4 @@ function formatBytes(bytes: number) {
     if (bytes < 1024) return `${bytes} B`;
     if (bytes < 1024 ** 2) return `${(bytes / 1024).toFixed(1)} KB`;
     return `${(bytes / 1024 ** 2).toFixed(1)} MB`;
-}
-
-function formatTimeAgo(isoString: string) {
-    const diff = Math.floor((Date.now() - new Date(isoString).getTime()) / 1000);
-    if (diff < 60) return `${diff}s ago`;
-    if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
-    return `${Math.floor(diff / 3600)}h ago`;
 }

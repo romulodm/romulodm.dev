@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense, useRef, useCallback, useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import Lanyard from "@/components/ui/lanyard";
 import CardTemplate, { type CardTemplateRef } from "@/components/lanyard/LayardCardTemplate";
 
@@ -37,6 +38,7 @@ export default function LanyardDisplay({
     const cardTemplateRef = useRef<CardTemplateRef>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const today = getTodayFormatted();
+    const t = useTranslations("lanyard");
 
     const handleTextureReady = useCallback((canvas: HTMLCanvasElement) => {
         setCardTexture(canvas);
@@ -56,11 +58,11 @@ export default function LanyardDisplay({
         <>
             <CardTemplate
                 ref={cardTemplateRef}
-                userName="Romulo de Moraes"
-                role="Software Engineer"
+                userName={t("name")}
+                role={t("role")}
                 variant="dark"
                 onTextureReady={handleTextureReady}
-                city="Rio Grande, Brazil"
+                city={t("city")}
                 date={today}
             />
             <div className={containerClassName}>

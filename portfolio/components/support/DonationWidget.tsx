@@ -246,7 +246,7 @@ function DonationWidgetBody() {
             const accounts = await wallet.provider.request({ method: 'eth_requestAccounts' }) as string[]
             setConnected({ address: accounts[0], provider: wallet.provider, name: wallet.info.name })
             setShowWallets(false)
-        } catch { setCryptoError('Falha ao conectar carteira.') }
+        } catch { setCryptoError(t('crypto.errors.connect')) }
     }
 
     async function ensureNetwork(provider: EthProvider) {
@@ -259,7 +259,7 @@ function DonationWidgetBody() {
                     method: 'wallet_addEthereumChain',
                     params: [{ chainId: chainHex, chainName: netConfig.name, nativeCurrency: netConfig.nativeCurrency, rpcUrls: [netConfig.rpcUrl], blockExplorerUrls: [netConfig.explorer] }],
                 })
-            } else throw new Error('Não foi possível trocar de rede.')
+            } else throw new Error(t('crypto.errors.switchNetwork'))
         }
     }
 
@@ -273,7 +273,7 @@ function DonationWidgetBody() {
             let tx: string
 
             if (token === 'ETH') {
-                if (!ethPrice) throw new Error('Preço do ETH indisponível.')
+                if (!ethPrice) throw new Error(t('crypto.errors.priceUnavailable'))
                 const valueWei = BigInt(Math.round((totalUsd / ethPrice) * 1e18))
                 tx = await connected.provider.request({
                     method: 'eth_sendTransaction',
@@ -317,8 +317,8 @@ function DonationWidgetBody() {
             setStep('success')
         } catch (err: any) {
             setSendStep('idle')
-            if (err.code === 4001) setCryptoError('Transação cancelada.')
-            else setCryptoError(err.message ?? 'Erro inesperado.')
+            if (err.code === 4001) setCryptoError(t('crypto.errors.cancelled'))
+            else setCryptoError(err.message ?? t('crypto.errors.unexpected'))
         }
     }
 
@@ -328,11 +328,11 @@ function DonationWidgetBody() {
     const explorerTx = txHash ? `${netConfig.explorer}/tx/${txHash}` : null
 
     const cryptoLabel: Record<SendStep, string> = {
-        idle: `Apoiar com $${totalUsd.toFixed(2)}`,
-        switching: 'Trocando de rede…',
-        sending: 'Aguardando carteira…',
-        confirming: 'Enviando…',
-        done: 'Enviado!',
+        idle: t('crypto.steps.idle', { amount: totalUsd.toFixed(2) }),
+        switching: t('crypto.steps.switching'),
+        sending: t('crypto.steps.sending'),
+        confirming: t('crypto.steps.confirming'),
+        done: t('crypto.steps.done'),
     }
 
     const fiatLabel = loading ? t('widget.loading') : t('widget.supportWith', { amount: totalBrl })
@@ -440,7 +440,7 @@ function DonationWidgetBody() {
                                     text-sm text-muted-foreground flex items-center gap-2">
                         <Link2 className="w-3.5 h-3.5 shrink-0" />
                         <span className="text-foreground font-medium">@{sessionUsername}</span>
-                        <span>· vinculado à sua conta</span>
+                        <span>{t('widget.linkedToAccount')}</span>
                     </div>
                 ) : (
                     <input
@@ -483,7 +483,7 @@ function DonationWidgetBody() {
                                 }`}
                         >
                             {method === 'pix' ? <FaPix /> : method === 'card' ? <FaCreditCard /> : <span className="text-base">₿</span>}
-                            {method === 'pix' ? t('widget.methods.pix') : method === 'card' ? t('widget.methods.card') : 'Crypto'}
+                            {method === 'pix' ? t('widget.methods.pix') : method === 'card' ? t('widget.methods.card') : t('widget.methods.crypto')}
                         </button>
                     ))}
                 </div>
@@ -531,7 +531,7 @@ function DonationWidgetBody() {
 
                     {/* Destino */}
                     <div className="flex items-center gap-2 bg-muted/30 rounded-lg px-3 py-2">
-                        <span className="text-xs text-muted-foreground shrink-0">Para</span>
+                        <span className="text-xs text-muted-foreground shrink-0">{t('crypto.to')}</span>
                         <span className="font-mono text-xs text-foreground truncate flex-1">{walletAddr}</span>
                         <a href={`${netConfig.explorer}/address/${walletAddr}`} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors shrink-0">
                             <ExternalLink className="h-3 w-3" />
@@ -559,14 +559,14 @@ function DonationWidgetBody() {
                             className="w-full py-2 rounded-lg border border-border text-sm font-medium text-foreground hover:bg-muted transition flex items-center justify-center gap-2"
                         >
                             <Wallet className="h-4 w-4" />
-                            Conectar carteira
+                            {t('crypto.connectWallet')}
                         </button>
                     )}
 
                     {explorerTx && (
                         <a href={explorerTx} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-xs text-primary hover:underline">
                             <ExternalLink className="h-3 w-3" />
-                            Ver transação no explorer
+                            {t('crypto.viewTransaction')}
                         </a>
                     )}
 
@@ -595,8 +595,8 @@ function DonationWidgetBody() {
                     </label>
                     <InfoTooltip>
                         {form.method === 'crypto'
-                            ? 'Seu nome e mensagem não aparecerão publicamente. A mensagem é criptografada com X25519 antes de sair do navegador.'
-                            : 'Seu nome e mensagem não aparecerão na lista pública de apoiadores.'
+                            ? t('widget.privateHint.crypto')
+                            : t('widget.privateHint.fiat')
                         }
                     </InfoTooltip>
                 </div>
@@ -612,12 +612,10 @@ function DonationWidgetBody() {
                                 onChange={(e) => setLinkToAccount(e.target.checked)}
                             />
                             <Link2 className="h-3.5 w-3.5" />
-                            Vincular à minha conta
+                            {t('widget.linkAccount.label')}
                         </label>
                         <InfoTooltip>
-                            Associa este apoio ao seu perfil @{sessionUsername}.
-                            Seu username substituirá o campo de nome e o apoio aparecerá
-                            na aba "Doações" do seu perfil publicamente.
+                            {t('widget.linkAccount.hint', { username: sessionUsername ?? '' })}
                         </InfoTooltip>
                     </div>
                 )}
@@ -654,14 +652,14 @@ function DonationWidgetBody() {
                 <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 p-4">
                     <div className="w-full max-w-sm rounded-xl border border-border bg-card p-5 shadow-xl">
                         <div className="flex items-center justify-between mb-4">
-                            <h3 className="type-h3 text-foreground">Escolha sua carteira</h3>
+                            <h3 className="type-h3 text-foreground">{t('crypto.chooseWallet')}</h3>
                             <button type="button" onClick={() => setShowWallets(false)} className="text-muted-foreground hover:text-foreground">
                                 <X className="h-4 w-4" />
                             </button>
                         </div>
                         {wallets.length === 0 ? (
                             <p className="text-sm text-muted-foreground text-center py-6">
-                                Nenhuma carteira detectada. Instale MetaMask, Rainbow ou Coinbase Wallet.
+                                {t('crypto.noWallets')}
                             </p>
                         ) : (
                             <div className="space-y-2">

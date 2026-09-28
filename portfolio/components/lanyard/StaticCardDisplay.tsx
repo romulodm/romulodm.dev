@@ -1,6 +1,7 @@
 'use client';
 
 import { Suspense, useRef, useState, useEffect, useCallback, useMemo } from 'react';
+import { useTranslations } from 'next-intl';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { useGLTF, Environment, Lightformer } from '@react-three/drei';
 import * as THREE from 'three';
@@ -143,6 +144,7 @@ export default function StaticCardDisplay() {
     const [isReady, setIsReady] = useState(false);
     const cardTemplateRef = useRef<CardTemplateRef>(null);
     const today = getTodayFormatted();
+    const t = useTranslations("lanyard");
 
     const handleTextureReady = useCallback((canvas: HTMLCanvasElement) => {
         setCardTexture(canvas);
@@ -162,11 +164,11 @@ export default function StaticCardDisplay() {
         <>
             <CardTemplate
                 ref={cardTemplateRef}
-                userName="Romulo de Moraes"
-                role="Software Engineer"
+                userName={t("name")}
+                role={t("role")}
                 variant="dark"
                 onTextureReady={handleTextureReady}
-                city="Rio Grande, Brazil"
+                city={t("city")}
                 date={today}
             />
             <div className="flex justify-center py-4 relative">

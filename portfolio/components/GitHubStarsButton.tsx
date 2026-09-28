@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { FaGithub } from 'react-icons/fa'
+import { useTranslations } from 'next-intl'
 
 interface GitHubStarsButtonProps {
     user: string
@@ -20,6 +21,7 @@ export function GitHubStarsButton({
     size = 'md',
     className = '',
 }: GitHubStarsButtonProps) {
+    const t = useTranslations('githubStars')
     const [stars, setStars] = useState<number | null>(null)
     const [loading, setLoading] = useState(true)
 
@@ -61,7 +63,7 @@ export function GitHubStarsButton({
             href={href}
             target="_blank"
             rel="noopener noreferrer"
-            aria-label={`Star ${user}/${repo} on GitHub`}
+            aria-label={t('aria', { repo: `${user}/${repo}` })}
             className={[
                 'inline-flex items-center rounded font-medium no-underline select-none',
                 'transition-colors duration-150 cursor-pointer',
@@ -72,7 +74,7 @@ export function GitHubStarsButton({
         >
             <FaGithub size={iconSize} />
 
-            <span>Star</span>
+            <span>{t('label')}</span>
 
             {showCount && (
                 <>

@@ -14,6 +14,8 @@ import {
   X,
   AlertTriangle,
 } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
+import { getIntlLocaleCode } from "@/lib/locales";
 
 interface BackupItem {
   key: string;
@@ -35,9 +37,9 @@ function formatSize(bytes: number): string {
   return `${(bytes / Math.pow(k, i)).toFixed(2)} ${sizes[i]}`;
 }
 
-function formatDate(iso: string): string {
+function formatDate(iso: string, localeCode: string): string {
   const d = new Date(iso);
-  return d.toLocaleString("pt-BR", {
+  return d.toLocaleString(localeCode, {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
@@ -47,6 +49,8 @@ function formatDate(iso: string): string {
 }
 
 export function BackupsClient({ initialBackups, initialError }: Props) {
+  const t = useTranslations("admin.observability.backups");
+  const localeCode = getIntlLocaleCode(useLocale());
   const [backups, setBackups] = useState<BackupItem[]>(initialBackups);
   const [error, setError] = useState<string | null>(initialError);
   const [isPending, startTransition] = useTransition();
@@ -66,12 +70,12 @@ export function BackupsClient({ initialBackups, initialError }: Props) {
     startTransition(async () => {
       try {
         const res = await fetch("/api/admin/observability/backups", { cache: "no-store" });
-        if (!res.ok) throw new Error("Falha ao buscar backups");
+        if (!res.ok) throw new Error(t("errors.fetch"));
         const data = await res.json();
         setBackups(data.backups);
         setError(null);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Erro desconhecido");
+        setError(err instanceof Error ? err.message : t("errors.unknown"));
       }
     });
   }
@@ -82,7 +86,7 @@ export function BackupsClient({ initialBackups, initialError }: Props) {
       const res = await fetch("/api/admin/observability/backups", { method: "POST" });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        throw new Error(data.message ?? "Falha ao criar backup");
+        throw new Error(data.message ?? t("errors.create"));
       }
       // Backup é assíncrono — aguarda 3s e recarrega
       setTimeout(() => {
@@ -90,7 +94,7 @@ export function BackupsClient({ initialBackups, initialError }: Props) {
         setCreating(false);
       }, 3000);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erro desconhecido");
+      setError(err instanceof Error ? err.message : t("errors.unknown"));
       setCreating(false);
     }
   }
@@ -110,7 +114,7 @@ export function BackupsClient({ initialBackups, initialError }: Props) {
 
   async function confirmAction() {
     if (!passwordModal || !password) {
-      setModalError("Digite a senha operacional");
+      setModalError(t("errors.passwordRequired"));
       return;
     }
 
@@ -127,7 +131,7 @@ export function BackupsClient({ initialBackups, initialError }: Props) {
         });
 
         const data = await res.json();
-        if (!res.ok) throw new Error(data.message ?? "Falha ao gerar link");
+        if (!res.ok) throw new Error(data.message ?? t("errors.link"));
 
         // Dispara download usando a URL presignada
         window.location.href = data.url;
@@ -142,7 +146,7 @@ export function BackupsClient({ initialBackups, initialError }: Props) {
 
         if (!res.ok) {
           const data = await res.json().catch(() => ({}));
-          throw new Error(data.message ?? "Falha ao excluir");
+          throw new Error(data.message ?? t("errors.delete"));
         }
 
         // Remove da lista local
@@ -152,7 +156,7 @@ export function BackupsClient({ initialBackups, initialError }: Props) {
         closeModal();
       }
     } catch (err) {
-      setModalError(err instanceof Error ? err.message : "Erro desconhecido");
+      setModalError(err instanceof Error ? err.message : t("errors.unknown"));
       setActionLoading(false);
     }
   }
@@ -162,9 +166,9 @@ export function BackupsClient({ initialBackups, initialError }: Props) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Backups</h1>
+          <h1 className="text-2xl font-bold text-foreground">{t('title')}</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            {backups.length} {backups.length === 1 ? "backup" : "backups"} no S3
+            {t("count", { count: backups.length })}
           </p>
         </div>
 
@@ -178,7 +182,7 @@ export function BackupsClient({ initialBackups, initialError }: Props) {
               size={14}
               className={isPending ? "animate-spin" : ""}
             />
-            Atualizar
+            {t('refresh')}
           </button>
 
           <button
@@ -191,7 +195,7 @@ export function BackupsClient({ initialBackups, initialError }: Props) {
             ) : (
               <Plus size={14} />
             )}
-            {creating ? "Criando..." : "Novo backup"}
+            {creating ? t("creating") : t("create")}
           </button>
         </div>
       </div>
@@ -208,9 +212,7 @@ export function BackupsClient({ initialBackups, initialError }: Props) {
       <div className="flex items-start gap-3 rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm">
         <Lock size={16} className="mt-0.5 shrink-0 text-amber-500" />
         <div className="text-muted-foreground">
-          <strong className="text-foreground">Segurança:</strong> download e
-          exclusão exigem senha operacional separada do login. Após 3 tentativas
-          inválidas, o acesso é bloqueado por 15 minutos.
+          {t.rich("securityNotice", { strong: (chunks) => <strong className="text-foreground">{chunks}</strong> })}
         </div>
       </div>
 
@@ -219,7 +221,7 @@ export function BackupsClient({ initialBackups, initialError }: Props) {
         <div className="flex items-center gap-2 border-b border-border px-5 py-4">
           <Database className="h-4 w-4 text-muted-foreground" />
           <h2 className="text-sm font-semibold text-foreground">
-            Backups disponíveis
+            {t('list.title')}
           </h2>
         </div>
 
@@ -227,10 +229,10 @@ export function BackupsClient({ initialBackups, initialError }: Props) {
           <div className="py-16 text-center">
             <Database className="mx-auto mb-3 h-12 w-12 text-muted-foreground opacity-40" />
             <p className="text-sm font-medium text-foreground">
-              Nenhum backup encontrado
+              {t('list.empty')}
             </p>
             <p className="mt-1 text-xs text-muted-foreground">
-              Clique em &quot;Novo backup&quot; para criar o primeiro
+              {t('list.emptyHint')}
             </p>
           </div>
         ) : (
@@ -249,7 +251,7 @@ export function BackupsClient({ initialBackups, initialError }: Props) {
                     {backup.filename}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    {formatDate(backup.createdAt)} · {formatSize(backup.size)}
+                    {formatDate(backup.createdAt, localeCode)} · {formatSize(backup.size)}
                   </p>
                 </div>
 
@@ -257,7 +259,7 @@ export function BackupsClient({ initialBackups, initialError }: Props) {
                   <button
                     onClick={() => openPasswordModal("download", backup)}
                     className="rounded-lg p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-                    title="Download (requer senha)"
+                    title={t('list.download')}
                   >
                     <Download size={15} />
                   </button>
@@ -265,7 +267,7 @@ export function BackupsClient({ initialBackups, initialError }: Props) {
                   <button
                     onClick={() => openPasswordModal("delete", backup)}
                     className="rounded-lg p-2 text-muted-foreground transition-colors hover:bg-red-500/10 hover:text-red-500"
-                    title="Excluir (requer senha)"
+                    title={t('list.delete')}
                   >
                     <Trash2 size={15} />
                   </button>
@@ -303,8 +305,8 @@ export function BackupsClient({ initialBackups, initialError }: Props) {
                 <div>
                   <h3 className="text-base font-semibold text-foreground">
                     {passwordModal.action === "delete"
-                      ? "Excluir backup"
-                      : "Download de backup"}
+                      ? t("modal.deleteTitle")
+                      : t("modal.downloadTitle")}
                   </h3>
                   <p className="mt-0.5 text-xs text-muted-foreground">
                     {passwordModal.backup.filename}
@@ -332,15 +334,14 @@ export function BackupsClient({ initialBackups, initialError }: Props) {
                 <div className="flex items-start gap-3 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2.5 text-xs text-red-500">
                   <AlertTriangle size={14} className="mt-0.5 shrink-0" />
                   <div>
-                    Esta ação é <strong>irreversível</strong>. O arquivo será
-                    removido permanentemente do S3.
+                    {t.rich("modal.deleteWarning", { strong: (chunks) => <strong>{chunks}</strong> })}
                   </div>
                 </div>
               )}
 
               <div>
                 <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
-                  Senha operacional
+                  {t('modal.password')}
                 </label>
                 <input
                   type="password"
@@ -365,7 +366,7 @@ export function BackupsClient({ initialBackups, initialError }: Props) {
                   disabled={actionLoading}
                   className="rounded-lg border border-border px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-50"
                 >
-                  Cancelar
+                  {t('modal.cancel')}
                 </button>
                 <button
                   type="submit"
@@ -379,8 +380,8 @@ export function BackupsClient({ initialBackups, initialError }: Props) {
                     <Loader2 size={14} className="animate-spin" />
                   )}
                   {passwordModal.action === "delete"
-                    ? "Excluir"
-                    : "Gerar link"}
+                    ? t("modal.confirmDelete")
+                    : t("modal.confirmDownload")}
                 </button>
               </div>
             </form>

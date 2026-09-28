@@ -8,10 +8,23 @@ import { Activity, Coffee, FileText, MessageSquare, Radio } from "lucide-react";
  * e os links precisam aparecer junto com Home/Blog.
  */
 
+/**
+ * Link copy lives in messages/*.json under `navigation.links.<key>` (a label
+ * and, for the "More" panel, a description). This module only holds what does
+ * not depend on the locale.
+ */
+export type NavLinkKey =
+    | "home"
+    | "blog"
+    | "guestbook"
+    | "support"
+    | "resume"
+    | "newsletter"
+    | "status";
+
 export type FeaturedItem = {
     href: string;
-    title: string;
-    description: string;
+    key: NavLinkKey;
     icon: LucideIcon;
     /** Cor do card: borda a 25% e fundo a 10% (visivel so enquanto a imagem carrega). */
     accent: string;
@@ -22,41 +35,41 @@ export type FeaturedItem = {
 export const featuredItems: FeaturedItem[] = [
     {
         href: "/wall",
-        title: "Guestbook",
-        description: "Deixe uma mensagem aqui",
+        key: "guestbook",
         icon: MessageSquare,
         accent: "#b298f0",
         image: "/images/more/guestbook.webp",
     },
     {
         href: "/support",
-        title: "Apoia-se",
-        description: "Me apoie para continuar criando",
+        key: "support",
         icon: Coffee,
         accent: "#93d65f",
         image: "/images/more/apoiase.webp",
     },
 ];
 
-export const quickLinks = [
+export const quickLinks: {
+    href: string;
+    key: NavLinkKey;
+    icon: ReactNode;
+    external: boolean;
+}[] = [
     {
         href: "/resume",
-        label: "Resume",
-        description: "Minha experiencia profissional",
+        key: "resume",
         icon: <FileText className="h-4 w-4" />,
         external: false,
     },
     {
         href: "/newsletter",
-        label: "Newsletter",
-        description: "Assine para receber novidades",
+        key: "newsletter",
         icon: <Radio className="h-4 w-4" />,
         external: false,
     },
     {
         href: "/status",
-        label: "Status",
-        description: "Uptime dos meus servicos",
+        key: "status",
         icon: <Activity className="h-4 w-4" />,
         external: true,
     },
@@ -68,11 +81,11 @@ export const quickLinks = [
  */
 export const moreItems: {
     href: string;
-    label: string;
+    key: NavLinkKey;
     icon: ReactNode;
     external: boolean;
 }[] = [
-    { href: "/wall", label: "Guestbook", icon: <MessageSquare className="h-4 w-4" />, external: false },
-    { href: "/support", label: "Apoia-se", icon: <Coffee className="h-4 w-4" />, external: false },
-    ...quickLinks.map(({ href, label, icon, external }) => ({ href, label, icon, external })),
+    { href: "/wall", key: "guestbook", icon: <MessageSquare className="h-4 w-4" />, external: false },
+    { href: "/support", key: "support", icon: <Coffee className="h-4 w-4" />, external: false },
+    ...quickLinks,
 ];

@@ -3,10 +3,12 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { CheckCircle2, XCircle, Loader2, ArrowRight } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 type State = "loading" | "success" | "error";
 
 export default function NewsletterConfirmClient({ token }: { token: string }) {
+  const t = useTranslations("newsletterConfirm");
   const [state, setState] = useState<State>("loading");
   const [message, setMessage] = useState("");
 
@@ -23,19 +25,19 @@ export default function NewsletterConfirmClient({ token }: { token: string }) {
 
         if (res.ok) {
           setState("success");
-          setMessage(data.message ?? "Inscrição confirmada!");
+          setMessage(data.message ?? t("messages.success"));
         } else {
           setState("error");
-          setMessage(data.error ?? "Erro ao confirmar inscrição.");
+          setMessage(data.error ?? t("messages.error"));
         }
       } catch {
         setState("error");
-        setMessage("Erro de conexão. Tente novamente mais tarde.");
+        setMessage(t("messages.network"));
       }
     }
 
     confirm();
-  }, [token]);
+  }, [token, t]);
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
@@ -74,9 +76,9 @@ export default function NewsletterConfirmClient({ token }: { token: string }) {
 
             {/* Heading */}
             <h1 className="type-h1 text-foreground mb-2">
-              {state === "loading" && "Confirmando…"}
-              {state === "success" && "Tudo certo! 🎉"}
-              {state === "error" && "Ops! Algo deu errado"}
+              {state === "loading" && t("heading.loading")}
+              {state === "success" && t("heading.success")}
+              {state === "error" && t("heading.error")}
             </h1>
 
             {/* Message */}
@@ -86,13 +88,13 @@ export default function NewsletterConfirmClient({ token }: { token: string }) {
             {state === "success" && (
               <div className="mb-6 p-4 bg-green-50 dark:bg-green-950/20 rounded-xl border border-green-200 dark:border-green-900 text-left">
                 <p className="text-sm font-medium text-green-800 dark:text-green-300 mb-2">
-                  A partir de agora você vai receber:
+                  {t("benefits.title")}
                 </p>
                 <ul className="space-y-1">
                   {[
-                    "Novos posts assim que publicados",
-                    "Dicas e conteúdos exclusivos",
-                    "Novidades e projetos",
+                    t("benefits.newPosts"),
+                    t("benefits.tips"),
+                    t("benefits.projects"),
                   ].map((item) => (
                     <li
                       key={item}
@@ -110,13 +112,13 @@ export default function NewsletterConfirmClient({ token }: { token: string }) {
             {state === "error" && (
               <div className="mb-6 p-4 bg-red-50 dark:bg-red-950/20 rounded-xl border border-red-200 dark:border-red-900 text-left">
                 <p className="text-sm font-medium text-red-800 dark:text-red-300 mb-2">
-                  Possíveis causas:
+                  {t("causes.title")}
                 </p>
                 <ul className="space-y-1">
                   {[
-                    "O link expirou (válido por 24h)",
-                    "Este e-mail já foi confirmado",
-                    "O link está incorreto",
+                    t("causes.expired"),
+                    t("causes.alreadyConfirmed"),
+                    t("causes.invalid"),
                   ].map((item) => (
                     <li
                       key={item}
@@ -139,16 +141,16 @@ export default function NewsletterConfirmClient({ token }: { token: string }) {
                            rounded-xl font-semibold text-sm
                            hover:opacity-90 transition-opacity"
               >
-                Ir para o início
+                {t("home")}
                 <ArrowRight className="w-4 h-4" />
               </Link>
             )}
 
             {state === "error" && (
               <p className="mt-4 text-xs text-muted-foreground">
-                Problema persistindo?{" "}
+                {t("persisting")}{" "}
                 <Link href="/#newsletter" className="text-primary underline underline-offset-4">
-                  Inscreva-se novamente
+                  {t("subscribeAgain")}
                 </Link>
               </p>
             )}

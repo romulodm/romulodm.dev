@@ -106,6 +106,7 @@ export function BlogHeader({
   onLayoutChange,
 }: BlogHeaderProps) {
   const t = useTranslations('blogUi.header');
+  const ts = useTranslations('blogSearch');
   const locale = useLocale();
   const router = useRouter();
 
@@ -264,11 +265,11 @@ export function BlogHeader({
           value={query}
           onChange={e => { setQuery(e.target.value); if (e.target.value.length >= 2) setShowResults(true); }}
           onFocus={() => { if (hits.length > 0) setShowResults(true); }}
-          placeholder="Buscar posts..."
+          placeholder={ts('placeholder')}
           className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
         />
         {query && (
-          <button onClick={clearSearch} className="text-muted-foreground hover:text-foreground transition-colors">
+          <button onClick={clearSearch} aria-label={ts('clear')} className="text-muted-foreground hover:text-foreground transition-colors">
             <X size={14} />
           </button>
         )}
@@ -280,10 +281,10 @@ export function BlogHeader({
             <>
               <div className="flex items-center justify-between px-3 py-2 border-b border-border">
                 <span className="text-xs text-muted-foreground">
-                  {hits.length} resultado{hits.length !== 1 ? 's' : ''}
+                  {ts('results', { count: hits.length })}
                 </span>
                 <span className="text-xs text-muted-foreground font-mono">
-                  Motor Go · TF-IDF + BK-tree
+                  {ts('engine')}
                 </span>
               </div>
               <ul>
@@ -330,7 +331,7 @@ export function BlogHeader({
             </div>
           ) : (
             <div className="px-3 py-6 text-center text-sm text-muted-foreground">
-              Nenhum resultado para <strong className="text-foreground">"{query}"</strong>
+              {ts.rich('noResults', { query, strong: (chunks) => <strong className="text-foreground">{chunks}</strong> })}
             </div>
           )}
         </div>

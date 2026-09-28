@@ -3,10 +3,12 @@
 import { useState } from "react";
 import Link from "next/link";
 import { CheckCircle2, XCircle, Loader2, ArrowRight, AlertTriangle } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 type State = "confirm" | "loading" | "success" | "error";
 
 export default function NewsletterUnsubscribeClient({ token }: { token: string }) {
+  const t = useTranslations("newsletterUnsubscribe");
   const [state, setState] = useState<State>("confirm");
   const [message, setMessage] = useState("");
 
@@ -21,14 +23,14 @@ export default function NewsletterUnsubscribeClient({ token }: { token: string }
 
       if (res.ok) {
         setState("success");
-        setMessage(data.message ?? "Inscrição cancelada com sucesso.");
+        setMessage(data.message ?? t("messages.success"));
       } else {
         setState("error");
-        setMessage(data.error ?? "Erro ao cancelar inscrição.");
+        setMessage(data.error ?? t("messages.error"));
       }
     } catch {
       setState("error");
-      setMessage("Erro de conexão. Tente novamente.");
+      setMessage(t("messages.network"));
     }
   };
 
@@ -74,17 +76,16 @@ export default function NewsletterUnsubscribeClient({ token }: { token: string }
 
             {/* Heading */}
             <h1 className="type-h1 text-foreground mb-2">
-              {state === "confirm" && "Cancelar inscrição?"}
-              {state === "loading" && "Processando…"}
-              {state === "success" && "Inscrição cancelada"}
-              {state === "error" && "Ops! Algo deu errado"}
+              {state === "confirm" && t("heading.confirm")}
+              {state === "loading" && t("heading.loading")}
+              {state === "success" && t("heading.success")}
+              {state === "error" && t("heading.error")}
             </h1>
 
             {/* Subtext */}
             {state === "confirm" && (
               <p className="text-muted-foreground text-sm mb-6">
-                Você não receberá mais novos posts e atualizações por e-mail.
-                Pode se inscrever novamente a qualquer momento.
+                {t("confirmDescription")}
               </p>
             )}
             {(state === "success" || state === "error") && (
@@ -100,7 +101,7 @@ export default function NewsletterUnsubscribeClient({ token }: { token: string }
                              rounded-xl font-semibold text-sm
                              hover:opacity-90 transition-opacity"
                 >
-                  Sim, cancelar inscrição
+                  {t("confirmAction")}
                 </button>
                 <Link
                   href="/"
@@ -108,7 +109,7 @@ export default function NewsletterUnsubscribeClient({ token }: { token: string }
                              rounded-xl font-semibold text-sm text-center
                              hover:opacity-90 transition-opacity"
                 >
-                  Não, quero continuar
+                  {t("cancelAction")}
                 </Link>
               </div>
             )}
@@ -118,10 +119,10 @@ export default function NewsletterUnsubscribeClient({ token }: { token: string }
               <>
                 <div className="mb-6 p-4 bg-muted rounded-xl text-left">
                   <p className="text-sm text-muted-foreground text-center">
-                    Sentiremos sua falta! 😢
+                    {t("missYou")}
                     <br />
                     <span className="text-xs">
-                      Você pode se inscrever novamente a qualquer momento.
+                      {t("resubscribeAnytime")}
                     </span>
                   </p>
                 </div>
@@ -132,7 +133,7 @@ export default function NewsletterUnsubscribeClient({ token }: { token: string }
                              rounded-xl font-semibold text-sm
                              hover:opacity-90 transition-opacity"
                 >
-                  Ir para o início
+                  {t("home")}
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               </>
@@ -147,7 +148,7 @@ export default function NewsletterUnsubscribeClient({ token }: { token: string }
                            rounded-xl font-semibold text-sm
                            hover:opacity-90 transition-opacity"
               >
-                Ir para o início
+                {t("home")}
                 <ArrowRight className="w-4 h-4" />
               </Link>
             )}

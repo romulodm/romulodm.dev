@@ -34,6 +34,7 @@ export function SearchDialog() {
     const router = useRouter()
     const locale = useLocale()
     const t = useTranslations('navigation')
+    const ts = useTranslations('blogSearch')
 
     // Atalho Cmd/Ctrl + K
     useEffect(() => {
@@ -110,7 +111,7 @@ export function SearchDialog() {
                 >
                     {/* Título acessível — visualmente oculto */}
                     <DialogHeader className="sr-only">
-                        <DialogTitle>Buscar posts</DialogTitle>
+                        <DialogTitle>{ts('title')}</DialogTitle>
                     </DialogHeader>
 
                     {/* Input */}
@@ -123,7 +124,7 @@ export function SearchDialog() {
                             ref={inputRef}
                             value={query}
                             onChange={e => setQuery(e.target.value)}
-                            placeholder="Buscar posts..."
+                            placeholder={ts('placeholder')}
                             className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
                         />
                         <div className="flex items-center gap-2 mr-7 shrink-0">
@@ -131,14 +132,14 @@ export function SearchDialog() {
                                 <button
                                     type="button"
                                     onClick={() => setQuery('')}
-                                    aria-label="Limpar busca"
+                                    aria-label={ts('clear')}
                                     className="text-muted-foreground hover:text-foreground transition-colors"
                                 >
                                     <Eraser size={16} />
                                 </button>
                             )}
                             <kbd className="text-xs text-muted-foreground bg-muted px-1.5 py-0.5 rounded border border-border">
-                                Esc
+                                {ts('escKey')}
                             </kbd>
                         </div>
                     </div>
@@ -150,11 +151,11 @@ export function SearchDialog() {
                                 {/* Meta — contagem + tempo */}
                                 <div className="px-4 pt-3 pb-1 flex items-center justify-between">
                                     <span className="text-xs text-muted-foreground">
-                                        {hits.length} resultado{hits.length !== 1 ? 's' : ''}
+                                        {ts('results', { count: hits.length })}
                                     </span>
                                     {timeMs !== null && (
                                         <span className="text-xs text-muted-foreground flex items-center gap-1">
-                                            <Clock size={11} /> {timeMs}ms
+                                            <Clock size={11} /> {ts('timeMs', { ms: timeMs })}
                                         </span>
                                     )}
                                 </div>
@@ -210,16 +211,15 @@ export function SearchDialog() {
                             </>
                         ) : query.length >= 2 && !isPending ? (
                             <div className="py-12 text-center text-muted-foreground text-sm">
-                                Nenhum resultado para{' '}
-                                <strong className="text-foreground">"{query}"</strong>
+                                {ts.rich('noResults', { query, strong: (chunks) => <strong className="text-foreground">{chunks}</strong> })}
                             </div>
                         ) : query.length > 0 ? (
                             <div className="py-8 text-center text-muted-foreground text-xs">
-                                Continue digitando...
+                                {ts('keepTyping')}
                             </div>
                         ) : (
                             <div className="py-8 text-center text-muted-foreground text-xs">
-                                Digite para buscar nos posts
+                                {ts('prompt')}
                             </div>
                         )}
                     </div>

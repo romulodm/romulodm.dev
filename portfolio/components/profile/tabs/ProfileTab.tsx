@@ -24,7 +24,7 @@ export function ProfileTab({ profile }: { profile: Profile }) {
             {(profile.githubUrl || profile.linkedinUrl) && (
                 <div className="rounded-lg border border-border p-5 space-y-3">
                     <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
-                        Links
+                        {t("links")}
                     </h2>
                     <div className="flex flex-col gap-2">
                         {profile.githubUrl && (

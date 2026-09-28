@@ -1,6 +1,6 @@
 // portfolio/app/[locale]/admin/backups/page.tsx
 
-import { getLocale } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
 
 import { isAdminAuthenticated } from "@/lib/auth-helpers";
@@ -21,7 +21,8 @@ export default async function AdminBackupsPage() {
   try {
     initialBackups = await listBackups();
   } catch (err) {
-    initialError = err instanceof Error ? err.message : "Erro ao listar backups";
+    const t = await getTranslations("admin.observability.backups.errors");
+    initialError = err instanceof Error ? err.message : t("list");
     console.error("[backups.page]", err);
   }
 

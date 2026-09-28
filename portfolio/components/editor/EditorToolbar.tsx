@@ -1,6 +1,7 @@
 'use client'
 
 import { RefObject, useRef, ChangeEvent } from 'react'
+import { useTranslations } from 'next-intl'
 import {
   Bold,
   Italic,
@@ -35,6 +36,7 @@ export function EditorToolbar({
   onImageUpload,
   isUploading,
 }: EditorToolbarProps) {
+  const t = useTranslations('admin.postEditor.toolbar')
   const imageInputRef = useRef<HTMLInputElement>(null)
 
   const insertMarkdown = (before: string, after: string = '') => {
@@ -67,18 +69,18 @@ export function EditorToolbar({
   }
 
   const tools: ToolItem[] = [
-    { icon: Bold, label: 'Bold', action: () => insertMarkdown('**', '**') },
-    { icon: Italic, label: 'Italic', action: () => insertMarkdown('*', '*') },
-    { icon: Link, label: 'Link', action: () => insertMarkdown('[', '](url)') },
-    { icon: List, label: 'Unordered List', action: () => insertMarkdown('\n- ', '') },
-    { icon: ListOrdered, label: 'Ordered List', action: () => insertMarkdown('\n1. ', '') },
-    { icon: Heading2, label: 'Heading', action: () => insertMarkdown('\n## ', '') },
-    { icon: Quote, label: 'Quote', action: () => insertMarkdown('\n> ', '') },
-    { icon: Code, label: 'Inline Code', action: () => insertMarkdown('`', '`') },
-    { icon: FileCode, label: 'Code Block', action: () => insertMarkdown('\n```\n', '\n```\n') },
+    { icon: Bold, label: t('bold'), action: () => insertMarkdown('**', '**') },
+    { icon: Italic, label: t('italic'), action: () => insertMarkdown('*', '*') },
+    { icon: Link, label: t('link'), action: () => insertMarkdown('[', '](url)') },
+    { icon: List, label: t('unorderedList'), action: () => insertMarkdown('\n- ', '') },
+    { icon: ListOrdered, label: t('orderedList'), action: () => insertMarkdown('\n1. ', '') },
+    { icon: Heading2, label: t('heading'), action: () => insertMarkdown('\n## ', '') },
+    { icon: Quote, label: t('quote'), action: () => insertMarkdown('\n> ', '') },
+    { icon: Code, label: t('inlineCode'), action: () => insertMarkdown('`', '`') },
+    { icon: FileCode, label: t('codeBlock'), action: () => insertMarkdown('\n```\n', '\n```\n') },
     { type: 'divider' },
-    { icon: Image, label: 'Upload Image', action: () => imageInputRef.current?.click(), disabled: isUploading },
-    { icon: PlayCircle, label: 'Embed YouTube', action: () => insertMarkdown(`\n::youtube[title](url)\n`) },
+    { icon: Image, label: t('uploadImage'), action: () => imageInputRef.current?.click(), disabled: isUploading },
+    { icon: PlayCircle, label: t('embedYoutube'), action: () => insertMarkdown(`\n::youtube[title](url)\n`) },
   ]
 
   return (

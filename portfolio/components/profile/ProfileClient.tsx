@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { getIntlLocaleCode } from "@/lib/locales";
 import { listUserComments } from "@/app/[locale]/profile/[username]/actions";
 
@@ -54,6 +54,7 @@ export default function ProfileClient({
     wallMessages,
 }: Props) {
     const locale = useLocale();
+    const tTabs = useTranslations("profilePage.tabs");
     const localeCode = getIntlLocaleCode(locale);
 
     const [activeTab, setActiveTab] = useState<Tab>("profile");
@@ -88,17 +89,17 @@ export default function ProfileClient({
     // ── Tab definitions ───────────────────────────────────────────────────────
 
     const tabs: { id: Tab; label: string; count?: number }[] = [
-        { id: "profile", label: "Perfil" },
-        { id: "comments", label: "Comentários", count: profile._count.comments },
-        { id: "wall", label: "Wall" },
+        { id: "profile", label: tTabs("profile") },
+        { id: "comments", label: tTabs("comments"), count: profile._count.comments },
+        { id: "wall", label: tTabs("wall") },
         // Donations: always visible for everyone
-        { id: "donations", label: "Doações" },
+        { id: "donations", label: tTabs("donations") },
         // Owner-only tabs
         ...(isMe
-            ? ([
-                { id: "newsletter", label: "Newsletter" },
-                { id: "settings", label: "Configurações" },
-            ] as const)
+            ? [
+                { id: "newsletter" as const, label: tTabs("newsletter") },
+                { id: "settings" as const, label: tTabs("settings") },
+            ]
             : []),
     ];
 

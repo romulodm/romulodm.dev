@@ -1,4 +1,5 @@
 import { ArrowRight } from "lucide-react";
+import { useTranslations } from "next-intl";
 import type { StaticImageData } from "next/image";
 
 type BadgeCategory = "programming" | "tutorial" | "interview" | "marketing";
@@ -31,6 +32,7 @@ const BlogCard = ({
     author,
     variant = "compact",
 }: BlogCardProps) => {
+    const t = useTranslations("blogUi.card");
     const isFeatured = variant === "featured";
 
     return (
@@ -71,7 +73,7 @@ const BlogCard = ({
                 href="#"
                 className="inline-flex items-center gap-1.5 text-sm font-semibold group transition-colors text-purple-700 dark:text-purple-500/90 hover:text-purple-600 dark:hover:text-purple-500"
             >
-                Read more
+                {t("readMore")}
                 <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />
             </a>
         </article>

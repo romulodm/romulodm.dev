@@ -378,7 +378,7 @@ export function SecretCorrectMessage({ command }: CommandMessageProps): JSX.Elem
                     rel="noreferrer"
                     href={SECRET_REWARD_URL}
                 >
-                    reward
+                    {t("secret.rewardLink")}
                 </a>
             </Muted>
         </div>
@@ -455,7 +455,7 @@ export function PingRomuloMessage(): JSX.Element {
             <Muted>{t("loadings.ping", { ms })}</Muted>
 
             <Output>
-                status: {status}<br />
+                {t("ping.status")}: {status}<br />
                 {message}<br />
                 {t("ping.timezone")}: America/Sao_Paulo<br />
                 {t("ping.hour")}: {saoPauloHour}:00

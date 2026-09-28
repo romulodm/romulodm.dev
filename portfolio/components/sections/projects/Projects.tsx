@@ -46,7 +46,7 @@ export default async function Projects() {
                     </div>
                 </>
             ) : (
-                <GitHubError message="Não foi possível carregar os projetos." />
+                <GitHubError message={t("projects.loadError")} />
             )}
         </div>
     );

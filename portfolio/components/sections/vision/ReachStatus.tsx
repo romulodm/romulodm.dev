@@ -73,13 +73,13 @@ export function ReachReadout() {
   return (
     <div aria-hidden className="font-mono text-xs leading-relaxed text-neutral-500">
       <div>
-        LAT <span className="text-neutral-700 dark:text-neutral-300">-32.03</span>
+        {t('readout.lat')} <span className="text-neutral-700 dark:text-neutral-300">-32.03</span>
       </div>
       <div>
-        LON <span className="text-neutral-700 dark:text-neutral-300">-52.10</span>
+        {t('readout.lon')} <span className="text-neutral-700 dark:text-neutral-300">-52.10</span>
       </div>
       <div className="flex items-end gap-2">
-        SIG
+        {t('readout.signal')}
         <span className="inline-flex items-end gap-[2px] pb-[3px]">
           {SIGNAL_BARS.map((h) => (
             <span

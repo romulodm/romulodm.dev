@@ -57,7 +57,7 @@ export function ProfileHeader({ profile, isMe, isAdmin, localeCode }: Props) {
                     <button
                         type="button"
                         onClick={() => setModalOpen(true)}
-                        aria-label="Editar imagem do perfil"
+                        aria-label={t("avatar.edit")}
                         className="absolute inset-0 flex items-center justify-center rounded-full bg-black/55 text-white opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-opacity"
                     >
                         <Pencil className="w-4 h-4" />

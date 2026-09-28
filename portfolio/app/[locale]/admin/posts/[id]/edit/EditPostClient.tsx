@@ -3,6 +3,7 @@
 import { useRouter, useParams, useSearchParams } from 'next/navigation'
 import { PostEditor, type PostEditorData } from '@/components/editor/PostEditor'
 import { useEffect, useState, useCallback } from 'react'
+import { useTranslations } from 'next-intl'
 import type { LocaleCode } from '@/lib/locales'
 
 interface PostTranslation {
@@ -25,6 +26,7 @@ interface PostWithTranslations {
 }
 
 export default function EditPostClient() {
+    const t = useTranslations('admin.postEditor.errors')
     const router = useRouter()
     const params = useParams()
     const searchParams = useSearchParams()
@@ -53,7 +55,7 @@ export default function EditPostClient() {
                     setSelectedLocale(data.translations[0].locale as LocaleCode)
                 }
             } catch (error) {
-                setError('Falha ao carregar o post')
+                setError(t('load'))
                 console.error('Error loading post:', error)
             } finally {
                 setIsLoading(false)
@@ -61,7 +63,7 @@ export default function EditPostClient() {
         }
         loadPost()
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [params.id])
+    }, [params.id, t])
 
     const handleLocaleChange = useCallback(
         (locale: LocaleCode) => {
@@ -106,7 +108,7 @@ export default function EditPostClient() {
     if (error || !post || !selectedLocale) {
         return (
             <div className="flex-1 flex items-center justify-center min-h-screen">
-                <p className="text-destructive">{error || 'Post não encontrado'}</p>
+                <p className="text-destructive">{error || t('notFound')}</p>
             </div>
         )
     }

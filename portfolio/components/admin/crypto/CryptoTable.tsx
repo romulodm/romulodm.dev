@@ -2,7 +2,8 @@
 'use client'
 
 import { useState } from 'react'
-import { useLocale } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
+import { getIntlLocaleCode } from '@/lib/locales'
 import { ExternalLink, ChevronDown, ChevronUp, Copy, Check } from 'lucide-react'
 import { NETWORKS, type NetworkKey, type TokenKey } from '@romulo/web3'
 import { formatDistanceToNow } from '@/lib/utils'
@@ -37,6 +38,7 @@ function formatRaw(rawAmount: string, token: TokenKey): string {
 }
 
 function CopyButton({ text }: { text: string }) {
+    const t = useTranslations('admin.cryptoDonations')
     const [copied, setCopied] = useState(false)
 
     async function copy() {
@@ -49,7 +51,7 @@ function CopyButton({ text }: { text: string }) {
         <button
             onClick={copy}
             className="text-muted-foreground hover:text-foreground transition-colors"
-            title="Copiar"
+            title={t('table.copy')}
         >
             {copied
                 ? <Check className="h-3 w-3 text-green-500" />
@@ -61,6 +63,7 @@ function CopyButton({ text }: { text: string }) {
 
 export function CryptoTable({ donations }: { donations: OnChainDonation[] }) {
     const locale = useLocale()
+    const t = useTranslations('admin.cryptoDonations')
     const [expanded, setExpanded] = useState<string | null>(null)
 
     return (
@@ -70,13 +73,13 @@ export function CryptoTable({ donations }: { donations: OnChainDonation[] }) {
             <div className="flex items-center justify-between border-b border-border px-6 py-4">
                 <div>
                     <h2 className="text-lg font-semibold text-foreground">
-                        Todas as doações
+                        {t('table.title')}
                         <span className="ml-2 text-sm font-normal text-muted-foreground">
                             ({donations.length})
                         </span>
                     </h2>
                     <p className="mt-0.5 text-xs text-muted-foreground">
-                        Pagamentos verificados on-chain — ETH, USDC e USDT
+                        {t('table.subtitle')}
                     </p>
                 </div>
             </div>
@@ -84,7 +87,7 @@ export function CryptoTable({ donations }: { donations: OnChainDonation[] }) {
             {donations.length === 0 ? (
                 <div className="py-16 text-center text-muted-foreground">
                     <p className="mb-3 text-4xl">⛓️</p>
-                    <p className="text-sm">Nenhuma doação on-chain ainda.</p>
+                    <p className="text-sm">{t('table.empty')}</p>
                 </div>
             ) : (
                 <div className="divide-y divide-border">
@@ -109,7 +112,7 @@ export function CryptoTable({ donations }: { donations: OnChainDonation[] }) {
                                         {/* Row 1: nome + badges + data */}
                                         <div className="flex flex-wrap items-center gap-2">
                                             <span className="font-semibold text-sm text-foreground">
-                                                {d.name || 'Anônimo'}
+                                                {d.name || t('table.anonymous')}
                                             </span>
 
                                             {/* Network */}
@@ -125,7 +128,7 @@ export function CryptoTable({ donations }: { donations: OnChainDonation[] }) {
                                             {/* Privada */}
                                             {d.isPrivate && (
                                                 <span className="rounded-full border border-border px-2 py-0.5 text-xs text-muted-foreground">
-                                                    Privada
+                                                    {t('table.private')}
                                                 </span>
                                             )}
 
@@ -141,7 +144,7 @@ export function CryptoTable({ donations }: { donations: OnChainDonation[] }) {
                                             </span>
                                             <span>·</span>
                                             <span>
-                                                {d.amountBrl.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                                {d.amountBrl.toLocaleString(getIntlLocaleCode(locale), { style: 'currency', currency: 'BRL' })}
                                             </span>
                                             <span>·</span>
                                             <span>
@@ -149,7 +152,7 @@ export function CryptoTable({ donations }: { donations: OnChainDonation[] }) {
                                             </span>
                                             <span>·</span>
                                             <span>
-                                                {d.coffees} café{d.coffees > 1 ? 's' : ''}
+                                                {t('table.coffees', { count: d.coffees })}
                                             </span>
                                         </div>
 
@@ -195,7 +198,7 @@ export function CryptoTable({ donations }: { donations: OnChainDonation[] }) {
                                                     target="_blank"
                                                     rel="noopener noreferrer"
                                                     className="text-muted-foreground hover:text-primary transition-colors"
-                                                    title="Ver no explorer"
+                                                    title={t('table.viewExplorer')}
                                                 >
                                                     <ExternalLink className="h-3 w-3" />
                                                 </a>

@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import { Check, Copy, Loader2, RefreshCw } from "lucide-react";
 import { SEEDICON_STYLES } from "seedicon";
 import { Avatar } from "seedicon/react";
+import { useTranslations } from "next-intl";
 
 import {
   Dialog,
@@ -46,6 +47,7 @@ interface Props {
 type Status = "idle" | "saving" | "ok" | "error" | "rate_limited";
 
 export function AvatarModal({ open, onOpenChange, user, onSaved }: Props) {
+  const t = useTranslations("profilePage.avatar");
   const [draft, setDraft] = useState<AvatarDraft>({
     seed: user.avatarSeed,
     style: user.avatarStyle,
@@ -124,10 +126,9 @@ export function AvatarModal({ open, onOpenChange, user, onSaved }: Props) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md border-border">
         <DialogHeader>
-          <DialogTitle>Imagem do perfil</DialogTitle>
+          <DialogTitle>{t("title")}</DialogTitle>
           <DialogDescription>
-            Seu avatar é gerado a partir de um UUID. Gere outro para trocar de
-            imagem, ou escolha um estilo diferente.
+            {t("description")}
           </DialogDescription>
         </DialogHeader>
 
@@ -139,22 +140,21 @@ export function AvatarModal({ open, onOpenChange, user, onSaved }: Props) {
         {/* ── Origem — só aparece para quem tem foto de provider ───────────── */}
         {hasProviderPhoto && (
           <div className="space-y-1.5">
-            <label className="text-xs font-medium text-muted-foreground">Imagem</label>
+            <label className="text-xs font-medium text-muted-foreground">{t("source.label")}</label>
             <div className="grid grid-cols-2 gap-1 rounded-lg border border-border p-1">
               <SourceOption
-                label="Foto da conta"
+                label={t("source.provider")}
                 active={draft.source === "PROVIDER"}
                 onClick={() => setDraft((d) => ({ ...d, source: "PROVIDER" }))}
               />
               <SourceOption
-                label="Avatar gerado"
+                label={t("source.generated")}
                 active={draft.source === "SEEDICON"}
                 onClick={() => setDraft((d) => ({ ...d, source: "SEEDICON" }))}
               />
             </div>
             <p className="text-xs text-muted-foreground">
-              Sua foto do {user.image?.includes("github") ? "GitHub" : "Google"} fica
-              guardada de qualquer jeito — você pode voltar para ela depois.
+              {t("source.note", { provider: user.image?.includes("github") ? "GitHub" : "Google" })}
             </p>
           </div>
         )}
@@ -166,7 +166,7 @@ export function AvatarModal({ open, onOpenChange, user, onSaved }: Props) {
         >
           {/* ── UUID ───────────────────────────────────────────────────────── */}
           <div className="space-y-1.5">
-            <label className="text-xs font-medium text-muted-foreground">UUID</label>
+            <label className="text-xs font-medium text-muted-foreground">{t("seed.label")}</label>
             <div className="flex items-center gap-2">
               <input
                 readOnly
@@ -174,7 +174,7 @@ export function AvatarModal({ open, onOpenChange, user, onSaved }: Props) {
                 onFocus={(e) => e.currentTarget.select()}
                 className="flex-1 min-w-0 px-3 py-2 rounded-lg border border-border bg-accent/40 font-mono text-xs focus:outline-none focus:border-primary transition-colors"
               />
-              <IconButton onClick={copySeed} title="Copiar UUID">
+              <IconButton onClick={copySeed} title={t("seed.copy")}>
                 {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
               </IconButton>
             </div>
@@ -184,13 +184,13 @@ export function AvatarModal({ open, onOpenChange, user, onSaved }: Props) {
               className="inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:opacity-80 transition-opacity"
             >
               <RefreshCw className="w-3 h-3" />
-              Gerar novo UUID
+              {t("seed.regenerate")}
             </button>
           </div>
 
           {/* ── Estilos ────────────────────────────────────────────────────── */}
           <div className="space-y-1.5">
-            <label className="text-xs font-medium text-muted-foreground">Estilo</label>
+            <label className="text-xs font-medium text-muted-foreground">{t("style")}</label>
             {/* Construído de SEEDICON_STYLES, não de uma lista escrita à mão:
                 uma release nova do pacote aparece aqui sozinha. Cada opção
                 renderiza o UUID do rascunho, então o usuário se vê em todos. */}
@@ -220,15 +220,15 @@ export function AvatarModal({ open, onOpenChange, user, onSaved }: Props) {
         <div className="flex items-center justify-end gap-3 pt-1">
           {status === "rate_limited" && (
             <span className="text-xs text-red-500 mr-auto">
-              Você trocou de avatar muitas vezes. Tente de novo mais tarde.
+              {t("status.rateLimited")}
             </span>
           )}
           {status === "error" && (
-            <span className="text-xs text-red-500 mr-auto">Erro ao salvar.</span>
+            <span className="text-xs text-red-500 mr-auto">{t("status.error")}</span>
           )}
           {status === "ok" && (
             <span className="text-xs text-green-600 mr-auto flex items-center gap-1">
-              <Check className="w-3.5 h-3.5" /> Salvo!
+              <Check className="w-3.5 h-3.5" /> {t("status.saved")}
             </span>
           )}
 
@@ -237,7 +237,7 @@ export function AvatarModal({ open, onOpenChange, user, onSaved }: Props) {
             onClick={() => onOpenChange(false)}
             className="px-4 py-2 rounded-lg border border-border text-sm hover:bg-accent transition-colors"
           >
-            Cancelar
+            {t("cancel")}
           </button>
           <button
             type="button"
@@ -246,7 +246,7 @@ export function AvatarModal({ open, onOpenChange, user, onSaved }: Props) {
             className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:opacity-90 transition disabled:opacity-50"
           >
             {status === "saving" && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
-            Salvar
+            {t("save")}
           </button>
         </div>
       </DialogContent>
