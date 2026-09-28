@@ -99,6 +99,7 @@ export class ResendProvider implements EmailProvider {
           subject: opts.subject,
           html: opts.html,
           ...(opts.replyTo ? { reply_to: opts.replyTo } : {}),
+          ...(opts.headers ? { headers: opts.headers } : {}),
         }),
         signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
       });

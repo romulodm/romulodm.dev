@@ -34,5 +34,8 @@ export function confirmationTemplate(opts: ConfirmationTemplateOptions): string 
     </td>
   </tr>`;
 
-  return wrapper(body, opts.brand, opts.confirmationUrl, opts.recipient.locale);
+  // null: the recipient is not on the list yet, so there is nothing to
+  // unsubscribe from. Passing the confirmation URL here (as before) turned the
+  // footer's "Unsubscribe" into a second "Confirm" button.
+  return wrapper(body, opts.brand, null, opts.recipient.locale);
 }

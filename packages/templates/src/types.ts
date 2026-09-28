@@ -7,10 +7,25 @@ export interface BrandConfig {
   name: string;
   /** Full site URL, used for header link and fallback hrefs */
   baseUrl: string;
+  /**
+   * Absolute URL of the header logo (a PNG, since email clients strip SVG).
+   * Defaults to `${baseUrl}/email-logo.png`.
+   */
+  logoUrl?: string;
   /** Primary accent colour (hex). Defaults to #f57842 */
   accentColor?: string;
-  /** Full URL to the privacy policy page */
+  /**
+   * Full URL to the privacy policy page. Leave unset to use the site's own
+   * locale-aware route (/<locale>/legal/privacy-policy), which is what every
+   * caller should do; this exists only to point at an external policy.
+   */
   privacyUrl?: string;
+  /**
+   * Sender's postal address, printed in the footer of every email. Defaults to
+   * DEFAULT_POSTAL_ADDRESS. Plain text on purpose: a map link, especially a
+   * URL shortener, is a spam signal in the footer of bulk mail.
+   */
+  postalAddress?: string;
 }
 
 // ─── Shared per-recipient context ─────────────────────────────────────────────

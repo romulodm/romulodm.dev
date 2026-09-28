@@ -37,9 +37,8 @@ import {
 
 const BRAND: BrandConfig = {
   name: process.env.NEXT_PUBLIC_APP_NAME ?? "romulodm",
-  baseUrl: process.env.NEXT_PUBLIC_APP_URL ?? "https://romulodm.com.br",
+  baseUrl: process.env.NEXT_PUBLIC_APP_URL ?? "https://romulodm.dev",
   accentColor: "#f57842",
-  privacyUrl: `${process.env.NEXT_PUBLIC_APP_URL ?? "https://romulodm.com.br"}/privacy`,
 };
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -56,6 +55,37 @@ function isFinalAttempt(job: { attemptsMade: number; opts: JobsOptions }): boole
 
 function recipient(data: { displayName: string; locale: string }): RecipientContext {
   return { displayName: data.displayName, locale: data.locale as RecipientContext["locale"] };
+}
+
+/**
+ * RFC 2369 + RFC 8058 headers for mailing-list sends. They make Gmail, Yahoo
+ * and Apple Mail show a native "Unsubscribe" next to the sender, and Gmail and
+ * Yahoo expect them from bulk senders; mail without them lands in spam more
+ * often.
+ *
+ * The one-click variant needs an endpoint that unsubscribes on a bare POST,
+ * with no page, login or confirmation in between. That is
+ * POST /api/newsletter/unsubscribe/[token]. The URL carried in the job is the
+ * human-facing page (/newsletter/unsubscribe/<token>, which asks for
+ * confirmation), so the API path is derived from it. If it ever stops matching
+ * that shape, only the plain List-Unsubscribe header is sent: a one-click
+ * header pointing at a page that does not unsubscribe on POST would be worse
+ * than none.
+ */
+export function listUnsubscribeHeaders(unsubscribeUrl: string): Record<string, string> {
+  try {
+    const url = new URL(unsubscribeUrl);
+    const match = url.pathname.match(/^\/(?:[a-z]{2}\/)?newsletter\/unsubscribe\/([^/]+)\/?$/);
+    if (match) {
+      return {
+        "List-Unsubscribe": `<${url.origin}/api/newsletter/unsubscribe/${match[1]}>`,
+        "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+      };
+    }
+  } catch {
+    // Not an absolute URL; fall through.
+  }
+  return { "List-Unsubscribe": `<${unsubscribeUrl}>` };
 }
 
 /**
@@ -243,6 +273,7 @@ export async function processTransactionalEmailJob(job: TransactionalJobContext)
         to: data.email,
         subject: `Welcome to ${BRAND.name}! 🎉`,
         html: welcomeTemplate({ unsubscribeUrl: data.unsubscribeUrl, brand: BRAND, recipient: r }),
+        headers: listUnsubscribeHeaders(data.unsubscribeUrl),
         messageId,
         isFinalAttempt: lastAttempt,
       });
@@ -307,6 +338,7 @@ export async function processCampaignEmailJob(job: CampaignJobContext): Promise<
       to: data.email,
       subject: data.subject,
       html,
+      headers: listUnsubscribeHeaders(data.unsubscribeUrl),
       messageId: buildEmailMessageId("campaign", deliveryId),
       isFinalAttempt: isFinalAttempt(job),
     });

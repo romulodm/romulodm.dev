@@ -25,9 +25,8 @@ const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "";
 
 const BRAND: BrandConfig = {
   name: process.env.NEXT_PUBLIC_APP_NAME ?? "romulodm",
-  baseUrl: APP_URL || "https://romulodm.com.br",
+  baseUrl: APP_URL || "https://romulodm.dev",
   accentColor: "#f57842",
-  privacyUrl: `${APP_URL || "https://romulodm.com.br"}/privacy`,
 };
 
 function createUpdateCampaignSchema(t: Awaited<ReturnType<typeof getApiTranslator>>) {

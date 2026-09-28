@@ -1,22 +1,52 @@
 import { BrandConfig } from "./types";
-import { logoImg } from "./logo";
+import { logoImg, EMAIL_LOGO_PATH } from "./logo";
 import { getStrings } from "./i18n";
 
 export const DEFAULT_ACCENT = "#f57842";
 
+/**
+ * Printed in the footer of every email. Bulk-mail rules (CAN-SPAM, and the
+ * sender guidelines Gmail and Yahoo enforce) expect a physical address for
+ * the sender; the brand config can override it.
+ */
+export const DEFAULT_POSTAL_ADDRESS = "Av. Itália, Carreiros · Rio Grande, RS · Brasil";
+
+/**
+ * The site only serves /pt and /en, while emails also render in "es". Map
+ * anything that is not "pt" to "en" so links never land on a 404.
+ */
+function siteLocale(locale?: string | null): "pt" | "en" {
+  return locale === "pt" ? "pt" : "en";
+}
+
+export function privacyPolicyUrl(brand: BrandConfig, locale?: string | null): string {
+  return brand.privacyUrl ?? `${brand.baseUrl}/${siteLocale(locale)}/legal/privacy-policy`;
+}
+
 // ─── Wrapper ──────────────────────────────────────────────────────────────────
 
+/**
+ * @param unsubscribeUrl - Pass null for emails that do not come from the
+ *   mailing list (subscription confirmation, password reset): the footer then
+ *   omits the unsubscribe link instead of pointing it somewhere unrelated.
+ */
 export function wrapper(
   body: string,
   brand: BrandConfig,
-  unsubscribeUrl: string,
+  unsubscribeUrl: string | null,
   locale?: string | null,
 ): string {
-  const accent = brand.accentColor ?? DEFAULT_ACCENT;
-  const logo = logoImg(accent, 28);
+  const logo = logoImg(brand.logoUrl ?? `${brand.baseUrl}${EMAIL_LOGO_PATH}`, brand.name, 28);
   const s = getStrings(locale);
   const year = new Date().getFullYear();
-  const privacyUrl = brand.privacyUrl ?? `${brand.baseUrl}/privacy`;
+  const privacyUrl = privacyPolicyUrl(brand, locale);
+  const postalAddress = brand.postalAddress ?? DEFAULT_POSTAL_ADDRESS;
+  const unsubscribeLink = unsubscribeUrl
+    ? `
+              <span style="color:#d1cbc5;padding:0 6px;">|</span>
+              <a href="${unsubscribeUrl}"
+                 style="color:#b8b0a8;text-decoration:underline;">${s.unsubscribe}</a>`
+    : "";
 
   return `<!DOCTYPE html>
 <html lang="${locale ?? "en"}">
@@ -66,10 +96,11 @@ export function wrapper(
             <p style="margin:0 0 12px;font-family:'Inter',sans-serif;
                       font-size:12px;line-height:1;">
               <a href="${privacyUrl}"
-                 style="color:#b8b0a8;text-decoration:underline;">${s.privacyPolicy}</a>
-              <span style="color:#d1cbc5;padding:0 6px;">|</span>
-              <a href="${unsubscribeUrl}"
-                 style="color:#b8b0a8;text-decoration:underline;">${s.unsubscribe}</a>
+                 style="color:#b8b0a8;text-decoration:underline;">${s.privacyPolicy}</a>${unsubscribeLink}
+            </p>
+            <p style="margin:0 0 4px;font-family:'Inter',sans-serif;
+                      color:#c4bdb6;font-size:11px;line-height:1.5;">
+              ${postalAddress}
             </p>
             <p style="margin:0;font-family:'Inter',sans-serif;
                       color:#c4bdb6;font-size:11px;">

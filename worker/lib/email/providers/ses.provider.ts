@@ -30,6 +30,12 @@ export class SesProvider implements EmailProvider {
     async send(opts: SendEmailOptions): Promise<SendResult> {
         const from = opts.from ?? `"${this.fromName}" <${this.fromAddress}>`;
 
+        // opts.headers is NOT sent: the classic SES SendEmail API has no field
+        // for custom headers, so List-Unsubscribe is lost on this path. Only
+        // SendRawEmail (hand-built MIME) or the SESv2 client can carry it. Fine
+        // while SES is only the overflow fallback behind Resend; worth fixing
+        // before SES carries campaigns on its own, since Gmail and Yahoo expect
+        // one-click unsubscribe on bulk mail.
         const command = new SendEmailCommand({
             Source: from,
             Destination: { ToAddresses: [opts.to] },

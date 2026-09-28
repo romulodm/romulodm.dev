@@ -24,8 +24,8 @@ export { campaignTemplate } from "./templates/campaign.template";
 export { digestTemplate } from "./templates/digest.template";
 
 // ─── Utilities ────────────────────────────────────────────────────────────────
-export { logoImg } from "./logo";
-export { DEFAULT_ACCENT } from "./base";
+export { logoImg, EMAIL_LOGO_PATH } from "./logo";
+export { DEFAULT_ACCENT, DEFAULT_POSTAL_ADDRESS, privacyPolicyUrl } from "./base";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
