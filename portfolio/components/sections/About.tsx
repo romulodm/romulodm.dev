@@ -12,6 +12,10 @@ import { ArrowRight, Github, Mail, MapPin } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import DissolveText from "@/components/DissolveText";
+import { ContactTrigger } from "@/components/modals/ContactTrigger";
+
+const SECONDARY_BUTTON =
+    "inline-flex z-20 items-center gap-2 rounded-lg border border-gray-300 bg-transparent px-5 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:border-gray-400 hover:bg-gray-100 hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 dark:border-neutral-700 dark:text-neutral-200 dark:hover:border-neutral-500 dark:hover:bg-neutral-800/70 dark:hover:text-white";
 
 type Stat = {
     value: string;
@@ -127,24 +131,22 @@ const About: React.FC = () => {
                     <div className="flex flex-wrap gap-3 my-5">
                         <a
                             href="#projects"
-                            className="inline-flex z-20 items-center gap-2 bg-primary text-primary-foreground px-5 py-2.5 rounded-md text-sm font-medium hover:opacity-90 transition-opacity"
+                            className="group inline-flex z-20 items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm shadow-primary/20 transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                         >
-                            {t("viewProjects")} <ArrowRight size={16} />
+                            {t("viewProjects")}
+                            <ArrowRight size={16} className="transition-transform group-hover:translate-x-0.5" />
                         </a>
                         <a
-                            href="https://github.com"
+                            href="https://github.com/romulodm"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex z-20 items-center gap-2 bg-secondary text-secondary-foreground px-5 py-2.5 rounded-md text-sm font-medium hover:bg-muted transition-colors border border-border"
+                            className={SECONDARY_BUTTON}
                         >
                             <Github size={16} /> {t("github")}
                         </a>
-                        <a
-                            href="#contact"
-                            className="inline-flex z-20 items-center gap-2 bg-secondary text-secondary-foreground px-5 py-2.5 rounded-md text-sm font-medium hover:bg-muted transition-colors border border-border"
-                        >
+                        <ContactTrigger className={SECONDARY_BUTTON}>
                             <Mail size={16} /> {t("contact")}
-                        </a>
+                        </ContactTrigger>
                     </div>
 
                     {/* Stats */}
@@ -173,7 +175,7 @@ const About: React.FC = () => {
                     <div className="col-start-4 col-span-2 row-start-1 row-span-2 rounded-2xl overflow-hidden">
                         <Image
                             src={pic_2}
-                            alt="pic_ whiteboard session"
+                            alt={t("photos.whiteboard")}
                             className="w-full h-full object-cover"
                         />
                     </div>
@@ -182,7 +184,7 @@ const About: React.FC = () => {
                     <div className="col-start-1 col-span-3 row-start-2 row-span-3 rounded-2xl overflow-hidden">
                         <Image
                             src={pic_1}
-                            alt="pic_ collaboration"
+                            alt={t("photos.collaboration")}
                             className="w-full h-full object-cover shadow-5xl shadow-black dark:shadow-black/40"
                         />
                     </div>
@@ -191,7 +193,7 @@ const About: React.FC = () => {
                     <div className="col-start-4 col-span-2 row-start-3 row-span-3 rounded-2xl overflow-hidden">
                         <Image
                             src={pic_4}
-                            alt="pic_ member"
+                            alt={t("photos.member")}
                             className="w-full h-full object-cover"
                         />
                     </div>
@@ -200,7 +202,7 @@ const About: React.FC = () => {
                     <div className="col-start-1 col-span-3 row-start-5 row-span-2 rounded-2xl overflow-hidden">
                         <Image
                             src={pic_3}
-                            alt="Coworking space"
+                            alt={t("photos.coworking")}
                             className="w-full h-full object-cover"
                         />
                     </div>
@@ -209,7 +211,7 @@ const About: React.FC = () => {
                     <div className="col-start-4 col-span-2 row-start-6 row-span-2 rounded-2xl overflow-hidden">
                         <Image
                             src={pic_5}
-                            alt="Nova imagem"
+                            alt={t("photos.workspace")}
                             className="w-full h-full object-cover"
                         />
                     </div>
