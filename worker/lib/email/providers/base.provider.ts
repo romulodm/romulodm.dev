@@ -8,6 +8,13 @@ export interface SendEmailOptions {
   replyTo?: string;
   messageId?: string;
   /**
+   * Extra MIME headers, e.g. List-Unsubscribe / List-Unsubscribe-Post for
+   * mailing-list sends (see listUnsubscribeHeaders in email.worker.ts).
+   * Honoured by ResendProvider and SmtpProvider; SesProvider drops them, see
+   * the note there.
+   */
+  headers?: Record<string, string>;
+  /**
    * True quando essa é a última tentativa que o BullMQ vai fazer desse job
    * (ver `isFinalAttempt()` em email.worker.ts). O FallbackProvider usa isso
    * pra decidir se vale esperar mais uma rodada de retry — idempotente,

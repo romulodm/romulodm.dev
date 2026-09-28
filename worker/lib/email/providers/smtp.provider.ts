@@ -69,6 +69,7 @@ export class SmtpProvider implements EmailProvider {
       html: opts.html,
       replyTo: opts.replyTo,
       messageId: opts.messageId,
+      headers: opts.headers,
     });
 
     return { messageId: info.messageId, success: true };
