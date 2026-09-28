@@ -1,6 +1,6 @@
 // lib/alerts.ts
 
-import { notifyWorkerAlert } from "./telegram";
+import { notifyWorkerAlert, telegramConfigured } from "./telegram";
 
 const ALERT_WINDOW_MS = Number(process.env.WORKER_ALERT_WINDOW_MS ?? 15 * 60 * 1000);
 const ALERTS_ENABLED = process.env.WORKER_TELEGRAM_ALERTS !== "false";
@@ -30,7 +30,8 @@ function shouldSend(signature: string): boolean {
 
 /**
  * Dispara alerta no Telegram. Nunca lanca e nunca bloqueia o caller por muito
- * tempo — se o bot estiver fora do ar o erro e ignorado (o Sentry ja registrou).
+ * tempo (timeout de TELEGRAM_TIMEOUT_MS) — se o Telegram falhar o erro e
+ * ignorado (o Sentry ja registrou).
  */
 export async function sendWorkerAlert(options: {
     event: string;
@@ -39,7 +40,7 @@ export async function sendWorkerAlert(options: {
     jobId?: string;
 }): Promise<void> {
     if (!ALERTS_ENABLED) return;
-    if (!process.env.TELEGRAM_BOT_URL || !process.env.TELEGRAM_NOTIFY_SECRET) return;
+    if (!telegramConfigured()) return;
 
     const message =
         options.error instanceof Error ? options.error.message : String(options.error ?? "erro desconhecido");
