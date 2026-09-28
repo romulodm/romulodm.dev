@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { markdownToHtml } from '@/lib/markdown'
+import { useTranslations } from 'next-intl'
 
 interface MarkdownPreviewProps {
   title: string
@@ -16,6 +17,7 @@ export function MarkdownPreview({
   coverImageUrl,
   tags,
 }: MarkdownPreviewProps) {
+  const t = useTranslations('admin.postEditor.preview')
   const [html, setHtml] = useState('')
 
   useEffect(() => {
@@ -28,7 +30,7 @@ export function MarkdownPreview({
         <div className="overflow-hidden rounded-t-lg">
           <img
             src={coverImageUrl}
-            alt="Cover"
+            alt={t('coverAlt')}
             className="w-full h-80 object-cover"
           />
         </div>
@@ -36,7 +38,7 @@ export function MarkdownPreview({
 
       <article className="p-8 md:p-12">
         <h1 className="text-5xl font-bold text-gray-900 mb-4">
-          {title || 'Untitled'}
+          {title || t('untitled')}
         </h1>
 
         {tags.length > 0 && (

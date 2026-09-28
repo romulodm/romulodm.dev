@@ -16,6 +16,8 @@ import {
     sanitizeMultilineText,
 } from "@/lib/api-validation";
 import { AVATAR_SELECT } from "@/lib/avatar";
+import { getCommentDepth } from "@/lib/comment-depth";
+import { canReplyAtDepth } from "@/lib/comment-rules";
 import { enqueueNotification } from '@/lib/queues/notification.queue';
 import { moderate } from '@/lib/moderation';
 import { getRequestIp, rateLimit } from '@/lib/rate-limit';
@@ -139,6 +141,9 @@ export async function POST(request: NextRequest) {
             });
             if (!parent) {
                 return notFoundResponse(t('comments.parentNotFound'));
+            }
+            if (!canReplyAtDepth(await getCommentDepth(parentId))) {
+                return forbiddenResponse(t('comments.maxDepth'));
             }
         }
 
