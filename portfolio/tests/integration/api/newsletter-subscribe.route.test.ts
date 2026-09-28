@@ -42,7 +42,7 @@ describe("POST /api/newsletter/subscribe", () => {
     const payload = await response.json();
 
     expect(response.status).toBe(200);
-    expect(payload.message).toBe("Verifique seu e-mail para confirmar a inscricao.");
+    expect(payload.message).toBe("Inscrição recebida. Confira seu e-mail para confirmar.");
     expect(subscribeMock).toHaveBeenCalledWith("user@example.com");
   });
 
@@ -86,7 +86,7 @@ describe("POST /api/newsletter/subscribe", () => {
     const payload = await response.json();
 
     expect(response.status).toBe(500);
-    expect(payload.error).toBe("Erro interno. Tente novamente.");
+    expect(payload.error).toBe("Não consegui registrar sua inscrição agora. Tenta de novo em instantes.");
     expect(payload.code).toBe("internal_error");
   });
 });
