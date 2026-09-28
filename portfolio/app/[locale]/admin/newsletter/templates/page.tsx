@@ -18,9 +18,8 @@ import { InteractiveCustomPreviewCard } from "./InteractiveCustomPreviewCard";
 
 const BRAND: BrandConfig = {
     name: process.env.NEXT_PUBLIC_APP_NAME ?? "romulodm",
-    baseUrl: process.env.NEXT_PUBLIC_APP_URL ?? "https://romulodm.com.br",
+    baseUrl: process.env.NEXT_PUBLIC_APP_URL ?? "https://romulodm.dev",
     accentColor: "#f57842",
-    privacyUrl: `${process.env.NEXT_PUBLIC_APP_URL ?? "https://romulodm.com.br"}/privacy`,
 };
 
 // ─── Dummy recipient for preview ──────────────────────────────────────────────
