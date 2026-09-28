@@ -80,7 +80,7 @@ function HomeContent() {
         </div>
       </section>
 
-      <section className='w-full flex items-center justify-center pb-16 px-4 max-w-7xl mx-auto'>
+      <section id="projects" className='scroll-mt-20 w-full flex items-center justify-center pb-16 px-4 max-w-7xl mx-auto'>
         <div className="flex flex-col justify-center items-center w-full max-w-7xl mx-auto">
           <div className="flex flex-row justify-center w-full py-2">
             <SectionHeader
