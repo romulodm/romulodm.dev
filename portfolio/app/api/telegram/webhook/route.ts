@@ -13,14 +13,17 @@ import {
 export const dynamic = 'force-dynamic';
 
 /**
- * Why the webhook points here and not at the bot in bot/.
+ * Why the webhook points at the site.
  *
- * That bot is an outbound bridge: the worker posts to it and it writes to the
- * chat. It has no access to Redis and it sleeps on Render's free plan, so a
- * command typed on a phone would wait for a cold start and then still need a
- * round trip back here to store anything. Telegram delivering the update
- * straight to the site removes both hops. The bot keeps sending notifications;
- * nothing about it changes.
+ * Outbound notifications are sent by the worker, straight to the Bot API
+ * (worker/lib/telegram.ts). Nothing there listens for updates, and the /status
+ * command needs Redis, which the site already talks to. Telegram delivering
+ * the update here stores the status in one hop.
+ *
+ * The reply below is deliberately not shared with the worker's sender: it is
+ * plain text (see the comment in `reply`) and must never throw, while the
+ * worker's sender uses MarkdownV2 and throws so BullMQ can retry. Sharing would
+ * mean a new workspace package for about fifteen lines.
  *
  * Two checks guard the route, and both matter:
  *
