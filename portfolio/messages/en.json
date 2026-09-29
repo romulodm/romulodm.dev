@@ -22,6 +22,23 @@
         "success": "Subscription received. Check your email to confirm it.",
         "rateLimited": "Too many sign-up attempts in a row. Give it a few minutes and try again.",
         "internal": "I couldn't save your subscription right now. Try again in a moment."
+      },
+      "confirm": {
+        "missingToken": "The confirmation link is incomplete.",
+        "invalidToken": "This confirmation link expired or was already used.",
+        "success": "Subscription confirmed.",
+        "internal": "I couldn't confirm your subscription right now. Try again in a moment."
+      },
+      "unsubscribe": {
+        "missingToken": "The unsubscribe link is incomplete.",
+        "invalidToken": "This unsubscribe link doesn't match any subscription.",
+        "success": "Unsubscribed.",
+        "internal": "I couldn't cancel your subscription right now. Try again in a moment."
+      },
+      "requestUnsubscribe": {
+        "success": "If that email is subscribed, a link to confirm the unsubscribe is on its way.",
+        "rateLimited": "Too many unsubscribe requests in a row. Give it a few minutes and try again.",
+        "internal": "I couldn't save the request right now. Try again in a moment."
       }
     },
     "comments": {
@@ -2124,16 +2141,16 @@
   "cookieBanner": {
     "ariaLabel": "Cookie consent banner",
     "title": "Allow cookies?",
-    "safeExperience": "We use cookies to provide a safer, more personalized browsing experience.",
-    "descriptionPrefix": "Learn more in ",
+    "description": "Google Analytics is always on. \"Allow\" adds demographics.",
+    "descriptionPrefix": "Learn more in the ",
     "policyLink": "Cookie Policy",
     "accept": "Allow",
-    "decline": "Decline"
+    "essentialOnly": "Essential only"
   },
   "legal": {
     "cookiePolicy": {
       "title": "Cookie Policy",
-      "updatedAt": "Last updated: February 2026",
+      "updatedAt": "Last updated: September 2026",
       "close": "Close",
       "sections": {
         "whatAreCookies": {
@@ -2142,23 +2159,23 @@
         },
         "essential": {
           "title": "1. Essential cookies",
-          "body": "These cookies are necessary for the basic operation of the website. They include cookies that allow you to sign in to secure areas or use core functionality. Without them, requested services cannot be provided."
+          "body": "Always on. They include session and security cookies, the cookie that stores your banner choice and the Google Analytics 4 cookies (_ga and _ga_*), used to measure in aggregate which pages are visited, where traffic comes from and how people navigate. Measurement relies on legitimate interest (LGPD, art. 7, IX) and is not used for advertising."
         },
         "performance": {
-          "title": "2. Performance cookies",
-          "body": "These cookies collect information about how visitors use the website — such as the pages visited most often or whether they encounter error messages. They do not collect information that personally identifies a visitor."
+          "title": "2. Audience metrics",
+          "body": "Google Analytics 4 records page views, scrolling, outbound link clicks, searches, downloads and form and video interactions, together with technical data such as browser, device and approximate location (city). Google does not log or store the full IP address. The data is processed by Google in the United States."
         },
         "functionality": {
           "title": "3. Functionality cookies",
-          "body": "These cookies allow the website to remember your choices, such as language or region, and provide enhanced, more personalized features. The information collected can be anonymized and cannot track browsing activity on other websites."
+          "body": "They let the site remember your choices, such as language and theme. They stay in your browser and do not track your browsing on other sites."
         },
         "targeting": {
-          "title": "4. Targeting cookies",
-          "body": "These cookies are used to present more relevant content and can help limit how many times you see an advertisement, as well as measure the effectiveness of campaigns."
+          "title": "4. Google signals (optional)",
+          "body": "Only enabled when you click \"Allow\". With them, Google associates visits from people signed in to a Google account to produce aggregated reports on age, gender, interests and cross-device use. No data is used to personalize ads. With \"Essential only\", signals stay off."
         },
         "manage": {
-          "title": "5. How to manage cookies",
-          "body": "Most browsers allow you to control cookies through preference settings. Limiting cookies may affect your browsing experience and prevent the website from remembering personalized settings."
+          "title": "5. How to manage or object",
+          "body": "To turn Google Analytics off in this browser, use the link in section 7.4 of the <link>Privacy Policy</link>. To change your banner choice, delete the cookie_consent cookie and the banner shows again. You can also block cookies in your browser settings."
         }
       }
     },
@@ -2364,51 +2381,57 @@
   },
   "newsletterConfirm": {
     "metaTitle": "Confirm subscription",
-    "messages": {
-      "success": "Subscription confirmed!",
-      "error": "I couldn't confirm your subscription.",
-      "network": "Couldn't reach the server. Try again later."
+    "eyebrow": "Newsletter",
+    "loading": {
+      "title": "Confirming your subscription",
+      "description": "One moment."
     },
-    "heading": {
-      "loading": "Confirming…",
-      "success": "You're all set! 🎉",
-      "error": "Oops! Something went wrong"
+    "success": {
+      "title": "Subscription confirmed\u00a0🎉",
+      "description": "Upcoming newsletter issues will land in this inbox. Each one carries a post, a roundup of several or an update, and always an unsubscribe link."
     },
-    "benefits": {
-      "title": "From now on you'll get:",
-      "newPosts": "New posts as soon as they go live",
-      "tips": "Tips and exclusive content",
-      "projects": "News and projects"
+    "invalid": {
+      "title": "This link no longer works",
+      "description": "Confirmation links last 24 hours and work only once. If you already clicked it, you're subscribed. If not, sign up again to get a fresh link."
     },
-    "causes": {
-      "title": "Possible causes:",
-      "expired": "The link expired (valid for 24h)",
-      "alreadyConfirmed": "This email was already confirmed",
-      "invalid": "The link is incorrect"
+    "failed": {
+      "title": "Couldn't confirm right now",
+      "description": "The server didn't respond. The link stays valid for 24 hours after you signed up, so you can try again in a bit."
     },
-    "home": "Go to home",
-    "persisting": "Still having trouble?",
-    "subscribeAgain": "Subscribe again"
+    "actions": {
+      "blog": "Read the blog",
+      "home": "Go to home",
+      "subscribeAgain": "Sign up again",
+      "retry": "Try again"
+    }
   },
   "newsletterUnsubscribe": {
     "metaTitle": "Unsubscribe",
-    "messages": {
-      "success": "You have been unsubscribed.",
-      "error": "I couldn't cancel your subscription.",
-      "network": "Couldn't reach the server. Try again."
+    "eyebrow": "Newsletter",
+    "confirm": {
+      "title": "Unsubscribe?",
+      "description": "You'll stop getting newsletter emails. You can sign up again anytime."
     },
-    "heading": {
-      "confirm": "Unsubscribe?",
-      "loading": "Processing…",
-      "success": "Unsubscribed",
-      "error": "Oops! Something went wrong"
+    "success": {
+      "title": "Unsubscribed\u00a0😢",
+      "description": "No more newsletter emails will reach you. If you change your mind, the sign-up form is on the newsletter page."
     },
-    "confirmDescription": "You won't get new posts and updates by email anymore. You can subscribe again anytime.",
-    "confirmAction": "Yes, unsubscribe",
-    "cancelAction": "No, keep me subscribed",
-    "missYou": "We'll miss you! 😢",
-    "resubscribeAnytime": "You can subscribe again anytime.",
-    "home": "Go to home"
+    "invalid": {
+      "title": "Invalid link",
+      "description": "This link doesn't match any subscription. Check that it was copied in full, or use the unsubscribe link at the bottom of any newsletter email."
+    },
+    "failed": {
+      "title": "Couldn't unsubscribe right now",
+      "description": "The server didn't respond. The link still works, so you can try again in a bit."
+    },
+    "actions": {
+      "unsubscribe": "Unsubscribe",
+      "working": "Unsubscribing…",
+      "stay": "Stay subscribed",
+      "home": "Go to home",
+      "newsletter": "See the newsletter",
+      "retry": "Try again"
+    }
   },
   "githubStars": {
     "label": "Star",
