@@ -11,6 +11,7 @@ import {
 } from "@/lib/api-errors";
 import { getApiTranslator } from "@/lib/api-intl";
 import { getOtherLocales } from "@/lib/locales";
+import { sweepUnusedPostMedia } from "@/lib/post-media";
 import { isValidPostId } from "@/lib/s3";
 import { slugify, uniqueSlug } from "@/lib/markdown";
 import { syncPostToSearch } from "@/lib/search-sync";
@@ -164,6 +165,15 @@ export async function POST(req: NextRequest) {
 
     // Nao indexa se nasceu como rascunho — a propria funcao decide pelo status.
     await syncPostToSearch(post.id);
+
+    // Drops images uploaded during editing that the saved post no longer
+    // uses. The save itself already succeeded, so a storage failure is only
+    // logged; the leftovers are picked up by the next save.
+    try {
+      await sweepUnusedPostMedia(post.id);
+    } catch (error) {
+      logApiError("admin-posts-create.media-sweep", error, { postId: post.id });
+    }
 
     return NextResponse.json(post, { status: 201 });
   } catch (error) {

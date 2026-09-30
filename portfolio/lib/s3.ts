@@ -54,7 +54,7 @@ export function createPostId(): string {
   return `c${time}${random}`
 }
 
-function postMediaPrefix(postId: string): string {
+export function postMediaPrefix(postId: string): string {
   return `${POST_MEDIA_ROOT}/${postId}/`
 }
 
@@ -75,8 +75,14 @@ const EXTENSION_BY_TYPE: Record<string, string> = {
 function buildObjectKey(postId: string, kind: UploadKind, contentType: string): string {
   const extension = EXTENSION_BY_TYPE[contentType]
   const name = randomBytes(12).toString('hex')
-  const prefix = kind === 'cover' ? 'cover-' : ''
+  const prefix = kind === 'cover' ? COVER_NAME_PREFIX : ''
   return `${postMediaPrefix(postId)}${prefix}${name}.${extension}`
+}
+
+const COVER_NAME_PREFIX = 'cover-'
+
+export function isCoverKey(key: string): boolean {
+  return key.slice(key.lastIndexOf('/') + 1).startsWith(COVER_NAME_PREFIX)
 }
 
 export async function generatePresignedUpload(
@@ -113,41 +119,52 @@ export async function generatePresignedUpload(
   }
 }
 
-/**
- * Removes every object under a post's media prefix and returns how many were
- * deleted. Objects are removed one at a time: a post holds a handful of
- * images, and single-object deletes avoid the Content-MD5/checksum
- * requirements that DeleteObjects has against MinIO.
- */
-export async function deletePostMedia(postId: string): Promise<number> {
+/** Lists every object key under a post's media prefix. */
+export async function listPostMediaKeys(postId: string): Promise<string[]> {
   if (!isValidPostId(postId)) {
     throw new Error(`Invalid post id: ${postId}`)
   }
 
-  const bucket = process.env.MINIO_BUCKET_NAME!
-  const prefix = postMediaPrefix(postId)
-  let deleted = 0
+  const keys: string[] = []
   let continuationToken: string | undefined
 
   do {
     const page = await s3Client.send(
       new ListObjectsV2Command({
-        Bucket: bucket,
-        Prefix: prefix,
+        Bucket: process.env.MINIO_BUCKET_NAME!,
+        Prefix: postMediaPrefix(postId),
         ContinuationToken: continuationToken,
       })
     )
 
     for (const object of page.Contents ?? []) {
-      if (!object.Key) continue
-      await s3Client.send(new DeleteObjectCommand({ Bucket: bucket, Key: object.Key }))
-      deleted++
+      if (object.Key) keys.push(object.Key)
     }
 
     continuationToken = page.IsTruncated ? page.NextContinuationToken : undefined
   } while (continuationToken)
 
-  return deleted
+  return keys
+}
+
+/**
+ * Deletes the given objects one at a time. A post holds a handful of images,
+ * and single-object deletes avoid the Content-MD5/checksum requirements that
+ * DeleteObjects has against MinIO.
+ */
+export async function deleteMediaObjects(keys: string[]): Promise<void> {
+  for (const key of keys) {
+    await s3Client.send(
+      new DeleteObjectCommand({ Bucket: process.env.MINIO_BUCKET_NAME!, Key: key })
+    )
+  }
+}
+
+/** Removes every object under a post's media prefix; returns how many. */
+export async function deletePostMedia(postId: string): Promise<number> {
+  const keys = await listPostMediaKeys(postId)
+  await deleteMediaObjects(keys)
+  return keys.length
 }
 
 const ALLOWED_IMAGE_TYPES = Object.keys(EXTENSION_BY_TYPE)

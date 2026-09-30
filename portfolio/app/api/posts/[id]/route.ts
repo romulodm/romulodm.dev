@@ -14,6 +14,7 @@ import {
 } from "@/lib/api-errors";
 import { getApiTranslator } from "@/lib/api-intl";
 import { slugify, uniqueSlug, generateExcerpt } from "@/lib/markdown";
+import { sweepUnusedPostMedia } from "@/lib/post-media";
 import { deletePostMedia } from "@/lib/s3";
 import { removePostFromSearch, syncPostToSearch } from "@/lib/search-sync";
 
@@ -234,6 +235,15 @@ export async function PATCH(
     // Cobre os dois sentidos: publicar indexa, despublicar remove. Tambem
     // reindexa quando so o conteudo mudou — titulo e resumo entram no indice.
     await syncPostToSearch(params.id);
+
+    // Drops images uploaded during editing that the saved post no longer
+    // uses. The save itself already succeeded, so a storage failure is only
+    // logged; the leftovers are picked up by the next save.
+    try {
+      await sweepUnusedPostMedia(params.id);
+    } catch (error) {
+      logApiError("admin-posts-update.media-sweep", error, { postId: params.id });
+    }
 
     return NextResponse.json(updated);
   } catch (error) {
