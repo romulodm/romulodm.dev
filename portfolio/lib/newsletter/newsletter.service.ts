@@ -70,7 +70,7 @@ async function resolveRecipientContext(
 
 // ── Subscribe ────────────────────────────────────────────────────────────────
 
-export async function subscribe(email: string) {
+export async function subscribe(email: string, requestLocale?: string) {
   const existing = await prisma.newsletterSubscriber.findUnique({
     where: { email },
     select: {
@@ -94,6 +94,10 @@ export async function subscribe(email: string) {
     Date.now() + CONFIRMATION_TTL_HOURS * 3_600_000,
   );
 
+  // Subscribing again from a different language switches the preference too:
+  // the welcome email and future campaigns follow the latest request.
+  const preferredLocale = requestLocale ? resolveLocale(requestLocale) : undefined;
+
   if (existing) {
     await prisma.newsletterSubscriber.update({
       where: { email },
@@ -103,17 +107,25 @@ export async function subscribe(email: string) {
         unsubscribeToken,
         isConfirmed: false,
         unsubscribedAt: null,
+        ...(preferredLocale && { preferredLocale }),
       },
     });
   } else {
     await prisma.newsletterSubscriber.create({
-      data: { email, confirmationToken, confirmationExpires, unsubscribeToken },
+      data: {
+        email,
+        confirmationToken,
+        confirmationExpires,
+        unsubscribeToken,
+        ...(preferredLocale && { preferredLocale }),
+      },
     });
   }
 
   const { displayName, locale } = await resolveRecipientContext(email, existing);
+  const emailLocale = preferredLocale ?? locale;
 
-  await enqueueConfirmation(email, confirmUrl(confirmationToken), displayName, locale);
+  await enqueueConfirmation(email, confirmUrl(confirmationToken), displayName, emailLocale);
   return { status: "confirmation_sent" as const };
 }
 
