@@ -167,7 +167,12 @@ export async function subscribeFromProfile() {
         `${process.env.NEXT_PUBLIC_APP_URL}/api/newsletter/subscribe`,
         {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            // A server-side fetch carries no cookie or referer, so the route
+            // cannot infer the visitor's locale on its own.
+            headers: {
+                "Content-Type": "application/json",
+                "x-next-intl-locale": await getLocale(),
+            },
             body: JSON.stringify({ email: session.user.email }),
         },
     );
