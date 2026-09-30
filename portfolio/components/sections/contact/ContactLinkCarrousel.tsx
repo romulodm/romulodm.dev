@@ -6,28 +6,40 @@ import React from 'react';
 import { AiFillInstagram } from 'react-icons/ai';
 import { FaGithub, FaLinkedin, FaTwitch } from 'react-icons/fa';
 import { SiOnlyfans } from 'react-icons/si';
-import Tooltip from '@mui/material/Tooltip';
-import { styled } from '@mui/material/styles';
-import { TooltipProps } from '@mui/material/Tooltip';
+import * as TooltipPrimitive from '@radix-ui/react-tooltip';
 import { LattesIcon } from '@/components/icons/LattesIcon'
 
-interface ItemTooltipProps extends TooltipProps {
-  color?: string;
+interface ItemTooltipProps {
+  title: string;
+  color: string;
+  children: React.ReactElement;
 }
 
-const ItemTooltip = styled(({ className, ...props }: ItemTooltipProps) => (
-  <Tooltip {...props} arrow classes={{ popper: className }} />
-))<ItemTooltipProps>(({ color }) => ({
-  '& .MuiTooltip-arrow': {
-    color: color,
-  },
-  '& .MuiTooltip-tooltip': {
-    backgroundColor: color,
-    // Sem tema MUI, o Tooltip usaria Roboto/Arial; herda a fonte do site.
-    fontFamily: 'inherit',
-    fontSize: '0.875rem',
-  },
-}));
+/**
+ * Tooltip tinted with the network's brand color. It uses the Radix primitive
+ * directly instead of the shared `ui/tooltip`, whose dark chip and arrow
+ * colors are fixed by class; here both come from the link's `color`.
+ */
+function ItemTooltip({ title, color, children }: ItemTooltipProps): React.JSX.Element {
+  return (
+    <TooltipPrimitive.Provider delayDuration={100}>
+      <TooltipPrimitive.Root>
+        <TooltipPrimitive.Trigger asChild>{children}</TooltipPrimitive.Trigger>
+        <TooltipPrimitive.Portal>
+          <TooltipPrimitive.Content
+            side="bottom"
+            sideOffset={6}
+            style={{ backgroundColor: color }}
+            className="pointer-events-none z-50 select-none whitespace-nowrap rounded-md px-2.5 py-1 text-sm font-medium text-white shadow-lg duration-150 ease-out animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-1"
+          >
+            {title}
+            <TooltipPrimitive.Arrow width={10} height={5} style={{ fill: color }} />
+          </TooltipPrimitive.Content>
+        </TooltipPrimitive.Portal>
+      </TooltipPrimitive.Root>
+    </TooltipPrimitive.Provider>
+  );
+}
 
 interface LinkItem {
   url: string;
@@ -41,7 +53,7 @@ interface LinkProps extends LinkItem { }
 
 function Link({ url, icon, title, color, id }: LinkProps): React.JSX.Element {
   return (
-    <ItemTooltip title={title} placement="bottom" color={color}>
+    <ItemTooltip title={title} color={color}>
       <a
         href={url}
         target="_blank"
