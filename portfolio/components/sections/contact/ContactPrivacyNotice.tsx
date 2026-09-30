@@ -10,7 +10,8 @@
  * "responder mensagens de contato" como Art. 7º, V e IX da LGPD: execução de
  * procedimentos preliminares e legítimo interesse. Não é Art. 7º, I. As duas
  * únicas finalidades que a política marca como consentimento são a newsletter
- * e os cookies analíticos, e as duas têm um opt-in de verdade em outro lugar.
+ * e os sinais do Google no Analytics, e as duas têm um opt-in de verdade em
+ * outro lugar.
  *
  * Um checkbox de "concordo com o tratamento dos meus dados" aqui trocaria uma
  * base legal sólida por uma frágil: consentimento é revogável a qualquer

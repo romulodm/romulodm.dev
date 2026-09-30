@@ -1,43 +1,21 @@
-﻿'use client';
+'use client';
 
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Cookie } from 'lucide-react';
 import { CookiePolicyModal } from './modals/CookiePolicyModal';
-
-const CONSENT_COOKIE_NAME = 'cookie_consent';
-const CONSENT_MAX_AGE = 60 * 60 * 24 * 365;
-
-type ConsentStatus = 'accepted' | 'declined' | null;
-
-function getConsentCookie(): ConsentStatus {
-  if (typeof document === 'undefined') return null;
-  const match = document.cookie.match(new RegExp(`(?:^|; )${CONSENT_COOKIE_NAME}=([^;]*)`));
-  if (!match) return null;
-  const value = decodeURIComponent(match[1]);
-  return value === 'accepted' || value === 'declined' ? value : null;
-}
-
-function setConsentCookie(status: 'accepted' | 'declined') {
-  document.cookie = `${CONSENT_COOKIE_NAME}=${status}; path=/; max-age=${CONSENT_MAX_AGE}; SameSite=Lax`;
-}
-
-function removeNonEssentialCookies() {
-  const essential = [CONSENT_COOKIE_NAME, '__next', '__vercel', 'next-auth'];
-  document.cookie.split(';').forEach((cookie) => {
-    const name = cookie.split('=')[0].trim();
-    if (!essential.some((e) => name === e || name.startsWith(e)) && name) {
-      document.cookie = `${name}=; path=/; max-age=0; SameSite=Lax`;
-    }
-  });
-}
+import { readConsent, writeConsent } from '@/lib/consent';
 
 interface CookieBannerProps {
   onAccept?: () => void;
-  onDecline?: () => void;
+  onEssentialOnly?: () => void;
 }
 
-export function CookieBanner({ onAccept, onDecline }: CookieBannerProps) {
+// GA4 measurement is always on (legitimate interest, see lib/consent.ts). The
+// two buttons only decide Google signals, and the copy says so explicitly: a
+// banner that implies analytics can be refused while it keeps running would be
+// the misleading-choice problem the ANPD cookie guide warns about.
+export function CookieBanner({ onAccept, onEssentialOnly }: CookieBannerProps) {
   const t = useTranslations('cookieBanner');
   const [visible, setVisible] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -45,22 +23,20 @@ export function CookieBanner({ onAccept, onDecline }: CookieBannerProps) {
 
   useEffect(() => {
     setMounted(true);
-    if (!getConsentCookie()) setVisible(true);
+    if (!readConsent()) setVisible(true);
   }, []);
 
   const handleAccept = useCallback(() => {
-    setConsentCookie('accepted');
+    writeConsent('all');
     setVisible(false);
-    window.dispatchEvent(new Event('cookie-consent-accepted'));
     onAccept?.();
   }, [onAccept]);
 
-  const handleDecline = useCallback(() => {
-    setConsentCookie('declined');
-    removeNonEssentialCookies();
+  const handleEssentialOnly = useCallback(() => {
+    writeConsent('essential');
     setVisible(false);
-    onDecline?.();
-  }, [onDecline]);
+    onEssentialOnly?.();
+  }, [onEssentialOnly]);
 
   if (!mounted) return null;
 
@@ -88,7 +64,7 @@ export function CookieBanner({ onAccept, onDecline }: CookieBannerProps) {
           <div>
             <p className="text-sm font-semibold text-foreground">{t('title')}</p>
             <p className="mt-0.5 text-xs leading-relaxed text-muted-foreground">
-              {t('safeExperience')} {t('descriptionPrefix')}{' '}
+              {t('description')} {t('descriptionPrefix')}{' '}
               <button
                 onClick={() => setPolicyOpen(true)}
                 className="font-medium text-primary underline underline-offset-2 hover:opacity-80 transition-opacity"
@@ -109,10 +85,10 @@ export function CookieBanner({ onAccept, onDecline }: CookieBannerProps) {
             {t('accept')}
           </button>
           <button
-            onClick={handleDecline}
+            onClick={handleEssentialOnly}
             className="flex-1 rounded-xl border border-border bg-muted/50 px-4 py-2.5 text-sm font-semibold text-muted-foreground transition-all hover:bg-muted hover:text-foreground active:scale-[0.98]"
           >
-            {t('decline')}
+            {t('essentialOnly')}
           </button>
         </div>
       </div>
