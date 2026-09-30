@@ -1,162 +1,90 @@
 'use client';
 
-import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
-import { CheckCircle2, XCircle, Loader2, ArrowRight } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 
-type State = "loading" | "success" | "error";
+import {
+  NewsletterStatusCard,
+  StatusButton,
+  StatusLink,
+  type NewsletterStatusTone,
+} from "@/components/newsletter/NewsletterStatusCard";
+
+// "invalid" is the 400 from the API: the token expired or was already used
+// (confirming clears it), which the visitor fixes by signing up again.
+// "failed" is everything else (rate limit, server error, no network), where
+// the same link still works and retrying is the concrete next step.
+type State = "loading" | "success" | "invalid" | "failed";
+
+const TONE: Record<State, NewsletterStatusTone> = {
+  loading: "loading",
+  success: "success",
+  invalid: "error",
+  failed: "error",
+};
 
 export default function NewsletterConfirmClient({ token }: { token: string }) {
   const t = useTranslations("newsletterConfirm");
   const [state, setState] = useState<State>("loading");
-  const [message, setMessage] = useState("");
+  // Server text for "failed" (already translated by the API); null falls back
+  // to the local copy.
+  const [serverError, setServerError] = useState<string | null>(null);
 
-  const hasRun = useRef(false);  // ← fora do useEffect
-
-  useEffect(() => {
-    if (hasRun.current) return;  // ← segunda chamada do StrictMode é ignorada
-    hasRun.current = true;
-
-    async function confirm() {
-      try {
-        const res = await fetch(`/api/newsletter/confirm/${token}`, { method: "GET" });
-        const data = await res.json();
-
-        if (res.ok) {
-          setState("success");
-          setMessage(data.message ?? t("messages.success"));
-        } else {
-          setState("error");
-          setMessage(data.error ?? t("messages.error"));
-        }
-      } catch {
-        setState("error");
-        setMessage(t("messages.network"));
+  const confirm = useCallback(async () => {
+    setState("loading");
+    setServerError(null);
+    try {
+      const res = await fetch(`/api/newsletter/confirm/${encodeURIComponent(token)}`);
+      if (res.ok) {
+        setState("success");
+        return;
       }
+      if (res.status === 400) {
+        setState("invalid");
+        return;
+      }
+      const data = await res.json().catch(() => null);
+      setServerError(typeof data?.error === "string" ? data.error : null);
+      setState("failed");
+    } catch {
+      setState("failed");
     }
+  }, [token]);
 
-    confirm();
-  }, [token, t]);
+  // StrictMode runs effects twice in development; the second GET would find
+  // the token already consumed and flip a successful confirmation to "invalid".
+  const hasRun = useRef(false);
+  useEffect(() => {
+    if (hasRun.current) return;
+    hasRun.current = true;
+    void confirm();
+  }, [confirm]);
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        {/* Card */}
-        <div className="bg-card border border-border rounded-2xl shadow-lg overflow-hidden">
-          {/* Top accent bar */}
-          <div
-            className={`h-1.5 w-full ${state === "loading"
-              ? "bg-gradient-to-r from-muted to-muted animate-pulse"
-              : state === "success"
-                ? "bg-gradient-to-r from-green-400 to-emerald-500"
-                : "bg-gradient-to-r from-red-400 to-rose-500"
-              }`}
-          />
-
-          <div className="p-8 text-center">
-            {/* Icon */}
-            <div className="flex justify-center mb-6">
-              {state === "loading" && (
-                <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center">
-                  <Loader2 className="w-9 h-9 text-muted-foreground animate-spin" />
-                </div>
-              )}
-              {state === "success" && (
-                <div className="w-20 h-20 rounded-full bg-green-100 dark:bg-green-950/40 flex items-center justify-center">
-                  <CheckCircle2 className="w-10 h-10 text-green-500" />
-                </div>
-              )}
-              {state === "error" && (
-                <div className="w-20 h-20 rounded-full bg-red-100 dark:bg-red-950/40 flex items-center justify-center">
-                  <XCircle className="w-10 h-10 text-destructive" />
-                </div>
-              )}
-            </div>
-
-            {/* Heading */}
-            <h1 className="type-h1 text-foreground mb-2">
-              {state === "loading" && t("heading.loading")}
-              {state === "success" && t("heading.success")}
-              {state === "error" && t("heading.error")}
-            </h1>
-
-            {/* Message */}
-            <p className="text-muted-foreground text-sm mb-6">{message}</p>
-
-            {/* Success details */}
-            {state === "success" && (
-              <div className="mb-6 p-4 bg-green-50 dark:bg-green-950/20 rounded-xl border border-green-200 dark:border-green-900 text-left">
-                <p className="text-sm font-medium text-green-800 dark:text-green-300 mb-2">
-                  {t("benefits.title")}
-                </p>
-                <ul className="space-y-1">
-                  {[
-                    t("benefits.newPosts"),
-                    t("benefits.tips"),
-                    t("benefits.projects"),
-                  ].map((item) => (
-                    <li
-                      key={item}
-                      className="text-sm text-green-700 dark:text-green-400 flex items-center gap-2"
-                    >
-                      <span className="w-1.5 h-1.5 rounded-full bg-green-500 shrink-0" />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {/* Error details */}
-            {state === "error" && (
-              <div className="mb-6 p-4 bg-red-50 dark:bg-red-950/20 rounded-xl border border-red-200 dark:border-red-900 text-left">
-                <p className="text-sm font-medium text-red-800 dark:text-red-300 mb-2">
-                  {t("causes.title")}
-                </p>
-                <ul className="space-y-1">
-                  {[
-                    t("causes.expired"),
-                    t("causes.alreadyConfirmed"),
-                    t("causes.invalid"),
-                  ].map((item) => (
-                    <li
-                      key={item}
-                      className="text-sm text-red-700 dark:text-red-400 flex items-center gap-2"
-                    >
-                      <span className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0" />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {/* CTA */}
-            {state !== "loading" && (
-              <Link
-                href="/"
-                className="inline-flex items-center gap-2 w-full justify-center
-                           px-6 py-3 bg-primary text-primary-foreground
-                           rounded-xl font-semibold text-sm
-                           hover:opacity-90 transition-opacity"
-              >
-                {t("home")}
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-            )}
-
-            {state === "error" && (
-              <p className="mt-4 text-xs text-muted-foreground">
-                {t("persisting")}{" "}
-                <Link href="/#newsletter" className="text-primary underline underline-offset-4">
-                  {t("subscribeAgain")}
-                </Link>
-              </p>
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
+    <NewsletterStatusCard
+      tone={TONE[state]}
+      eyebrow={t("eyebrow")}
+      title={t(`${state}.title`)}
+      description={state === "failed" && serverError ? serverError : t(`${state}.description`)}
+    >
+      {state === "success" && (
+        <>
+          <StatusLink href="/blog" primary>{t("actions.blog")}</StatusLink>
+          <StatusLink href="/">{t("actions.home")}</StatusLink>
+        </>
+      )}
+      {state === "invalid" && (
+        <>
+          <StatusLink href="/newsletter" primary>{t("actions.subscribeAgain")}</StatusLink>
+          <StatusLink href="/">{t("actions.home")}</StatusLink>
+        </>
+      )}
+      {state === "failed" && (
+        <>
+          <StatusButton onClick={confirm} primary>{t("actions.retry")}</StatusButton>
+          <StatusLink href="/">{t("actions.home")}</StatusLink>
+        </>
+      )}
+    </NewsletterStatusCard>
   );
 }

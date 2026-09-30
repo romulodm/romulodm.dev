@@ -1,6 +1,6 @@
-// src/app/newsletter/confirm/[token]/page.tsx
 import { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
+import { NewsletterStatusMain } from "@/components/newsletter/NewsletterStatusCard";
 import NewsletterConfirmClient from "./NewsletterConfirmClient";
 
 export async function generateMetadata({
@@ -19,5 +19,11 @@ export default async function NewsletterConfirmPage({
   params: Promise<{ token: string }>;
 }) {
   const { token } = await params;
-  return <NewsletterConfirmClient token={token} />;
+  return (
+    <div className="min-h-screen bg-background text-foreground">
+      <NewsletterStatusMain>
+        <NewsletterConfirmClient token={token} />
+      </NewsletterStatusMain>
+    </div>
+  );
 }
