@@ -56,6 +56,78 @@
       "parentNotFound": "O comentário que você está respondendo não existe mais.",
       "cannotComment": "Sua conta não pode comentar.",
       "commentNotFound": "Comentário não encontrado."
+    },
+    "auth": {
+      "forgot": {
+        "rateLimited": "Muitas tentativas. Tente novamente em 10 minutos.",
+        "success": "Se esse e-mail estiver cadastrado, você receberá um link em breve.",
+        "internal": "Erro interno."
+      },
+      "register": {
+        "rateLimited": "Muitas tentativas de cadastro. Tente novamente mais tarde.",
+        "conflict": "Não foi possível concluir o cadastro com os dados informados.",
+        "conflictRetry": "Não foi possível concluir o cadastro. Tente novamente.",
+        "passwordRequired": "Senha é obrigatória.",
+        "passwordMin": "A senha deve ter pelo menos 8 caracteres.",
+        "passwordMax": "A senha deve ter no máximo 128 caracteres."
+      }
+    },
+    "donations": {
+      "eth": {
+        "invalidTransaction": "Transação inválida."
+      },
+      "pix": {
+        "notAvailableInProduction": "Não disponível em produção.",
+        "missingDonationId": "donationId ausente.",
+        "chargeDescription": "{count}x café para o blog",
+        "internal": "Não foi possível criar a cobrança PIX. Tente novamente.",
+        "checkFailed": "Não foi possível verificar o pagamento. Tentando novamente..."
+      },
+      "stripe": {
+        "missingSignature": "Assinatura ausente.",
+        "invalidSignature": "Assinatura inválida.",
+        "internal": "Não foi possível criar a intenção de pagamento Stripe. Tente novamente."
+      },
+      "invalidCoffeeCount": "Quantidade de cafés inválida."
+    },
+    "posts": {
+      "noPosts": "Nenhum post encontrado.",
+      "notFound": "Post não encontrado.",
+      "missingRequiredFields": "Campos obrigatórios ausentes.",
+      "queueOnly": "O flush de views agora roda exclusivamente pelo caminho de fila com worker."
+    },
+    "uploads": {
+      "missingFields": "Campos obrigatórios ausentes: filename, contentType, kind.",
+      "invalidKind": "Tipo inválido. Deve ser \"cover\" ou \"inline\".",
+      "invalidContentType": "Tipo de arquivo não suportado.",
+      "fileTooLarge": "O arquivo é grande demais.",
+      "internal": "Não foi possível preparar o upload. Tente novamente."
+    },
+    "admin": {
+      "newsletterCampaigns": {
+        "subjectRequired": "Assunto é obrigatório.",
+        "digestMinPosts": "Um digest precisa de pelo menos 2 posts.",
+        "digestInvalidPosts": "Todos os posts do digest precisam existir e estar publicados.",
+        "postIdRequired": "postId é obrigatório para campanhas baseadas em post.",
+        "postNotFound": "Post não encontrado.",
+        "postMustBePublished": "Só é possível criar campanhas para posts publicados.",
+        "missingPortugueseTranslation": "O post precisa ter tradução em português primeiro.",
+        "customContentRequired": "Conteúdo é obrigatório para campanhas personalizadas.",
+        "notFound": "Campanha não encontrada.",
+        "draftOnlyEdit": "Apenas campanhas em rascunho podem ser editadas.",
+        "invalidPost": "Post inválido ou não publicado.",
+        "cannotDeleteSending": "Não é possível excluir uma campanha em envio.",
+        "deleted": "Campanha excluída.",
+        "draftOnlySend": "Apenas campanhas em rascunho podem ser enviadas.",
+        "invalidScheduledAt": "scheduledAt inválido.",
+        "futureScheduledAt": "scheduledAt deve ser uma data futura.",
+        "scheduled": "Campanha agendada com sucesso.",
+        "queued": "Campanha enfileirada para envio.",
+        "dispatchFailed": "Falha ao despachar campanha."
+      },
+      "suspiciousComments": {
+        "notFound": "Comentário suspeito não encontrado."
+      }
     }
   },
   "ResumePDFButton": {

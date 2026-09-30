@@ -56,6 +56,78 @@
       "parentNotFound": "The comment you're replying to no longer exists.",
       "cannotComment": "Your account can't comment.",
       "commentNotFound": "Comment not found."
+    },
+    "auth": {
+      "forgot": {
+        "rateLimited": "Too many attempts. Please try again in 10 minutes.",
+        "success": "If this email is registered, you will receive a link shortly.",
+        "internal": "Internal error."
+      },
+      "register": {
+        "rateLimited": "Too many sign-up attempts. Please try again later.",
+        "conflict": "Could not complete sign-up with the provided data.",
+        "conflictRetry": "Could not complete sign-up. Please try again.",
+        "passwordRequired": "Password is required.",
+        "passwordMin": "Password must be at least 8 characters.",
+        "passwordMax": "Password must be at most 128 characters."
+      }
+    },
+    "donations": {
+      "eth": {
+        "invalidTransaction": "Invalid transaction."
+      },
+      "pix": {
+        "notAvailableInProduction": "Not available in production.",
+        "missingDonationId": "Missing donationId.",
+        "chargeDescription": "{count}x coffee for the blog",
+        "internal": "Could not create the PIX charge. Please try again.",
+        "checkFailed": "Could not verify the payment. Retrying..."
+      },
+      "stripe": {
+        "missingSignature": "Missing signature.",
+        "invalidSignature": "Invalid signature.",
+        "internal": "Could not create the Stripe payment intent. Please try again."
+      },
+      "invalidCoffeeCount": "Invalid coffee amount."
+    },
+    "posts": {
+      "noPosts": "No posts.",
+      "notFound": "Post not found.",
+      "missingRequiredFields": "Missing required fields.",
+      "queueOnly": "View flushing now runs exclusively through the worker-backed queue path."
+    },
+    "uploads": {
+      "missingFields": "Missing required fields: filename, contentType, kind.",
+      "invalidKind": "Invalid kind. It must be \"cover\" or \"inline\".",
+      "invalidContentType": "Unsupported file type.",
+      "fileTooLarge": "File is too large.",
+      "internal": "Could not prepare the upload. Please try again."
+    },
+    "admin": {
+      "newsletterCampaigns": {
+        "subjectRequired": "Subject is required.",
+        "digestMinPosts": "A digest needs at least 2 posts.",
+        "digestInvalidPosts": "Every post in the digest must exist and be published.",
+        "postIdRequired": "postId is required for post-based campaigns.",
+        "postNotFound": "Post not found.",
+        "postMustBePublished": "You can only create campaigns for published posts.",
+        "missingPortugueseTranslation": "The post needs a Portuguese translation first.",
+        "customContentRequired": "Content is required for custom campaigns.",
+        "notFound": "Campaign not found.",
+        "draftOnlyEdit": "Only draft campaigns can be edited.",
+        "invalidPost": "Invalid or unpublished post.",
+        "cannotDeleteSending": "You cannot delete a campaign that is being sent.",
+        "deleted": "Campaign deleted.",
+        "draftOnlySend": "Only draft campaigns can be sent.",
+        "invalidScheduledAt": "Invalid scheduledAt value.",
+        "futureScheduledAt": "scheduledAt must be a future date.",
+        "scheduled": "Campaign scheduled successfully.",
+        "queued": "Campaign queued for sending.",
+        "dispatchFailed": "Failed to dispatch campaign."
+      },
+      "suspiciousComments": {
+        "notFound": "Suspicious comment not found."
+      }
     }
   },
   "ResumePDFButton": {
