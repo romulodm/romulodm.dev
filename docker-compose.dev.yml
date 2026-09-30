@@ -21,16 +21,17 @@ services:
   mailcatcher:
     image: sj26/mailcatcher
     container_name: mailcatcher
+    restart: unless-stopped
     env_file:
       - .env
     expose:
       - '${SMTP_PORT}'
       - '${HTTP_PORT}'
     ports:
-      - '${SMTP_PORT}:1025'
-      - '${HTTP_PORT}:1080'
+      - "1025:1025"
+      - "1080:1080"
     networks:
-    - dev-romulodm-network
+      - dev-romulodm-network
 
   minio:
     image: minio/minio:latest
@@ -95,10 +96,16 @@ services:
     container_name: dev-romulodm-worker
     env_file:
       - .env
+    environment:
+      # .env points REDIS_URL at localhost for the Next.js dev server running on
+      # the host. Inside this container localhost is the worker itself, so it
+      # must reach Redis by its service name instead.
+      REDIS_URL: redis://redis:6379
     restart: unless-stopped
     depends_on:
       - postgres
       - redis
+      - mailcatcher
     networks:
       - dev-romulodm-network
 
