@@ -44,9 +44,9 @@ const base: LegalConfig = {
 }
 
 const byLocale: Partial<Record<string, Partial<LegalConfig>>> = {
-  pt: { EFFECTIVE_DATE: '5 de agosto de 2026' },
-  en: { EFFECTIVE_DATE: 'August 5, 2026' },
-  es: { EFFECTIVE_DATE: '5 de agosto de 2026' },
+  pt: { EFFECTIVE_DATE: '28 de setembro de 2026' },
+  en: { EFFECTIVE_DATE: 'September 28, 2026' },
+  es: { EFFECTIVE_DATE: '28 de septiembre de 2026' },
 }
 
 export function getLegalConfig(locale: string): LegalConfig {

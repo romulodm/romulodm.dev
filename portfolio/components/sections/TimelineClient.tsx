@@ -72,7 +72,7 @@ export default function TimelineClient(): ReactElement {
                                         {currentItem === globalEventIndex && (
                                             <main
                                                 aria-hidden={currentItem !== globalEventIndex}
-                                                className={`absolute w-72 top-28 px-4 pt-1 z-50 ${globalEventIndex === 0 ? 'text-left' : 'text-center'}`}
+                                                className={`absolute w-72 top-28 px-4 pt-1 z-10 ${globalEventIndex === 0 ? 'text-left' : 'text-center'}`}
                                                 style={globalEventIndex === 0 ? { transform: 'translateX(-8%)' } : { transform: 'translateX(-50%)' }}
                                             >
                                                 <h3 className="type-h3 text-gray-800 dark:text-neutral-300">

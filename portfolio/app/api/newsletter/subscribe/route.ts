@@ -6,7 +6,7 @@ import {
   rateLimitResponse,
   validationErrorResponse,
 } from "@/lib/api-errors";
-import { getApiTranslator } from "@/lib/api-intl";
+import { getApiTranslator, resolveApiLocale } from "@/lib/api-intl";
 import {
   parseJsonBodyWithMessages,
   RequestValidationError,
@@ -47,7 +47,9 @@ export async function POST(req: NextRequest) {
         fallbackMessage: t("common.invalidRequest"),
       },
     );
-    await subscribe(email);
+    // The locale the visitor is browsing in decides the language of the
+    // confirmation email and is stored as their preferred locale.
+    await subscribe(email, resolveApiLocale(req));
 
     return NextResponse.json({
       message: t("newsletter.subscribe.success"),

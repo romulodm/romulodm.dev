@@ -43,7 +43,7 @@ describe("POST /api/newsletter/subscribe", () => {
 
     expect(response.status).toBe(200);
     expect(payload.message).toBe("Inscrição recebida. Confira seu e-mail para confirmar.");
-    expect(subscribeMock).toHaveBeenCalledWith("user@example.com");
+    expect(subscribeMock).toHaveBeenCalledWith("user@example.com", "pt");
   });
 
   it("returns validation errors for invalid emails", async () => {

@@ -1,7 +1,7 @@
 # Privacy Policy
 
 **Last updated:** {{EFFECTIVE_DATE}}
-**Version:** 1.0
+**Version:** 1.1
 
 This Privacy Policy explains how personal data belonging to visitors and users of **{{DOMAIN}}** (the "Site") is collected, used, shared, stored, and protected.
 
@@ -104,7 +104,7 @@ Submission is protected by **Cloudflare Turnstile**, an anti-automation check th
 | Error and performance logs | Fault diagnosis and stability | Error monitoring service |
 | Application access logs | Compliance with Art. 15 of Law 12,965/2014 (Brazilian Internet Civil Framework) | Server/infrastructure |
 | Cookies and identifiers | See section 7 | Your browser |
-| Aggregate audience metrics | Readership statistics | Google Analytics 4, with consent only |
+| Audience metrics | Readership and navigation statistics | Google Analytics 4, always on (see section 7.2); Google signals only with "Allow" (section 7.3) |
 | Article view counts | Editorial statistics | Short-lived technical cookie + aggregate counter. Does not identify the reader |
 
 ## 4. Why data is collected and the legal basis
@@ -124,7 +124,8 @@ The LGPD requires a lawful basis for every processing activity. The table below 
 | Apply suspensions and bans and keep a record of them | Account and reason for the block | Art. 7, IX and VI — legitimate interest and regular exercise of rights |
 | Maintain Site security, availability, and diagnostics | Technical data (3.7) | Art. 7, IX |
 | Retain application access logs | Connection records | Art. 7, II — compliance with a legal obligation (Internet Civil Framework, Art. 15) |
-| Produce audience statistics using analytics cookies | See section 7 | Art. 7, I — **consent** |
+| Measure the Site's audience with Google Analytics 4 | See section 7.2 | Art. 7, IX — **legitimate interest** in understanding how the Site is used and improving it, with a right to object (section 7.4) |
+| Enable Google signals (aggregated demographics) | See section 7.3 | Art. 7, I — **consent**, given through the "Allow" button |
 | Defend against judicial, administrative, or arbitral proceedings | As required | Art. 7, VI |
 
 Where legitimate interest is the basis, processing is limited to what is strictly necessary for the stated purpose, and you may object to it through the channel in section 12.
@@ -147,7 +148,7 @@ The Site **does not sell data**. Sharing occurs only with **processors** perform
 | Automated content moderation service | Detecting abusive content before publication | Comment or message text |
 | URL safety verification service | Blocking phishing and malware links | URLs contained in submitted content |
 | Error monitoring service | Diagnosing failures | Technical logs, which may include a user identifier |
-| Google Analytics 4 | Audience statistics | See section 7; with consent only |
+| Google Analytics 4 | Audience statistics | See section 7.2 |
 | Public blockchain network | Settling cryptocurrency donations | Wallet address, amount, and message — **public and permanent** |
 
 > **Customize:** the providers currently in use are **Stripe** (credit card) and **AbacatePay** (PIX). This list may be updated if providers change; the category and purpose of processing, however, remain as described above.
@@ -168,6 +169,8 @@ If the project is ever succeeded, transferred, or discontinued, you will be noti
 Some processors are based outside Brazil, notably in the United States and the European Union. This constitutes an **international transfer of data**, permitted under Article 33 of the LGPD.
 
 These transfers occur because they are **necessary for the performance of the contract** with you (Art. 33, VI) and, where applicable, are backed by **standard contractual clauses** and the compliance commitments offered by the providers themselves. For visitors subject to the GDPR, the corresponding bases are Articles 46 and 49 of the Regulation.
+
+For **Google Analytics 4**, data is processed by Google LLC in the United States, based on the **standard contractual clauses** in Google's data protection terms (LGPD Art. 33, II, "b") and, for visitors subject to the GDPR, on Google's certification under the **EU-US Data Privacy Framework** (Art. 45 of the Regulation).
 
 ## 6. Where data is stored and how it is protected
 
@@ -191,7 +194,7 @@ Technical and organizational measures in place:
 
 ## 7. Cookies and similar technologies
 
-Cookies are small files stored in your browser. The Site uses the following categories:
+Cookies are small files stored in your browser. The Site uses the following categories. In the cookie notice, categories 7.1 and 7.2 are grouped as "essential"; only 7.3 depends on your choice.
 
 ### 7.1 Strictly necessary cookies
 
@@ -204,20 +207,27 @@ Always active, because the Site does not work without them. They do not require 
 | Preventing double-counting of article views | Technical cookie with a 30-minute lifetime |
 | Security and CSRF protection | Framework protection cookies |
 
-### 7.2 Analytics cookies (optional)
+### 7.2 Audience measurement (always on)
 
-The Site uses **Google Analytics 4** to understand which content is read most and how navigation can be improved.
+The Site uses **Google Analytics 4** to understand which content is read, where visitors come from and how navigation can be improved. This measurement is treated as an essential part of running the Site and is therefore **active for every visitor**, regardless of the choice made in the cookie notice.
 
-- Google Analytics scripts **load only after you click "Accept"** in the cookie notice. If you decline or ignore the notice, **no analytics script runs**.
-- Collection is configured with **IP anonymization**.
-- Data is used in **aggregate, statistical form**, for metrics such as most-visited pages, traffic sources, and navigation behavior.
-- **This data is not used for personalized advertising**, does not feed ad networks, and is not cross-referenced with your profile on the Site.
+- **Legal basis:** legitimate interest (LGPD Art. 7, IX) in understanding how the Site is used in order to improve it. You can object at any time (section 7.4).
+- **Cookies:** `_ga` and `_ga_*`, first-party (set on the {{DOMAIN}} domain), with a lifetime of up to 2 years.
+- **What is recorded:** pages visited, time on page, scrolling, outbound link clicks, on-site searches, file downloads, form and video interactions, traffic source (referring site or campaign), plus technical data such as browser, operating system, device type, language and approximate location (city/region).
+- **What is not recorded:** Google Analytics 4 does not log or store the full IP address; it is only used to derive approximate location and then discarded. No name, email or data from your Site account is sent to Google.
+- **Use:** statistical only. This data **is not used for personalized advertising**, does not feed ad networks and is not combined with your Site profile.
 
-### 7.3 How to manage cookies
+### 7.3 Google signals (optional)
 
-If you decline optional cookies, the Site actively removes non-essential cookies present in your browser. You may also delete cookies and adjust preferences directly in your browser settings at any time. Restricting necessary cookies may prevent sign-in and other basic functionality.
+By clicking **"Allow"**, you enable **Google signals**: for people signed in to a Google account with ad personalization turned on, Google associates visits with that account to produce **aggregated** reports on age range, gender, interests and cross-device use. The Site only sees aggregated totals, never data about a specific person. None of it is used to personalize ads.
 
-To withdraw consent you have already given, delete the `cookie_consent` cookie — the notice will reappear on your next visit.
+By clicking **"Essential only"**, Google signals stay off and the measurement in section 7.2 keeps working normally.
+
+### 7.4 How to manage or object
+
+- **Turn Google Analytics off in this browser:** [click here to opt out](?ga-optout=1). The `_ga` cookies are deleted and the script stops loading. The choice is stored in the `ga_optout` cookie for 2 years. To turn it back on, [click here](?ga-optout=0).
+- **Change the choice made in the notice:** delete the `cookie_consent` cookie; the notice will reappear on your next visit.
+- **Through your browser:** you can delete or block cookies in its settings, and also use the [official Google Analytics opt-out add-on](https://tools.google.com/dlpage/gaoptout). Restricting necessary cookies (7.1) may prevent sign-in and other basic features.
 
 ## 8. How long data is kept
 
@@ -230,6 +240,7 @@ To withdraw consent you have already given, delete the `cookie_consent` cookie �
 | Application access logs | 6 months, under Art. 15 of the Internet Civil Framework, extendable by court order |
 | IP address used for rate limiting | Minutes to hours, with automatic cache expiry |
 | Error and diagnostic logs | Per the monitoring service's retention policy, typically up to 90 days |
+| Google Analytics 4 data (user and event level) | **14 months**, per the property's retention setting. Aggregated reports, which identify no one, may be kept longer |
 | Contact form messages | For as long as they remain useful to the exchange they belong to, and at most **24 months** from submission. They may be deleted sooner, at any time, at the sender's request |
 | Ban records | For as long as necessary to prevent recurrence and to exercise legal rights |
 | Blockchain donation data | **Permanent and irreversible by nature** — see section 9.3 |

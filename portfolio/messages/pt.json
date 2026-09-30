@@ -22,6 +22,23 @@
         "success": "Inscrição recebida. Confira seu e-mail para confirmar.",
         "rateLimited": "Muitas tentativas de inscrição seguidas. Espera alguns minutos e tenta de novo.",
         "internal": "Não consegui registrar sua inscrição agora. Tenta de novo em instantes."
+      },
+      "confirm": {
+        "missingToken": "O link de confirmação está incompleto.",
+        "invalidToken": "Este link de confirmação expirou ou já foi usado.",
+        "success": "Inscrição confirmada.",
+        "internal": "Não consegui confirmar sua inscrição agora. Tenta de novo em instantes."
+      },
+      "unsubscribe": {
+        "missingToken": "O link de cancelamento está incompleto.",
+        "invalidToken": "Este link de cancelamento não corresponde a nenhuma inscrição.",
+        "success": "Inscrição cancelada.",
+        "internal": "Não consegui cancelar sua inscrição agora. Tenta de novo em instantes."
+      },
+      "requestUnsubscribe": {
+        "success": "Se esse e-mail estiver inscrito, chega nele um link para confirmar o cancelamento.",
+        "rateLimited": "Muitos pedidos de cancelamento seguidos. Espera alguns minutos e tenta de novo.",
+        "internal": "Não consegui registrar o pedido agora. Tenta de novo em instantes."
       }
     },
     "comments": {
@@ -39,6 +56,78 @@
       "parentNotFound": "O comentário que você está respondendo não existe mais.",
       "cannotComment": "Sua conta não pode comentar.",
       "commentNotFound": "Comentário não encontrado."
+    },
+    "auth": {
+      "forgot": {
+        "rateLimited": "Muitas tentativas. Tente novamente em 10 minutos.",
+        "success": "Se esse e-mail estiver cadastrado, você receberá um link em breve.",
+        "internal": "Erro interno."
+      },
+      "register": {
+        "rateLimited": "Muitas tentativas de cadastro. Tente novamente mais tarde.",
+        "conflict": "Não foi possível concluir o cadastro com os dados informados.",
+        "conflictRetry": "Não foi possível concluir o cadastro. Tente novamente.",
+        "passwordRequired": "Senha é obrigatória.",
+        "passwordMin": "A senha deve ter pelo menos 8 caracteres.",
+        "passwordMax": "A senha deve ter no máximo 128 caracteres."
+      }
+    },
+    "donations": {
+      "eth": {
+        "invalidTransaction": "Transação inválida."
+      },
+      "pix": {
+        "notAvailableInProduction": "Não disponível em produção.",
+        "missingDonationId": "donationId ausente.",
+        "chargeDescription": "{count}x café para o blog",
+        "internal": "Não foi possível criar a cobrança PIX. Tente novamente.",
+        "checkFailed": "Não foi possível verificar o pagamento. Tentando novamente..."
+      },
+      "stripe": {
+        "missingSignature": "Assinatura ausente.",
+        "invalidSignature": "Assinatura inválida.",
+        "internal": "Não foi possível criar a intenção de pagamento Stripe. Tente novamente."
+      },
+      "invalidCoffeeCount": "Quantidade de cafés inválida."
+    },
+    "posts": {
+      "noPosts": "Nenhum post encontrado.",
+      "notFound": "Post não encontrado.",
+      "missingRequiredFields": "Campos obrigatórios ausentes.",
+      "queueOnly": "O flush de views agora roda exclusivamente pelo caminho de fila com worker."
+    },
+    "uploads": {
+      "missingFields": "Campos obrigatórios ausentes: filename, contentType, kind.",
+      "invalidKind": "Tipo inválido. Deve ser \"cover\" ou \"inline\".",
+      "invalidContentType": "Tipo de arquivo não suportado.",
+      "fileTooLarge": "O arquivo é grande demais.",
+      "internal": "Não foi possível preparar o upload. Tente novamente."
+    },
+    "admin": {
+      "newsletterCampaigns": {
+        "subjectRequired": "Assunto é obrigatório.",
+        "digestMinPosts": "Um digest precisa de pelo menos 2 posts.",
+        "digestInvalidPosts": "Todos os posts do digest precisam existir e estar publicados.",
+        "postIdRequired": "postId é obrigatório para campanhas baseadas em post.",
+        "postNotFound": "Post não encontrado.",
+        "postMustBePublished": "Só é possível criar campanhas para posts publicados.",
+        "missingPortugueseTranslation": "O post precisa ter tradução em português primeiro.",
+        "customContentRequired": "Conteúdo é obrigatório para campanhas personalizadas.",
+        "notFound": "Campanha não encontrada.",
+        "draftOnlyEdit": "Apenas campanhas em rascunho podem ser editadas.",
+        "invalidPost": "Post inválido ou não publicado.",
+        "cannotDeleteSending": "Não é possível excluir uma campanha em envio.",
+        "deleted": "Campanha excluída.",
+        "draftOnlySend": "Apenas campanhas em rascunho podem ser enviadas.",
+        "invalidScheduledAt": "scheduledAt inválido.",
+        "futureScheduledAt": "scheduledAt deve ser uma data futura.",
+        "scheduled": "Campanha agendada com sucesso.",
+        "queued": "Campanha enfileirada para envio.",
+        "dispatchFailed": "Falha ao despachar campanha."
+      },
+      "suspiciousComments": {
+        "notFound": "Comentário suspeito não encontrado."
+      }
     }
   },
   "ResumePDFButton": {
@@ -2124,16 +2213,16 @@
   "cookieBanner": {
     "ariaLabel": "Banner de consentimento de cookies",
     "title": "Permitir cookies?",
-    "safeExperience": "Usamos cookies para oferecer uma experiência de navegação mais segura e personalizada.",
+    "description": "O Google Analytics fica sempre ativo. \"Permitir\" inclui dados demográficos.",
     "descriptionPrefix": "Saiba mais na ",
     "policyLink": "Política de Cookies",
     "accept": "Permitir",
-    "decline": "Recusar"
+    "essentialOnly": "Só essenciais"
   },
   "legal": {
     "cookiePolicy": {
       "title": "Política de Cookies",
-      "updatedAt": "Última atualização: Fevereiro de 2026",
+      "updatedAt": "Última atualização: Setembro de 2026",
       "close": "Fechar",
       "sections": {
         "whatAreCookies": {
@@ -2142,23 +2231,23 @@
         },
         "essential": {
           "title": "1. Cookies essenciais",
-          "body": "Esses cookies são necessários para o funcionamento básico do site. Incluem cookies que permitem que você acesse áreas seguras ou use funcionalidades principais. Sem eles, os serviços solicitados não podem ser fornecidos."
+          "body": "Sempre ativos. Incluem os cookies de sessão e segurança, o cookie que registra sua escolha no aviso e os cookies do Google Analytics 4 (_ga e _ga_*), usados para medir de forma agregada quais páginas são acessadas, de onde vem o tráfego e como as pessoas navegam. A medição se baseia no legítimo interesse (LGPD, art. 7º, IX) e não é usada para publicidade."
         },
         "performance": {
-          "title": "2. Cookies de desempenho",
-          "body": "Esses cookies coletam informações sobre como os visitantes usam o site — como as páginas mais acessadas ou se encontram mensagens de erro. Não coletam informações que identifiquem um visitante pessoalmente."
+          "title": "2. Métricas de audiência",
+          "body": "O Google Analytics 4 registra visualizações de página, rolagem, cliques em links externos, buscas, downloads e interações com formulários e vídeos, junto com dados técnicos como navegador, dispositivo e localização aproximada (cidade). O Google não registra nem armazena o endereço IP completo. Os dados são tratados pelo Google nos Estados Unidos."
         },
         "functionality": {
           "title": "3. Cookies de funcionalidade",
-          "body": "Esses cookies permitem que o site lembre suas escolhas, como idioma ou região, e ofereça recursos mais personalizados. As informações coletadas podem ser anonimizadas e não rastreiam a atividade de navegação em outros sites."
+          "body": "Permitem que o site lembre suas escolhas, como idioma e tema. Ficam só no seu navegador e não rastreiam a sua navegação em outros sites."
         },
         "targeting": {
-          "title": "4. Cookies de segmentação",
-          "body": "Esses cookies são usados para apresentar conteúdo mais relevante e podem ajudar a limitar quantas vezes você vê um anúncio, além de medir a eficácia de campanhas."
+          "title": "4. Sinais do Google (opcionais)",
+          "body": "Só são ativados quando você clica em \"Permitir\". Com eles, o Google associa as visitas de quem está conectado a uma conta Google para gerar relatórios agregados de idade, gênero, interesses e uso em vários dispositivos. Nenhum dado é usado para personalizar anúncios. Em \"Só essenciais\", os sinais ficam desligados."
         },
         "manage": {
-          "title": "5. Como gerenciar cookies",
-          "body": "A maioria dos navegadores permite controlar cookies pelas configurações de preferências. Limitar os cookies pode piorar sua experiência de navegação e impedir que o site lembre configurações personalizadas."
+          "title": "5. Como gerenciar ou se opor",
+          "body": "Para desativar o Google Analytics neste navegador, use o link na seção 7.4 da <link>Política de Privacidade</link>. Para mudar a escolha feita no aviso, apague o cookie cookie_consent e o aviso reaparece. Você também pode bloquear cookies nas configurações do navegador."
         }
       }
     },
@@ -2364,51 +2453,57 @@
   },
   "newsletterConfirm": {
     "metaTitle": "Confirmar inscrição",
-    "messages": {
-      "success": "Inscrição confirmada!",
-      "error": "Erro ao confirmar inscrição.",
-      "network": "Erro de conexão. Tente novamente mais tarde."
+    "eyebrow": "Newsletter",
+    "loading": {
+      "title": "Confirmando sua inscrição",
+      "description": "Só um instante."
     },
-    "heading": {
-      "loading": "Confirmando…",
-      "success": "Tudo certo! 🎉",
-      "error": "Ops! Algo deu errado"
+    "success": {
+      "title": "Inscrição confirmada\u00a0🎉",
+      "description": "As próximas edições da newsletter chegam neste e-mail. Cada uma traz um post, um resumo de vários ou uma novidade, e sempre um link para cancelar."
     },
-    "benefits": {
-      "title": "A partir de agora você vai receber:",
-      "newPosts": "Novos posts assim que publicados",
-      "tips": "Dicas e conteúdos exclusivos",
-      "projects": "Novidades e projetos"
+    "invalid": {
+      "title": "Este link não funciona mais",
+      "description": "Links de confirmação valem por 24 horas e só podem ser usados uma vez. Se você já clicou nele antes, sua inscrição está ativa. Se não, inscreva-se de novo para receber um link novo."
     },
-    "causes": {
-      "title": "Possíveis causas:",
-      "expired": "O link expirou (válido por 24h)",
-      "alreadyConfirmed": "Este e-mail já foi confirmado",
-      "invalid": "O link está incorreto"
+    "failed": {
+      "title": "Não deu para confirmar agora",
+      "description": "O servidor não respondeu. O link continua valendo até 24 horas depois da inscrição, então dá para tentar de novo daqui a pouco."
     },
-    "home": "Ir para o início",
-    "persisting": "Problema persistindo?",
-    "subscribeAgain": "Inscreva-se novamente"
+    "actions": {
+      "blog": "Ler o blog",
+      "home": "Ir para o início",
+      "subscribeAgain": "Inscrever-se de novo",
+      "retry": "Tentar de novo"
+    }
   },
   "newsletterUnsubscribe": {
     "metaTitle": "Cancelar inscrição",
-    "messages": {
-      "success": "Inscrição cancelada com sucesso.",
-      "error": "Erro ao cancelar inscrição.",
-      "network": "Erro de conexão. Tente novamente."
+    "eyebrow": "Newsletter",
+    "confirm": {
+      "title": "Cancelar a inscrição?",
+      "description": "Você deixa de receber os e-mails da newsletter. Dá para se inscrever de novo quando quiser."
     },
-    "heading": {
-      "confirm": "Cancelar inscrição?",
-      "loading": "Processando…",
-      "success": "Inscrição cancelada",
-      "error": "Ops! Algo deu errado"
+    "success": {
+      "title": "Inscrição cancelada\u00a0😢",
+      "description": "Nenhum outro e-mail da newsletter vai chegar. Se mudar de ideia, o formulário está na página da newsletter."
     },
-    "confirmDescription": "Você não receberá mais novos posts e atualizações por e-mail. Pode se inscrever novamente a qualquer momento.",
-    "confirmAction": "Sim, cancelar inscrição",
-    "cancelAction": "Não, quero continuar",
-    "missYou": "Sentiremos sua falta! 😢",
-    "resubscribeAnytime": "Você pode se inscrever novamente a qualquer momento.",
-    "home": "Ir para o início"
+    "invalid": {
+      "title": "Link inválido",
+      "description": "Este link não corresponde a nenhuma inscrição. Confira se ele foi copiado inteiro, ou use o link de cancelamento no fim de qualquer e-mail da newsletter."
+    },
+    "failed": {
+      "title": "Não deu para cancelar agora",
+      "description": "O servidor não respondeu. O link continua valendo, então dá para tentar de novo daqui a pouco."
+    },
+    "actions": {
+      "unsubscribe": "Cancelar inscrição",
+      "working": "Cancelando…",
+      "stay": "Continuar inscrito",
+      "home": "Ir para o início",
+      "newsletter": "Ver a newsletter",
+      "retry": "Tentar de novo"
+    }
   },
   "githubStars": {
     "label": "Star",

@@ -1,6 +1,6 @@
-// src/app/newsletter/unsubscribe/[token]/page.tsx
 import { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
+import { NewsletterStatusMain } from "@/components/newsletter/NewsletterStatusCard";
 import NewsletterUnsubscribeClient from "./NewsletterUnsubscribeClient";
 
 export async function generateMetadata({
@@ -19,5 +19,11 @@ export default async function NewsletterUnsubscribePage({
   params: Promise<{ token: string }>;
 }) {
   const { token } = await params;
-  return <NewsletterUnsubscribeClient token={token} />;
+  return (
+    <div className="min-h-screen bg-background text-foreground">
+      <NewsletterStatusMain>
+        <NewsletterUnsubscribeClient token={token} />
+      </NewsletterStatusMain>
+    </div>
+  );
 }

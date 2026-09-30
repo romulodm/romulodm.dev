@@ -1,7 +1,7 @@
 # Política de Privacidade
 
 **Última atualização:** {{EFFECTIVE_DATE}}
-**Versão:** 1.0
+**Versão:** 1.1
 
 Esta Política de Privacidade descreve como os dados pessoais dos visitantes e usuários de **{{DOMAIN}}** ("Site") são coletados, utilizados, compartilhados, armazenados e protegidos.
 
@@ -103,7 +103,7 @@ O envio é protegido pelo **Cloudflare Turnstile**, um mecanismo de verificaçã
 | Registros de erro e desempenho | Diagnóstico de falhas e estabilidade | Serviço de monitoramento de erros |
 | Registros de acesso à aplicação | Cumprimento do art. 15 da Lei nº 12.965/2014 (Marco Civil da Internet) | Servidor/infraestrutura |
 | Cookies e identificadores | Ver seção 7 | Seu navegador |
-| Métricas agregadas de audiência | Estatísticas de leitura | Google Analytics 4, somente com consentimento |
+| Métricas de audiência | Estatísticas de leitura e navegação | Google Analytics 4, sempre ativo (ver seção 7.2); sinais do Google só com "Permitir" (seção 7.3) |
 | Contagem de visualizações de artigos | Estatística editorial | Cookie técnico de curta duração + contador agregado. Não identifica o leitor |
 
 ## 4. Por que os dados são coletados e qual a base legal
@@ -123,7 +123,8 @@ A LGPD exige que todo tratamento tenha uma hipótese legal. A tabela abaixo indi
 | Aplicar suspensões e banimentos e manter seu registro | Conta e motivo do bloqueio | Art. 7º, IX e VI — legítimo interesse e exercício regular de direitos |
 | Manter a segurança, disponibilidade e diagnóstico do Site | Dados técnicos (3.7) | Art. 7º, IX |
 | Guardar registros de acesso à aplicação | Registros de conexão | Art. 7º, II — cumprimento de obrigação legal (Marco Civil da Internet, art. 15) |
-| Produzir estatísticas de audiência com cookies analíticos | Ver seção 7 | Art. 7º, I — **consentimento** |
+| Medir a audiência do Site com o Google Analytics 4 | Ver seção 7.2 | Art. 7º, IX — **legítimo interesse** em entender como o Site é usado e melhorá-lo, com direito de oposição (seção 7.4) |
+| Ativar os sinais do Google (dados demográficos agregados) | Ver seção 7.3 | Art. 7º, I — **consentimento**, dado pelo botão "Permitir" |
 | Defender-se em processos judiciais, administrativos ou arbitrais | Conforme necessário | Art. 7º, VI |
 
 Quando o legítimo interesse é a base adotada, o tratamento se limita ao estritamente necessário para a finalidade declarada, e você pode se opor a ele pelo canal indicado na seção 12.
@@ -146,7 +147,7 @@ O Site **não vende dados**. O compartilhamento ocorre apenas com **operadores**
 | Serviço de moderação automatizada de conteúdo | Detectar conteúdo abusivo antes da publicação | Texto do comentário ou mensagem |
 | Serviço de verificação de segurança de URLs | Bloquear links de *phishing* e malware | URLs contidas no conteúdo enviado |
 | Serviço de monitoramento de erros | Diagnosticar falhas | Registros técnicos, que podem conter identificador de usuário |
-| Google Analytics 4 | Estatísticas de audiência | Ver seção 7; somente com consentimento |
+| Google Analytics 4 | Estatísticas de audiência | Ver seção 7.2 |
 | Rede blockchain pública | Liquidar doações em criptomoeda | Endereço da carteira, valor e mensagem — **públicos e permanentes** |
 
 > **Personalizar:** os prestadores atualmente utilizados são o **Stripe** (cartão de crédito) e o **AbacatePay** (PIX). Esta lista pode ser atualizada caso os prestadores mudem; a categoria e a finalidade do tratamento, contudo, permanecem as descritas acima.
@@ -167,6 +168,8 @@ Se houver eventual sucessão, transferência ou descontinuação do projeto, voc
 Alguns operadores estão sediados fora do Brasil, notadamente nos Estados Unidos e na União Europeia. Isso caracteriza **transferência internacional de dados**, admitida pelo art. 33 da LGPD.
 
 Essas transferências ocorrem porque são **necessárias à execução do contrato** com você (art. 33, VI) e, quando aplicável, amparadas em **cláusulas contratuais padrão** e nos compromissos de conformidade oferecidos pelos próprios prestadores. Para visitantes sujeitos ao GDPR, as bases correspondentes são os arts. 46 e 49 do Regulamento.
+
+No caso do **Google Analytics 4**, os dados são tratados pelo Google LLC nos Estados Unidos, com base nas **cláusulas contratuais padrão** dos termos de proteção de dados do Google (art. 33, II, "b", da LGPD) e, para visitantes sujeitos ao GDPR, na adesão do Google ao **EU-US Data Privacy Framework** (art. 45 do Regulamento).
 
 ## 6. Onde os dados ficam e como são protegidos
 
@@ -190,7 +193,7 @@ Medidas técnicas e organizacionais adotadas:
 
 ## 7. Cookies e tecnologias semelhantes
 
-Cookies são pequenos arquivos gravados no seu navegador. O Site utiliza as seguintes categorias:
+Cookies são pequenos arquivos gravados no seu navegador. O Site utiliza as categorias abaixo. No aviso de cookies, as categorias 7.1 e 7.2 aparecem juntas como "essenciais"; só a 7.3 depende da sua escolha.
 
 ### 7.1 Cookies estritamente necessários
 
@@ -203,20 +206,27 @@ Sempre ativos, pois sem eles o Site não funciona. Não exigem consentimento.
 | Evitar contagem duplicada de visualizações de artigos | Cookie técnico com validade de 30 minutos |
 | Segurança e proteção contra CSRF | Cookies de proteção do framework |
 
-### 7.2 Cookies analíticos (opcionais)
+### 7.2 Medição de audiência (sempre ativa)
 
-O Site utiliza o **Google Analytics 4** para entender quais conteúdos são mais lidos e como melhorar a navegação.
+O Site utiliza o **Google Analytics 4** para entender quais conteúdos são lidos, de onde vêm os visitantes e como a navegação pode melhorar. Essa medição é tratada como parte essencial da operação do Site e, por isso, **fica ativa para todos os visitantes**, independentemente da escolha feita no aviso de cookies.
 
-- Os scripts do Google Analytics **só são carregados após você clicar em "Aceitar"** no aviso de cookies. Se você recusar ou ignorar o aviso, **nenhum script analítico é executado**.
-- A coleta é configurada com **anonimização de IP**.
-- Os dados são usados de forma **agregada e estatística**, para métricas como páginas mais acessadas, origem do tráfego e comportamento de navegação.
-- **Esses dados não são usados para publicidade personalizada**, não alimentam redes de anúncios e não são cruzados com o seu perfil no Site.
+- **Base legal:** legítimo interesse (art. 7º, IX, da LGPD) em conhecer o uso do Site para melhorá-lo. Você pode se opor a qualquer momento (seção 7.4).
+- **Cookies:** `_ga` e `_ga_*`, primários (gravados no domínio {{DOMAIN}}), com validade de até 2 anos.
+- **O que é registrado:** páginas visitadas, tempo de permanência, rolagem, cliques em links externos, buscas no Site, downloads de arquivos, interações com formulários e vídeos, origem do tráfego (site de referência ou campanha), além de dados técnicos como navegador, sistema operacional, tipo de dispositivo, idioma e localização aproximada (cidade/região).
+- **O que não é registrado:** o Google Analytics 4 não registra nem armazena o endereço IP completo; ele é usado apenas para derivar a localização aproximada e descartado em seguida. Não são enviados ao Google nome, e-mail ou qualquer dado da sua conta no Site.
+- **Uso:** exclusivamente estatístico. Esses dados **não são usados para publicidade personalizada**, não alimentam redes de anúncios e não são cruzados com o seu perfil no Site.
 
-### 7.3 Como gerenciar
+### 7.3 Sinais do Google (opcional)
 
-Ao recusar os cookies opcionais, o Site remove ativamente os cookies não essenciais presentes no seu navegador. Você também pode, a qualquer momento, apagar cookies e ajustar as preferências diretamente nas configurações do seu navegador. Restringir cookies necessários pode impedir o login e outras funcionalidades básicas.
+Ao clicar em **"Permitir"**, você autoriza os **sinais do Google**: para quem está conectado a uma conta Google com a personalização de anúncios ativada, o Google associa as visitas a essa conta para gerar relatórios **agregados** de faixa etária, gênero, interesses e uso em vários dispositivos. O Site só vê os totais agregados, nunca dados de uma pessoa específica. Nada disso é usado para personalizar anúncios.
 
-Para revogar um consentimento já dado, apague o cookie `cookie_consent` — o aviso reaparecerá na próxima visita.
+Ao clicar em **"Só essenciais"**, os sinais do Google ficam desligados e a medição da seção 7.2 continua funcionando normalmente.
+
+### 7.4 Como gerenciar ou se opor
+
+- **Desativar o Google Analytics neste navegador:** [clique aqui para desativar](?ga-optout=1). Os cookies `_ga` são apagados e o script deixa de ser carregado. A escolha fica gravada no cookie `ga_optout` por 2 anos. Para reativar, [clique aqui](?ga-optout=0).
+- **Mudar a escolha feita no aviso:** apague o cookie `cookie_consent`; o aviso reaparecerá na próxima visita.
+- **Pelo navegador:** você pode apagar ou bloquear cookies nas configurações, e também usar o [complemento oficial de desativação do Google Analytics](https://tools.google.com/dlpage/gaoptout). Restringir cookies necessários (7.1) pode impedir o login e outras funcionalidades básicas.
 
 ## 8. Por quanto tempo os dados são mantidos
 
@@ -229,6 +239,7 @@ Para revogar um consentimento já dado, apague o cookie `cookie_consent` — o a
 | Registros de acesso à aplicação | 6 meses, nos termos do art. 15 do Marco Civil da Internet, podendo ser prorrogado por ordem judicial |
 | Endereço IP para limitação de taxa | Minutos a horas, com expiração automática em cache |
 | Registros de erro e diagnóstico | Conforme a política de retenção do serviço de monitoramento, tipicamente até 90 dias |
+| Dados do Google Analytics 4 (nível de usuário e de evento) | **14 meses**, conforme a configuração de retenção da propriedade. Relatórios agregados, que não identificam ninguém, podem ser mantidos por mais tempo |
 | Mensagens do formulário de contato | Enquanto úteis para o relacionamento a que se destinam, e no máximo **24 meses** contados do envio. Podem ser excluídas antes disso, a qualquer momento, a pedido do remetente |
 | Registros de banimento | Enquanto necessário para impedir a reincidência e para exercício regular de direitos |
 | Dados de doações em blockchain | **Permanentes e irreversíveis por natureza** — ver seção 9.3 |

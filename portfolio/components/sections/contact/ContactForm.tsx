@@ -24,7 +24,7 @@ import Script from 'next/script';
 import { FiAtSign, FiUser } from 'react-icons/fi';
 import { MdErrorOutline } from 'react-icons/md';
 import { BsSendCheck } from 'react-icons/bs';
-import { CircularProgress } from '@mui/material';
+import { Loader2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { useTurnstile } from '@/hooks/useTurnstile';
@@ -291,7 +291,7 @@ export default function ContactForm({
             disabled={loading || !turnstile.ready}
           >
             {loading ? (
-              <CircularProgress size={20} style={{ fontSize: '2px' }} color="secondary" />
+              <Loader2 aria-hidden className="mx-auto size-5 animate-spin" />
             ) : (
               t('form-button')
             )}

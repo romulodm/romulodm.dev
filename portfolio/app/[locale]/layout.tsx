@@ -15,10 +15,10 @@ import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 import { ToastProvider } from "@/components/ToastProvider";
 import {
   AUTHOR_NAME,
-  DEFAULT_OG_IMAGE,
   SITE_DESCRIPTION,
   SITE_NAME,
   SITE_URL,
+  defaultOgImage,
 } from "@/lib/seo";
 
 const jetbrains = JetBrains_Mono({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--font-jetbrains" });
@@ -27,53 +27,64 @@ export function generateStaticParams() {
   return [];
 }
 
-export const metadata: Metadata = {
-  // `template` faz cada pagina virar "Blog | romulodm.dev" sem repetir o sufixo
-  // em todo generateMetadata.
-  title: {
-    default: SITE_NAME,
-    template: `%s | ${SITE_NAME}`,
-  },
-  description: SITE_DESCRIPTION,
-  metadataBase: new URL(SITE_URL),
-  applicationName: SITE_NAME,
-  authors: [{ name: AUTHOR_NAME, url: SITE_URL }],
-  creator: AUTHOR_NAME,
-  publisher: AUTHOR_NAME,
-  // Fallback de Open Graph: paginas que nao chamam buildPageMetadata ainda
-  // saem com preview em vez de link cru.
-  openGraph: {
-    type: "website",
-    siteName: SITE_NAME,
-    title: SITE_NAME,
+// A function rather than a `metadata` object so the fallback share image can
+// follow the locale.
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const ogImage = defaultOgImage(locale);
+
+  return {
+    // `template` faz cada pagina virar "Blog | romulodm.dev" sem repetir o sufixo
+    // em todo generateMetadata.
+    title: {
+      default: SITE_NAME,
+      template: `%s | ${SITE_NAME}`,
+    },
     description: SITE_DESCRIPTION,
-    images: [{ url: DEFAULT_OG_IMAGE, width: 1200, height: 630, alt: SITE_NAME }],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: SITE_NAME,
-    description: SITE_DESCRIPTION,
-    images: [DEFAULT_OG_IMAGE],
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
+    metadataBase: new URL(SITE_URL),
+    applicationName: SITE_NAME,
+    authors: [{ name: AUTHOR_NAME, url: SITE_URL }],
+    creator: AUTHOR_NAME,
+    publisher: AUTHOR_NAME,
+    // Fallback de Open Graph: paginas que nao chamam buildPageMetadata ainda
+    // saem com preview em vez de link cru.
+    openGraph: {
+      type: "website",
+      siteName: SITE_NAME,
+      title: SITE_NAME,
+      description: SITE_DESCRIPTION,
+      images: [{ url: ogImage, width: 1200, height: 630, alt: SITE_NAME }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: SITE_NAME,
+      description: SITE_DESCRIPTION,
+      images: [ogImage],
+    },
+    robots: {
       index: true,
       follow: true,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-      "max-video-preview": -1,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+        "max-video-preview": -1,
+      },
     },
-  },
-  icons: {
-    icon: [
-      { url: "/favicon.svg", type: "image/svg+xml" },
-    ],
-    shortcut: "/favicon.ico",
-    apple: "/icon.png",
-  },
-};
+    icons: {
+      icon: [
+        { url: "/favicon.svg", type: "image/svg+xml" },
+      ],
+      shortcut: "/favicon.ico",
+      apple: "/icon.png",
+    },
+  };
+}
 
 export default async function RootLayout({
   children,

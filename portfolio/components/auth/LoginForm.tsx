@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { signIn } from "next-auth/react"
 import { toast } from "react-toastify"
-import CircularProgress from "@mui/material/CircularProgress"
+import { Loader2 } from "lucide-react"
 import { MdOutlineAlternateEmail } from "react-icons/md"
 import { RiLockPasswordLine } from "react-icons/ri"
 import { MdVisibility, MdVisibilityOff } from "react-icons/md"
@@ -132,7 +132,7 @@ export function LoginForm({ onSuccess, onForgotPassword, onRegister }: Props) {
             className="w-full h-12 mt-3 bg-primary hover:bg-primary/90 text-white font-semibold rounded-lg flex items-center justify-center transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
           >
             {isSubmitting ? (
-              <CircularProgress size={20} sx={{ color: "white" }} />
+              <Loader2 aria-hidden className="size-5 animate-spin" />
             ) : (
               t("login.submit")
             )}
