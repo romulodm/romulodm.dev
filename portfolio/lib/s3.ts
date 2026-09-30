@@ -1,4 +1,11 @@
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
+import { randomBytes } from 'node:crypto'
+
+import {
+  DeleteObjectCommand,
+  ListObjectsV2Command,
+  PutObjectCommand,
+  S3Client,
+} from '@aws-sdk/client-s3'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 
 const s3Client = new S3Client({
@@ -13,20 +20,71 @@ const s3Client = new S3Client({
   responseChecksumValidation: 'WHEN_REQUIRED',
 })
 
+export type UploadKind = 'cover' | 'inline'
+
 interface PresignedUploadResult {
   uploadUrl: string
   publicUrl: string
   key: string
 }
 
+// Every image a post uses lives under posts/<postId>/. The folder is keyed by
+// the post id rather than the slug because slugs change on rename, and S3 has
+// no rename: moving a folder means copying every object and rewriting every
+// URL already embedded in the post's markdown.
+const POST_MEDIA_ROOT = 'posts'
+
+// Accepts both Prisma's cuid() ids and the ones from createPostId(). The only
+// hard requirement is that the id is a single path-safe segment.
+const POST_ID_PATTERN = /^[a-z0-9]{20,36}$/
+
+export function isValidPostId(value: unknown): value is string {
+  return typeof value === 'string' && POST_ID_PATTERN.test(value)
+}
+
+/**
+ * Generates an id for a post that does not exist yet, so the editor has a
+ * media prefix to upload into before the first save. Same shape as Prisma's
+ * cuid(): "c" + 24 lowercase base36 characters.
+ */
+export function createPostId(): string {
+  const alphabet = '0123456789abcdefghijklmnopqrstuvwxyz'
+  const time = Date.now().toString(36).padStart(8, '0').slice(-8)
+  const random = Array.from(randomBytes(16), (byte) => alphabet[byte % 36]).join('')
+  return `c${time}${random}`
+}
+
+function postMediaPrefix(postId: string): string {
+  return `${POST_MEDIA_ROOT}/${postId}/`
+}
+
+const EXTENSION_BY_TYPE: Record<string, string> = {
+  'image/jpeg': 'jpg',
+  'image/jpg': 'jpg',
+  'image/png': 'png',
+  'image/gif': 'gif',
+  'image/webp': 'webp',
+}
+
+/**
+ * Object names are random and never reused: a replaced image gets a new key
+ * instead of overwriting the old one. That is what makes the year-long
+ * `immutable` cache header in nginx safe. The uploader's original filename is
+ * deliberately not part of the key.
+ */
+function buildObjectKey(postId: string, kind: UploadKind, contentType: string): string {
+  const extension = EXTENSION_BY_TYPE[contentType]
+  const name = randomBytes(12).toString('hex')
+  const prefix = kind === 'cover' ? 'cover-' : ''
+  return `${postMediaPrefix(postId)}${prefix}${name}.${extension}`
+}
+
 export async function generatePresignedUpload(
-  filename: string,
-  contentType: string,
-  kind: 'cover' | 'inline'
+  postId: string,
+  kind: UploadKind,
+  contentType: string
 ): Promise<PresignedUploadResult> {
-  const timestamp = Date.now()
-  const sanitizedFilename = filename.replace(/[^a-zA-Z0-9._-]/g, '_')
-  const key = `${kind}/${timestamp}-${sanitizedFilename}`
+  const key = buildObjectKey(postId, kind, contentType)
 
   const command = new PutObjectCommand({
     Bucket: process.env.MINIO_BUCKET_NAME!,
@@ -55,20 +113,49 @@ export async function generatePresignedUpload(
   }
 }
 
-const ALLOWED_IMAGE_TYPES = [
-  'image/jpeg',
-  'image/jpg',
-  'image/png',
-  'image/gif',
-  'image/webp',
-]
+/**
+ * Removes every object under a post's media prefix and returns how many were
+ * deleted. Objects are removed one at a time: a post holds a handful of
+ * images, and single-object deletes avoid the Content-MD5/checksum
+ * requirements that DeleteObjects has against MinIO.
+ */
+export async function deletePostMedia(postId: string): Promise<number> {
+  if (!isValidPostId(postId)) {
+    throw new Error(`Invalid post id: ${postId}`)
+  }
+
+  const bucket = process.env.MINIO_BUCKET_NAME!
+  const prefix = postMediaPrefix(postId)
+  let deleted = 0
+  let continuationToken: string | undefined
+
+  do {
+    const page = await s3Client.send(
+      new ListObjectsV2Command({
+        Bucket: bucket,
+        Prefix: prefix,
+        ContinuationToken: continuationToken,
+      })
+    )
+
+    for (const object of page.Contents ?? []) {
+      if (!object.Key) continue
+      await s3Client.send(new DeleteObjectCommand({ Bucket: bucket, Key: object.Key }))
+      deleted++
+    }
+
+    continuationToken = page.IsTruncated ? page.NextContinuationToken : undefined
+  } while (continuationToken)
+
+  return deleted
+}
+
+const ALLOWED_IMAGE_TYPES = Object.keys(EXTENSION_BY_TYPE)
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB
 
 export function validateFileUpload(contentType: string, size?: number) {
-  const allowedTypes = [...ALLOWED_IMAGE_TYPES]
-
-  if (!allowedTypes.includes(contentType)) {
+  if (!ALLOWED_IMAGE_TYPES.includes(contentType)) {
     throw new Error(`Invalid content type: ${contentType}`)
   }
 

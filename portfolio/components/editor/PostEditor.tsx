@@ -27,6 +27,9 @@ interface ExistingTranslation {
 }
 
 interface PostEditorProps {
+  /** Id of the post being edited, or pre-generated for a new one. Uploaded
+   *  images are stored under this post's media prefix. */
+  postId: string;
   mode?: 'new' | 'edit';
   existingTranslations?: ExistingTranslation[];
   selectedLocale?: LocaleCode;
@@ -180,6 +183,7 @@ function EditLocaleTabs({
 }
 
 export function PostEditor({
+  postId,
   mode = 'new',
   existingTranslations = [],
   selectedLocale,
@@ -231,7 +235,7 @@ export function PostEditor({
       const presignRes = await fetch('/api/uploads/presign', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ filename: file.name, contentType: file.type, kind: 'cover' }),
+        body: JSON.stringify({ postId, contentType: file.type, kind: 'cover' }),
       });
       if (!presignRes.ok) throw new Error(t('errors.upload'));
 
@@ -259,7 +263,7 @@ export function PostEditor({
       const presignRes = await fetch('/api/uploads/presign', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ filename: file.name, contentType: file.type, kind: 'inline' }),
+        body: JSON.stringify({ postId, contentType: file.type, kind: 'inline' }),
       });
       if (!presignRes.ok) throw new Error(t('errors.upload'));
 

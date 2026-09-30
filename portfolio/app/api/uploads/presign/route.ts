@@ -8,7 +8,7 @@ import {
   unauthorizedResponse,
 } from "@/lib/api-errors";
 import { getApiTranslator } from "@/lib/api-intl";
-import { generatePresignedUpload, validateFileUpload } from "@/lib/s3";
+import { generatePresignedUpload, isValidPostId, validateFileUpload } from "@/lib/s3";
 
 export async function POST(request: NextRequest) {
   const t = await getApiTranslator(request);
@@ -21,10 +21,16 @@ export async function POST(request: NextRequest) {
         : forbiddenResponse(t("common.forbidden"));
     }
 
-    const { filename, contentType, kind } = await request.json();
+    const { postId, contentType, kind } = await request.json();
 
-    if (!filename || !contentType || !kind) {
+    if (!postId || !contentType || !kind) {
       return badRequestResponse(t("uploads.missingFields"));
+    }
+
+    // The post may not exist yet (new posts get their id before the first
+    // save), so only the shape is checked: it becomes a path segment.
+    if (!isValidPostId(postId)) {
+      return badRequestResponse(t("common.invalidRequest"));
     }
 
     if (!["cover", "inline"].includes(kind)) {
@@ -47,7 +53,7 @@ export async function POST(request: NextRequest) {
       return badRequestResponse(t("common.invalidRequest"));
     }
 
-    const result = await generatePresignedUpload(filename, contentType, kind);
+    const result = await generatePresignedUpload(postId, kind, contentType);
     return NextResponse.json(result);
   } catch (error) {
     return internalErrorResponse("presign", error, t("uploads.internal"));

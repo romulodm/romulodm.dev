@@ -14,6 +14,7 @@ import {
 } from "@/lib/api-errors";
 import { getApiTranslator } from "@/lib/api-intl";
 import { slugify, uniqueSlug, generateExcerpt } from "@/lib/markdown";
+import { deletePostMedia } from "@/lib/s3";
 import { removePostFromSearch, syncPostToSearch } from "@/lib/search-sync";
 
 export async function GET(
@@ -265,6 +266,15 @@ export async function DELETE(
       params.id,
       translations.map((tr) => tr.locale),
     );
+
+    // The post is already gone at this point, so a storage failure must not
+    // turn the response into an error. Leftover objects stay findable under
+    // posts/<id>/ and can be removed by hand.
+    try {
+      await deletePostMedia(params.id);
+    } catch (error) {
+      logApiError("admin-posts-delete.media", error, { postId: params.id });
+    }
 
     return NextResponse.json({ success: true });
   } catch (error) {
