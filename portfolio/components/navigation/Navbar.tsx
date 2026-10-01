@@ -51,7 +51,8 @@ const Navbar = () => {
 
     return (
         <>
-            {hasAnnouncement && <AnnouncementBar ref={announcementRef} />}
+            {/* {hasAnnouncement && <AnnouncementBar ref={announcementRef} />} */}
+
             <nav
                 ref={navRef}
                 // Fallback until useAnnouncementOffset runs: 2.25rem is the
