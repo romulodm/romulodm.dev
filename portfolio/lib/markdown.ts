@@ -9,6 +9,9 @@ import remarkRehype from 'remark-rehype'
 import rehypeSanitize, { defaultSchema } from 'rehype-sanitize'
 import type { Schema } from 'hast-util-sanitize'
 import rehypeHighlight from 'rehype-highlight'
+import { common } from 'lowlight'
+import rehypeCodeBlocks from './rehype-code-blocks'
+import prismaGrammar from './highlight-prisma'
 import rehypeSlug from 'rehype-slug'
 import rehypeExternalLinks from 'rehype-external-links'
 import rehypeStringify from 'rehype-stringify'
@@ -44,7 +47,19 @@ const youtubeSchema: Schema = {
   },
 }
 
-export async function markdownToHtml(markdown: string): Promise<string> {
+export interface MarkdownToHtmlOptions {
+  /**
+   * Frame code blocks with a language header and a copy button (see
+   * lib/rehype-code-blocks.ts). Off by default: the RSS feed (lib/feed.ts)
+   * reuses this pipeline, and feed readers would show the button as junk.
+   */
+  codeBlockChrome?: boolean
+}
+
+export async function markdownToHtml(
+  markdown: string,
+  { codeBlockChrome = false }: MarkdownToHtmlOptions = {},
+): Promise<string> {
   // Substitui ::youtube[...](url) por HTML raw ANTES do remark parsear
   // Isso evita que o remarkGfm interprete [título](url) como link markdown
   const preprocessed = preprocessYoutube(markdown)
@@ -55,11 +70,16 @@ export async function markdownToHtml(markdown: string): Promise<string> {
     .use(remarkRehype as any, { allowDangerousHtml: true }) // converte raw HTML → HAST raw nodes
     .use(rehypeSanitize, youtubeSchema)                    // sanitiza por whitelist (remove raw nodes inseguros)
     .use(rehypeSlug)
-    .use(rehypeHighlight)
+    // `languages` replaces the default set instead of extending it, so the
+    // common grammars are spread back in next to the custom Prisma one.
+    .use(rehypeHighlight, { languages: { ...common, prisma: prismaGrammar } })
     .use(rehypeExternalLinks, {
       target: '_blank',
       rel: ['noopener', 'noreferrer'],
     })
+    // Runs after sanitize on purpose: the frame adds a <button>, inline SVG
+    // and an inline style that the sanitize schema would strip.
+    .use(rehypeCodeBlocks, { enabled: codeBlockChrome })
     .use(rehypeStringify) // sem allowDangerousHtml — sanitize já eliminou os raw nodes
     .process(preprocessed)
 

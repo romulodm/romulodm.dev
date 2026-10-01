@@ -11,6 +11,8 @@ import {
 } from "@/lib/api-errors";
 import { getApiTranslator } from "@/lib/api-intl";
 import { getOtherLocales } from "@/lib/locales";
+import { sweepUnusedPostMedia } from "@/lib/post-media";
+import { isValidPostId } from "@/lib/s3";
 import { slugify, uniqueSlug } from "@/lib/markdown";
 import { syncPostToSearch } from "@/lib/search-sync";
 import { translatePost } from "@/lib/translate";
@@ -63,6 +65,7 @@ export async function POST(req: NextRequest) {
   }
 
   const {
+    id,
     locale,
     translateWithAI,
     title,
@@ -78,6 +81,13 @@ export async function POST(req: NextRequest) {
   if (!locale || !title || !contentMarkdown) {
     return badRequestResponse(t("posts.missingRequiredFields"));
   }
+
+  // The editor pre-generates the id so uploads made before the first save
+  // share the post's media prefix. Without one, Prisma's default applies.
+  if (id !== undefined && !isValidPostId(id)) {
+    return badRequestResponse(t("common.invalidRequest"));
+  }
+  const postId = isValidPostId(id) ? id : undefined;
 
   try {
     const normalizedStatus = status === "PUBLISHED" ? "PUBLISHED" : "DRAFT";
@@ -130,6 +140,7 @@ export async function POST(req: NextRequest) {
 
     const post = await prisma.post.create({
       data: {
+        ...(postId ? { id: postId } : {}),
         slug,
         readingTime: typeof readingTime === "number" ? readingTime : 0,
         coverImageUrl: typeof coverImageUrl === "string" ? coverImageUrl : null,
@@ -154,6 +165,15 @@ export async function POST(req: NextRequest) {
 
     // Nao indexa se nasceu como rascunho — a propria funcao decide pelo status.
     await syncPostToSearch(post.id);
+
+    // Drops images uploaded during editing that the saved post no longer
+    // uses. The save itself already succeeded, so a storage failure is only
+    // logged; the leftovers are picked up by the next save.
+    try {
+      await sweepUnusedPostMedia(post.id);
+    } catch (error) {
+      logApiError("admin-posts-create.media-sweep", error, { postId: post.id });
+    }
 
     return NextResponse.json(post, { status: 201 });
   } catch (error) {

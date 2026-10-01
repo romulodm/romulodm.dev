@@ -118,6 +118,7 @@ export default function EditPostClient() {
     return (
         <PostEditor
             key={selectedLocale}
+            postId={post.id}
             mode="edit"
             existingTranslations={post.translations.map((t) => ({ locale: t.locale, title: t.title }))}
             selectedLocale={selectedLocale}

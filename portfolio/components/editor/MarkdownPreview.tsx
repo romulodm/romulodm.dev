@@ -21,7 +21,7 @@ export function MarkdownPreview({
   const [html, setHtml] = useState('')
 
   useEffect(() => {
-    markdownToHtml(contentMarkdown).then(setHtml)
+    markdownToHtml(contentMarkdown, { codeBlockChrome: true }).then(setHtml)
   }, [contentMarkdown])
 
   return (
@@ -55,7 +55,7 @@ export function MarkdownPreview({
         )}
 
         <div
-          className="prose prose-lg max-w-none"
+          className="post-body prose prose-lg max-w-none"
           dangerouslySetInnerHTML={{ __html: html }}
         />
       </article>

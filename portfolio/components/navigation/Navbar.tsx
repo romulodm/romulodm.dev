@@ -15,7 +15,7 @@ import { NavMore } from "./NavMore";
 import type { NavLinkKey } from "./moreItems";
 import { IconTooltip } from "./IconTooltip";
 import { ThemeToggle } from "./ThemeToggle";
-import { AnnouncementBar, useAnnouncementOffset } from "./AnnouncementBar";
+import { useAnnouncementOffset } from "./AnnouncementBar";
 
 export const navItems: { key: NavLinkKey; href: string; icon: ReactNode }[] = [
     { key: "home", href: "/", icon: <Home className="h-4 w-4" /> },
@@ -51,7 +51,8 @@ const Navbar = () => {
 
     return (
         <>
-            {hasAnnouncement && <AnnouncementBar ref={announcementRef} />}
+            {/* {hasAnnouncement && <AnnouncementBar ref={announcementRef} />} */}
+
             <nav
                 ref={navRef}
                 // Fallback until useAnnouncementOffset runs: 2.25rem is the

@@ -2046,6 +2046,17 @@
       "share": "Compartilhar",
       "shareAria": "Compartilhar este post"
     },
+    "summarize": {
+      "button": "Resumo",
+      "buttonAria": "Resumir este post com IA",
+      "title": "Resumir com IA",
+      "description": "Este post tem um prompt pronto que pede para uma IA ler o texto completo, resumir os 5 pontos principais e contar o que você perde por não ler tudo. Escolha onde abrir:",
+      "showPrompt": "Ver o prompt",
+      "copy": "Copiar prompt",
+      "copied": "Prompt copiado",
+      "disclaimer": "O resumo é gerado pela IA que você escolher, na sua conta, e pode conter erros.",
+      "prompt": "Leia o artigo completo neste link: {url}\n\nCom base no texto real, e não só no título:\n1) Diga em duas frases do que ele trata, liste as 5 ideias principais e explique a conclusão, se houver.\n2) Aponte o que um resumo deixa de fora: exemplos, números ou decisões que valem a leitura completa.\n3) Sugira uma pergunta para continuarmos a conversa sobre o artigo."
+    },
     "sidebar": {
       "otherPosts": "Outras publicações"
     },
@@ -2439,7 +2450,11 @@
     "videoTitle": "Vídeo do post",
     "published": "Publicado {time}",
     "readingTime": "{minutes} min de leitura",
-    "originallyPublished": "Publicado originalmente em:"
+    "originallyPublished": "Publicado originalmente em:",
+    "copyCode": "Copiar código",
+    "copied": "Copiado",
+    "expandImage": "Ampliar imagem",
+    "closeImage": "Fechar imagem"
   },
   "commentPage": {
     "notFound": "Comentário não encontrado",

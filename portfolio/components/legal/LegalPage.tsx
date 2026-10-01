@@ -14,11 +14,9 @@ const TABS: { slug: LegalDocumentSlug; labelKey: 'terms' | 'privacyPolicy' }[] =
 ]
 
 /**
- * O plugin @tailwindcss/typography está configurado em tailwind.config.ts com
- * `color: '#333'` fixo no `.prose`. Esse valor sobrescreve a variável de cor do
- * plugin, então `dark:prose-invert` sozinho não conserta o contraste no tema
- * escuro. As classes abaixo amarram cada elemento aos tokens do tema — mesma
- * abordagem já usada na página de post do blog.
+ * Binds each prose element to the site's theme tokens instead of the plugin's
+ * gray palette, so the legal pages match the rest of the site in both themes.
+ * Same approach as the blog post page.
  */
 const PROSE_CLASSES = [
   'prose prose-neutral dark:prose-invert max-w-none',

@@ -14,6 +14,8 @@ import {
 } from "@/lib/api-errors";
 import { getApiTranslator } from "@/lib/api-intl";
 import { slugify, uniqueSlug, generateExcerpt } from "@/lib/markdown";
+import { sweepUnusedPostMedia } from "@/lib/post-media";
+import { deletePostMedia } from "@/lib/s3";
 import { removePostFromSearch, syncPostToSearch } from "@/lib/search-sync";
 
 export async function GET(
@@ -234,6 +236,15 @@ export async function PATCH(
     // reindexa quando so o conteudo mudou — titulo e resumo entram no indice.
     await syncPostToSearch(params.id);
 
+    // Drops images uploaded during editing that the saved post no longer
+    // uses. The save itself already succeeded, so a storage failure is only
+    // logged; the leftovers are picked up by the next save.
+    try {
+      await sweepUnusedPostMedia(params.id);
+    } catch (error) {
+      logApiError("admin-posts-update.media-sweep", error, { postId: params.id });
+    }
+
     return NextResponse.json(updated);
   } catch (error) {
     return internalErrorResponse("admin-posts-update", error, t("common.internalError"));
@@ -265,6 +276,15 @@ export async function DELETE(
       params.id,
       translations.map((tr) => tr.locale),
     );
+
+    // The post is already gone at this point, so a storage failure must not
+    // turn the response into an error. Leftover objects stay findable under
+    // posts/<id>/ and can be removed by hand.
+    try {
+      await deletePostMedia(params.id);
+    } catch (error) {
+      logApiError("admin-posts-delete.media", error, { postId: params.id });
+    }
 
     return NextResponse.json({ success: true });
   } catch (error) {
