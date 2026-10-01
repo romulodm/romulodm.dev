@@ -15,6 +15,7 @@ import { Footer } from '@/components/Footer'
 import { Clock } from 'lucide-react'
 import Link from 'next/link'
 import { ViewTracker } from './ViewTracker'
+import { PostBodyEnhancer } from '@/components/blog/PostBodyEnhancer'
 import { JsonLd } from '@/components/seo/JsonLd'
 import { absoluteUrl, blogPostingJsonLd, breadcrumbJsonLd, buildPageMetadata } from '@/lib/seo'
 
@@ -210,7 +211,7 @@ export default async function PostPage({ params }: PageProps) {
   // para o cliente: o CommentsSection ja busca sozinho quando recebe a lista
   // vazia (ver o useEffect com o comentario "pagina estatica" la dentro).
   const [htmlContent, relatedRaw] = await Promise.all([
-    markdownToHtml(translation.contentMarkdown),
+    markdownToHtml(translation.contentMarkdown, { codeBlockChrome: true }),
     getCachedRelatedPosts(locale, post.id),
   ])
 
@@ -347,19 +348,28 @@ export default async function PostPage({ params }: PageProps) {
 
               {post.youtubeUrl && <YoutubeEmbed url={post.youtubeUrl} title={t('videoTitle')} />}
 
+              {/* Code blocks, inline code and images are styled in globals.css
+                  under .post-body; PostBodyEnhancer adds the copy buttons and
+                  the image lightbox on the client. */}
               <div
-                className="prose prose-lg dark:prose-invert max-w-none
+                id="post-body"
+                className="post-body prose prose-lg dark:prose-invert max-w-none
+                  [--tw-prose-bullets:hsl(var(--muted-foreground))]
+                  [--tw-prose-counters:hsl(var(--muted-foreground))]
+                  [--tw-prose-invert-bullets:hsl(var(--muted-foreground))]
+                  [--tw-prose-invert-counters:hsl(var(--muted-foreground))]
                   prose-headings:text-foreground
                   prose-p:text-foreground/90
+                  prose-li:text-foreground/90
+                  prose-em:text-foreground/90
                   prose-a:text-primary hover:prose-a:opacity-80
                   prose-strong:text-foreground
-                  prose-code:bg-muted prose-code:text-foreground
-                  prose-pre:bg-muted
                   prose-blockquote:border-primary prose-blockquote:text-muted-foreground
                   prose-hr:border-border
                   prose-th:text-foreground prose-td:text-foreground/90"
                 dangerouslySetInnerHTML={{ __html: htmlContent }}
               />
+              <PostBodyEnhancer targetId="post-body" />
 
               {translation.canonicalUrl && (
                 <div className="mt-8 pt-8 border-t border-border">

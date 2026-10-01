@@ -1,6 +1,6 @@
 ﻿'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { ChevronUp } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -57,6 +57,8 @@ export function TableOfContents() {
   const isScrollingRef = useRef(false);
   const scrollTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const headingsRef = useRef<Heading[]>([]);
+  const navRef = useRef<HTMLElement>(null);
+  const [fade, setFade] = useState({ top: false, bottom: false });
 
   useEffect(() => {
     setHeadings([]);
@@ -97,6 +99,42 @@ export function TableOfContents() {
     };
   }, [pathname]);
 
+  // The list scrolls inside the sidebar with its scrollbar hidden, so edge fades
+  // are the only cue that more items exist above or below.
+  const updateFade = useCallback(() => {
+    const nav = navRef.current;
+    if (!nav) return;
+    const top = nav.scrollTop > 1;
+    const bottom = nav.scrollTop + nav.clientHeight < nav.scrollHeight - 1;
+    setFade((prev) => (prev.top === top && prev.bottom === bottom ? prev : { top, bottom }));
+  }, []);
+
+  useEffect(() => {
+    const nav = navRef.current;
+    if (!nav) return;
+    updateFade();
+    const observer = new ResizeObserver(updateFade);
+    observer.observe(nav);
+    return () => observer.disconnect();
+  }, [headings, updateFade]);
+
+  // Keep the active entry visible while the page scrolls. Only the list moves:
+  // scrollIntoView would also scroll the page and fight the reader.
+  useEffect(() => {
+    const nav = navRef.current;
+    const link = nav?.querySelector<HTMLElement>(`[data-toc-id="${CSS.escape(activeId)}"]`);
+    if (!nav || !link) return;
+    const margin = 24;
+    // The nav is `relative`, so offsetTop is already measured from its top.
+    const linkTop = link.offsetTop;
+    const linkBottom = linkTop + link.offsetHeight;
+    if (linkTop < nav.scrollTop + margin) {
+      nav.scrollTo({ top: Math.max(0, linkTop - margin), behavior: 'smooth' });
+    } else if (linkBottom > nav.scrollTop + nav.clientHeight - margin) {
+      nav.scrollTo({ top: linkBottom - nav.clientHeight + margin, behavior: 'smooth' });
+    }
+  }, [activeId]);
+
   function scrollToHeading(event: React.MouseEvent<HTMLAnchorElement>, id: string) {
     event.preventDefault();
     const element = document.getElementById(id);
@@ -121,17 +159,23 @@ export function TableOfContents() {
   if (headings.length === 0) return null;
 
   return (
-    <div className="space-y-3 p-5">
-      <h3 className="type-small font-semibold text-foreground">{t('title')}</h3>
-      <nav className="space-y-1">
+    <div className="flex min-h-0 flex-1 flex-col gap-3 p-5">
+      <h3 className="type-small shrink-0 font-semibold text-foreground">{t('title')}</h3>
+      <nav
+        ref={navRef}
+        onScroll={updateFade}
+        data-fade-top={fade.top || undefined}
+        data-fade-bottom={fade.bottom || undefined}
+        className="toc-scroll relative min-h-0 space-y-1 overflow-y-auto overscroll-contain"
+      >
         {headings.map((heading) => (
-          <a key={heading.id} href={`#${heading.id}`} onClick={(event) => scrollToHeading(event, heading.id)} className={['block text-xs leading-snug transition-colors hover:text-foreground', heading.level === 3 ? 'pl-3' : '', activeId === heading.id ? 'font-semibold text-primary' : 'text-muted-foreground'].join(' ')}>
+          <a key={heading.id} data-toc-id={heading.id} href={`#${heading.id}`} onClick={(event) => scrollToHeading(event, heading.id)} className={['block text-xs leading-snug transition-colors hover:text-foreground', heading.level === 3 ? 'pl-3' : '', activeId === heading.id ? 'font-semibold text-primary' : 'text-muted-foreground'].join(' ')}>
             {heading.text}
           </a>
         ))}
       </nav>
       {showScrollTop && (
-        <button onClick={scrollToTop} className="flex w-full items-center gap-1.5 border-t border-border pt-2 text-xs text-muted-foreground transition-colors hover:text-foreground">
+        <button onClick={scrollToTop} className="flex w-full shrink-0 items-center gap-1.5 border-t border-border pt-2 text-xs text-muted-foreground transition-colors hover:text-foreground">
           <ChevronUp className="h-3.5 w-3.5" />
           {t('scrollToTop')}
         </button>

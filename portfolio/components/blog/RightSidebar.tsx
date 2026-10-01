@@ -24,22 +24,25 @@ export async function RightSidebar({ relatedPosts, currentPostId, locale }: Prop
 
   return (
     <div className="hidden w-64 shrink-0 xl:block">
-      <div className="sticky top-20 space-y-3">
-        {filtered.length > 0 && (
-          <div className="p-5">
-            <h3 className="type-small font-semibold mb-3 text-foreground">{t('otherPosts')}</h3>
-            <div className="space-y-3">
-              {filtered.map((post) => (
-                <Link key={post.id} href={`/${locale}/blog/${post.slug}`} className="group flex gap-3">
-                  <div className="min-w-0 flex flex-col justify-center">
-                    <span className="line-clamp-2 text-sm font-medium leading-snug text-foreground transition-colors group-hover:text-primary">{post.title}</span>
-                    {post.publishedAt && <span className="mt-0.5 text-xs text-muted-foreground">{formatDistanceToNow(post.publishedAt, locale)}</span>}
-                  </div>
-                </Link>
-              ))}
-            </div>
+      {/* Capped at the viewport height so the table of contents never runs
+          past the bottom of the screen; the TOC takes the remaining space and
+          scrolls inside it (see TableOfContents). */}
+      {filtered.length > 0 && (
+        <div className="shrink-0 p-5">
+          <h3 className="type-small font-semibold mb-3 text-foreground">{t('otherPosts')}</h3>
+          <div className="space-y-3">
+            {filtered.map((post) => (
+              <Link key={post.id} href={`/${locale}/blog/${post.slug}`} className="group flex gap-3">
+                <div className="min-w-0 flex flex-col justify-center">
+                  <span className="line-clamp-2 text-sm font-medium leading-snug text-foreground transition-colors group-hover:text-primary">{post.title}</span>
+                  {post.publishedAt && <span className="mt-0.5 text-xs text-muted-foreground">{formatDistanceToNow(post.publishedAt, locale)}</span>}
+                </div>
+              </Link>
+            ))}
           </div>
-        )}
+        </div>
+      )}
+      <div className="sticky top-20 flex max-h-[calc(100vh-6rem)] flex-col gap-3">
 
         <TableOfContents />
       </div>
