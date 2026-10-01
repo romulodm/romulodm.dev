@@ -1,28 +1,6 @@
-@import 'highlight.js/styles/github.css' layer(highlight-light);
-@import 'highlight.js/styles/github-dark.css' layer(highlight-dark);
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-
-@layer highlight-light {
-
-  /* só aplica no modo claro */
-  :root:not(.dark) pre code.hljs,
-  :root:not(.dark) code.hljs {
-    all: revert;
-  }
-}
-
-@layer highlight-dark {
-
-  /* só aplica no modo escuro */
-  .dark pre code.hljs,
-  .dark code.hljs {
-    all: revert;
-  }
-}
 
 :root {
   --background: 0 0% 98%;
@@ -548,18 +526,325 @@
   @apply bg-gray-300;
 }
 
-/* Code blocks in markdown */
+/* Table of contents in the post sidebar (components/blog/TableOfContents.tsx).
+ * The list scrolls when it is taller than the viewport, without a visible
+ * scrollbar; a mask fades whichever edge has more items behind it. */
+.toc-scroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.toc-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.toc-scroll[data-fade-top] {
+  mask-image: linear-gradient(to bottom, transparent, #000 2rem);
+}
+
+.toc-scroll[data-fade-bottom] {
+  mask-image: linear-gradient(to top, transparent, #000 2rem);
+}
+
+.toc-scroll[data-fade-top][data-fade-bottom] {
+  mask-image: linear-gradient(to bottom, transparent, #000 2rem, #000 calc(100% - 2rem), transparent);
+}
+
+/* ------------------------------------------------------------------------
+ * Code in markdown (posts, comments, legal pages)
+ *
+ * Syntax colors are CSS variables with one set per theme, applied to the
+ * highlight.js classes that rehype-highlight emits. This replaces the old
+ * github.css + github-dark.css imports, which were wrapped in cascade layers
+ * and reverted with `all: revert`; the result was a light-theme token palette
+ * on a dark <pre> and vice versa. Palette based on GitHub's light and dark
+ * themes.
+ * ---------------------------------------------------------------------- */
+:root {
+  --code-bg: 0 0% 100%;
+  --code-header-bg: 0 0% 97%;
+  --code-fg: #1f2328;
+  --code-muted: #59636e;
+  --code-copied: #1a7f37;
+  --inline-code-fg: #be185d;
+
+  --hl-comment: #6e7781;
+  --hl-keyword: #cf222e;
+  --hl-string: #0a3069;
+  --hl-number: #0550ae;
+  --hl-function: #8250df;
+  --hl-type: #953800;
+  --hl-meta: #6639ba;
+  --hl-tag: #116329;
+  --hl-addition-fg: #116329;
+  --hl-addition-bg: #dafbe1;
+  --hl-deletion-fg: #82071e;
+  --hl-deletion-bg: #ffebe9;
+}
+
+.dark {
+  --code-bg: 0 0% 6%;
+  --code-header-bg: 0 0% 8.5%;
+  --code-fg: #e6edf3;
+  --code-muted: #9198a1;
+  --code-copied: #3fb950;
+  --inline-code-fg: #f9a8d4;
+
+  --hl-comment: #8b949e;
+  --hl-keyword: #ff7b72;
+  --hl-string: #a5d6ff;
+  --hl-number: #79c0ff;
+  --hl-function: #d2a8ff;
+  --hl-type: #ffa657;
+  --hl-meta: #bc8cff;
+  --hl-tag: #7ee787;
+  --hl-addition-fg: #aff5b4;
+  --hl-addition-bg: rgb(46 160 67 / 0.15);
+  --hl-deletion-fg: #ffdcd7;
+  --hl-deletion-bg: rgb(248 81 73 / 0.15);
+}
+
+.hljs {
+  color: var(--code-fg);
+  background: transparent;
+}
+
+.hljs-comment,
+.hljs-quote {
+  color: var(--hl-comment);
+  font-style: italic;
+}
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-doctag,
+.hljs-template-tag,
+.hljs-template-variable {
+  color: var(--hl-keyword);
+}
+
+.hljs-string,
+.hljs-regexp,
+.hljs-meta .hljs-string {
+  color: var(--hl-string);
+}
+
+.hljs-number,
+.hljs-literal,
+.hljs-symbol,
+.hljs-attr,
+.hljs-attribute,
+.hljs-variable.constant_,
+.hljs-selector-attr,
+.hljs-selector-class,
+.hljs-selector-id,
+.hljs-bullet,
+.hljs-link {
+  color: var(--hl-number);
+}
+
+.hljs-title,
+.hljs-title.function_,
+.hljs-section {
+  color: var(--hl-function);
+}
+
+.hljs-title.class_,
+.hljs-title.class_.inherited__,
+.hljs-type,
+.hljs-built_in,
+.hljs-variable,
+.hljs-params {
+  color: var(--hl-type);
+}
+
+.hljs-meta,
+.hljs-meta .hljs-keyword {
+  color: var(--hl-meta);
+}
+
+.hljs-name,
+.hljs-tag,
+.hljs-selector-pseudo {
+  color: var(--hl-tag);
+}
+
+.hljs-addition {
+  color: var(--hl-addition-fg);
+  background: var(--hl-addition-bg);
+}
+
+.hljs-deletion {
+  color: var(--hl-deletion-fg);
+  background: var(--hl-deletion-bg);
+}
+
+.hljs-emphasis {
+  font-style: italic;
+}
+
+.hljs-strong,
+.hljs-section {
+  font-weight: 600;
+}
+
+/* Fallback for <pre> outside the post frame (comments set their own bg). */
 .prose pre {
-  @apply bg-gray-900 text-gray-100 rounded-lg p-4 overflow-x-auto;
+  @apply rounded-lg p-4 overflow-x-auto;
+  background-color: hsl(var(--code-bg));
+  color: var(--code-fg);
 }
 
 .prose code {
-  @apply text-sm;
+  @apply font-mono text-sm;
 }
 
-/* Inline code */
-.prose :not(pre)>code {
-  @apply bg-gray-100 text-pink-600 px-1 py-0.5 rounded text-sm;
+/* Inline code. Muted surface + a pink that keeps contrast in both themes
+ * (the previous bg-gray-100 stayed light gray on the dark background). */
+.prose :not(pre) > code {
+  @apply rounded-md border border-border bg-muted font-medium;
+  padding: 0.125em 0.375em;
+  font-size: 0.875em;
+  color: var(--inline-code-fg);
+  overflow-wrap: anywhere;
+}
+
+/* ---- Framed code blocks of a post (markup: lib/rehype-code-blocks.ts) ---- */
+.post-body .code-block {
+  margin: 1.75em 0;
+  overflow: hidden;
+  border: 1px solid hsl(var(--border));
+  border-radius: 0.75rem;
+  background-color: hsl(var(--code-bg));
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.04);
+}
+
+.post-body .code-block__header {
+  @apply flex items-center gap-3 font-mono text-xs;
+  min-height: 2.5rem;
+  padding: 0 0.375rem 0 1rem;
+  border-bottom: 1px solid hsl(var(--border));
+  /* Faint tint of the language's brand color on the left of the header. */
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--lang-accent) 14%, transparent), transparent 60%),
+    hsl(var(--code-header-bg));
+}
+
+.post-body .code-block__lang {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--code-muted);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.post-body .code-block__dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
+  background-color: var(--lang-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--lang-accent) 22%, transparent);
+}
+
+.post-body .code-block__copy {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid transparent;
+  border-radius: 0.5rem;
+  color: var(--code-muted);
+  cursor: pointer;
+  transition: color 150ms, background-color 150ms, border-color 150ms;
+}
+
+.post-body .code-block__copy:hover {
+  color: var(--code-fg);
+  background-color: hsl(var(--foreground) / 0.06);
+  border-color: hsl(var(--border));
+}
+
+.post-body .code-block__copy:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 1px;
+}
+
+.post-body .code-block__icon-check,
+.post-body .code-block__copy[data-copied] .code-block__icon-copy {
+  display: none;
+}
+
+.post-body .code-block__copy[data-copied] {
+  color: var(--code-copied);
+}
+
+.post-body .code-block__copy[data-copied] .code-block__icon-check {
+  display: block;
+}
+
+.post-body .code-block pre {
+  margin: 0;
+  padding: 1rem 1.25rem;
+  border-radius: 0;
+  background: transparent;
+  color: var(--code-fg);
+  font-size: 0.875rem;
+  line-height: 1.7;
+  tab-size: 2;
+  overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--border)) transparent;
+}
+
+.post-body .code-block pre code {
+  padding: 0;
+  background: none;
+  font-size: inherit;
+  color: inherit;
+}
+
+/* Images of a post open full-screen (components/blog/PostBodyEnhancer.tsx). */
+.post-body img[data-zoomable] {
+  cursor: zoom-in;
+  border-radius: 0.5rem;
+  transition: box-shadow 150ms;
+}
+
+.post-body img[data-zoomable]:hover {
+  box-shadow: 0 0 0 1px hsl(var(--border)), 0 8px 24px rgb(0 0 0 / 0.12);
+}
+
+.post-body img[data-zoomable]:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 3px;
+}
+
+.image-lightbox {
+  animation: image-lightbox-fade 180ms ease-out;
+}
+
+.image-lightbox__img {
+  animation: image-lightbox-zoom 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes image-lightbox-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes image-lightbox-zoom {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .image-lightbox,
+  .image-lightbox__img {
+    animation: none;
+  }
 }
 
 .timeline-connector::before {

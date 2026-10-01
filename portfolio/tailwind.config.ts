@@ -111,7 +111,10 @@ const config: Config = {
         DEFAULT: {
           css: {
             maxWidth: 'none',
-            color: '#333',
+            // No fixed `color` here: a literal value overrides the plugin's
+            // --tw-prose-body variable, so `dark:prose-invert` could not swap
+            // it and every element without an explicit prose-* color (list
+            // items, table cells, captions) stayed #333 on the dark background.
             a: {
               color: '#3b49df',
               '&:hover': {
