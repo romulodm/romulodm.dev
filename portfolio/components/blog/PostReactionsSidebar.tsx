@@ -7,6 +7,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import { formatCount } from '@/lib/format-number';
 import { usePostInteractions } from '@/hooks/use-post-interactions';
 import { cn } from '@/lib/utils';
+import { SummarizeWithAI } from '@/components/blog/SummarizeWithAI';
 
 interface Props {
   postId: string;
@@ -42,6 +43,8 @@ export function PostReactionSidebar({ postId, initialLikes, initialViews, initia
         <MessageSquare size={20} />
         <span className="text-xs">{formatCount(comments)}</span>
       </button>
+
+      <SummarizeWithAI variant="sidebar" listenForAnchor />
 
       <Link href={`/${locale}/support`} target="_blank" className="flex flex-col items-center justify-center gap-1 rounded-xl text-muted-foreground transition-colors hover:text-primary">
         <Coffee size={20} />
