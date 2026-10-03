@@ -31,13 +31,32 @@ export async function generateMetadata({
   })
 }
 
-export default async function WallPage() {
+const WALL_PAGE_SIZE = 100
+
+/** `?page=` vindo da URL: qualquer coisa que nao seja inteiro >= 1 vira 1. */
+function parsePage(raw: string | undefined): number {
+  const n = Number(raw)
+  return Number.isInteger(n) && n >= 1 ? n : 1
+}
+
+export default async function WallPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>
+}) {
   const session = await getServerSession(authOptions);
   const userId = session?.user?.id as string | undefined;
 
+  const total = await prisma.wallMessage.count();
+  const totalPages = Math.max(1, Math.ceil(total / WALL_PAGE_SIZE));
+  // Pagina alem da ultima (link antigo, recado apagado) cai na ultima em vez
+  // de mostrar um mural vazio.
+  const page = Math.min(parsePage((await searchParams).page), totalPages);
+
   const [initialMessages, hasPosted, dbUser] = await Promise.all([
     prisma.wallMessage.findMany({
-      take: 21,
+      skip: (page - 1) * WALL_PAGE_SIZE,
+      take: WALL_PAGE_SIZE,
       orderBy: { createdAt: "desc" },
       include: { author: { select: { id: true, ...AVATAR_SELECT } } },
     }),
@@ -65,6 +84,9 @@ export default async function WallPage() {
           currentUser={dbUser ?? null}
           isAdmin={dbUser?.admin ?? false}
           hasPosted={hasPosted as boolean}
+          total={total}
+          page={page}
+          totalPages={totalPages}
         />
       </main>
       <Footer />
