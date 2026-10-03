@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useLocale, useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { formatDistanceToNow } from '@/lib/utils'
-import { Trophy, Clock } from 'lucide-react'
+import { Trophy, Clock, Infinity as InfinityIcon, CalendarDays, CalendarRange, ChevronLeft, ChevronRight, type LucideIcon } from 'lucide-react'
 import { MessageModal } from './MessageModal'
 
 interface Donor {
@@ -21,10 +21,22 @@ interface Donor {
     username: string | null
 }
 
+export type RankingPeriod = 'all' | 'week' | 'month'
+
 interface Props {
-    topDonors: Donor[]
+    topDonors: Record<RankingPeriod, Donor[]>
     recentDonors: Donor[]
 }
+
+const PERIOD_OPTIONS: { value: RankingPeriod; icon: LucideIcon }[] = [
+    { value: 'all', icon: InfinityIcon },
+    { value: 'week', icon: CalendarDays },
+    { value: 'month', icon: CalendarRange },
+]
+
+const PAGE_SIZE = 10
+/** Only the all-time ranking paginates; the server sends at most MAX_PAGES * PAGE_SIZE rows. */
+const MAX_PAGES = 3
 
 type ModalState = { name: string | null; message: string } | null
 
@@ -84,20 +96,68 @@ export function SupportersSidebar({ topDonors, recentDonors }: Props) {
     const t = useTranslations('support')
     const locale = useLocale()
     const [modal, setModal] = useState<ModalState>(null)
+    const [period, setPeriod] = useState<RankingPeriod>('all')
+    const [page, setPage] = useState(0)
+
+    const periodDonors = topDonors[period]
+    const pageCount = period === 'all'
+        ? Math.min(MAX_PAGES, Math.ceil(periodDonors.length / PAGE_SIZE))
+        : 1
+    const offset = period === 'all' ? page * PAGE_SIZE : 0
+    const visibleDonors = periodDonors.slice(offset, offset + PAGE_SIZE)
+    const hasAnyDonor = topDonors.all.length > 0 || recentDonors.length > 0
+
+    const handlePeriodChange = (next: RankingPeriod) => {
+        if (next === period) return
+        setPeriod(next)
+        setPage(0)
+    }
 
     return (
         <>
             <div className="space-y-8">
-                {topDonors.length > 0 && (
+                {topDonors.all.length > 0 && (
                     <div className="rounded-xl border border-border bg-card p-6">
-                        <h2 className="type-h3 text-foreground flex items-center gap-2 mb-4">
-                            <Trophy className="w-4 h-4 text-primary" />
-                            {t('sidebar.topSupporters')}
-                        </h2>
-                        <ol className="space-y-3">
-                            {topDonors.map((donor, index) => (
+                        <div className="flex items-center justify-between gap-4 flex-wrap mb-4">
+                            <h2 className="type-h3 text-foreground flex items-center gap-2">
+                                <Trophy className="w-4 h-4 text-primary" />
+                                {t('sidebar.topSupporters')}
+                            </h2>
+                            <div
+                                role="tablist"
+                                aria-label={t('sidebar.period.label')}
+                                className="flex items-center gap-1 rounded-lg border border-border p-0.5 bg-gray-300/30 dark:bg-neutral-800/50"
+                            >
+                                {PERIOD_OPTIONS.map(({ value, icon: Icon }) => (
+                                    <button
+                                        key={value}
+                                        type="button"
+                                        role="tab"
+                                        aria-selected={period === value}
+                                        onClick={() => handlePeriodChange(value)}
+                                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all
+                                            ${period === value
+                                                ? 'bg-gray-400/40 dark:bg-neutral-800 text-foreground shadow-sm'
+                                                : 'text-muted-foreground hover:text-foreground'
+                                            }`}
+                                    >
+                                        <Icon className="w-3 h-3" />
+                                        {t(`sidebar.period.${value}`)}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                        {visibleDonors.length === 0 && (
+                            <p className="text-sm text-muted-foreground py-6 text-center">
+                                {t(`sidebar.period.empty.${period}`)}
+                            </p>
+                        )}
+                        <ol className="space-y-3" start={offset + 1}>
+                            {visibleDonors.map((donor, i) => {
+                                const index = offset + i
+                                return (
                                 <li key={donor.id} className="flex items-start gap-1">
-                                    <span className={`text-sm font-bold min-w-[24px] ${index === 0 ? 'text-amber-500'
+                                    <span className={`text-sm font-bold min-w-[28px] ${index === 0 ? 'text-amber-500'
                                             : index === 1 ? 'text-slate-600 dark:text-slate-200'
                                                 : index === 2 ? 'text-orange-600'
                                                     : 'text-muted-foreground'
@@ -123,8 +183,49 @@ export function SupportersSidebar({ topDonors, recentDonors }: Props) {
                                         />
                                     </div>
                                 </li>
-                            ))}
+                                )
+                            })}
                         </ol>
+                        {pageCount > 1 && (
+                            <nav
+                                aria-label={t('sidebar.pagination.label')}
+                                className="flex items-center justify-center gap-1 mt-5 pt-4 border-t border-border"
+                            >
+                                <button
+                                    type="button"
+                                    onClick={() => setPage((p) => p - 1)}
+                                    disabled={page === 0}
+                                    aria-label={t('sidebar.pagination.previous')}
+                                    className="p-1.5 rounded-md text-muted-foreground hover:text-foreground disabled:opacity-30 disabled:pointer-events-none transition-colors"
+                                >
+                                    <ChevronLeft className="w-4 h-4" />
+                                </button>
+                                {Array.from({ length: pageCount }, (_, p) => (
+                                    <button
+                                        key={p}
+                                        type="button"
+                                        onClick={() => setPage(p)}
+                                        aria-current={page === p ? 'page' : undefined}
+                                        className={`min-w-[28px] h-7 px-2 rounded-md text-xs font-medium transition-all
+                                            ${page === p
+                                                ? 'bg-gray-400/40 dark:bg-neutral-800 text-foreground shadow-sm'
+                                                : 'text-muted-foreground hover:text-foreground'
+                                            }`}
+                                    >
+                                        {p + 1}
+                                    </button>
+                                ))}
+                                <button
+                                    type="button"
+                                    onClick={() => setPage((p) => p + 1)}
+                                    disabled={page >= pageCount - 1}
+                                    aria-label={t('sidebar.pagination.next')}
+                                    className="p-1.5 rounded-md text-muted-foreground hover:text-foreground disabled:opacity-30 disabled:pointer-events-none transition-colors"
+                                >
+                                    <ChevronRight className="w-4 h-4" />
+                                </button>
+                            </nav>
+                        )}
                     </div>
                 )}
 
@@ -165,7 +266,7 @@ export function SupportersSidebar({ topDonors, recentDonors }: Props) {
                     </div>
                 )}
 
-                {topDonors.length === 0 && recentDonors.length === 0 && (
+                {!hasAnyDonor && (
                     <div className="rounded-xl border border-border bg-card p-10 text-center">
                         <p className="text-4xl mb-3">☕</p>
                         <p className="text-muted-foreground text-sm">{t('sidebar.beFirst')}</p>
