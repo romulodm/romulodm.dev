@@ -18,7 +18,7 @@ export default function NewsletterCard({ subscriberCount = 0 }: NewsletterCardPr
 
   return (
     <section className="w-full mx-auto px-6 py-12">
-      <div className="w-full flex flex-col sm:flex-row items-center justify-center mb-1 gap-1">
+      <div className="w-full flex flex-col sm:flex-row items-center justify-center gap-1">
         <h2 className="type-h2 mb-1.5 text-center text-secondary sm:whitespace-nowrap">
           {t("title")}
         </h2>
@@ -48,7 +48,7 @@ export default function NewsletterCard({ subscriberCount = 0 }: NewsletterCardPr
 
         <NewsletterSubscribeForm />
 
-        <p className="text-sm mt-4 text-muted-foreground text-center">
+        <p className="text-sm mt-2 text-muted-foreground text-center">
           <span className="font-bold text-foreground">{t("privacy.prefix")} </span>
           {t.rich("privacy.suffix", {
             link: (chunks) => (
