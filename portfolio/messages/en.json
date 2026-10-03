@@ -217,7 +217,8 @@
   "wall": {
     "page": {
       "title": "The wall remembers",
-      "description": "Words that echo through time, leaving a mark here. Share your thoughts, memories, or just say hi!"
+      "description": "Words that echo through time, leaving a mark here. Share your thoughts, memories, or just say hi!",
+      "count": "{count, plural, one {<strong>#</strong> message} other {<strong>#</strong> messages}}"
     },
     "signIn": {
       "title": "“Join the wall…”",
@@ -229,8 +230,9 @@
       "subtitle": "Scroll down to find your message"
     },
     "list": {
-      "loadMore": "Load more",
-      "loading": "Loading…"
+      "previous": "Previous",
+      "next": "Next",
+      "pagination": "Wall pages"
     },
     "actions": {
       "copyLink": "Copy link",
@@ -1000,7 +1002,7 @@
     },
     "page": {
       "title": "Buy me a coffee",
-      "description": "Each coffee helps me keep writing and maintaining the blog. Thanks for the support!",
+      "description": "This site is <repo>open source</repo> under the MIT license. Your support is an incentive to keep the blog running and improve a codebase others can use and adapt freely.",
       "supporters": "<strong>{count}</strong> supporters"
     },
     "trustNote": "Secure payment. Your bank and card details never pass through this site. You can check the privacy policy <link>here</link>.",
@@ -1010,7 +1012,8 @@
       "payWith": "Pay with",
       "privateMessage": "Private message",
       "loading": "Please wait...",
-      "supportWith": "Support with R$ {amount},00",
+      "supportWith": "Support with R$ {amount}",
+      "amountLabel": "Support amount",
       "genericError": "Something went wrong. Please try again.",
       "methods": {
         "pix": "PIX",
@@ -1084,7 +1087,23 @@
       "beFirst": "Be the first to support!",
       "anonymous": "Anonymous",
       "someone": "Someone",
-      "coffees": "{count} coffee(s)"
+      "coffees": "{count} coffee(s)",
+      "period": {
+        "label": "Ranking period",
+        "all": "All time",
+        "week": "Week",
+        "month": "Month",
+        "empty": {
+          "all": "No support yet.",
+          "week": "No support in the last 7 days.",
+          "month": "No support in the last 30 days."
+        }
+      },
+      "pagination": {
+        "label": "Ranking pages",
+        "previous": "Previous page",
+        "next": "Next page"
+      }
     },
     "messageModal": {
       "defaultName": "Anonymous",

@@ -217,7 +217,8 @@
   "wall": {
     "page": {
       "title": "O mural lembra",
-      "description": "Palavras que ecoam no tempo e deixam uma marca aqui. Compartilhe pensamentos, memórias ou só dê um oi!"
+      "description": "Palavras que ecoam no tempo e deixam uma marca aqui. Compartilhe pensamentos, memórias ou só dê um oi!",
+      "count": "{count, plural, one {<strong>#</strong> recado} other {<strong>#</strong> recados}}"
     },
     "signIn": {
       "title": "“Entre no mural…”",
@@ -229,8 +230,9 @@
       "subtitle": "Role para baixo para encontrar seu recado"
     },
     "list": {
-      "loadMore": "Carregar mais",
-      "loading": "Carregando…"
+      "previous": "Anterior",
+      "next": "Próxima",
+      "pagination": "Páginas do mural"
     },
     "actions": {
       "copyLink": "Copiar link",
@@ -999,8 +1001,8 @@
       "description": "Me pague um café e ajude a manter o blog no ar!"
     },
     "page": {
-      "title": "Compre um café",
-      "description": "Cada café me ajuda a continuar escrevendo e mantendo o blog. Obrigado pelo apoio!",
+      "title": "Compre-me um café",
+      "description": "Este site tem <repo>código aberto</repo> sob licença MIT. Seu apoio serve de incentivo para manter o blog e melhorar uma base de código que outras pessoas podem usar e adaptar livremente.",
       "supporters": "<strong>{count}</strong> apoiadores"
     },
     "trustNote": "Pagamento seguro. Seus dados bancários e de cartão nunca passam por este site. Você pode checar a política de privacidade <link>aqui</link>.",
@@ -1010,7 +1012,8 @@
       "payWith": "Pagar com",
       "privateMessage": "Mensagem privada",
       "loading": "Aguarde...",
-      "supportWith": "Apoiar com R$ {amount},00",
+      "supportWith": "Apoiar com R$ {amount}",
+      "amountLabel": "Valor do apoio",
       "genericError": "Algo deu errado. Tente novamente.",
       "methods": {
         "pix": "PIX",
@@ -1084,7 +1087,23 @@
       "beFirst": "Seja o primeiro a apoiar!",
       "anonymous": "Anônimo",
       "someone": "Alguém",
-      "coffees": "{count} café(s)"
+      "coffees": "{count} café(s)",
+      "period": {
+        "label": "Período do ranking",
+        "all": "Geral",
+        "week": "Semana",
+        "month": "Mês",
+        "empty": {
+          "all": "Nenhum apoio ainda.",
+          "week": "Nenhum apoio nos últimos 7 dias.",
+          "month": "Nenhum apoio nos últimos 30 dias."
+        }
+      },
+      "pagination": {
+        "label": "Páginas do ranking",
+        "previous": "Página anterior",
+        "next": "Próxima página"
+      }
     },
     "messageModal": {
       "defaultName": "Anônimo",
