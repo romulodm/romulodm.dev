@@ -132,6 +132,15 @@ export default function AdminDashboardPage() {
                         <Info className="h-4 w-4" />
                         <span className="hidden sm:inline">{t('statusPage')}</span>
                     </a>
+                    <a
+                        href="https://analytics.google.com/analytics/web/"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="flex items-center gap-2 rounded-lg bg-primary px-3 py-2 text-sm font-medium text-white transition-opacity hover:opacity-90"
+                    >
+                        <Info className="h-4 w-4" />
+                        <span className="hidden sm:inline">Google Analytics</span>
+                    </a>
                 </div>
             </header>
 
