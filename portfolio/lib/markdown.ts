@@ -1,6 +1,6 @@
 /**
  * Pipeline única de conversão — usada tanto no servidor (page.tsx)
- * quanto no cliente (MarkdownPreview). Garante output idêntico nos dois lugares.
+ * quanto no cliente (PostPreview do editor). Garante output idêntico nos dois lugares.
  */
 import { unified } from 'unified'
 import remarkParse from 'remark-parse'
@@ -11,6 +11,8 @@ import type { Schema } from 'hast-util-sanitize'
 import rehypeHighlight from 'rehype-highlight'
 import { common } from 'lowlight'
 import rehypeCodeBlocks from './rehype-code-blocks'
+import rehypeCitations from './rehype-citations'
+import rehypeFigures from './rehype-figures'
 import prismaGrammar from './highlight-prisma'
 import rehypeSlug from 'rehype-slug'
 import rehypeExternalLinks from 'rehype-external-links'
@@ -25,6 +27,8 @@ import { prisma } from '@romulo/database'
  * Ordem da pipeline:
  *   remarkRehype (allowDangerousHtml) → converte HTML raw em nós HAST
  *   rehypeSanitize                    → limpa o HAST por whitelist
+ *   rehypeCitations                   → [@chave] vira citação autor-ano (lib/rehype-citations.ts)
+ *   rehypeFigures                     → imagem sozinha vira <figure>; o texto de ![...] vira <figcaption> (lib/rehype-figures.ts)
  *   rehypeSlug / rehypeHighlight / rehypeExternalLinks → enriquecem o HTML limpo
  *   rehypeStringify                   → serializa sem allowDangerousHtml (não há mais raw nodes)
  */
@@ -69,6 +73,10 @@ export async function markdownToHtml(
     .use(remarkGfm)
     .use(remarkRehype as any, { allowDangerousHtml: true }) // converte raw HTML → HAST raw nodes
     .use(rehypeSanitize, youtubeSchema)                    // sanitiza por whitelist (remove raw nodes inseguros)
+    // After sanitize (it would prefix the anchor ids but not the #links) and
+    // before highlight (it consumes the ```references fence).
+    .use(rehypeCitations)
+    .use(rehypeFigures)
     .use(rehypeSlug)
     // `languages` replaces the default set instead of extending it, so the
     // common grammars are spread back in next to the custom Prisma one.
