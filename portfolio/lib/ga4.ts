@@ -191,3 +191,127 @@ export async function getRealtimeActiveUsers(): Promise<number> {
 
     return Number(response.rows?.[0]?.metricValues?.[0]?.value ?? 0);
 }
+
+// ── Audiência da semana (página pública /status) ──────────────────────────────
+//
+// Um recorte no formato do dashboard do Umami: totais com variação contra a
+// semana anterior, listas de ambiente e localização, e o mapa de calor de
+// dia da semana × hora. Tudo em janelas de 7 dias fechados (hoje incluso), sem
+// sobreposição entre o período atual e o anterior.
+
+const WEEK = { startDate: '6daysAgo', endDate: 'today' };
+const PREVIOUS_WEEK = { startDate: '13daysAgo', endDate: '7daysAgo' };
+
+export type AudienceTotals = {
+    visitors: number;
+    visits: number;
+    views: number;
+    /** Percentual inteiro (0–100). */
+    bounceRate: number;
+    /** Duração média da visita, em segundos. */
+    visitDuration: number;
+};
+
+export type AudienceRow = {
+    name: string;
+    /** ISO 3166-1 alfa-2 do país, quando a linha é geográfica. */
+    countryCode?: string;
+    visitors: number;
+};
+
+export type WeeklyAudience = {
+    totals: { current: AudienceTotals; previous: AudienceTotals };
+    browsers: AudienceRow[];
+    os: AudienceRow[];
+    devices: AudienceRow[];
+    countries: AudienceRow[];
+    regions: AudienceRow[];
+    cities: AudienceRow[];
+    /** Sessões por [dia da semana 0=domingo][hora 0–23], no fuso da propriedade. */
+    traffic: number[][];
+};
+
+async function getWeeklyTotals() {
+    const [response] = await client.runReport({
+        property: `properties/${propertyId}`,
+        metrics: [
+            { name: 'activeUsers' },
+            { name: 'sessions' },
+            { name: 'screenPageViews' },
+            { name: 'bounceRate' },
+            { name: 'averageSessionDuration' },
+        ],
+        // Com mais de um intervalo, o GA4 acrescenta a dimensão `dateRange`
+        // sozinho e cada linha vem rotulada com o `name` abaixo.
+        dateRanges: [
+            { ...WEEK, name: 'current' },
+            { ...PREVIOUS_WEEK, name: 'previous' },
+        ],
+    });
+
+    const rows = response.rows ?? [];
+    function parse(name: string): AudienceTotals {
+        const m = rows.find((r) => r.dimensionValues?.[0]?.value === name)?.metricValues ?? [];
+        return {
+            visitors: Number(m[0]?.value ?? 0),
+            visits: Number(m[1]?.value ?? 0),
+            views: Number(m[2]?.value ?? 0),
+            bounceRate: Math.round(Number(m[3]?.value ?? 0) * 100),
+            visitDuration: Math.round(Number(m[4]?.value ?? 0)),
+        };
+    }
+
+    return { current: parse('current'), previous: parse('previous') };
+}
+
+async function getWeeklyTop(dimensions: string[], limit = 10): Promise<AudienceRow[]> {
+    const [response] = await client.runReport({
+        property: `properties/${propertyId}`,
+        dimensions: dimensions.map((name) => ({ name })),
+        metrics: [{ name: 'activeUsers' }],
+        dateRanges: [WEEK],
+        orderBys: [{ metric: { metricName: 'activeUsers' }, desc: true }],
+        limit,
+    });
+
+    return (response.rows ?? []).map((row) => ({
+        name: row.dimensionValues?.[0]?.value ?? '',
+        countryCode: row.dimensionValues?.[1]?.value || undefined,
+        visitors: Number(row.metricValues?.[0]?.value ?? 0),
+    }));
+}
+
+async function getWeeklyTraffic(): Promise<number[][]> {
+    const [response] = await client.runReport({
+        property: `properties/${propertyId}`,
+        dimensions: [{ name: 'dayOfWeek' }, { name: 'hour' }],
+        metrics: [{ name: 'sessions' }],
+        dateRanges: [WEEK],
+        limit: 7 * 24,
+    });
+
+    const grid = Array.from({ length: 7 }, () => Array<number>(24).fill(0));
+    for (const row of response.rows ?? []) {
+        const day = Number(row.dimensionValues?.[0]?.value);
+        const hour = Number(row.dimensionValues?.[1]?.value);
+        if (day >= 0 && day < 7 && hour >= 0 && hour < 24) {
+            grid[day][hour] = Number(row.metricValues?.[0]?.value ?? 0);
+        }
+    }
+    return grid;
+}
+
+export async function getWeeklyAudience(): Promise<WeeklyAudience> {
+    const [totals, browsers, os, devices, countries, regions, cities, traffic] = await Promise.all([
+        getWeeklyTotals(),
+        getWeeklyTop(['browser']),
+        getWeeklyTop(['operatingSystem']),
+        getWeeklyTop(['deviceCategory']),
+        getWeeklyTop(['country', 'countryId']),
+        getWeeklyTop(['region', 'countryId']),
+        getWeeklyTop(['city', 'countryId']),
+        getWeeklyTraffic(),
+    ]);
+
+    return { totals, browsers, os, devices, countries, regions, cities, traffic };
+}
