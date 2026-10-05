@@ -135,5 +135,5 @@ export function campaignTemplate(opts: CampaignTemplateOptions): string {
   ${contentBlock}
   ${opts.trackingPixelUrl ? renderTrackingPixel(opts.trackingPixelUrl) : ""}`;
 
-  return wrapper(body, opts.brand, opts.unsubscribeUrl, opts.recipient.locale);
+  return wrapper(body, opts.brand, opts.unsubscribeUrl, opts.recipient.locale, opts.previewText);
 }

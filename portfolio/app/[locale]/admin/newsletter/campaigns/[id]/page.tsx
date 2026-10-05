@@ -279,6 +279,7 @@ export default async function CampaignDetailPage(props: {
               content: campaign.content,
               postId: campaign.postId,
               postIds: campaign.campaignPosts.map((cp) => cp.postId),
+              translations: campaign.translations,
             }}
             publishedPosts={publishedPosts.map((post: typeof publishedPosts[number]) => ({
               id: post.id,

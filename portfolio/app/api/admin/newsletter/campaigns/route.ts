@@ -20,6 +20,11 @@ import {
 } from "@/lib/api-validation";
 import { sanitizeNewsletterHtml } from "@/lib/newsletter-html-sanitizer";
 import { campaignTemplate, type BrandConfig } from "@romulo/templates";
+import {
+  buildCampaignTranslations,
+  submittedTranslationsSchema,
+  translationsToJson,
+} from "@/lib/newsletter/campaign-translations.server";
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "";
 
@@ -48,6 +53,7 @@ function createCampaignSchema(t: Awaited<ReturnType<typeof getApiTranslator>>) {
       ),
     postId: z.string().trim().optional(),
     postIds: z.array(z.string().trim()).optional(),
+    translations: submittedTranslationsSchema,
   });
 }
 
@@ -65,6 +71,16 @@ export async function POST(req: NextRequest) {
       invalidBodyMessage: t("common.invalidBody"),
       fallbackMessage: t("common.invalidRequest"),
     });
+
+    // Called right before each insert, after the type-specific validation, so
+    // an invalid request never costs an OpenAI call.
+    const translate = () =>
+      buildCampaignTranslations({
+        type: body.type,
+        source: { subject: body.subject, previewText: body.previewText },
+        stored: null,
+        submitted: body.translations,
+      });
 
     // ── DIGEST ──────────────────────────────────────────────────────────────
     if (body.type === "DIGEST") {
@@ -86,11 +102,13 @@ export async function POST(req: NextRequest) {
         );
       }
 
+      const { translations, translationFailed } = await translate();
       const campaign = await prisma.campaign.create({
         data: {
           type: "DIGEST",
           subject: body.subject,
           previewText: body.previewText,
+          translations: translationsToJson(translations),
           // O worker renderiza o template por destinatário na hora do envio,
           // assim como faz com POST_BASED. Não há HTML pré-gerado aqui.
           content: "",
@@ -102,7 +120,7 @@ export async function POST(req: NextRequest) {
         },
       });
 
-      return NextResponse.json(campaign, { status: 201 });
+      return NextResponse.json({ ...campaign, translationFailed }, { status: 201 });
     }
 
     // ── POST_BASED ───────────────────────────────────────────────────────────
@@ -144,11 +162,13 @@ export async function POST(req: NextRequest) {
         );
       }
 
+      const { translations, translationFailed } = await translate();
       const campaign = await prisma.campaign.create({
         data: {
           type: "POST_BASED",
           subject: body.subject,
           previewText: body.previewText,
+          translations: translationsToJson(translations),
           content: campaignTemplate({
             subject: body.subject,
             post: {
@@ -168,7 +188,7 @@ export async function POST(req: NextRequest) {
         },
       });
 
-      return NextResponse.json(campaign, { status: 201 });
+      return NextResponse.json({ ...campaign, translationFailed }, { status: 201 });
     }
 
     // ── CUSTOM ───────────────────────────────────────────────────────────────

@@ -123,10 +123,16 @@
         "futureScheduledAt": "scheduledAt must be a future date.",
         "scheduled": "Campaign scheduled successfully.",
         "queued": "Campaign queued for sending.",
-        "dispatchFailed": "Failed to dispatch campaign."
+        "dispatchFailed": "Failed to dispatch campaign.",
+        "draftOnlyTest": "Only draft campaigns can be tested.",
+        "noTestRecipients": "No test emails yet. Add a confirmed subscriber to the test list.",
+        "testQueued": "Test queued."
       },
       "suspiciousComments": {
         "notFound": "Suspicious comment not found."
+      },
+      "newsletterTesters": {
+        "notSubscribed": "This email is not a confirmed newsletter subscriber."
       }
     }
   },
@@ -1658,6 +1664,28 @@
         "customLabel": "custom HTML — preview",
         "editHtml": "Edit HTML",
         "customIframeTitle": "Custom email preview"
+      },
+      "translations": {
+        "title": "Translations (EN and ES)",
+        "hint": "The subject and preview text are translated to English and Spanish automatically on save. You can adjust each one here afterwards.",
+        "stale": "The Portuguese text changed. Translations will be redone on save; anything you edit here now is kept.",
+        "failed": "Automatic translation failed. English and Spanish recipients will get the Portuguese text. Save again to retry.",
+        "subject": "Subject",
+        "previewText": "Preview text"
+      },
+      "test": {
+        "title": "Send test",
+        "description": "Sends the draft only to the emails below, each in that subscriber's own language. The campaign stays a draft and nothing counts toward its stats.",
+        "empty": "No test emails yet. Add a confirmed newsletter subscriber.",
+        "emailPlaceholder": "your-email@example.com",
+        "add": "Add",
+        "remove": "Remove {email} from the test list",
+        "send": "Save and send test ({count})",
+        "sent": "{count, plural, one {Test queued for 1 email.} other {Test queued for # emails.}}",
+        "errors": {
+          "add": "Could not add the email.",
+          "send": "Could not send the test."
+        }
       }
     },
     "postEditor": {

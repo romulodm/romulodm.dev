@@ -1,5 +1,6 @@
 // lib/alerts.ts
 
+import { workerEnvironment } from "./environment";
 import { notifyWorkerAlert, telegramConfigured } from "./telegram";
 
 const ALERT_WINDOW_MS = Number(process.env.WORKER_ALERT_WINDOW_MS ?? 15 * 60 * 1000);
@@ -54,7 +55,7 @@ export async function sendWorkerAlert(options: {
             message,
             queue: options.queue,
             jobId: options.jobId,
-            environment: process.env.SENTRY_ENVIRONMENT ?? process.env.NODE_ENV ?? "development",
+            environment: workerEnvironment(),
         });
     } catch {
         // silencioso de proposito — alerta nao pode quebrar o worker

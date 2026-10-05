@@ -9,6 +9,7 @@ import {
   enqueueCampaignEmail,
 } from "@/lib/queues/email.queue";
 import { displayNameFromEmail, resolveLocale } from "@romulo/templates";
+import { resolveCampaignCopy } from "./campaign-copy";
 
 const CONFIRMATION_TTL_HOURS = 24;
 
@@ -316,6 +317,7 @@ export async function dispatchCampaign(campaignId: string, scheduledAt?: Date) {
     const linkedUsername = sub.userId ? usersMap.get(sub.userId) : undefined;
     const displayName = linkedUsername ?? displayNameFromEmail(sub.email);
     const locale = resolveLocale(sub.preferredLocale);
+    const copy = resolveCampaignCopy(campaign, locale);
 
     await enqueueCampaignEmail(
       {
@@ -326,7 +328,8 @@ export async function dispatchCampaign(campaignId: string, scheduledAt?: Date) {
         recipientId: r.id,
         trackingId: r.trackingId,
         email: sub.email,
-        subject: campaign.subject,
+        subject: copy.subject,
+        previewText: copy.previewText,
         content: campaign.content,
         unsubscribeUrl: unsubscribeUrl(sub.unsubscribeToken),
         trackingPixelUrl: trackingPixelUrl(r.trackingId),
@@ -347,4 +350,68 @@ export async function dispatchCampaign(campaignId: string, scheduledAt?: Date) {
   });
 
   return { dispatched: recipients.length };
+}
+
+/**
+ * Sends the current state of a campaign to every subscriber flagged as
+ * tester (`isTestRecipient`), each in their own locale, without touching the
+ * campaign: no CampaignRecipient rows, no counters, no status change. The
+ * draft can be tested any number of times and then sent for real, and the
+ * testers are included in that real send like everyone else.
+ */
+export async function dispatchCampaignTest(campaignId: string) {
+  const campaign = await prisma.campaign.findUnique({
+    where: { id: campaignId },
+    include: {
+      campaignPosts: {
+        orderBy: { order: "asc" },
+        select: { postId: true },
+      },
+    },
+  });
+  if (!campaign) throw new Error("Campaign not found");
+
+  const testers = await prisma.newsletterSubscriber.findMany({
+    where: { isTestRecipient: true, isConfirmed: true, unsubscribedAt: null },
+    orderBy: { email: "asc" },
+    select: {
+      id: true,
+      email: true,
+      unsubscribeToken: true,
+      preferredLocale: true,
+      userId: true,
+    },
+  });
+
+  const postIds = campaign.campaignPosts.map((cp) => cp.postId);
+  const testRunId = crypto.randomUUID();
+  const sent: Array<{ email: string; locale: string; subject: string }> = [];
+
+  for (const tester of testers) {
+    const { displayName, locale } = await resolveRecipientContext(tester.email, tester);
+    const copy = resolveCampaignCopy(campaign, locale);
+
+    await enqueueCampaignEmail({
+      campaignId,
+      campaignType: campaign.type,
+      postId: campaign.postId,
+      postIds,
+      recipientId: tester.id,
+      trackingId: "",
+      email: tester.email,
+      subject: copy.subject,
+      previewText: copy.previewText,
+      content: campaign.content,
+      unsubscribeUrl: unsubscribeUrl(tester.unsubscribeToken),
+      // Empty: the templates skip the pixel, so test opens never reach the
+      // tracking endpoint (there is no recipient row to attribute them to).
+      trackingPixelUrl: "",
+      displayName,
+      locale,
+      testRunId,
+    });
+    sent.push({ email: tester.email, locale, subject: copy.subject });
+  }
+
+  return { dispatched: sent.length, recipients: sent };
 }

@@ -123,10 +123,16 @@
         "futureScheduledAt": "scheduledAt deve ser uma data futura.",
         "scheduled": "Campanha agendada com sucesso.",
         "queued": "Campanha enfileirada para envio.",
-        "dispatchFailed": "Falha ao despachar campanha."
+        "dispatchFailed": "Falha ao despachar campanha.",
+        "draftOnlyTest": "Apenas campanhas em rascunho podem ser testadas.",
+        "noTestRecipients": "Nenhum e-mail de teste cadastrado. Adicione um inscrito confirmado na lista de teste.",
+        "testQueued": "Teste enfileirado."
       },
       "suspiciousComments": {
         "notFound": "Comentário suspeito não encontrado."
+      },
+      "newsletterTesters": {
+        "notSubscribed": "Esse e-mail não é um inscrito confirmado da newsletter."
       }
     }
   },
@@ -1658,6 +1664,28 @@
         "customLabel": "HTML personalizado — preview",
         "editHtml": "Editar HTML",
         "customIframeTitle": "Pré-visualização do e-mail personalizado"
+      },
+      "translations": {
+        "title": "Traduções (EN e ES)",
+        "hint": "O assunto e o preview são traduzidos automaticamente para inglês e espanhol ao salvar. Depois você pode ajustar cada um aqui.",
+        "stale": "O texto em português mudou. As traduções serão refeitas ao salvar; o que você editar aqui agora é mantido.",
+        "failed": "A tradução automática falhou. Quem recebe em inglês ou espanhol vai ver o texto em português. Salve de novo para tentar outra vez.",
+        "subject": "Assunto",
+        "previewText": "Preview text"
+      },
+      "test": {
+        "title": "Enviar teste",
+        "description": "Envia o rascunho só para os e-mails abaixo, cada um no idioma do próprio inscrito. A campanha continua como rascunho e nada entra nas estatísticas.",
+        "empty": "Nenhum e-mail de teste ainda. Adicione um inscrito confirmado da newsletter.",
+        "emailPlaceholder": "seu-email@exemplo.com",
+        "add": "Adicionar",
+        "remove": "Remover {email} da lista de teste",
+        "send": "Salvar e enviar teste ({count})",
+        "sent": "{count, plural, one {Teste enfileirado para 1 e-mail.} other {Teste enfileirado para # e-mails.}}",
+        "errors": {
+          "add": "Não foi possível adicionar o e-mail.",
+          "send": "Não foi possível enviar o teste."
+        }
       }
     },
     "postEditor": {

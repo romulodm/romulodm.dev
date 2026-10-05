@@ -23,18 +23,44 @@ export function privacyPolicyUrl(brand: BrandConfig, locale?: string | null): st
   return brand.privacyUrl ?? `${brand.baseUrl}/${siteLocale(locale)}/legal/privacy-policy`;
 }
 
+// ─── Preheader ────────────────────────────────────────────────────────────────
+
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+/**
+ * Hidden text that inbox lists show next to the subject. Without it, clients
+ * fill that slot with the first visible text of the body (here, the greeting),
+ * so the campaign's preview text would never be seen.
+ *
+ * The trailing run of zero-width non-joiners and non-breaking spaces pads the
+ * preview so clients do not append body text right after the preheader.
+ */
+function renderPreheader(text: string): string {
+  const padding = "&zwnj;&nbsp;".repeat(90);
+  return `<div style="display:none;font-size:1px;line-height:1px;max-height:0;max-width:0;
+              opacity:0;overflow:hidden;mso-hide:all;color:#f0ede8;">${escapeHtml(text)}${padding}</div>`;
+}
+
 // ─── Wrapper ──────────────────────────────────────────────────────────────────
 
 /**
  * @param unsubscribeUrl - Pass null for emails that do not come from the
  *   mailing list (subscription confirmation, password reset): the footer then
  *   omits the unsubscribe link instead of pointing it somewhere unrelated.
+ * @param preheader - Inbox preview text. Omitted or empty renders nothing.
  */
 export function wrapper(
   body: string,
   brand: BrandConfig,
   unsubscribeUrl: string | null,
   locale?: string | null,
+  preheader?: string | null,
 ): string {
   const logo = logoImg(brand.logoUrl ?? `${brand.baseUrl}${EMAIL_LOGO_PATH}`, brand.name, 28);
   const s = getStrings(locale);
@@ -63,6 +89,7 @@ export function wrapper(
 </head>
 <body style="margin:0;padding:0;background-color:#f0ede8;
              font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+  ${preheader?.trim() ? renderPreheader(preheader.trim()) : ""}
 
   <table width="100%" cellpadding="0" cellspacing="0" role="presentation"
          style="background-color:#f0ede8;padding:40px 16px;">

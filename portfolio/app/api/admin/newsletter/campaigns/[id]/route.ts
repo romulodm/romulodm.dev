@@ -20,6 +20,11 @@ import {
 } from "@/lib/api-validation";
 import { sanitizeNewsletterHtml } from "@/lib/newsletter-html-sanitizer";
 import { campaignTemplate, type BrandConfig } from "@romulo/templates";
+import {
+  buildCampaignTranslations,
+  submittedTranslationsSchema,
+  translationsToJson,
+} from "@/lib/newsletter/campaign-translations.server";
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "";
 
@@ -50,6 +55,8 @@ function createUpdateCampaignSchema(t: Awaited<ReturnType<typeof getApiTranslato
         value === undefined ? undefined : sanitizeNewsletterHtml(value, 50000),
       ),
     postId: z.string().trim().optional(),
+    postIds: z.array(z.string().trim()).optional(),
+    translations: submittedTranslationsSchema,
   });
 }
 
@@ -145,12 +152,54 @@ export async function PATCH(
       updateData.content = body.content;
     }
 
-    const updated = await prisma.campaign.update({
-      where: { id: params.id },
-      data: updateData,
+    // DIGEST: the form sends the full ordered list on every save. Without this
+    // branch, reordering, adding or removing posts on an existing draft was
+    // silently dropped by the schema.
+    let digestPostIds: string[] | undefined;
+    if (existing.type === "DIGEST" && body.postIds !== undefined) {
+      const uniqueIds = [...new Set(body.postIds)];
+      if (uniqueIds.length < 2) {
+        throw new RequestValidationError(t("admin.newsletterCampaigns.digestMinPosts"));
+      }
+      const published = await prisma.post.count({
+        where: { id: { in: uniqueIds }, status: "PUBLISHED" },
+      });
+      if (published !== uniqueIds.length) {
+        throw new RequestValidationError(t("admin.newsletterCampaigns.digestInvalidPosts"));
+      }
+      digestPostIds = uniqueIds;
+    }
+
+    const { translations, translationFailed } = await buildCampaignTranslations({
+      type: existing.type,
+      source: {
+        subject: (updateData.subject as string | undefined) ?? existing.subject,
+        previewText:
+          body.previewText !== undefined ? body.previewText : existing.previewText,
+      },
+      stored: existing.translations,
+      submitted: body.translations,
+    });
+    updateData.translations = translationsToJson(translations);
+
+    const updated = await prisma.$transaction(async (tx) => {
+      if (digestPostIds) {
+        await tx.campaignPost.deleteMany({ where: { campaignId: params.id } });
+        await tx.campaignPost.createMany({
+          data: digestPostIds.map((postId, order) => ({
+            campaignId: params.id,
+            postId,
+            order,
+          })),
+        });
+      }
+      return tx.campaign.update({
+        where: { id: params.id },
+        data: updateData,
+      });
     });
 
-    return NextResponse.json(updated);
+    return NextResponse.json({ ...updated, translationFailed });
   } catch (error) {
     if (error instanceof z.ZodError || error instanceof RequestValidationError) {
       return validationErrorResponse(error, t("common.invalidRequest"));
