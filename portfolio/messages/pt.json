@@ -1120,6 +1120,8 @@
       "toggleTheme": "Alternar tema",
       "toggleLanguage": "Alternar idioma",
       "fallbackUser": "Admin",
+      "collapseSidebar": "Recolher menu",
+      "expandSidebar": "Fixar menu aberto",
       "nav": {
         "dashboard": "Dashboard",
         "posts": "Posts",
@@ -2579,13 +2581,15 @@
       "suspicious": "Comentários suspeitos detectados",
       "donations": "Doações concluídas por dia",
       "donationAmount": "Valor arrecadado por dia (BRL)",
-      "unsubscribes": "Cancelamentos por dia"
+      "unsubscribes": "Cancelamentos por dia",
+      "wallMessages": "Mensagens no mural"
     },
     "engagement": {
       "posts": "Posts publicados",
       "avgComments": "Média de comentários",
       "avgViews": "Média de views",
-      "avgLikes": "Média de likes"
+      "avgLikes": "Média de likes",
+      "wallMessages": "Mensagens no mural"
     },
     "topPosts": {
       "title": "Top posts (últimos 7 dias)",
@@ -2642,6 +2646,49 @@
     },
     "noData": "Sem dados nos últimos 60 dias",
     "tooltipTotal": "total",
-    "updatedAt": "Atualizado em {date}"
+    "updatedAt": "Atualizado em {date}",
+    "audience": {
+      "title": "Visitantes nos últimos 7 dias",
+      "source": "Google Analytics · atualizado a cada 10 min",
+      "unavailable": "Não foi possível carregar os dados de audiência agora.",
+      "vsPrevious": "7 dias anteriores: {value}",
+      "metrics": {
+        "visitors": "Visitantes",
+        "visits": "Visitas",
+        "views": "Visualizações",
+        "bounceRate": "Taxa de rejeição",
+        "visitDuration": "Duração da visita"
+      },
+      "environment": {
+        "title": "Ambiente",
+        "browsers": "Navegadores",
+        "os": "Sistemas",
+        "devices": "Dispositivos",
+        "browser": "Navegador",
+        "system": "Sistema",
+        "device": "Dispositivo"
+      },
+      "location": {
+        "title": "Localização",
+        "countries": "Países",
+        "regions": "Regiões",
+        "cities": "Cidades",
+        "country": "País",
+        "region": "Região",
+        "city": "Cidade"
+      },
+      "deviceNames": {
+        "desktop": "Desktop",
+        "mobile": "Celular",
+        "tablet": "Tablet"
+      },
+      "visitorsColumn": "Visitantes",
+      "unknown": "Desconhecido",
+      "empty": "Sem visitas no período",
+      "traffic": {
+        "title": "Tráfego",
+        "tooltip": "{count, plural, =0 {nenhuma visita} one {# visita} other {# visitas}}"
+      }
+    }
   }
 }
