@@ -89,7 +89,10 @@ const About: React.FC = () => {
                     {t("eyebrow")}
                 </p>
                 <h1 className="type-h1 text-foreground max-w-2xl">
-                    {t("headline")}
+                    {/* The phrase box is a block, so this space changes nothing on
+                        screen. Without it the heading's text content reads
+                        "trabalhei emtelemetria", which is what crawlers index. */}
+                    {t("headline")}{" "}
                     <DissolveText
                         text={builds[buildIndex % builds.length]}
                         phrases={builds}
