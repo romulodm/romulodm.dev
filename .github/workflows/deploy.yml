@@ -404,8 +404,34 @@ jobs:
               $COMPOSE exec -T nginx nginx -s reload
             fi
 
-            echo "Pruning old images..."
-            docker image prune -f
+            # ── Disk ───────────────────────────────────────────────────────
+            # `docker image prune -f` alone only removes dangling images. Every
+            # release here is tagged `<sha>-<target>`, so an old release is
+            # never dangling: it stays tagged, and each deploy left about 1.5 GB
+            # behind (app + migrator + worker + search). In October 2026 that
+            # filled the 38 GB disk; Redis lost the ability to write its RDB
+            # snapshot and started refusing writes (MISCONF), and nginx served
+            # large files truncated.
+            #
+            # Keeps the two newest releases of each image: the one just
+            # deployed and the previous one, so the rollback printed by the
+            # health check below still works without a pull. `docker image ls`
+            # lists newest first; ranking by image ID means a release carrying
+            # two tags (`<sha>-<target>` and `latest-<target>`) counts once.
+            # Removal goes by tag and never forces, so an image still used by a
+            # container (stopped ones included) is skipped, not deleted.
+            echo "Pruning old releases (keeping the current one and the previous one)..."
+            KEEP=2
+            for repo in romulodm-app romulodm-migrator romulodm-worker romulodm-search; do
+              docker image ls "ghcr.io/$GHCR_OWNER/$repo" --format '{{.ID}} {{.Repository}}:{{.Tag}}' \
+                | awk -v keep="$KEEP" '{ if (!($1 in rank)) rank[$1] = ++n; if (rank[$1] > keep && $2 !~ /:<none>$/) print $2 }' \
+                | while read -r ref; do
+                    docker image rm "$ref" >/dev/null 2>&1 && echo "  removed $ref" || echo "  kept $ref (in use)"
+                  done
+            done
+            # Untagged layers left behind by the removals above and by pulls.
+            docker image prune -f >/dev/null
+            df -h / | tail -n 1
 
             docker logout ghcr.io
         env:
