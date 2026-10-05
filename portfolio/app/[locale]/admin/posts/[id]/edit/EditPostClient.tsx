@@ -20,6 +20,7 @@ interface PostWithTranslations {
     coverImageUrl: string | null
     youtubeUrl: string | null
     readingTime: number
+    publishedAt: string | null
     status: 'DRAFT' | 'PUBLISHED'
     postTags: { tag: string }[]
     translations: PostTranslation[]
@@ -131,6 +132,7 @@ export default function EditPostClient() {
                 youtubeUrl: post.youtubeUrl ?? '',
                 summary: activeTranslation?.summary ?? '',
                 readingTime: post.readingTime,
+                publishedAt: post.publishedAt,
             }}
             onSave={handleSave}
             onCancel={() => router.push('/admin/posts')}

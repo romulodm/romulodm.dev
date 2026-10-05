@@ -23,7 +23,7 @@ export function PeriodSelector({
         <div
             role="radiogroup"
             aria-label={t('label')}
-            className="inline-flex items-center gap-0.5 rounded-lg border border-border bg-card p-0.5"
+            className="inline-flex items-center gap-0.5 rounded-lg border border-border bg-card px-3 py-1"
         >
             {PERIODS.map((p) => {
                 const active = p === value;

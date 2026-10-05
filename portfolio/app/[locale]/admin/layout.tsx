@@ -1,6 +1,8 @@
+import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { isAdminAuthenticated } from '@/lib/auth-helpers'
-import { AdminSidebar } from '@/components/admin/AdminSidebar'
+import { AdminShell } from '@/components/admin/AdminShell'
+import { ADMIN_SIDEBAR_COOKIE } from '@/lib/admin-sidebar'
 import { prisma } from '@romulo/database'
 import { AVATAR_SELECT } from '@/lib/avatar'
 
@@ -16,13 +18,12 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         select: { email: true, ...AVATAR_SELECT },
     })
 
+    const cookieStore = await cookies()
+    const initialCollapsed = cookieStore.get(ADMIN_SIDEBAR_COOKIE)?.value === 'collapsed'
+
     return (
-        <div className="flex min-h-screen bg-background">
-            <AdminSidebar user={user} />
-            {/* Conteúdo empurrado pela largura da sidebar */}
-            <div className="flex-1 ml-64 min-h-screen">
-                {children}
-            </div>
-        </div>
+        <AdminShell user={user} initialCollapsed={initialCollapsed}>
+            {children}
+        </AdminShell>
     )
 }
