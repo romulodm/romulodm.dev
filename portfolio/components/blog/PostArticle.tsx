@@ -2,6 +2,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Clock } from 'lucide-react'
 
+import { SUPPORTED_LOCALES, getLocale } from '@/lib/locales'
+
 /**
  * Pecas visuais do post, compartilhadas entre a pagina publica
  * (app/[locale]/blog/[slug]/page.tsx) e o preview do editor no admin
@@ -21,7 +23,9 @@ export function extractYoutubeId(url: string): string | null {
 
 export function PostYoutubeEmbed({ url, title }: { url: string; title: string }) {
   const videoId = extractYoutubeId(url)
-  if (!videoId) return null
+  // The capture group already limits the id to [a-zA-Z0-9_-]{11}; the anchored
+  // test makes that guarantee visible at the sink (CodeQL js/xss-through-dom).
+  if (!videoId || !/^[a-zA-Z0-9_-]{11}$/.test(videoId)) return null
   return (
     <div className="mb-10">
       <div className="aspect-video w-full rounded-xl overflow-hidden shadow-md">
@@ -178,12 +182,15 @@ export function OtherPostsList({
   formatDate: (date: Date) => string
 }) {
   if (posts.length === 0) return null
+  // In the editor preview the locale comes from a <select>; resolve it against
+  // the fixed list so the href never carries arbitrary text (e.g. "/evil.com").
+  const safeLocale = getLocale(locale)?.code ?? SUPPORTED_LOCALES[0].code
   return (
     <div className="shrink-0 p-5">
       <h3 className="type-small font-semibold mb-3 text-foreground">{title}</h3>
       <div className="space-y-3">
         {posts.map((post) => (
-          <Link key={post.id} href={`/${locale}/blog/${post.slug}`} className="group flex gap-3">
+          <Link key={post.id} href={`/${safeLocale}/blog/${post.slug}`} className="group flex gap-3">
             <div className="min-w-0 flex flex-col justify-center">
               <span className="line-clamp-2 text-sm font-medium leading-snug text-foreground transition-colors group-hover:text-primary">{post.title}</span>
               {post.publishedAt && <span className="mt-0.5 text-xs text-muted-foreground">{formatDate(new Date(post.publishedAt))}</span>}
