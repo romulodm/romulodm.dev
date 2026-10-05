@@ -12,6 +12,7 @@ import {
   Eye,
   EyeOff,
   FileText,
+  Languages,
   Layers,
   Loader2,
   Save,
@@ -19,6 +20,13 @@ import {
   X,
 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
+import {
+  CAMPAIGN_TARGET_LOCALES,
+  isTranslatableCampaignType,
+  parseCampaignTranslations,
+  type LocalizedCopy,
+} from "@/lib/newsletter/campaign-copy";
+import CampaignTestPanel from "./CampaignTestPanel";
 
 interface Post {
   id: string;
@@ -36,6 +44,8 @@ interface Campaign {
   content?: string;
   postId?: string | null;
   postIds?: string[];
+  /** Raw `Campaign.translations` value. */
+  translations?: unknown;
 }
 
 interface CampaignFormProps {
@@ -75,6 +85,31 @@ export default function CampaignForm({
   const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [sendState, setSendState] = useState<"idle" | "confirm" | "sending" | "sent" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
+
+  // Translations of subject/previewText. `translationSource` is the PT copy
+  // they were made from; when it differs from the fields above, the server
+  // translates again on the next save.
+  const initialTranslations = parseCampaignTranslations(campaign?.translations);
+  const [translations, setTranslations] = useState<Record<string, LocalizedCopy>>(
+    initialTranslations?.locales ?? {},
+  );
+  const [translationSource, setTranslationSource] = useState<LocalizedCopy | null>(
+    initialTranslations?.source ?? null,
+  );
+  const [translationFailed, setTranslationFailed] = useState(false);
+  const translatable = isTranslatableCampaignType(campaignType);
+  const hasTranslations = CAMPAIGN_TARGET_LOCALES.some((code) => translations[code]);
+  const translationsStale =
+    translationSource !== null &&
+    (translationSource.subject !== subject.trim() ||
+      (translationSource.previewText ?? "") !== previewText.trim());
+
+  function updateTranslation(code: string, field: keyof LocalizedCopy, value: string) {
+    setTranslations((prev) => {
+      const current = prev[code] ?? { subject: "", previewText: null };
+      return { ...prev, [code]: { ...current, [field]: value } };
+    });
+  }
 
   const selectedPost = publishedPosts.find((p) => p.id === selectedPostId) ?? null;
   const previewHtml = selectedPostId ? previewHtmlMap[selectedPostId] : undefined;
@@ -120,18 +155,19 @@ export default function CampaignForm({
 
   function buildPayload() {
     if (campaignType === "POST_BASED") {
-      return { type: "POST_BASED", postId: selectedPostId, subject, previewText };
+      return { type: "POST_BASED", postId: selectedPostId, subject, previewText, translations };
     }
     if (campaignType === "DIGEST") {
-      return { type: "DIGEST", postIds: selectedPostIds, subject, previewText };
+      return { type: "DIGEST", postIds: selectedPostIds, subject, previewText, translations };
     }
     return { type: "CUSTOM", subject, previewText, content };
   }
 
   // ── Actions ─────────────────────────────────────────────────────────────────
 
-  const handleSave = async () => {
-    if (!isValid) return;
+  // Resolves to true when the campaign was saved; the test panel relies on it.
+  const handleSave = async (): Promise<boolean> => {
+    if (!isValid) return false;
     setSaveState("saving");
     setErrorMsg("");
     try {
@@ -149,6 +185,10 @@ export default function CampaignForm({
         throw new Error(data.error ?? t("errors.save"));
       }
       const saved = await res.json();
+      const savedTranslations = parseCampaignTranslations(saved.translations);
+      setTranslations(savedTranslations?.locales ?? {});
+      setTranslationSource(savedTranslations?.source ?? null);
+      setTranslationFailed(Boolean(saved.translationFailed));
       setSaveState("saved");
       setTimeout(() => setSaveState("idle"), 2000);
       if (mode === "create") {
@@ -156,9 +196,11 @@ export default function CampaignForm({
           router.replace(`/${locale}/admin/newsletter/campaigns/${saved.id}`);
         });
       }
+      return true;
     } catch (error) {
       setSaveState("error");
       setErrorMsg(error instanceof Error ? error.message : t("errors.save"));
+      return false;
     }
   };
 
@@ -525,6 +567,56 @@ export default function CampaignForm({
         />
       </div>
 
+      {/* ── Translations (POST_BASED and DIGEST only) ──────────────────────── */}
+      {translatable && (
+        <div className="space-y-3 rounded-xl border border-gray-200 dark:border-neutral-700 p-4">
+          <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
+            <Languages className="w-4 h-4 text-gray-400" />
+            {t("translations.title")}
+          </p>
+
+          {translationFailed ? (
+            <p className="text-xs text-amber-600 dark:text-amber-400">{t("translations.failed")}</p>
+          ) : !hasTranslations ? (
+            <p className="text-xs text-gray-500 dark:text-gray-400">{t("translations.hint")}</p>
+          ) : translationsStale ? (
+            <p className="text-xs text-amber-600 dark:text-amber-400">{t("translations.stale")}</p>
+          ) : null}
+
+          {CAMPAIGN_TARGET_LOCALES.map((code) => {
+            const copy = translations[code];
+            if (!copy) return null;
+            return (
+              <div key={code} className="space-y-2">
+                <span className="inline-block font-mono text-[10px] font-bold uppercase px-1.5 py-0.5 rounded bg-muted text-muted-foreground">
+                  {code}
+                </span>
+                <input
+                  type="text"
+                  value={copy.subject}
+                  onChange={(e) => updateTranslation(code, "subject", e.target.value)}
+                  aria-label={`${t("translations.subject")} (${code.toUpperCase()})`}
+                  placeholder={t("translations.subject")}
+                  maxLength={150}
+                  className="w-full px-3 py-2 border border-gray-200 dark:border-neutral-700 rounded-lg text-sm bg-white dark:bg-neutral-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500/30 focus:border-green-500 transition-all"
+                />
+                {(previewText.trim() || copy.previewText) && (
+                  <input
+                    type="text"
+                    value={copy.previewText ?? ""}
+                    onChange={(e) => updateTranslation(code, "previewText", e.target.value)}
+                    aria-label={`${t("translations.previewText")} (${code.toUpperCase()})`}
+                    placeholder={t("translations.previewText")}
+                    maxLength={200}
+                    className="w-full px-3 py-2 border border-gray-200 dark:border-neutral-700 rounded-lg text-sm bg-white dark:bg-neutral-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500/30 focus:border-green-500 transition-all"
+                  />
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+
       {/* ── Schedule (edit mode only) ──────────────────────────────────────── */}
       {mode === "edit" && (
         <div className="space-y-1.5">
@@ -541,6 +633,15 @@ export default function CampaignForm({
             className="px-4 py-3 border border-gray-200 dark:border-neutral-700 rounded-xl text-sm bg-white dark:bg-neutral-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500/30 focus:border-green-500 transition-all"
           />
         </div>
+      )}
+
+      {/* ── Send test (edit mode only) ──────────────────────────────────────── */}
+      {mode === "edit" && campaign?.id && (
+        <CampaignTestPanel
+          campaignId={campaign.id}
+          disabled={!isValid || saveState === "saving"}
+          onBeforeSend={handleSave}
+        />
       )}
 
       {/* ── Actions ────────────────────────────────────────────────────────── */}
