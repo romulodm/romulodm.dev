@@ -30,9 +30,14 @@ export interface MarkdownEditorProps {
   isPending?: boolean;
   headerLabel?: React.ReactNode;
   placeholder?: string;
+  /**
+   * Renders the preview tab. When given, the preview shows the comment as it
+   * will appear in the thread (see CommentPreview) instead of bare markdown.
+   */
+  renderPreview?: (markdown: string) => React.ReactNode;
 }
 
-export function MarkdownEditor({ value, onChange, onSubmit, onCancel, autoFocus = false, rows = 6, submitLabel, isPending = false, headerLabel, placeholder }: MarkdownEditorProps) {
+export function MarkdownEditor({ value, onChange, onSubmit, onCancel, autoFocus = false, rows = 6, submitLabel, isPending = false, headerLabel, placeholder, renderPreview }: MarkdownEditorProps) {
   const t = useTranslations('commentsUi.editor');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [tab, setTab] = useState<'write' | 'preview'>('write');
@@ -69,7 +74,7 @@ export function MarkdownEditor({ value, onChange, onSubmit, onCancel, autoFocus 
 
   async function switchTab(nextTab: 'write' | 'preview') {
     setTab(nextTab);
-    if (nextTab === 'preview') setPreviewHtml(await renderToHtml(value));
+    if (nextTab === 'preview' && !renderPreview) setPreviewHtml(await renderToHtml(value));
   }
 
   return (
@@ -101,6 +106,12 @@ export function MarkdownEditor({ value, onChange, onSubmit, onCancel, autoFocus 
           if ((event.metaKey || event.ctrlKey) && event.key === 'i') { event.preventDefault(); insert('*', '*'); }
           if (event.key === 'Escape' && onCancel) { event.preventDefault(); onCancel(); }
         }} />
+      ) : renderPreview ? (
+        <div className="min-h-24 px-3 pt-3">
+          {value.trim()
+            ? renderPreview(value)
+            : <span className="text-sm italic text-muted-foreground">{t('nothingToPreview')}</span>}
+        </div>
       ) : (
         <div className="prose prose-sm min-h-24 max-w-none px-3 py-2.5 dark:prose-invert prose-p:my-1 prose-headings:mb-1 prose-headings:mt-3 prose-code:rounded prose-code:bg-accent prose-code:px-1 prose-code:text-xs prose-code:before:content-none prose-code:after:content-none prose-blockquote:border-l-2 prose-blockquote:border-border prose-blockquote:pl-3 prose-blockquote:text-muted-foreground prose-blockquote:not-italic prose-ul:my-1 prose-ol:my-1 prose-li:my-0" dangerouslySetInnerHTML={{ __html: previewHtml || `<span class="text-muted-foreground text-sm italic">${t('nothingToPreview')}</span>` }} />
       )}

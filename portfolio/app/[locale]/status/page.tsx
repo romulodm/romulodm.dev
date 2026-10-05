@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { getIntlLocaleCode } from '@/lib/locales';
+import { WeeklyAudience } from '@/components/status/WeeklyAudience';
 import {
     BarChart, Bar, XAxis, YAxis, Tooltip,
     ResponsiveContainer, CartesianGrid,
@@ -45,6 +46,10 @@ interface StatusData {
         comments: DayStat[];
         replies: DayStat[];
         votes: DayStat[];
+        // Opcionais: o cache de estatisticas (Redis, ate 15 min) pode ainda
+        // guardar o payload de antes destes campos existirem.
+        wallMessages?: DayStat[];
+        wall?: { total: number };
         suspiciousComments: DayStat[];
         donationsPerDay: DayDonation[];
         unsubscribesPerDay: DayStat[];
@@ -102,54 +107,79 @@ export default function StatusPage() {
         return () => clearInterval(id);
     }, []);
 
-    if (loading) {
+    // Mesma largura do conteudo da navbar (container max-w-7xl px-6). O pt
+    // compensa a navbar fixa.
+    //
+    // Os dois returns abaixo montam <main> com h1 e WeeklyAudience nas mesmas
+    // posicoes (e com a mesma key): o React reaproveita o componente quando o
+    // status chega, e a audiencia nao e buscada de novo.
+    const mainClass = 'mx-auto max-w-7xl px-6 pb-16 pt-28 space-y-14';
+
+    if (loading || !data) {
         return (
-            <main className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
-                <h1 className="type-h1 mb-8 text-foreground">
+            <main className={mainClass}>
+                <h1 className="type-h1 text-foreground">
                     {t('title')}
                 </h1>
-                <div className="space-y-3">
-                    {[100, 80, 100, 60, 80, 40].map((w, i) => (
-                        <div key={i} className="h-4 animate-pulse rounded bg-muted" style={{ width: `${w}%` }} />
-                    ))}
-                </div>
+                <WeeklyAudience key="audience" />
+                {loading && (
+                    <div className="space-y-3">
+                        {[100, 80, 100, 60, 80, 40].map((w, i) => (
+                            <div key={i} className="h-4 animate-pulse rounded bg-muted" style={{ width: `${w}%` }} />
+                        ))}
+                    </div>
+                )}
             </main>
         );
     }
-
-    if (!data) return null;
 
     const db = data.dependencies.database;
     const web = data.dependencies.webServer;
     const stats = data.statistics;
 
     return (
-        <main className="mx-auto max-w-3xl px-4 py-12 sm:px-6 space-y-14">
+        <main className={mainClass}>
             <h1 className="type-h1 text-foreground">
                 {t('title')}
             </h1>
 
+            {/* ── SECAO: Audiencia (GA4, ultimos 7 dias) ── */}
+            <WeeklyAudience key="audience" />
+
             {/* ── SECAO: Atividade de usuarios ── */}
             <Section title={t('sections.activity')}>
-                <StatChart title={t('charts.signups')} data={stats.users} />
-                <StatChart title={t('charts.posts')} data={stats.posts} />
-                <StatChart title={t('charts.comments')} data={stats.comments} />
-                <StatChart title={t('charts.replies')} data={stats.replies} />
-                <StatChart title={t('charts.votes')} data={stats.votes} />
-                <StatChart
-                    title={t('charts.suspicious')}
-                    data={stats.suspiciousComments}
-                    color="#f97316"
-                />
+                <div className="grid gap-x-10 gap-y-8 lg:grid-cols-2">
+                    <StatChart title={t('charts.signups')} data={stats.users} />
+                    <StatChart title={t('charts.posts')} data={stats.posts} />
+                    <StatChart title={t('charts.comments')} data={stats.comments} />
+                    <StatChart title={t('charts.replies')} data={stats.replies} />
+                    <StatChart title={t('charts.votes')} data={stats.votes} />
+                    <StatChart
+                        title={t('charts.wallMessages')}
+                        data={stats.wallMessages ?? []}
+                        color="#b298f0"
+                    />
+                    <div className="lg:col-span-2">
+                        <StatChart
+                            title={t('charts.suspicious')}
+                            data={stats.suspiciousComments}
+                            color="#f97316"
+                        />
+                    </div>
+                </div>
             </Section>
 
             {/* ── SECAO: Engajamento ── */}
             <Section title={t('sections.engagement')}>
-                <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
                     <StatTile label={t('engagement.posts')} value={String(stats.engagement.totalPosts)} />
                     <StatTile label={t('engagement.avgComments')} value={String(stats.engagement.avgComments)} />
                     <StatTile label={t('engagement.avgViews')} value={String(stats.engagement.avgViews)} />
                     <StatTile label={t('engagement.avgLikes')} value={String(stats.engagement.avgLikes)} />
+                    <StatTile
+                        label={t('engagement.wallMessages')}
+                        value={stats.wall ? stats.wall.total.toLocaleString(intlLocale) : '—'}
+                    />
                 </div>
 
                 {stats.topPostsWeek.length > 0 && (
@@ -185,17 +215,19 @@ export default function StatusPage() {
 
             {/* ── SECAO: Doacoes ── */}
             <Section title={t('sections.donations')}>
-                <StatChart
-                    title={t('charts.donations')}
-                    data={stats.donationsPerDay}
-                    color="#a855f7"
-                />
-                <StatChart
-                    title={t('charts.donationAmount')}
-                    data={stats.donationsPerDay.map((d) => ({ day: d.day, count: d.totalBrl }))}
-                    color="#a855f7"
-                    unit="R$"
-                />
+                <div className="grid gap-x-10 gap-y-8 lg:grid-cols-2">
+                    <StatChart
+                        title={t('charts.donations')}
+                        data={stats.donationsPerDay}
+                        color="#a855f7"
+                    />
+                    <StatChart
+                        title={t('charts.donationAmount')}
+                        data={stats.donationsPerDay.map((d) => ({ day: d.day, count: d.totalBrl }))}
+                        color="#a855f7"
+                        unit="R$"
+                    />
+                </div>
             </Section>
 
             {/* ── SECAO: Newsletter ── */}
@@ -254,6 +286,7 @@ export default function StatusPage() {
                 )}
             </Section>
 
+            <div className="grid gap-14 lg:grid-cols-2 lg:gap-10">
             {/* ── SECAO: Banco de Dados ── */}
             <Section title={t('sections.database')}>
                 <div className="space-y-2 text-sm text-foreground">
@@ -336,6 +369,7 @@ export default function StatusPage() {
                     {web.nodeVersion && <Row label={t('webServer.nodeVersion')}><Badge value={web.nodeVersion} /></Row>}
                 </div>
             </Section>
+            </div>
 
             <p className="text-xs text-muted-foreground">
                 {t('updatedAt', { date: new Date(data.updated_at).toLocaleString(intlLocale) })}

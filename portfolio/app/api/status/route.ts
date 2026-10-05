@@ -145,6 +145,8 @@ async function getAppStats() {
         topPostsWeek,
         engagementStats,
         unsubscribesPerDay,
+        wallMessages,
+        wallTotal,
     ] = await Promise.all([
 
         // ── Atividade diaria ──────────────────────────────────────────────────
@@ -276,6 +278,14 @@ async function getAppStats() {
             WHERE "unsubscribedAt" >= ${since60d}
             GROUP BY 1 ORDER BY 1
         `,
+
+        // ── Mural (guestbook) ─────────────────────────────────────────────────
+        prisma.$queryRaw<DayCount[]>`
+            SELECT date_trunc('day', "createdAt") AS day, count(*) AS count
+            FROM "WallMessage" WHERE "createdAt" >= ${since60d}
+            GROUP BY 1 ORDER BY 1
+        `,
+        prisma.wallMessage.count(),
     ]);
 
     function toSeries(rows: DayCount[]) {
@@ -295,6 +305,7 @@ async function getAppStats() {
         comments: toSeries(comments),
         replies: toSeries(replies),
         votes: toSeries(votes),
+        wallMessages: toSeries(wallMessages),
         suspiciousComments: toSeries(suspiciousComments),
         unsubscribesPerDay: toSeries(unsubscribesPerDay),
         donationsPerDay: donationsPerDay.map((r) => ({
@@ -336,6 +347,11 @@ async function getAppStats() {
             commentsCount: Number(p.comments_count),
         })),
 
+        // Mural
+        wall: {
+            total: wallTotal,
+        },
+
         // Engajamento geral
         engagement: {
             totalPosts: Number(eng?.total_posts ?? 0),
@@ -348,8 +364,8 @@ async function getAppStats() {
 
 // ─── Cache ────────────────────────────────────────────────────────────────────
 //
-// A rota e publica e cada execucao completa custa ~24 round trips no Postgres
-// (3x SELECT 1, version(), pg_stat_activity, tamanhos de tabela e 17
+// A rota e publica e cada execucao completa custa ~26 round trips no Postgres
+// (3x SELECT 1, version(), pg_stat_activity, tamanhos de tabela e 19
 // agregacoes). Sem cache, isso e um endpoint anonimo que multiplica carga de
 // banco por request.
 //
@@ -358,9 +374,9 @@ async function getAppStats() {
 //   payload (30s)  — inclui o health check. Curto o bastante para uma queda
 //                    aparecer rapido na pagina.
 //   statistics(5m) — agregacoes de 60 dias. Nao mudam de forma perceptivel em
-//                    5 minutos e respondem por 17 das 24 queries.
+//                    5 minutos e respondem por 19 das 26 queries.
 //
-// Em regime, 1 req/s na rota passa de ~24 queries/s para ~7 queries a cada
+// Em regime, 1 req/s na rota passa de ~26 queries/s para ~7 queries a cada
 // 30s. O single-flight garante que uma rajada no momento da expiracao dispare
 // um recalculo, nao um por request.
 

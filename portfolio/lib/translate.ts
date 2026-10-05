@@ -46,6 +46,7 @@ export async function translatePost(
           `Rules:`,
           `- Preserve ALL markdown formatting, code blocks, inline code, and links exactly as-is.`,
           `- Translate text content only, never translate code or URLs.`,
+          `- Keep citation markers such as [@key] or [@a; @b, p. 3] exactly as-is, and do not translate the \`\`\`references block.`,
           `- Keep technical terms in their widely-accepted form in the target language.`,
           `- Return ONLY a valid JSON object with keys: title, contentMarkdown, summary, excerpt.`,
         ].join('\n'),

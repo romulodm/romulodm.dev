@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import { useTheme } from 'next-themes'
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { loadStripe } from '@stripe/stripe-js'
 import { Elements } from '@stripe/react-stripe-js'
 import { Info, ExternalLink, Wallet, Loader2, CheckCircle2, X, AlertCircle, Link2 } from 'lucide-react'
@@ -26,6 +26,15 @@ const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
 
 const COFFEE_PRICE_BRL = 5
 const QUANTITIES = [1, 3, 5, 10]
+/** Mirrors the 1000-coffee cap enforced by the PIX and Stripe routes. */
+const MAX_COFFEES = 1000
+
+/** Parses "52", "52,5" or "52.50" into a number; NaN for anything else. */
+function parseMoney(input: string): number {
+    const normalized = input.trim().replace(/\s/g, '').replace(',', '.')
+    if (!/^\d+(\.\d{0,2})?$/.test(normalized)) return NaN
+    return Number(normalized)
+}
 
 type PaymentMethod = 'pix' | 'card' | 'crypto'
 type Step = 'form' | 'pix-qr' | 'stripe' | 'success'
@@ -34,6 +43,8 @@ type SendStep = 'idle' | 'switching' | 'sending' | 'confirming' | 'done'
 interface FormState {
     coffees: number
     customCoffees: string
+    /** Free-typed total (BRL for PIX/card, USD for crypto). When set, it drives the coffee count. */
+    customAmount: string
     name: string
     message: string
     isPrivate: boolean
@@ -51,7 +62,7 @@ interface EthProvider {
 }
 
 const INITIAL_FORM: FormState = {
-    coffees: 1, customCoffees: '', name: '', message: '',
+    coffees: 1, customCoffees: '', customAmount: '', name: '', message: '',
     isPrivate: false, isMonthly: false, method: 'pix',
 }
 
@@ -121,6 +132,7 @@ export function DonationWidget() {
 
 function DonationWidgetBody() {
     const t = useTranslations('support')
+    const locale = useLocale()
     const { resolvedTheme } = useTheme()
     const { data: session } = useSession()
 
@@ -152,9 +164,40 @@ function DonationWidgetBody() {
     const [txHash, setTxHash] = useState<string | null>(null)
     const [cryptoError, setCryptoError] = useState<string | null>(null)
 
-    const coffees = form.customCoffees ? Math.max(1, parseInt(form.customCoffees) || 1) : form.coffees
-    const totalBrl = coffees * COFFEE_PRICE_BRL
-    const totalUsd = coffees * COFFEE_USD
+    // Two ways to pick the total: by coffee count (pills / "?" input) or by typing
+    // the amount. In amount mode the typed value is clamped to [1 coffee, MAX_COFFEES]
+    // and the coffee count is derived from it, rounded down (R$ 52 = 10 coffees).
+    const unitPrice = form.method === 'crypto' ? COFFEE_USD : COFFEE_PRICE_BRL
+    const typedAmount = form.customAmount ? parseMoney(form.customAmount) : NaN
+    const amountMode = Number.isFinite(typedAmount)
+    const total = amountMode
+        ? Math.min(MAX_COFFEES * unitPrice, Math.max(unitPrice, typedAmount))
+        : NaN
+    const coffees = amountMode
+        ? Math.max(1, Math.floor(total / unitPrice + 1e-9))
+        : form.customCoffees
+            ? Math.min(MAX_COFFEES, Math.max(1, parseInt(form.customCoffees) || 1))
+            : form.coffees
+    const totalBrl = amountMode && form.method !== 'crypto' ? total : coffees * COFFEE_PRICE_BRL
+    const totalUsd = amountMode && form.method === 'crypto' ? total : coffees * COFFEE_USD
+    const totalBrlCents = Math.round(totalBrl * 100)
+
+    const formatMoney = (value: number) =>
+        value.toLocaleString(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2, useGrouping: false })
+    const totalInCurrency = form.method === 'crypto' ? totalUsd : totalBrl
+    const amountInputValue = form.customAmount !== '' ? form.customAmount : formatMoney(totalInCurrency)
+
+    function setAmount(value: string) {
+        setForm(f => ({ ...f, customAmount: value, customCoffees: '' }))
+    }
+
+    // On blur, rewrite the field with the clamped value so what the visitor
+    // sees matches what will be charged (e.g. "2" becomes "5,00").
+    function normalizeAmount() {
+        if (form.customAmount === '') return
+        if (!amountMode) { setAmount(''); return }
+        setAmount(formatMoney(total))
+    }
     const walletAddr = process.env.NEXT_PUBLIC_WALLET_ADDRESS!
     const netConfig = ALL_NETWORKS[network]
     const tokenConfig = TOKENS[token]
@@ -201,6 +244,7 @@ function DonationWidgetBody() {
     function basePayload() {
         return {
             coffees,
+            amount: totalBrlCents,
             name: effectiveName,
             message: form.message,
             isPrivate: form.isPrivate,
@@ -281,7 +325,7 @@ function DonationWidgetBody() {
                 }) as string
             } else {
                 const tokenAddress = getTokenAddress(token, network)!
-                const totalRaw = BigInt(totalUsd * 10 ** tokenConfig.decimals)
+                const totalRaw = BigInt(Math.round(totalUsd * 10 ** tokenConfig.decimals))
                 const data = encodeFunctionData({ abi: ERC20_TRANSFER_ABI, functionName: 'transfer', args: [walletAddr as `0x${string}`, totalRaw] })
                 tx = await connected.provider.request({
                     method: 'eth_sendTransaction',
@@ -328,14 +372,14 @@ function DonationWidgetBody() {
     const explorerTx = txHash ? `${netConfig.explorer}/tx/${txHash}` : null
 
     const cryptoLabel: Record<SendStep, string> = {
-        idle: t('crypto.steps.idle', { amount: totalUsd.toFixed(2) }),
+        idle: t('crypto.steps.idle', { amount: formatMoney(totalUsd) }),
         switching: t('crypto.steps.switching'),
         sending: t('crypto.steps.sending'),
         confirming: t('crypto.steps.confirming'),
         done: t('crypto.steps.done'),
     }
 
-    const fiatLabel = loading ? t('widget.loading') : t('widget.supportWith', { amount: totalBrl })
+    const fiatLabel = loading ? t('widget.loading') : t('widget.supportWith', { amount: formatMoney(totalBrl) })
 
     // ── Early returns ─────────────────────────────────────────────────────────
     if (step === 'success') return <SuccessView onReset={reset} />
@@ -343,7 +387,7 @@ function DonationWidgetBody() {
         <PixView
             {...pixData}
             coffees={coffees}
-            amount={coffees * 500}
+            amount={totalBrlCents}
             onBack={() => { setPixData(null); setStep('form') }}
             onSuccess={() => setStep('success')}
         />
@@ -368,7 +412,7 @@ function DonationWidgetBody() {
             >
                 <StripeForm
                     coffees={coffees}
-                    amount={coffees * 500}
+                    amount={totalBrlCents}
                     onBack={() => setStep('form')}
                     onSuccess={() => setStep('success')}
                 />
@@ -389,10 +433,10 @@ function DonationWidgetBody() {
                         <button
                             key={q}
                             type="button"
-                            onClick={() => setForm(f => ({ ...f, coffees: q, customCoffees: '' }))}
+                            onClick={() => setForm(f => ({ ...f, coffees: q, customCoffees: '', customAmount: '' }))}
                             className={`w-10 h-10 rounded-full font-bold text-sm border transition-all
                                 ${q === 3 ? 'hidden sm:flex items-center justify-center' : ''}
-                                ${form.coffees === q && !form.customCoffees
+                                ${form.coffees === q && !form.customCoffees && !amountMode
                                     ? 'bg-primary text-primary-foreground border-primary'
                                     : 'border-border hover:border-primary text-foreground'
                                 }`}
@@ -404,33 +448,41 @@ function DonationWidgetBody() {
                         type="number"
                         min={1}
                         placeholder="?"
-                        value={form.customCoffees}
-                        onChange={(e) => setForm(f => ({ ...f, customCoffees: e.target.value }))}
+                        value={amountMode ? String(coffees) : form.customCoffees}
+                        onChange={(e) => setForm(f => ({ ...f, customCoffees: e.target.value, customAmount: '' }))}
                         className={`w-10 h-10 rounded-full border text-center text-sm bg-background text-foreground focus:outline-none transition-all
                             [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none
-                            ${form.customCoffees ? 'bg-primary text-primary-foreground border-primary' : 'border-border hover:border-primary'}`}
+                            ${form.customCoffees || amountMode ? 'bg-primary text-primary-foreground border-primary' : 'border-border hover:border-primary'}`}
                     />
                 </div>
             </div>
 
-            {/* Valor */}
-            <p className="text-sm text-muted-foreground mb-5">
-                {form.method !== 'crypto' ? (
-                    <>= <span className="font-bold text-foreground text-base">R$ {totalBrl},00</span></>
-                ) : token === 'ETH' && ethEquiv ? (
-                    <>
-                        = <span className="font-bold text-foreground text-base">${totalUsd.toFixed(2)}</span>
-                        <span className="ml-2 text-muted-foreground">≈ {ethEquiv} ETH</span>
-                    </>
-                ) : (
-                    <>
-                        = <span className="font-bold text-foreground text-base">${totalUsd.toFixed(2)}</span>
-                        {(token === 'USDC' || token === 'USDT') && (
-                            <span className="ml-2 text-muted-foreground">= {totalUsd.toFixed(2)} {token}</span>
-                        )}
-                    </>
+            {/* Valor — editable; typing an amount derives the coffee count */}
+            <div className="flex items-center flex-wrap gap-x-2 text-sm text-muted-foreground mb-5">
+                <span>=</span>
+                <label className="inline-flex items-center gap-1 rounded-md border border-transparent px-1.5 -mx-1.5
+                                  hover:border-border focus-within:border-primary transition-colors cursor-text">
+                    <span className="font-bold text-foreground text-base">{form.method === 'crypto' ? '$' : 'R$'}</span>
+                    <input
+                        type="text"
+                        inputMode="decimal"
+                        aria-label={t('widget.amountLabel')}
+                        value={amountInputValue}
+                        onChange={(e) => setAmount(e.target.value)}
+                        onFocus={(e) => e.target.select()}
+                        onBlur={normalizeAmount}
+                        onKeyDown={(e) => { if (e.key === 'Enter') e.currentTarget.blur() }}
+                        style={{ width: `${Math.max(4, amountInputValue.length) + 1}ch` }}
+                        className="bg-transparent font-bold text-foreground text-base py-0.5 focus:outline-none"
+                    />
+                </label>
+                {form.method === 'crypto' && token === 'ETH' && ethEquiv && (
+                    <span>≈ {ethEquiv} ETH</span>
                 )}
-            </p>
+                {form.method === 'crypto' && (token === 'USDC' || token === 'USDT') && (
+                    <span>= {formatMoney(totalUsd)} {token}</span>
+                )}
+            </div>
 
             {/* Nome + mensagem */}
             <div className="space-y-3 mb-4">
@@ -476,7 +528,13 @@ function DonationWidgetBody() {
                         <button
                             key={method}
                             type="button"
-                            onClick={() => setForm(f => ({ ...f, method }))}
+                            onClick={() => setForm(f => ({
+                                ...f,
+                                method,
+                                // A typed amount is in the old method's currency (BRL vs USD);
+                                // keep the coffee count it bought instead of reinterpreting it.
+                                ...(amountMode && { customAmount: '', customCoffees: String(coffees) }),
+                            }))}
                             className={`py-2.5 flex items-center justify-center gap-1.5 rounded-lg border text-sm font-medium transition-all ${form.method === method
                                 ? 'border-primary bg-primary/5 text-primary'
                                 : 'border-border text-muted-foreground hover:border-primary/50'

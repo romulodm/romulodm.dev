@@ -6,6 +6,8 @@ import { toast } from 'react-toastify';
 import { useTranslations } from 'next-intl';
 
 import { MarkdownEditor } from '@/components/comments/MarkdownEditor';
+import { CommentPreview } from '@/components/comments/CommentPreview';
+import { avatarUserFromSession } from '@/lib/avatar';
 import { useAuthGuard } from '@/hooks/auth-guard';
 
 interface CommentComposerProps {
@@ -81,6 +83,13 @@ export function CommentComposer({ postId, parentId = null, onSuccess, onCancel, 
         rows={parentId ? 4 : 6}
         submitLabel={parentId ? t('reply') : t('comment')}
         isPending={isPending}
+        renderPreview={(markdown) => (
+          <CommentPreview
+            markdown={markdown}
+            author={avatarUserFromSession(session.user)}
+            username={session.user.username ?? ''}
+          />
+        )}
       />
       {error && <p className="mt-1 px-1 text-xs text-red-500">{error}</p>}
     </div>

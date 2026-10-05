@@ -20,6 +20,7 @@ import { getRequestIp, rateLimit } from "@/lib/rate-limit";
 import { authOptions } from "@/lib/auth";
 
 const COFFEE_CENTS = 500;
+const MAX_COFFEES = 1000;
 const DONATION_RATE_LIMIT_MAX = 10;
 const DONATION_RATE_LIMIT_WINDOW_SECONDS = 600;
 
@@ -29,7 +30,15 @@ function createPixDonationSchema(t: Awaited<ReturnType<typeof getApiTranslator>>
       .number()
       .int(t("donations.invalidCoffeeCount"))
       .min(1, t("donations.invalidCoffeeCount"))
-      .max(1000, t("donations.invalidCoffeeCount")),
+      .max(MAX_COFFEES, t("donations.invalidCoffeeCount")),
+    // Optional free-typed total in cents. When present it is the source of truth
+    // and the coffee count is derived from it (rounded down).
+    amount: z.coerce
+      .number()
+      .int(t("donations.invalidCoffeeCount"))
+      .min(COFFEE_CENTS, t("donations.invalidCoffeeCount"))
+      .max(MAX_COFFEES * COFFEE_CENTS, t("donations.invalidCoffeeCount"))
+      .optional(),
     name: z.unknown().optional().transform((v) => optionalPlainText(v, 100)),
     message: z.unknown().optional().transform((v) => optionalPlainText(v, 500)),
     isPrivate: z.coerce.boolean().optional().default(false),
@@ -53,7 +62,7 @@ export async function POST(req: NextRequest) {
     );
     if (limited) return rateLimitResponse(t("common.rateLimited"));
 
-    const { coffees, name, message, isPrivate, isMonthly, email, cellphone, taxId, userId } =
+    const { coffees: requestedCoffees, amount: requestedAmount, name, message, isPrivate, isMonthly, email, cellphone, taxId, userId } =
       await parseJsonBodyWithMessages(req, createPixDonationSchema(t), {
         invalidBodyMessage: t("common.invalidBody"),
         fallbackMessage: t("common.invalidRequest"),
@@ -69,7 +78,10 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    const amount = coffees * COFFEE_CENTS;
+    const amount = requestedAmount ?? requestedCoffees * COFFEE_CENTS;
+    const coffees = requestedAmount
+      ? Math.floor(requestedAmount / COFFEE_CENTS)
+      : requestedCoffees;
 
     const donation = await prisma.donation.create({
       data: {

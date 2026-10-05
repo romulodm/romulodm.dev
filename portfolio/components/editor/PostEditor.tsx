@@ -4,7 +4,7 @@ import { useRef, useState, type ChangeEvent } from 'react';
 import { ChevronDown, Languages, Sparkles } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { EditorToolbar } from './EditorToolbar';
-import { MarkdownPreview } from './MarkdownPreview';
+import { PostPreview } from './PostPreview';
 import { TagInput } from './TagInput';
 import { SUPPORTED_LOCALES, getOtherLocales, type LocaleCode } from '@/lib/locales';
 
@@ -42,6 +42,8 @@ interface PostEditorProps {
     youtubeUrl?: string;
     summary?: string;
     readingTime?: number;
+    /** Usado so no preview, para mostrar "Publicado ha X" como no post real. */
+    publishedAt?: string | null;
   };
   onSave: (data: PostEditorData) => Promise<void>;
   onCancel?: () => void;
@@ -364,8 +366,23 @@ export function PostEditor({
         </div>
       </div>
 
+      {editorMode === 'preview' && (
+        <PostPreview
+          postId={postId}
+          locale={locale}
+          title={title}
+          contentMarkdown={contentMarkdown}
+          coverImageUrl={coverImageUrl}
+          tags={tags}
+          summary={summary}
+          youtubeUrl={youtubeError ? '' : youtubeUrl}
+          readingTime={readingTime}
+          publishedAt={initialData?.publishedAt}
+        />
+      )}
+
       <div className="max-w-5xl mx-auto px-4 py-8">
-        {editorMode === 'edit' ? (
+        {editorMode === 'edit' && (
           <div className="bg-card rounded-lg shadow-sm border border-border">
             {mode === 'new' ? (
               <NewPostLocaleBar
@@ -516,13 +533,6 @@ export function PostEditor({
               />
             </div>
           </div>
-        ) : (
-          <MarkdownPreview
-            title={title}
-            contentMarkdown={contentMarkdown}
-            coverImageUrl={coverImageUrl}
-            tags={tags}
-          />
         )}
 
         <div className="mt-6 flex items-center gap-3">

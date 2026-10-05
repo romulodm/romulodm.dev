@@ -9,8 +9,8 @@ export function ShareBtn({ msgId }: { msgId: string }) {
 
   const copy = () => {
     // Current path instead of a hard-coded "/wall", so the copied link keeps
-    // the locale the visitor is reading in.
-    navigator.clipboard.writeText(`${window.location.origin}${window.location.pathname}#${msgId}`);
+    // the locale and the ?page= the visitor is reading.
+    navigator.clipboard.writeText(`${window.location.origin}${window.location.pathname}${window.location.search}#${msgId}`);
     setOk(true);
     setTimeout(() => setOk(false), 1800);
   };

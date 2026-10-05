@@ -806,6 +806,116 @@
   color: inherit;
 }
 
+/* ---- Author-year citations (markup: lib/rehype-citations.ts) ---- */
+.post-body .cite {
+  white-space: nowrap;
+}
+
+.post-body .cite__link {
+  position: relative;
+  color: hsl(var(--primary));
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.post-body .cite__link:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* The full reference on hover, from data-ref. Pure CSS so the RSS feed, which
+ * shares the pipeline, gets no extra markup. Touch devices follow the link. */
+@media (hover: hover) {
+  .post-body .cite__link[data-ref]:hover::after {
+    content: attr(data-ref);
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% + 0.5rem);
+    z-index: 20;
+    width: max-content;
+    max-width: min(26rem, 80vw);
+    transform: translateX(-50%);
+    padding: 0.625rem 0.75rem;
+    border: 1px solid hsl(var(--border));
+    border-radius: 0.5rem;
+    background-color: hsl(var(--popover));
+    color: hsl(var(--popover-foreground));
+    box-shadow: 0 8px 24px rgb(0 0 0 / 0.12);
+    font-size: 0.8125rem;
+    font-weight: 400;
+    line-height: 1.5;
+    white-space: normal;
+    text-align: left;
+    pointer-events: none;
+  }
+}
+
+.post-body .cite--missing {
+  color: hsl(var(--destructive, 0 72% 51%));
+  text-decoration: wavy underline;
+}
+
+.post-body ul.references {
+  list-style: none;
+  padding-left: 0;
+  font-size: 0.9em;
+}
+
+.post-body ul.references > li.references__item {
+  padding-left: 1.5em;
+  text-indent: -1.5em;
+  margin: 0.75em 0;
+  overflow-wrap: anywhere;
+}
+
+.post-body ul.references > li.references__item::before {
+  content: none;
+}
+
+/* Arriving from a citation, flash the entry so the eye finds it. */
+.post-body .references__item:target,
+.post-body .cite__link:target {
+  background-color: hsl(var(--primary) / 0.12);
+  border-radius: 0.25rem;
+}
+
+.post-body .references__item,
+.post-body .cite__link {
+  scroll-margin-top: 6rem;
+}
+
+.post-body .references__backref {
+  margin-left: 0.25em;
+  text-decoration: none;
+  font-size: 0.85em;
+  color: hsl(var(--muted-foreground));
+}
+
+.post-body .references__backref:hover {
+  color: hsl(var(--primary));
+}
+
+/* Standalone image (lib/rehype-figures.ts): the ![label] becomes a caption,
+   centered, italic and close to the image, as in a paper. */
+.post-body figure {
+  margin-top: 2em;
+  margin-bottom: 2em;
+}
+
+.post-body figure > img {
+  display: block;
+  margin: 0 auto;
+}
+
+.post-body figcaption {
+  margin-top: 0.6em;
+  text-align: center;
+  font-style: italic;
+  font-size: 0.875em;
+  line-height: 1.5;
+  color: hsl(var(--muted-foreground));
+}
+
 /* Images of a post open full-screen (components/blog/PostBodyEnhancer.tsx). */
 .post-body img[data-zoomable] {
   cursor: zoom-in;

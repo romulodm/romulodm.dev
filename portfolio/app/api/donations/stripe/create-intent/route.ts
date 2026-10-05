@@ -18,6 +18,7 @@ import { getStripe } from "@/lib/payments/stripe";
 import { getRequestIp, rateLimit } from "@/lib/rate-limit";
 
 const COFFEE_CENTS = 500;
+const MAX_COFFEES = 1000;
 const DONATION_RATE_LIMIT_MAX = 10;
 const DONATION_RATE_LIMIT_WINDOW_SECONDS = 600;
 
@@ -29,7 +30,15 @@ function createStripeDonationSchema(
       .number()
       .int(t("donations.invalidCoffeeCount"))
       .min(1, t("donations.invalidCoffeeCount"))
-      .max(1000, t("donations.invalidCoffeeCount")),
+      .max(MAX_COFFEES, t("donations.invalidCoffeeCount")),
+    // Optional free-typed total in cents. When present it is the source of truth
+    // and the coffee count is derived from it (rounded down).
+    amount: z.coerce
+      .number()
+      .int(t("donations.invalidCoffeeCount"))
+      .min(COFFEE_CENTS, t("donations.invalidCoffeeCount"))
+      .max(MAX_COFFEES * COFFEE_CENTS, t("donations.invalidCoffeeCount"))
+      .optional(),
     name: z
       .unknown()
       .optional()
@@ -56,12 +65,15 @@ export async function POST(req: NextRequest) {
       return rateLimitResponse(t("common.rateLimited"));
     }
 
-    const { coffees, name, message, isPrivate, isMonthly } =
+    const { coffees: requestedCoffees, amount: requestedAmount, name, message, isPrivate, isMonthly } =
       await parseJsonBodyWithMessages(req, createStripeDonationSchema(t), {
         invalidBodyMessage: t("common.invalidBody"),
         fallbackMessage: t("common.invalidRequest"),
       });
-    const amount = coffees * COFFEE_CENTS;
+    const amount = requestedAmount ?? requestedCoffees * COFFEE_CENTS;
+    const coffees = requestedAmount
+      ? Math.floor(requestedAmount / COFFEE_CENTS)
+      : requestedCoffees;
 
     const intent = await getStripe().paymentIntents.create({
       amount,

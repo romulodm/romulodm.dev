@@ -217,7 +217,8 @@
   "wall": {
     "page": {
       "title": "The wall remembers",
-      "description": "Words that echo through time, leaving a mark here. Share your thoughts, memories, or just say hi!"
+      "description": "Words that echo through time, leaving a mark here. Share your thoughts, memories, or just say hi!",
+      "count": "{count, plural, one {<strong>#</strong> message} other {<strong>#</strong> messages}}"
     },
     "signIn": {
       "title": "“Join the wall…”",
@@ -229,8 +230,9 @@
       "subtitle": "Scroll down to find your message"
     },
     "list": {
-      "loadMore": "Load more",
-      "loading": "Loading…"
+      "previous": "Previous",
+      "next": "Next",
+      "pagination": "Wall pages"
     },
     "actions": {
       "copyLink": "Copy link",
@@ -1000,7 +1002,7 @@
     },
     "page": {
       "title": "Buy me a coffee",
-      "description": "Each coffee helps me keep writing and maintaining the blog. Thanks for the support!",
+      "description": "This site is <repo>open source</repo> under the MIT license. Your support is an incentive to keep the blog running and improve a codebase others can use and adapt freely.",
       "supporters": "<strong>{count}</strong> supporters"
     },
     "trustNote": "Secure payment. Your bank and card details never pass through this site. You can check the privacy policy <link>here</link>.",
@@ -1010,7 +1012,8 @@
       "payWith": "Pay with",
       "privateMessage": "Private message",
       "loading": "Please wait...",
-      "supportWith": "Support with R$ {amount},00",
+      "supportWith": "Support with R$ {amount}",
+      "amountLabel": "Support amount",
       "genericError": "Something went wrong. Please try again.",
       "methods": {
         "pix": "PIX",
@@ -1084,7 +1087,23 @@
       "beFirst": "Be the first to support!",
       "anonymous": "Anonymous",
       "someone": "Someone",
-      "coffees": "{count} coffee(s)"
+      "coffees": "{count} coffee(s)",
+      "period": {
+        "label": "Ranking period",
+        "all": "All time",
+        "week": "Week",
+        "month": "Month",
+        "empty": {
+          "all": "No support yet.",
+          "week": "No support in the last 7 days.",
+          "month": "No support in the last 30 days."
+        }
+      },
+      "pagination": {
+        "label": "Ranking pages",
+        "previous": "Previous page",
+        "next": "Next page"
+      }
     },
     "messageModal": {
       "defaultName": "Anonymous",
@@ -1101,6 +1120,8 @@
       "toggleTheme": "Toggle theme",
       "toggleLanguage": "Toggle language",
       "fallbackUser": "Admin",
+      "collapseSidebar": "Collapse menu",
+      "expandSidebar": "Keep menu open",
       "nav": {
         "dashboard": "Dashboard",
         "posts": "Posts",
@@ -2560,13 +2581,15 @@
       "suspicious": "Suspicious comments detected",
       "donations": "Completed donations per day",
       "donationAmount": "Amount raised per day (BRL)",
-      "unsubscribes": "Unsubscribes per day"
+      "unsubscribes": "Unsubscribes per day",
+      "wallMessages": "Guestbook messages"
     },
     "engagement": {
       "posts": "Published posts",
       "avgComments": "Avg. comments",
       "avgViews": "Avg. views",
-      "avgLikes": "Avg. likes"
+      "avgLikes": "Avg. likes",
+      "wallMessages": "Guestbook messages"
     },
     "topPosts": {
       "title": "Top posts (last 7 days)",
@@ -2623,6 +2646,49 @@
     },
     "noData": "No data in the last 60 days",
     "tooltipTotal": "total",
-    "updatedAt": "Updated at {date}"
+    "updatedAt": "Updated at {date}",
+    "audience": {
+      "title": "Visitors in the last 7 days",
+      "source": "Google Analytics · refreshed every 10 min",
+      "unavailable": "Audience data could not be loaded right now.",
+      "vsPrevious": "Previous 7 days: {value}",
+      "metrics": {
+        "visitors": "Visitors",
+        "visits": "Visits",
+        "views": "Views",
+        "bounceRate": "Bounce rate",
+        "visitDuration": "Visit duration"
+      },
+      "environment": {
+        "title": "Environment",
+        "browsers": "Browsers",
+        "os": "OS",
+        "devices": "Devices",
+        "browser": "Browser",
+        "system": "OS",
+        "device": "Device"
+      },
+      "location": {
+        "title": "Location",
+        "countries": "Countries",
+        "regions": "Regions",
+        "cities": "Cities",
+        "country": "Country",
+        "region": "Region",
+        "city": "City"
+      },
+      "deviceNames": {
+        "desktop": "Desktop",
+        "mobile": "Mobile",
+        "tablet": "Tablet"
+      },
+      "visitorsColumn": "Visitors",
+      "unknown": "Unknown",
+      "empty": "No visits in this period",
+      "traffic": {
+        "title": "Traffic",
+        "tooltip": "{count, plural, =0 {no visits} one {# visit} other {# visits}}"
+      }
+    }
   }
 }
