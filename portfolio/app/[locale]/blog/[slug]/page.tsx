@@ -1,6 +1,5 @@
 import { notFound } from 'next/navigation'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
-import Image from 'next/image'
 import { prisma } from '@romulo/database'
 import { unstable_cache } from 'next/cache'
 import { markdownToHtml } from '@/lib/markdown'
@@ -12,10 +11,17 @@ import { PostReactionSidebar } from '@/components/blog/PostReactionsSidebar'
 import { PostStatsMobile } from '@/components/blog/PostStatsMobile'
 import { RightSidebar } from '@/components/blog/RightSidebar'
 import { Footer } from '@/components/Footer'
-import { Clock } from 'lucide-react'
-import Link from 'next/link'
 import { ViewTracker } from './ViewTracker'
 import { PostBodyEnhancer } from '@/components/blog/PostBodyEnhancer'
+import {
+  PostBody,
+  PostByline,
+  PostCover,
+  PostSummary,
+  PostTagList,
+  PostTitle,
+  PostYoutubeEmbed,
+} from '@/components/blog/PostArticle'
 import { JsonLd } from '@/components/seo/JsonLd'
 import { absoluteUrl, blogPostingJsonLd, breadcrumbJsonLd, buildPageMetadata } from '@/lib/seo'
 
@@ -24,31 +30,6 @@ interface PageProps {
 }
 
 const BLOG_POST_REVALIDATE_SECONDS = 300
-
-function extractYoutubeId(url: string): string | null {
-  const match = url.match(
-    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/,
-  )
-  return match ? match[1] : null
-}
-
-function YoutubeEmbed({ url, title }: { url: string; title: string }) {
-  const videoId = extractYoutubeId(url)
-  if (!videoId) return null
-  return (
-    <div className="mb-10">
-      <div className="aspect-video w-full rounded-xl overflow-hidden shadow-md">
-        <iframe
-          src={`https://www.youtube.com/embed/${videoId}`}
-          title={title}
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-          className="w-full h-full"
-        />
-      </div>
-    </div>
-  )
-}
 
 // ✅ Factory por slug — cada post tem sua própria entrada de cache
 const getCachedPostBySlug = (slug: string) =>
@@ -266,77 +247,28 @@ export default async function PostPage({ params }: PageProps) {
         <main className="flex-1 min-w-0 max-w-4xl md:px-4 pb-12">
           <article className="rounded-lg shadow-sm">
             {post.coverImageUrl && (
-              <div className="overflow-hidden md:rounded-t-2xl">
-                <img
-                  src={post.coverImageUrl}
-                  alt={translation.title}
-                  className="w-full h-64 md:h-96 object-cover"
-                />
-              </div>
+              <PostCover src={post.coverImageUrl} alt={translation.title} />
             )}
 
             <div className="p-4 md:p-6">
-              {tags.length > 0 && (
-                <div className="flex gap-2 mb-6 flex-wrap">
-                  {tags.map((tag, i) => (
-                    <span
-                      key={i}
-                      className="px-3 py-1 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-sm rounded-full"
-                    >
-                      #{tag}
-                    </span>
-                  ))}
-                </div>
-              )}
+              <PostTagList tags={tags} />
 
-              <h1 className="type-h1 text-foreground mb-4">
-                {translation.title}
-              </h1>
+              <PostTitle>{translation.title}</PostTitle>
 
               <div className="flex flex-col gap-2 mb-8 pb-2 border-b border-border">
-                <div className="flex items-center gap-4 text-muted-foreground text-sm flex-wrap">
-                  <div className="flex items-center gap-2">
-                    {author.avatarUrl ? (
-                      <Image
-                        src={author.avatarUrl}
-                        alt={author.name}
-                        width={24}
-                        height={24}
-                        className="rounded-full w-6 h-6 object-cover ring-1 ring-border"
-                      />
-                    ) : (
-                      <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-xs font-bold text-primary">
-                        {author.name.charAt(0).toUpperCase()}
-                      </div>
-                    )}
-                    <Link href={`/profile/${author.name}`} className="hover:underline">
-                      <span className="font-medium text-foreground">@{author.name}</span>
-                    </Link>
-                  </div>
+                <PostByline
+                  author={author}
+                  publishedLabel={
+                    post.publishedAt
+                      ? t('published', { time: formatDistanceToNow(post.publishedAt, locale) })
+                      : null
+                  }
+                  readingTimeLabel={
+                    post.readingTime > 0 ? t('readingTime', { minutes: post.readingTime }) : null
+                  }
+                />
 
-                  {post.publishedAt && (
-                    <>
-                      <span className="h-1 w-1 bg-gray-300 dark:bg-neutral-700 rounded-full" />
-                      <span>{t('published', { time: formatDistanceToNow(post.publishedAt, locale) })}</span>
-                    </>
-                  )}
-
-                  {post.readingTime > 0 && (
-                    <>
-                      <span className="h-1 w-1 bg-gray-300 dark:bg-neutral-700 rounded-full" />
-                      <span className="flex items-center gap-1">
-                        <Clock className="w-3.5 h-3.5" />
-                        {t('readingTime', { minutes: post.readingTime })}
-                      </span>
-                    </>
-                  )}
-                </div>
-
-                {translation.summary && (
-                  <p className="text-lg text-muted-foreground my-4 leading-relaxed border-l-4 border-primary pl-4 italic">
-                    {translation.summary}
-                  </p>
-                )}
+                {translation.summary && <PostSummary>{translation.summary}</PostSummary>}
 
                 <PostStatsMobile
                   postId={post.id}
@@ -346,29 +278,9 @@ export default async function PostPage({ params }: PageProps) {
                 />
               </div>
 
-              {post.youtubeUrl && <YoutubeEmbed url={post.youtubeUrl} title={t('videoTitle')} />}
+              {post.youtubeUrl && <PostYoutubeEmbed url={post.youtubeUrl} title={t('videoTitle')} />}
 
-              {/* Code blocks, inline code and images are styled in globals.css
-                  under .post-body; PostBodyEnhancer adds the copy buttons and
-                  the image lightbox on the client. */}
-              <div
-                id="post-body"
-                className="post-body prose prose-lg dark:prose-invert max-w-none
-                  [--tw-prose-bullets:hsl(var(--muted-foreground))]
-                  [--tw-prose-counters:hsl(var(--muted-foreground))]
-                  [--tw-prose-invert-bullets:hsl(var(--muted-foreground))]
-                  [--tw-prose-invert-counters:hsl(var(--muted-foreground))]
-                  prose-headings:text-foreground
-                  prose-p:text-foreground/90
-                  prose-li:text-foreground/90
-                  prose-em:text-foreground/90
-                  prose-a:text-primary hover:prose-a:opacity-80
-                  prose-strong:text-foreground
-                  prose-blockquote:border-primary prose-blockquote:text-muted-foreground
-                  prose-hr:border-border
-                  prose-th:text-foreground prose-td:text-foreground/90"
-                dangerouslySetInnerHTML={{ __html: htmlContent }}
-              />
+              <PostBody id="post-body" html={htmlContent} />
               <PostBodyEnhancer targetId="post-body" />
 
               {translation.canonicalUrl && (
