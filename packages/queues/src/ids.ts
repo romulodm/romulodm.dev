@@ -37,6 +37,12 @@ export function buildTransactionalJobId(job: TransactionalEmailJob): string {
 }
 
 export function buildCampaignJobId(job: CampaignEmailJob): string {
+    if (job.testRunId) {
+        // BullMQ rejects custom ids with a ":" unless they split into exactly
+        // three parts (a compatibility rule for legacy repeatable ids), so
+        // the run id and recipient share the last segment.
+        return `campaign-test:${job.campaignId}:${job.testRunId}-${job.recipientId}`;
+    }
     return `campaign:${job.campaignId}:${job.recipientId}`;
 }
 

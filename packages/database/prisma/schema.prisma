@@ -202,6 +202,8 @@ model NewsletterSubscriber {
   updatedAt           DateTime            @updatedAt
   preferredLocale     String              @default("en")
   userId              String?
+  /// Receives "send test" deliveries of draft campaigns. Never affects real sends.
+  isTestRecipient     Boolean             @default(false)
   recipients          CampaignRecipient[]
   user                User?               @relation(fields: [userId], references: [id])
 
@@ -209,12 +211,16 @@ model NewsletterSubscriber {
   @@index([unsubscribeToken])
   @@index([isConfirmed, unsubscribedAt])
   @@index([userId])
+  @@index([isTestRecipient])
 }
 
 model Campaign {
   id              String              @id @default(cuid())
   subject         String
   previewText     String?
+  /// Machine-translated subject/previewText per recipient locale, editable in
+  /// the admin form. Shape: CampaignTranslations in portfolio/lib/newsletter/campaign-copy.ts.
+  translations    Json?
   content         String
   status          CampaignStatus      @default(DRAFT)
   scheduledAt     DateTime?

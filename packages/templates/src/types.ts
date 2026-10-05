@@ -89,6 +89,8 @@ export interface PostMeta {
 
 export interface CampaignTemplateOptions {
   subject: string;
+  /** Inbox preview text rendered as a hidden preheader. */
+  previewText?: string | null;
   content?: string;
   post?: PostMeta;
   unsubscribeUrl: string;
@@ -99,6 +101,8 @@ export interface CampaignTemplateOptions {
 
 export type DigestTemplateOptions = {
   subject: string;
+  /** Inbox preview text rendered as a hidden preheader. */
+  previewText?: string | null;
   posts: DigestPost[];
   unsubscribeUrl: string;
   trackingPixelUrl?: string;

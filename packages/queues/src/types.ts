@@ -37,12 +37,23 @@ export interface CampaignEmailJob {
     recipientId: string;
     trackingId: string;
     email: string;
+    /** Already localized for `locale` at dispatch time. */
     subject: string;
+    /** Inbox preview text, already localized for `locale`. */
+    previewText?: string | null;
     content: string;
     unsubscribeUrl: string;
     trackingPixelUrl: string;
     displayName: string;
     locale: string;
+    /**
+     * Set only on "send test" deliveries of a draft campaign. A test job has
+     * no CampaignRecipient row: `recipientId` holds the subscriber id, no
+     * tracking pixel is rendered and campaign counters are left untouched.
+     * The value is unique per test run, so repeating a test is never
+     * deduplicated by the queue.
+     */
+    testRunId?: string;
 }
 
 export type NotificationJob =

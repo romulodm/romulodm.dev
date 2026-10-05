@@ -80,5 +80,5 @@ export function digestTemplate(opts: DigestTemplateOptions): string {
             : ""
         }`;
 
-    return wrapper(body, opts.brand, opts.unsubscribeUrl, opts.recipient.locale);
+    return wrapper(body, opts.brand, opts.unsubscribeUrl, opts.recipient.locale, opts.previewText);
 }
