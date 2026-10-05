@@ -67,3 +67,64 @@ export async function translatePost(
   const parsed = JSON.parse(raw) as TranslationOutput
   return parsed
 }
+
+// ── Newsletter campaign copy ─────────────────────────────────────────────────
+
+export interface CampaignCopy {
+  subject: string
+  previewText: string | null
+}
+
+/**
+ * Translates a campaign's subject line and inbox preview text into every
+ * target locale in a single request. Throws when the model omits a locale or
+ * returns an empty subject, so the caller never stores a half-translated set.
+ */
+export async function translateCampaignCopy(
+  copy: CampaignCopy,
+  sourceLocale: string,
+  targetLocales: readonly string[],
+): Promise<Record<string, CampaignCopy>> {
+  const sourceName = getLocale(sourceLocale)?.label ?? sourceLocale
+  const targets = targetLocales.map((code) => `${code} (${getLocale(code)?.label ?? code})`)
+
+  const completion = await getOpenAI().chat.completions.create({
+    model: 'gpt-4o-mini',
+    response_format: { type: 'json_object' },
+    messages: [
+      {
+        role: 'system',
+        content: [
+          `You translate newsletter email copy for a personal technical blog.`,
+          `Source language: ${sourceName}. Target locales: ${targets.join(', ')}.`,
+          `Rules:`,
+          `- "subject" is an email subject line: keep it natural and idiomatic in the target language, not word-for-word, and about the same length.`,
+          `- "previewText" is the inbox preview line shown after the subject. If it is empty, return an empty string.`,
+          `- Keep product names, package names, people's names, numbers and emoji exactly as written.`,
+          `- Keep technical terms in their widely-accepted form in the target language.`,
+          `- Return ONLY a JSON object keyed by locale code, e.g. {"en": {"subject": "...", "previewText": "..."}}.`,
+        ].join('\n'),
+      },
+      {
+        role: 'user',
+        content: JSON.stringify({ subject: copy.subject, previewText: copy.previewText ?? '' }),
+      },
+    ],
+  })
+
+  const raw = completion.choices[0].message.content ?? '{}'
+  const parsed = JSON.parse(raw) as Record<string, { subject?: unknown; previewText?: unknown }>
+
+  const result: Record<string, CampaignCopy> = {}
+  for (const code of targetLocales) {
+    const entry = parsed[code]
+    const subject = typeof entry?.subject === 'string' ? entry.subject.trim() : ''
+    if (!subject) throw new Error(`Campaign translation missing subject for locale "${code}"`)
+    const previewText =
+      copy.previewText && typeof entry?.previewText === 'string' && entry.previewText.trim()
+        ? entry.previewText.trim()
+        : null
+    result[code] = { subject, previewText }
+  }
+  return result
+}
