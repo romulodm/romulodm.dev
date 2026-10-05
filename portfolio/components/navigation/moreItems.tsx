@@ -71,7 +71,7 @@ export const quickLinks: {
         href: "/status",
         key: "status",
         icon: <Activity className="h-4 w-4" />,
-        external: true,
+        external: false,
     },
 ];
 
