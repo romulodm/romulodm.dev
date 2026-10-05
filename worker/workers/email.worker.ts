@@ -148,6 +148,7 @@ async function renderDigestEmail(
 
   return digestTemplate({
     subject: data.subject,
+    previewText: data.previewText,
     posts: digestPosts,
     unsubscribeUrl: data.unsubscribeUrl,
     trackingPixelUrl: data.trackingPixelUrl,
@@ -213,6 +214,7 @@ async function renderPostBasedEmail(
 
   return campaignTemplate({
     subject: data.subject,
+    previewText: data.previewText,
     post: {
       imageUrl: post.coverImageUrl ?? undefined,
       title: translation.title,
@@ -311,8 +313,58 @@ export async function processTransactionalEmailJob(job: TransactionalJobContext)
 
 // ── Campaign processor ────────────────────────────────────────────────────────
 
+async function renderCampaignHtml(data: CampaignEmailJob): Promise<string> {
+  if (data.campaignType === "DIGEST" && data.postIds?.length) {
+    return renderDigestEmail(data as CampaignEmailJob & { postIds: string[] });
+  }
+  if (data.campaignType === "POST_BASED" && data.postId) {
+    return renderPostBasedEmail(data as CampaignEmailJob & { postId: string });
+  }
+  return resolvePlaceholders(data.content, {
+    displayName: data.displayName,
+    unsubscribeUrl: data.unsubscribeUrl,
+    trackingPixelUrl: data.trackingPixelUrl,
+  });
+}
+
+/**
+ * "Send test" delivery of a draft campaign to a subscriber flagged as tester.
+ *
+ * Renders exactly what the real send would render for that subscriber's
+ * locale, but touches no CampaignRecipient row and no campaign counter: the
+ * draft stays a draft, and the tester still gets the real send later because
+ * no recipient row exists for them yet.
+ */
+async function processCampaignTestJob(job: CampaignJobContext): Promise<void> {
+  const { data } = job;
+  try {
+    const html = await renderCampaignHtml(data);
+    await emailService.send({
+      to: data.email,
+      subject: data.subject,
+      html,
+      headers: listUnsubscribeHeaders(data.unsubscribeUrl),
+      messageId: buildEmailMessageId("campaign-test", buildCampaignJobId(data)),
+      isFinalAttempt: isFinalAttempt(job),
+    });
+    console.log(`[CampaignWorker] Test sent to ${data.email} (campaign ${data.campaignId}, locale: ${data.locale})`);
+  } catch (error: unknown) {
+    logWorkerError("campaign.test_send_failed", error, {
+      campaignId: data.campaignId,
+      testRunId: data.testRunId,
+      finalAttempt: isFinalAttempt(job),
+    });
+    throw error;
+  }
+}
+
 export async function processCampaignEmailJob(job: CampaignJobContext): Promise<void> {
   const { data } = job;
+
+  if (data.testRunId) {
+    await processCampaignTestJob(job);
+    return;
+  }
 
   const existing = await prisma.campaignRecipient.findUnique({ where: { id: data.recipientId } });
   if (!existing || existing.status !== "PENDING") return;
@@ -320,19 +372,7 @@ export async function processCampaignEmailJob(job: CampaignJobContext): Promise<
   const deliveryId = buildCampaignJobId(data);
 
   try {
-    let html: string;
-
-    if (data.campaignType === "DIGEST" && data.postIds?.length) {
-      html = await renderDigestEmail(data as CampaignEmailJob & { postIds: string[] })
-    } else if (data.campaignType === "POST_BASED" && data.postId) {
-      html = await renderPostBasedEmail(data as CampaignEmailJob & { postId: string })
-    } else {
-      html = resolvePlaceholders(data.content, {
-        displayName: data.displayName,
-        unsubscribeUrl: data.unsubscribeUrl,
-        trackingPixelUrl: data.trackingPixelUrl,
-      });
-    }
+    const html = await renderCampaignHtml(data);
 
     await emailService.send({
       to: data.email,

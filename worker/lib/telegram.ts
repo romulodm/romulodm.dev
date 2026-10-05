@@ -21,6 +21,7 @@
 import { UnrecoverableError } from "bullmq";
 import { prisma } from "@romulo/database";
 
+import { isDevelopment } from "./environment";
 import { dayRange, getDailyStats, yesterdayDate } from "./ga4";
 import {
     formatComment,
@@ -58,6 +59,18 @@ export function telegramConfigured(): boolean {
  * Swallowing a 429 here would turn a rate limit into a lost message.
  */
 export async function sendTelegram(text: string): Promise<void> {
+    /*
+     * A development worker uses the same bot and chat as production, so its
+     * messages would land next to the real ones. Skipping here covers every
+     * message type: alerts, contact, comments, daily-status. The job still
+     * completes, so nothing piles up in the queue. `telegram:smoke:send` calls
+     * the Bot API on its own and is not affected.
+     */
+    if (isDevelopment()) {
+        console.info("[telegram] skipped: environment is development");
+        return;
+    }
+
     const token = process.env.TELEGRAM_BOT_TOKEN;
     const chatId = process.env.TELEGRAM_CHAT_ID;
 

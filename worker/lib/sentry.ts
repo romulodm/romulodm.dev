@@ -2,6 +2,8 @@
 
 import * as Sentry from "@sentry/node";
 
+import { workerEnvironment } from "./environment";
+
 const DSN = process.env.SENTRY_DSN ?? "";
 
 export const sentryEnabled = DSN.length > 0;
@@ -14,7 +16,7 @@ function parseRate(value: string | undefined, fallback: number) {
 if (sentryEnabled) {
   Sentry.init({
     dsn: DSN,
-    environment: process.env.SENTRY_ENVIRONMENT ?? process.env.NODE_ENV ?? "development",
+    environment: workerEnvironment(),
     release: process.env.SENTRY_RELEASE || undefined,
 
     // Sem PII: nada de IP, header ou corpo de request nos eventos.
