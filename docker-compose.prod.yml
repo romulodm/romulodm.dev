@@ -135,7 +135,7 @@ services:
       - .env
     environment:
       SITE_URL: ${SITE_URL:?defina SITE_URL no .env}
-      ROBOTS_ALLOW_INDEXING: ${ROBOTS_ALLOW_INDEXING:-false}
+      ROBOTS_ALLOW_INDEXING: ${ROBOTS_ALLOW_INDEXING:-true}
       SEARCH_GO_URL: http://search-go:8080
     restart: unless-stopped
     depends_on:

@@ -243,29 +243,33 @@ export default function DissolveText({
             className={`relative grid ${className ?? ''}`}
         >
             {/*
-             * Leitor de tela recebe so a frase atual. As camadas visuais ficam
-             * com `aria-hidden`: durante a transicao ha duas frases no DOM, e
-             * anunciar as duas nao diria nada.
+             * The reserve phrases are drawn by a ::before pseudo-element, not
+             * as text nodes. Pseudo-element content takes up the same space but
+             * is not part of the DOM text, so the heading this sits in reads as
+             * one sentence to crawlers and to "copy text", instead of every
+             * phrase concatenated.
              */}
-            <span className="sr-only">{text}</span>
-
             {reserve.map((phrase) => (
                 <span
                     key={phrase}
                     aria-hidden="true"
-                    className={`${LAYER} invisible`}
-                >
-                    {phrase}
-                </span>
+                    data-text={phrase}
+                    className={`${LAYER} invisible before:content-[attr(data-text)]`}
+                />
             ))}
 
             {/*
              * The visible layers stretch over the whole cell, so the mask
              * (sized to the layer) lines up with the grid the masker built from
              * the box.
+             *
+             * The incoming layer is the accessible text: it always holds the
+             * current phrase. Only the outgoing one is `aria-hidden`, since
+             * during a transition two phrases are in the DOM and announcing both
+             * would say nothing. A separate sr-only copy used to do this job,
+             * which put the current phrase in the text content twice.
              */}
             <span
-                aria-hidden="true"
                 className={LAYER}
                 style={maskStyle(mask, 'in')}
             >

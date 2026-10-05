@@ -50,15 +50,21 @@ export function absoluteUrl(path = '/'): string {
 /**
  * Monta o mapa de `alternates.languages` para uma rota sem prefixo de locale.
  * `localePrefix` e "always", entao toda rota publica existe como /pt/... e /en/...
+ *
+ * Inclui `x-default`, que diz ao Google qual versao servir a quem nao fala
+ * nenhum dos idiomas listados. Aponta para o locale padrao, nao para a raiz sem
+ * prefixo: `/` responde com redirect, e uma alternativa que redireciona e
+ * descartada.
  */
 export function localeAlternates(pathWithoutLocale = ''): Record<string, string> {
   const suffix = pathWithoutLocale.replace(/^\/+/, '')
-  return Object.fromEntries(
-    routing.locales.map((locale) => [
-      locale,
-      absoluteUrl(suffix ? `/${locale}/${suffix}` : `/${locale}`),
-    ]),
-  )
+  const urlFor = (locale: string) =>
+    absoluteUrl(suffix ? `/${locale}/${suffix}` : `/${locale}`)
+
+  return {
+    ...Object.fromEntries(routing.locales.map((locale) => [locale, urlFor(locale)])),
+    'x-default': urlFor(routing.defaultLocale),
+  }
 }
 
 type PageMetadataInput = {
@@ -145,7 +151,12 @@ export function buildPageMetadata({
 // Dados estruturados sao o que faz o Google mostrar autor, data e breadcrumb no
 // resultado de busca em vez de so titulo e snippet.
 
-export function personJsonLd(locale: string) {
+/**
+ * `description` vem da pagina, ja traduzida. SITE_DESCRIPTION e uma variavel de
+ * build com um idioma so, e usada aqui fazia /en declarar uma descricao em
+ * portugues ao lado de `inLanguage: en-US`. Fica so como fallback.
+ */
+export function personJsonLd(locale: string, description?: string) {
   return {
     '@context': 'https://schema.org',
     '@type': 'Person',
@@ -156,7 +167,7 @@ export function personJsonLd(locale: string) {
     // Estava fixo em ingles nos dois locales; o JSON-LD declara inLanguage por
     // pagina, entao o cargo precisa acompanhar.
     jobTitle: locale === 'pt' ? 'Engenheiro de Software' : 'Software Engineer',
-    description: SITE_DESCRIPTION,
+    description: description || SITE_DESCRIPTION,
     sameAs: [
       'https://github.com/romulodm',
       'https://www.linkedin.com/in/romulodm',
@@ -164,13 +175,13 @@ export function personJsonLd(locale: string) {
   }
 }
 
-export function websiteJsonLd(locale: string) {
+export function websiteJsonLd(locale: string, description?: string) {
   return {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     name: SITE_NAME,
     url: absoluteUrl(`/${locale}`),
-    description: SITE_DESCRIPTION,
+    description: description || SITE_DESCRIPTION,
     inLanguage: locale === 'pt' ? 'pt-BR' : 'en-US',
     author: { '@type': 'Person', name: AUTHOR_NAME },
   }

@@ -55,8 +55,8 @@ function HomeContent() {
 
   return (
     <main className="min-h-screen default-scroll bg-background">
-      <JsonLd data={personJsonLd(locale)} />
-      <JsonLd data={websiteJsonLd(locale)} />
+      <JsonLd data={personJsonLd(locale, t('seo.home.description'))} />
+      <JsonLd data={websiteJsonLd(locale, t('seo.home.description'))} />
       <Navbar />
       <Hero />
       <About />

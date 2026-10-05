@@ -103,12 +103,20 @@ export default async function BlogPage({
   const locale = SUPPORTED_LOCALES.find((l) => l.code === rawLocale)?.code ?? 'pt-BR'
   const { posts, allTags } = await getCachedBlogIndexData(locale)
   const t = await getTranslations({ locale: rawLocale, namespace: 'blogUi' })
+  const tSeo = await getTranslations({ locale: rawLocale, namespace: 'seo.blog' })
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-background">
       <Navbar />
       <main className="max-w-7xl mx-auto px-4 py-12">
         <div className="text-center mt-10 mb-5 pb-5 border-b border-border">
+          {/*
+           * The page had no h1. It is visually hidden because the layout reads
+           * fine without a big "Blog" on top, but crawlers and screen readers
+           * still get the page's main heading. The text is the same as <title>,
+           * so the hidden copy says nothing the page doesn't already show.
+           */}
+          <h1 className="sr-only">{tSeo('title')}</h1>
           <p className="type-body text-gray-600 dark:text-muted-foreground max-w-2xl mx-auto">
             {t('intro')}
           </p>

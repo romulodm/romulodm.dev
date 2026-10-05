@@ -59,21 +59,10 @@ export const STATIC_ROUTES: Array<{
 ]
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const now = new Date()
-
-  const staticEntries: MetadataRoute.Sitemap = STATIC_ROUTES.flatMap((route) =>
-    routing.locales.map((locale) => ({
-      url: absoluteUrl(route.path ? `/${locale}/${route.path}` : `/${locale}`),
-      lastModified: now,
-      changeFrequency: route.changeFrequency,
-      priority: route.priority,
-      alternates: { languages: localeAlternates(route.path) },
-    })),
-  )
-
   // Banco fora do ar nao pode derrubar o sitemap inteiro — as rotas estaticas
   // ainda sao uteis para o crawler.
   let postEntries: MetadataRoute.Sitemap = []
+  let latestPostChange: Date | undefined
 
   try {
     const posts = await prisma.post.findMany({
@@ -95,22 +84,55 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         .filter((locale): locale is (typeof routing.locales)[number] =>
           routing.locales.includes(locale as (typeof routing.locales)[number]),
         )
+      if (locales.length === 0) return []
+
+      const changedAt = post.updatedAt ?? post.publishedAt ?? undefined
+      if (changedAt && (!latestPostChange || changedAt > latestPostChange)) {
+        latestPostChange = changedAt
+      }
+
+      const urlFor = (l: string) => absoluteUrl(`/${l}/blog/${post.slug}`)
+      // x-default no locale padrao quando o post tem essa traducao; senao, na
+      // primeira que existir. Mesma regra de localeAlternates em lib/seo.ts.
+      const xDefault = locales.includes(routing.defaultLocale)
+        ? routing.defaultLocale
+        : locales[0]
 
       return locales.map((locale) => ({
-        url: absoluteUrl(`/${locale}/blog/${post.slug}`),
-        lastModified: post.updatedAt ?? post.publishedAt ?? now,
+        url: urlFor(locale),
+        lastModified: changedAt,
         changeFrequency: 'monthly' as const,
         priority: 0.7,
         alternates: {
-          languages: Object.fromEntries(
-            locales.map((l) => [l, absoluteUrl(`/${l}/blog/${post.slug}`)]),
-          ),
+          languages: {
+            ...Object.fromEntries(locales.map((l) => [l, urlFor(l)])),
+            'x-default': urlFor(xDefault),
+          },
         },
       }))
     })
   } catch {
     postEntries = []
   }
+
+  // `lastModified` so onde ha uma data real. Antes toda rota estatica saia com
+  // `new Date()`, ou seja, "mudou agora" em toda leitura. O Google compara
+  // lastmod com o que encontra na pagina e, quando o valor nunca bate, passa a
+  // ignorar o lastmod do site inteiro, inclusive o dos posts, que e correto.
+  // Sem data confiavel, omitir e melhor que mentir.
+  //
+  // O indice do blog e a excecao: muda quando um post muda.
+  const staticEntries: MetadataRoute.Sitemap = STATIC_ROUTES.flatMap((route) =>
+    routing.locales.map((locale) => ({
+      url: absoluteUrl(route.path ? `/${locale}/${route.path}` : `/${locale}`),
+      ...(route.path === 'blog' && latestPostChange
+        ? { lastModified: latestPostChange }
+        : {}),
+      changeFrequency: route.changeFrequency,
+      priority: route.priority,
+      alternates: { languages: localeAlternates(route.path) },
+    })),
+  )
 
   return [...staticEntries, ...postEntries]
 }
