@@ -470,7 +470,7 @@
       "eyebrow": "Tecnologias",
       "title": "Trabalha com tudo.",
       "description": "Frontend, backend, bancos de dados, DevOps, blockchain, sistemas embarcados, gateways de pagamento, APIs e mais.",
-      "highlight": "Sim."
+      "highlight": "Sim, quase não cabe na tela."
     },
     "software": {
       "eyebrow": "Visão",
@@ -518,32 +518,6 @@
         "member": "Membro do time",
         "coworking": "Espaço de coworking",
         "workspace": "Espaço de trabalho"
-      }
-    },
-    "blogPreview": {
-      "featured": {
-        "category": "Programação",
-        "title": "Publicar código em grandes empresas é lento, e existe um bom motivo para isso",
-        "excerpt": "Uma das coisas que sempre amei na web é o imediatismo. Você escreve um trecho de código, publica em algum lugar e as pessoas já podem acessar.",
-        "author": "Michael Gough",
-        "date": "Publicado em 31 de jan."
-      },
-      "posts": {
-        "tutorial": {
-          "category": "Tutorial",
-          "title": "Como subir no ranking do Google (6 passos simples)",
-          "excerpt": "Sites estáticos hoje servem de ponto de partida para muitos sites e estão virando a base de várias ferramentas que influenciam tanto designers quanto desenvolvedores web."
-        },
-        "interview": {
-          "category": "Entrevista",
-          "title": "Como agendar seus tweets para depois",
-          "excerpt": "Sites estáticos hoje servem de ponto de partida para muitos sites e estão virando a base de várias ferramentas."
-        },
-        "marketing": {
-          "category": "Marketing",
-          "title": "12 boas práticas de SEO que todo mundo deveria seguir",
-          "excerpt": "Sites estáticos hoje servem de ponto de partida para muitos sites e estão virando a base."
-        }
       }
     },
     "timeline": {
