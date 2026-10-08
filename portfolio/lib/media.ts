@@ -21,6 +21,13 @@
 export const MEDIA_PATH_PREFIX = '/media/'
 
 /**
+ * Largest image the editor accepts, in bytes. Matches nginx's
+ * `client_max_body_size 10M` (nginx/templates/app.conf), which rejects a
+ * bigger upload body before it reaches the app.
+ */
+export const MAX_MEDIA_BYTES = 10 * 1024 * 1024
+
+/**
  * Resolves a storage key to a public URL. Keeping the origin out of the
  * database means stored data survives host, domain and storage changes.
  *

@@ -6,7 +6,8 @@ import {
   PutObjectCommand,
   S3Client,
 } from '@aws-sdk/client-s3'
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
+
+import { MAX_MEDIA_BYTES } from './media'
 
 const s3Client = new S3Client({
   endpoint: `http://${process.env.MINIO_ENDPOINT}:${process.env.MINIO_PORT}`,
@@ -21,16 +22,6 @@ const s3Client = new S3Client({
 })
 
 export type UploadKind = 'cover' | 'inline'
-
-interface PresignedUploadResult {
-  uploadUrl: string
-  /**
-   * What the caller stores: Post.coverImageUrl holds it as is, and markdown
-   * embeds mediaUrl(key). No public URL is returned on purpose; see
-   * lib/media.ts for why the origin stays out of the database.
-   */
-  key: string
-}
 
 // Every image a post uses lives under posts/<postId>/. The folder is keyed by
 // the post id rather than the slug because slugs change on rename, and S3 has
@@ -89,35 +80,34 @@ export function isCoverKey(key: string): boolean {
   return key.slice(key.lastIndexOf('/') + 1).startsWith(COVER_NAME_PREFIX)
 }
 
-export async function generatePresignedUpload(
+/**
+ * Writes a post image to the bucket and returns its key, which is what the
+ * caller stores: Post.coverImageUrl holds it as is, and markdown embeds
+ * mediaUrl(key). No URL is returned on purpose; see lib/media.ts for why the
+ * origin stays out of the database.
+ *
+ * Only the app writes to MinIO, over the Docker network. See
+ * app/api/uploads/route.ts for why uploads no longer use presigned URLs.
+ */
+export async function uploadPostMedia(
   postId: string,
   kind: UploadKind,
-  contentType: string
-): Promise<PresignedUploadResult> {
+  contentType: string,
+  body: Uint8Array
+): Promise<string> {
   const key = buildObjectKey(postId, kind, contentType)
 
-  const command = new PutObjectCommand({
-    Bucket: process.env.MINIO_BUCKET_NAME!,
-    Key: key,
-    ContentType: contentType,
-  })
+  await s3Client.send(
+    new PutObjectCommand({
+      Bucket: process.env.MINIO_BUCKET_NAME!,
+      Key: key,
+      Body: body,
+      ContentType: contentType,
+      ContentLength: body.byteLength,
+    })
+  )
 
-  const uploadUrlRaw = await getSignedUrl(s3Client, command, {
-    expiresIn: 3600,
-    unhoistableHeaders: new Set(['x-amz-checksum-crc32', 'x-amz-sdk-checksum-algorithm']),
-  })
-
-  // The presigned URL is signed against the internal Docker endpoint —
-  // replace it with the public URL so the browser can reach MinIO directly.
-  // The HMAC signature remains valid because it covers the path and headers,
-  // not the hostname.
-  const internalEndpoint = `http://${process.env.MINIO_ENDPOINT}:${process.env.MINIO_PORT}`
-  const uploadUrl = uploadUrlRaw.replace(internalEndpoint, process.env.MINIO_PUBLIC_URL!)
-
-  return {
-    uploadUrl,
-    key,
-  }
+  return key
 }
 
 /** Lists every object key under a post's media prefix. */
@@ -170,14 +160,12 @@ export async function deletePostMedia(postId: string): Promise<number> {
 
 const ALLOWED_IMAGE_TYPES = Object.keys(EXTENSION_BY_TYPE)
 
-const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB
-
 export function validateFileUpload(contentType: string, size?: number) {
   if (!ALLOWED_IMAGE_TYPES.includes(contentType)) {
     throw new Error(`Invalid content type: ${contentType}`)
   }
 
-  if (size && size > MAX_FILE_SIZE) {
-    throw new Error(`File too large: ${size} bytes (max ${MAX_FILE_SIZE})`)
+  if (size && size > MAX_MEDIA_BYTES) {
+    throw new Error(`File too large: ${size} bytes (max ${MAX_MEDIA_BYTES})`)
   }
 }
