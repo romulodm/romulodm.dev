@@ -24,7 +24,11 @@ export type UploadKind = 'cover' | 'inline'
 
 interface PresignedUploadResult {
   uploadUrl: string
-  publicUrl: string
+  /**
+   * What the caller stores: Post.coverImageUrl holds it as is, and markdown
+   * embeds mediaUrl(key). No public URL is returned on purpose; see
+   * lib/media.ts for why the origin stays out of the database.
+   */
   key: string
 }
 
@@ -110,11 +114,8 @@ export async function generatePresignedUpload(
   const internalEndpoint = `http://${process.env.MINIO_ENDPOINT}:${process.env.MINIO_PORT}`
   const uploadUrl = uploadUrlRaw.replace(internalEndpoint, process.env.MINIO_PUBLIC_URL!)
 
-  const publicUrl = `${process.env.MINIO_PUBLIC_URL}/${process.env.MINIO_BUCKET_NAME}/${key}`
-
   return {
     uploadUrl,
-    publicUrl,
     key,
   }
 }

@@ -13,6 +13,7 @@ import { common } from 'lowlight'
 import rehypeCodeBlocks from './rehype-code-blocks'
 import rehypeCitations from './rehype-citations'
 import rehypeFigures from './rehype-figures'
+import rehypeMediaImages from './rehype-media-images'
 import prismaGrammar from './highlight-prisma'
 import rehypeSlug from 'rehype-slug'
 import rehypeExternalLinks from 'rehype-external-links'
@@ -29,6 +30,7 @@ import { prisma } from '@romulo/database'
  *   rehypeSanitize                    → limpa o HAST por whitelist
  *   rehypeCitations                   → [@chave] vira citação autor-ano (lib/rehype-citations.ts)
  *   rehypeFigures                     → imagem sozinha vira <figure>; o texto de ![...] vira <figcaption> (lib/rehype-figures.ts)
+ *   rehypeMediaImages                 → imagens de /media/ passam pelo otimizador do Next (lib/rehype-media-images.ts)
  *   rehypeSlug / rehypeHighlight / rehypeExternalLinks → enriquecem o HTML limpo
  *   rehypeStringify                   → serializa sem allowDangerousHtml (não há mais raw nodes)
  */
@@ -58,11 +60,17 @@ export interface MarkdownToHtmlOptions {
    * reuses this pipeline, and feed readers would show the button as junk.
    */
   codeBlockChrome?: boolean
+  /**
+   * Absolute origin for images stored in our media bucket. When set, those
+   * images get `<origin>/media/...` instead of optimizer URLs. The RSS feed
+   * needs this: feed readers resolve neither relative URLs nor `/_next/image`.
+   */
+  mediaOrigin?: string
 }
 
 export async function markdownToHtml(
   markdown: string,
-  { codeBlockChrome = false }: MarkdownToHtmlOptions = {},
+  { codeBlockChrome = false, mediaOrigin }: MarkdownToHtmlOptions = {},
 ): Promise<string> {
   // Substitui ::youtube[...](url) por HTML raw ANTES do remark parsear
   // Isso evita que o remarkGfm interprete [título](url) como link markdown
@@ -77,6 +85,7 @@ export async function markdownToHtml(
     // before highlight (it consumes the ```references fence).
     .use(rehypeCitations)
     .use(rehypeFigures)
+    .use(rehypeMediaImages, { origin: mediaOrigin })
     .use(rehypeSlug)
     // `languages` replaces the default set instead of extending it, so the
     // common grammars are spread back in next to the custom Prisma one.

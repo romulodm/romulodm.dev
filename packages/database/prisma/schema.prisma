@@ -69,6 +69,9 @@ model PasswordResetToken {
 model Post {
   id                 String              @id @default(cuid())
   slug               String              @unique
+  /// Storage key of the cover (posts/<postId>/cover-<hash>.<ext>), not a URL:
+  /// no origin, no bucket. portfolio/lib/media.ts turns it into /media/<key>.
+  /// The column keeps its old name to avoid a rename migration.
   coverImageUrl      String?
   status             PostStatus          @default(DRAFT)
   publishedAt        DateTime?
