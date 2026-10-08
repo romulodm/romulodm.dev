@@ -189,9 +189,16 @@ type HeaderLike = { get(name: string): string | null };
  * not carry over unexamined.
  */
 export function getRequestIp(source: Request | HeaderLike): string {
-  // Duck-typing rather than `instanceof Headers`: Next's `headers()` returns a
-  // ReadonlyHeaders, which is not necessarily an instance of Headers.
-  const headers: HeaderLike = "headers" in source ? source.headers : source;
+  // Duck-type on `.get()` rather than on a `headers` property. Next's
+  // `headers()` resolves to a HeadersAdapter, which *does* have a `headers`
+  // field: the raw IncomingHttpHeaders object, with no `.get()`. Testing
+  // `"headers" in source` therefore picked that plain object and threw
+  // "headers.get is not a function" in every Server Action. A Request has no
+  // `.get()` of its own, so this test tells the two shapes apart.
+  const headers: HeaderLike =
+    typeof (source as HeaderLike).get === "function"
+      ? (source as HeaderLike)
+      : (source as Request).headers;
 
   const realIp = headers.get("x-real-ip");
   if (realIp) return realIp.trim();

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 
 interface UsePostInteractionsOptions {
@@ -11,26 +11,31 @@ interface UsePostInteractionsOptions {
     initialLiked?: boolean;
 }
 
-function generateUUID(): string {
-    if (typeof crypto !== 'undefined' && crypto.randomUUID) {
-        return crypto.randomUUID();
-    }
-    // Fallback for older browsers or non-secure contexts
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-        const r = Math.random() * 16 | 0;
-        const v = c === 'x' ? r : (r & 0x3 | 0x8);
-        return v.toString(16);
-    });
-}
+/**
+ * One page load is one view, but this hook is mounted twice on a post page:
+ * by the desktop sidebar and by the mobile bar (both stay mounted, CSS only
+ * hides one). The two instances share a single request per post through this
+ * map. The entry is removed once the request settles, so opening the same
+ * post again later, including through client-side navigation, counts again.
+ *
+ * The request carries no body: the server resolves the reader on its own
+ * (see `lib/views-internal.ts`).
+ */
+const inFlightViews = new Map<string, Promise<boolean>>();
 
-function getOrCreateSessionId(): string {
-    const key = 'blog_session_id';
-    let id = sessionStorage.getItem(key);
-    if (!id) {
-        id = generateUUID();
-        sessionStorage.setItem(key, id);
+function recordView(postId: string): Promise<boolean> {
+    let pending = inFlightViews.get(postId);
+
+    if (!pending) {
+        pending = fetch(`/api/posts/${postId}/view`, { method: 'POST' })
+            .then((r) => (r.ok ? r.json() : null))
+            .then((d) => d?.counted === true)
+            .catch(() => false)
+            .finally(() => inFlightViews.delete(postId));
+        inFlightViews.set(postId, pending);
     }
-    return id;
+
+    return pending;
 }
 
 export function usePostInteractions({
@@ -46,7 +51,6 @@ export function usePostInteractions({
     const [comments] = useState(initialComments);
     const [liked, setLiked] = useState(initialLiked);
     const [likeLoading, setLikeLoading] = useState(false);
-    const viewSentRef = useRef(false);
 
     // Verificar se o usuário já curtiu ao montar (se logado)
     useEffect(() => {
@@ -57,24 +61,18 @@ export function usePostInteractions({
             .catch(() => { });
     }, [postId, session?.user?.id]);
 
-    // Registrar visualização uma vez por mount
+    // Uma visualização por carregamento do post (ver recordView acima).
     useEffect(() => {
-        if (viewSentRef.current) return;
-        viewSentRef.current = true;
+        let active = true;
 
-        const identifier = session?.user?.id || getOrCreateSessionId();
+        recordView(postId).then((counted) => {
+            if (counted && active) setViews((v) => v + 1);
+        });
 
-        fetch(`/api/posts/${postId}/view`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userId: session?.user?.id, sessionId: identifier }),
-        })
-            .then((r) => r.json())
-            .then((d) => {
-                if (d.counted) setViews((v) => v + 1);
-            })
-            .catch(() => { });
-    }, [postId, session?.user?.id]);
+        return () => {
+            active = false;
+        };
+    }, [postId]);
 
     const toggleLike = useCallback(async () => {
         if (!session?.user?.id) {

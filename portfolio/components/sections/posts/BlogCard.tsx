@@ -1,81 +1,80 @@
+import Image from "next/image";
+import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { useTranslations } from "next-intl";
-import type { StaticImageData } from "next/image";
 
-type BadgeCategory = "programming" | "tutorial" | "interview" | "marketing";
+import type { HomePreviewPost } from "@/lib/home-blog-preview";
+import { mediaUrl } from "@/lib/media";
 
+/**
+ * One post in the home page blog preview.
+ *
+ * No hooks on purpose: it is rendered inside BlogPreviewGrid, a client
+ * component, and every translated string arrives already formatted through
+ * props. Dividers between entries belong to the grid, not to the card, since
+ * only the grid knows which entry ends a column.
+ *
+ * The whole entry is one link. On hover it takes the card background and
+ * nothing else; the negative margin cancels the padding that background needs,
+ * so at rest the text lines up with the rest of the section.
+ */
 interface BlogCardProps {
-    image?: string | StaticImageData;
-    category: BadgeCategory;
-    categoryLabel: string;
-    categoryIcon: string;
-    title: string;
-    excerpt: string;
-    author?: { name: string; date: string; avatar?: string };
+    post: HomePreviewPost;
+    /** Already formatted, e.g. "10 min read"; null when the post has no reading time set. */
+    readingTime: string | null;
+    readMore: string;
+    /** featured: cover image and larger title. compact: every other entry. */
     variant?: "featured" | "compact";
 }
 
-const badgeStyles: Record<BadgeCategory, string> = {
-    programming: "bg-[hsl(var(--badge-programming-bg))] text-[hsl(var(--badge-programming-fg))]",
-    tutorial: "bg-[hsl(var(--badge-tutorial-bg))] text-[hsl(var(--badge-tutorial-fg))]",
-    interview: "bg-[hsl(var(--badge-interview-bg))] text-[hsl(var(--badge-interview-fg))]",
-    marketing: "bg-[hsl(var(--badge-marketing-bg))] text-[hsl(var(--badge-marketing-fg))]",
-};
-
-const BlogCard = ({
-    image,
-    category,
-    categoryLabel,
-    categoryIcon,
-    title,
-    excerpt,
-    author,
-    variant = "compact",
-}: BlogCardProps) => {
-    const t = useTranslations("blogUi.card");
+const BlogCard = ({ post, readingTime, readMore, variant = "compact" }: BlogCardProps) => {
     const isFeatured = variant === "featured";
 
     return (
-        <article className={isFeatured ? "" : "py-6 first:pt-0 border-b border-border last:border-b-0"}>
-            {isFeatured && image && (
-                <div className="overflow-hidden rounded-lg mb-5">
-                    <img
-                        src={typeof image === "string" ? image : image.src}
-                        alt={title}
-                        className="w-full h-full object-cover transition-transform duration-500"
-                        loading="lazy"
-                    />
-                </div>
-            )}
+        <article>
+            <Link
+                href={`/blog/${post.slug}`}
+                className={`group block rounded-lg transition-colors duration-200 hover:bg-card ${isFeatured ? "-m-4 p-4" : "-mx-4 px-4 py-6"}`}
+            >
+                {isFeatured && post.coverImageUrl && (
+                    <div className="relative overflow-hidden rounded-lg mb-5 aspect-[1200/630] bg-muted">
+                        {/* alt is empty: the title right below is part of the same link,
+                            so a description here would only be read twice. */}
+                        <Image
+                            src={mediaUrl(post.coverImageUrl)}
+                            alt=""
+                            fill
+                            sizes="(min-width: 1024px) 50vw, 100vw"
+                            className="object-cover"
+                        />
+                    </div>
+                )}
 
-            {!image && (
-                <span
-                    className={`inline-flex items-center gap-1.5 py-1 rounded-md text-xs font-semibold tracking-wide ${badgeStyles[category]}`}
+                <p className="inline-flex flex-wrap items-center gap-1.5 text-xs font-semibold tracking-wide text-card-foreground">
+                    <span aria-hidden="true">{post.icon}</span>
+                    {post.tag && <span>{post.tag}</span>}
+                    {readingTime && (
+                        <span className="font-normal text-muted-foreground">
+                            {post.tag && <span aria-hidden="true">· </span>}
+                            {readingTime}
+                        </span>
+                    )}
+                </p>
+
+                <h3
+                    className={`font-bold text-card-foreground mt-3 mb-2 leading-snug ${isFeatured ? "text-2xl" : "text-xl"}`}
                 >
-                    <span>{categoryIcon}</span>
-                    {categoryLabel}
+                    {post.title}
+                </h3>
+
+                <p className="text-muted-foreground text-sm leading-relaxed mb-3 line-clamp-3">
+                    {post.description}
+                </p>
+
+                <span className="inline-flex items-center gap-1.5 text-sm font-semibold transition-colors text-purple-700 dark:text-purple-500/90 group-hover:text-purple-600 dark:group-hover:text-purple-500">
+                    {readMore}
+                    <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />
                 </span>
-            )}
-
-
-            <h3
-                className={`font-bold text-card-foreground mt-3 mb-2 leading-snug ${isFeatured ? "text-2xl" : "text-xl"
-                    }`}
-            >
-                {title}
-            </h3>
-
-            <p className="text-muted-foreground text-sm leading-relaxed mb-3 line-clamp-3">
-                {excerpt}
-            </p>
-
-            <a
-                href="#"
-                className="inline-flex items-center gap-1.5 text-sm font-semibold group transition-colors text-purple-700 dark:text-purple-500/90 hover:text-purple-600 dark:hover:text-purple-500"
-            >
-                {t("readMore")}
-                <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />
-            </a>
+            </Link>
         </article>
     );
 };

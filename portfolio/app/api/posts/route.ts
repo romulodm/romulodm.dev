@@ -16,6 +16,7 @@ import { isValidPostId } from "@/lib/s3";
 import { slugify, uniqueSlug } from "@/lib/markdown";
 import { syncPostToSearch } from "@/lib/search-sync";
 import { translatePost } from "@/lib/translate";
+import { invalidatePostIdsCache } from "@/lib/views-internal";
 
 export async function GET(request: NextRequest) {
   const t = await getApiTranslator(request);
@@ -165,6 +166,10 @@ export async function POST(req: NextRequest) {
 
     // Nao indexa se nasceu como rascunho — a propria funcao decide pelo status.
     await syncPostToSearch(post.id);
+
+    // Sem isso, um post publicado agora so passa a contar visualizacao quando
+    // o cache de ids publicados expira (ate 5 min).
+    await invalidatePostIdsCache();
 
     // Drops images uploaded during editing that the saved post no longer
     // uses. The save itself already succeeded, so a storage failure is only

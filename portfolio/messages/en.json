@@ -470,7 +470,7 @@
       "eyebrow": "Technologies",
       "title": "Works with everything.",
       "description": "Frontend, backend, databases, DevOps, blockchain, embedded systems, payment gateways, APIs, and more.",
-      "highlight": "Yes."
+      "highlight": "Yes, it barely fits on the screen."
     },
     "software": {
       "eyebrow": "Vision",
@@ -518,32 +518,6 @@
         "member": "Team member",
         "coworking": "Coworking space",
         "workspace": "Workspace"
-      }
-    },
-    "blogPreview": {
-      "featured": {
-        "category": "Programming",
-        "title": "Releasing code in large corporations is slow - and there is a good reason for it",
-        "excerpt": "One of the things I always loved about the web is its immediacy. You write a piece of code, publish it somewhere and people can access it.",
-        "author": "Michael Gough",
-        "date": "Posted on Jan 31"
-      },
-      "posts": {
-        "tutorial": {
-          "category": "Tutorial",
-          "title": "How to rank higher on Google (6 easy steps)",
-          "excerpt": "Static websites are now used to bootstrap lots of websites and are becoming the basis for a variety of tools that even influence both web designers and developers."
-        },
-        "interview": {
-          "category": "Interview",
-          "title": "How to schedule your tweets to send later",
-          "excerpt": "Static websites are now used to bootstrap lots of websites and are becoming the basis for a variety of tools that even."
-        },
-        "marketing": {
-          "category": "Marketing",
-          "title": "12 SEO best practices that everyone should follow",
-          "excerpt": "Static websites are now used to bootstrap lots of websites and are becoming the basis."
-        }
       }
     },
     "timeline": {

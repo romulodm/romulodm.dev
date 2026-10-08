@@ -148,7 +148,7 @@ export function PostPreview({
 
         <main className="flex-1 min-w-0 max-w-4xl md:px-4 pb-12">
           <article className="rounded-lg shadow-sm">
-            {coverImageUrl && <PostCover src={coverImageUrl} alt={displayTitle} />}
+            {coverImageUrl && <PostCover coverKey={coverImageUrl} alt={displayTitle} />}
 
             <div className="p-4 md:p-6">
               <PostTagList tags={tags} />

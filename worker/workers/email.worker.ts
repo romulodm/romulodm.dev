@@ -21,6 +21,7 @@ import {
 } from "@romulo/queues";
 
 import { emailService } from "../lib/email/email.service";
+import { absoluteMediaUrl } from "../lib/media";
 import { logWorkerError, logWorkerEvent } from "../lib/worker-observability";
 import {
   campaignTemplate,
@@ -141,7 +142,7 @@ async function renderDigestEmail(
       title: translation?.title ?? "",
       summary: translation?.summary ?? undefined,
       tags: post.postTags.map((t) => t.tag),
-      imageUrl: post.coverImageUrl ?? undefined,
+      imageUrl: post.coverImageUrl ? absoluteMediaUrl(post.coverImageUrl, BRAND.baseUrl) : undefined,
       url: `${baseUrl}/${locale}/blog/${post.slug}`,
     }
   })
@@ -216,7 +217,7 @@ async function renderPostBasedEmail(
     subject: data.subject,
     previewText: data.previewText,
     post: {
-      imageUrl: post.coverImageUrl ?? undefined,
+      imageUrl: post.coverImageUrl ? absoluteMediaUrl(post.coverImageUrl, BRAND.baseUrl) : undefined,
       title: translation.title,
       summary: translation.summary ?? undefined,
       tags: post.postTags.map((pt) => pt.tag),

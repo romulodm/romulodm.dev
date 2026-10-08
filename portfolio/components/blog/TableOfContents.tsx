@@ -24,9 +24,20 @@ const NAVBAR_HEIGHT = 90;
  */
 const COMMENTS_CONTAINER = '#comments-section';
 
+/**
+ * React streams each Suspense boundary as a `<div hidden id="S:n">` at the end
+ * of <body> and moves it into place with `$RC`/`$RV`. The reveal is scheduled
+ * with requestAnimationFrame, which does not fire while the tab is in the
+ * background, so a page opened in a background tab (or reloaded by HMR while
+ * the editor has focus) keeps a full hidden copy of the post in the DOM next
+ * to the one React renders. Skipping `[hidden]` subtrees and repeated ids keeps
+ * that copy out of the list, which otherwise shows every heading twice.
+ */
 function collectHeadings(): Heading[] {
+  const seen = new Set<string>();
   const elements = Array.from(document.querySelectorAll('article h1, article h2, article h3')).filter(
-    (element) => element.id === 'comments' || !element.closest(COMMENTS_CONTAINER),
+    (element) =>
+      !element.closest('[hidden]') && (element.id === 'comments' || !element.closest(COMMENTS_CONTAINER)),
   );
 
   elements.forEach((element) => {
@@ -35,7 +46,13 @@ function collectHeadings(): Heading[] {
     }
   });
 
-  return elements.map((element) => ({ id: element.id, text: element.textContent ?? '', level: Number(element.tagName[1]) }));
+  return elements
+    .filter((element) => {
+      if (seen.has(element.id)) return false;
+      seen.add(element.id);
+      return true;
+    })
+    .map((element) => ({ id: element.id, text: element.textContent ?? '', level: Number(element.tagName[1]) }));
 }
 
 function getActiveId(headings: Heading[]): string {

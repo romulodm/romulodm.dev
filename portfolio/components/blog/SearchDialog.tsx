@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState, useTransition } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Search, Eraser, Clock, Loader2 } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
@@ -11,6 +12,7 @@ import {
     DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from "@/components/ui/button";
+import { mediaUrl } from "@/lib/media";
 import { IconTooltip } from "@/components/navigation/IconTooltip";
 
 interface SearchHit {
@@ -169,17 +171,13 @@ export function SearchDialog() {
                                                     hover:bg-muted text-left transition-colors"
                                             >
                                                 {hit.coverImageUrl && (
-                                                    // Plain <img>, like PostCard: covers live in MinIO, which
-                                                    // next/image can't proxy (localhost is a private IP in dev,
-                                                    // and the public /media URL isn't in remotePatterns in prod).
-                                                    // eslint-disable-next-line @next/next/no-img-element
-                                                    <img
-                                                        src={hit.coverImageUrl}
+                                                    // The index stores the cover's storage key, like the
+                                                    // database does (lib/media.ts).
+                                                    <Image
+                                                        src={mediaUrl(hit.coverImageUrl)}
                                                         alt=""
                                                         width={48}
                                                         height={48}
-                                                        loading="lazy"
-                                                        decoding="async"
                                                         className="w-12 h-12 rounded-lg object-cover shrink-0"
                                                     />
                                                 )}

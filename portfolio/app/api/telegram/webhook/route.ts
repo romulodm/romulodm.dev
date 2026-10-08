@@ -1,10 +1,11 @@
 // app/api/telegram/webhook/route.ts
-// Receives Telegram updates for the /status command.
+// Receives Telegram updates for the bot's commands (/status, /comandos).
 
 import { NextRequest, NextResponse } from 'next/server';
 
 import {
     DEFAULT_SECONDS,
+    MAX_SECONDS,
     clearStatus,
     parseStatusCommand,
     setStatus,
@@ -47,6 +48,27 @@ type Update = {
 };
 
 const OK = NextResponse.json({ ok: true });
+
+/**
+ * The reply to /comandos. /help and /start answer with it too: Telegram clients
+ * suggest /help by convention and send /start when the chat is first opened.
+ *
+ * Keep it in sync with the dispatch in POST. If the commands are also
+ * registered with setMyCommands (the menu Telegram shows when "/" is typed),
+ * that list lives in Telegram and has to be updated by hand as well.
+ */
+const HELP = [
+    'Comandos:',
+    '',
+    '/status em foco 2h',
+    `Mostra o status no site. A duração no fim é opcional: m, h ou d (padrão ${DEFAULT_SECONDS / 3600}h, máximo ${MAX_SECONDS / 3600}h).`,
+    '',
+    '/status off',
+    'Limpa o status.',
+    '',
+    '/comandos',
+    'Esta lista.',
+].join('\n');
 
 async function reply(chatId: number | string, text: string) {
     const token = process.env.TELEGRAM_BOT_TOKEN;
@@ -102,10 +124,23 @@ export async function POST(request: NextRequest) {
     if (String(chatId) !== String(process.env.TELEGRAM_CHAT_ID)) return OK;
 
     // Group chats deliver "/status@meu_bot algo"; strip the bot mention.
-    const match = text.match(/^\/status(?:@\w+)?\b([\s\S]*)$/i);
+    const match = text.match(/^\/(\w+)(?:@\w+)?\b([\s\S]*)$/i);
     if (!match) return OK;
 
-    const rest = match[1].trim();
+    const command = match[1].toLowerCase();
+    const rest = match[2].trim();
+
+    if (command === 'comandos' || command === 'help' || command === 'start') {
+        await reply(chatId, HELP);
+        return OK;
+    }
+
+    // A typo such as /stauts would otherwise get no answer at all, which reads
+    // the same as the webhook being down.
+    if (command !== 'status') {
+        await reply(chatId, `Não conheço /${command}. Mande /comandos para ver a lista.`);
+        return OK;
+    }
 
     if (!rest) {
         await reply(

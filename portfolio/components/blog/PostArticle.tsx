@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { Clock } from 'lucide-react'
 
 import { SUPPORTED_LOCALES, getLocale } from '@/lib/locales'
+import { mediaUrl } from '@/lib/media'
 
 /**
  * Pecas visuais do post, compartilhadas entre a pagina publica
@@ -41,10 +42,22 @@ export function PostYoutubeEmbed({ url, title }: { url: string; title: string })
   )
 }
 
-export function PostCover({ src, alt }: { src: string; alt: string }) {
+/**
+ * `coverKey` is the storage key kept in Post.coverImageUrl (see lib/media.ts).
+ * The cover is the largest element above the fold, so it is loaded with
+ * priority instead of lazily.
+ */
+export function PostCover({ coverKey, alt }: { coverKey: string; alt: string }) {
   return (
-    <div className="overflow-hidden md:rounded-t-2xl">
-      <img src={src} alt={alt} className="w-full h-64 md:h-96 object-cover" />
+    <div className="relative h-64 md:h-96 overflow-hidden md:rounded-t-2xl">
+      <Image
+        src={mediaUrl(coverKey)}
+        alt={alt}
+        fill
+        priority
+        sizes="(min-width: 56rem) 56rem, 100vw"
+        className="object-cover"
+      />
     </div>
   )
 }

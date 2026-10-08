@@ -4,10 +4,12 @@ import { prisma } from '@romulo/database'
 
 import { cdata, escapeXml, rssLanguage, toRfc822 } from '@/lib/feed-xml'
 import { markdownToHtml } from '@/lib/markdown'
+import { mediaUrl } from '@/lib/media'
 import {
   AUTHOR_NAME,
   SITE_DESCRIPTION,
   SITE_NAME,
+  SITE_URL,
   absoluteUrl,
 } from '@/lib/seo'
 
@@ -58,7 +60,7 @@ async function getFeedPosts(locale: string): Promise<FeedPost[]> {
         slug: post.slug,
         title: translation.title,
         description: translation.summary ?? translation.excerpt ?? '',
-        contentHtml: await markdownToHtml(translation.contentMarkdown),
+        contentHtml: await markdownToHtml(translation.contentMarkdown, { mediaOrigin: SITE_URL }),
         publishedAt: post.publishedAt,
         coverImageUrl: post.coverImageUrl,
         tags: post.postTags.map((t) => t.tag),
@@ -88,8 +90,10 @@ export async function buildRssFeed(locale: string): Promise<string> {
     .map((post) => {
       const url = absoluteUrl(`/${locale}/blog/${post.slug}`)
 
+      // coverImageUrl holds a storage key (lib/media.ts); feed readers need
+      // an absolute URL.
       const enclosure = post.coverImageUrl
-        ? `      <enclosure url="${escapeXml(post.coverImageUrl)}" type="image/jpeg" length="0" />\n`
+        ? `      <enclosure url="${escapeXml(absoluteUrl(mediaUrl(post.coverImageUrl)))}" type="image/jpeg" length="0" />\n`
         : ''
 
       const categories = post.tags
