@@ -11,10 +11,11 @@ export async function POST(
   const t = await getApiTranslator(req);
   const { id: postId } = await props.params;
 
-  // Nada é lido do body. O identificador de dedupe é resolvido dentro de
-  // registerPostView (sessão, senão cookie assinado emitido pelo servidor) —
-  // aceitá-lo do cliente permitia gerar chaves ilimitadas no Redis e queimar
-  // o cooldown de outro usuário.
+  // Nada é lido do body. O leitor é resolvido dentro de registerPostView
+  // (sessão, senão cookie assinado emitido pelo servidor) — aceitá-lo do
+  // cliente permitia gerar chaves ilimitadas no Redis e gastar o limite de
+  // outro usuário. Única porta de entrada do contador: chamada uma vez por
+  // carregamento pelo hook usePostInteractions.
   const result = await registerPostView(postId);
 
   if (result.reason === "invalid_post") {

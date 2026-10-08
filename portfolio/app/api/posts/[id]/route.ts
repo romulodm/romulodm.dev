@@ -17,6 +17,7 @@ import { slugify, uniqueSlug, generateExcerpt } from "@/lib/markdown";
 import { sweepUnusedPostMedia } from "@/lib/post-media";
 import { deletePostMedia } from "@/lib/s3";
 import { removePostFromSearch, syncPostToSearch } from "@/lib/search-sync";
+import { invalidatePostIdsCache } from "@/lib/views-internal";
 
 export async function GET(
   req: NextRequest,
@@ -236,6 +237,10 @@ export async function PATCH(
     // reindexa quando so o conteudo mudou — titulo e resumo entram no indice.
     await syncPostToSearch(params.id);
 
+    // Publicar ou despublicar muda o conjunto de ids que o contador de
+    // visualizacoes aceita; sem isso a mudanca leva ate 5 min para valer.
+    await invalidatePostIdsCache();
+
     // Drops images uploaded during editing that the saved post no longer
     // uses. The save itself already succeeded, so a storage failure is only
     // logged; the leftovers are picked up by the next save.
@@ -271,6 +276,7 @@ export async function DELETE(
     });
 
     await prisma.post.delete({ where: { id: params.id } });
+    await invalidatePostIdsCache();
 
     await removePostFromSearch(
       params.id,
