@@ -77,9 +77,12 @@ export async function flushViewsBuffer(redis: Redis): Promise<void> {
 
         // Each chunk runs in a single transaction: either all updates in the
         // chunk succeed, or none do (and the counts for that chunk are lost).
+        // `updateMany` rather than `update`: a post deleted while it still had
+        // views in the buffer matches zero rows instead of throwing, which
+        // would roll back — and lose — every other post's count in the chunk.
         await prisma.$transaction(
             chunk.map(([postId, count]) =>
-                prisma.post.update({
+                prisma.post.updateMany({
                     where: { id: postId },
                     data: { views: { increment: parseInt(count, 10) } },
                 }),
