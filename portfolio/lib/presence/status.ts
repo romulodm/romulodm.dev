@@ -14,7 +14,7 @@ import { getRedis } from '@/lib/redis';
 const KEY = 'presence:status';
 
 /** Longest a status can last. A forgotten "travelling" should not outlive the trip. */
-const MAX_SECONDS = 72 * 3600;
+export const MAX_SECONDS = 72 * 3600;
 /** Used when the command carries no duration. */
 export const DEFAULT_SECONDS = 4 * 3600;
 
