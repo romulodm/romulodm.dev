@@ -23,6 +23,14 @@ import Bento from '@/components/sections/bento/Bento';
 import { Footer } from '@/components/Footer';
 import Presence from '@/components/sections/presence/Presence';
 
+// The blog preview near the bottom (components/sections/posts/BlogList.tsx)
+// reads posts from the database. Without a revalidate this page would be
+// generated once and keep the posts it saw on that first request until the
+// next deploy, so a post published afterwards would never reach the home.
+// Same value as the blog index and as HOME_BLOG_PREVIEW_REVALIDATE_SECONDS:
+// if the HTML outlived the data cache it would serve stale markup anyway.
+export const revalidate = 300
+
 type HomeProps = {
   params: Promise<{ locale: string }>
 }

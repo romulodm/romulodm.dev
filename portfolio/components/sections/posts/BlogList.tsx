@@ -1,49 +1,33 @@
-import { useTranslations } from "next-intl";
-import BlogCard from "./BlogCard";
-import featuredImg from "./image.png";
+import { getLocale, getTranslations } from "next-intl/server";
 
-// Copy lives in messages/*.json under `home.blogPreview.posts.<category>`.
-const posts: {
-    category: "tutorial" | "interview" | "marketing";
-    categoryIcon: string;
-}[] = [
-        { category: "tutorial", categoryIcon: "📄" },
-        { category: "interview", categoryIcon: "🎙️" },
-        { category: "marketing", categoryIcon: "📊" },
-    ];
+import { getHomeBlogPreview, type HomePreviewPost } from "@/lib/home-blog-preview";
 
-const BlogList = () => {
-    const t = useTranslations("home.blogPreview");
+import BlogPreviewGrid, { type PreviewItem } from "./BlogPreviewGrid";
+
+/**
+ * Curated blog preview at the bottom of the home page. Which posts appear, and
+ * where, is configured in lib/home-blog-preview.ts.
+ */
+const BlogList = async () => {
+    const locale = await getLocale();
+    const [data, t] = await Promise.all([getHomeBlogPreview(locale), getTranslations("blogUi.card")]);
+
+    const toItem = (post: HomePreviewPost): PreviewItem => ({
+        post,
+        // readingTime defaults to 0 when the editor leaves the field empty, and
+        // "0 min read" says something false about the post.
+        readingTime: post.readingTime > 0 ? t("readingTime", { minutes: post.readingTime }) : null,
+    });
+
+    const featured = data.featured.map(toItem);
+    const list = data.list.map(toItem);
+    const closing = data.closing ? toItem(data.closing) : null;
+
+    if (featured.length === 0 && list.length === 0 && !closing) return null;
+
     return (
         <section className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16">
-                {/* Featured post */}
-                <div>
-                    <BlogCard
-                        variant="featured"
-                        image={featuredImg}
-                        category="programming"
-                        categoryIcon="</>"
-                        categoryLabel={t("featured.category")}
-                        title={t("featured.title")}
-                        excerpt={t("featured.excerpt")}
-                        author={{ name: t("featured.author"), date: t("featured.date") }}
-                    />
-                </div>
-
-                {/* Sidebar posts */}
-                <div className="flex flex-col">
-                    {posts.map((post, i) => (
-                        <BlogCard
-                            key={i}
-                            {...post}
-                            categoryLabel={t(`posts.${post.category}.category`)}
-                            title={t(`posts.${post.category}.title`)}
-                            excerpt={t(`posts.${post.category}.excerpt`)}
-                        />
-                    ))}
-                </div>
-            </div>
+            <BlogPreviewGrid featured={featured} list={list} closing={closing} readMore={t("readMore")} />
         </section>
     );
 };

@@ -1,12 +1,14 @@
 ﻿'use client';
 
 import { useRef, useState, type ChangeEvent } from 'react';
+import Image from 'next/image';
 import { ChevronDown, Languages, Sparkles } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { EditorToolbar } from './EditorToolbar';
 import { PostPreview } from './PostPreview';
 import { TagInput } from './TagInput';
 import { SUPPORTED_LOCALES, getOtherLocales, type LocaleCode } from '@/lib/locales';
+import { mediaUrl } from '@/lib/media';
 
 export interface PostEditorData {
   locale: LocaleCode;
@@ -241,7 +243,7 @@ export function PostEditor({
       });
       if (!presignRes.ok) throw new Error(t('errors.upload'));
 
-      const { uploadUrl, publicUrl } = await presignRes.json();
+      const { uploadUrl, key } = await presignRes.json();
 
       const uploadRes = await fetch(uploadUrl, {
         method: 'PUT',
@@ -250,7 +252,8 @@ export function PostEditor({
       });
       if (!uploadRes.ok) throw new Error(`S3 upload failed: ${uploadRes.status}`);
 
-      setCoverImageUrl(publicUrl);
+      // The post stores the storage key, never a URL (lib/media.ts).
+      setCoverImageUrl(key);
     } catch {
       alert(t('errors.upload'));
     } finally {
@@ -269,7 +272,7 @@ export function PostEditor({
       });
       if (!presignRes.ok) throw new Error(t('errors.upload'));
 
-      const { uploadUrl, publicUrl } = await presignRes.json();
+      const { uploadUrl, key } = await presignRes.json();
 
       const uploadRes = await fetch(uploadUrl, {
         method: 'PUT',
@@ -282,7 +285,8 @@ export function PostEditor({
       if (textarea) {
         const start = textarea.selectionStart;
         const end = textarea.selectionEnd;
-        const imageMarkdown = `![${t('content.imageAlt')}](${publicUrl})`;
+        // A relative /media/ path, so the markdown stays valid on any host.
+        const imageMarkdown = `![${t('content.imageAlt')}](${mediaUrl(key)})`;
         setContentMarkdown(
           contentMarkdown.substring(0, start) + imageMarkdown + contentMarkdown.substring(end),
         );
@@ -423,7 +427,15 @@ export function PostEditor({
               </div>
               {coverImageUrl && (
                 <div className="mt-4 relative">
-                  <img src={coverImageUrl} alt={t('cover.alt')} className="w-full h-64 object-cover rounded-lg" />
+                  <div className="relative h-64 overflow-hidden rounded-lg">
+                    <Image
+                      src={mediaUrl(coverImageUrl)}
+                      alt={t('cover.alt')}
+                      fill
+                      sizes="(min-width: 64rem) 64rem, 100vw"
+                      className="object-cover"
+                    />
+                  </div>
                   <button
                     onClick={() => setCoverImageUrl('')}
                     className="absolute top-2 right-2 px-3 py-1 bg-destructive text-destructive-foreground rounded-md hover:opacity-90 text-sm"

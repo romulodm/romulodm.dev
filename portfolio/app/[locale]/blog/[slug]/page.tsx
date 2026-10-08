@@ -3,6 +3,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { prisma } from '@romulo/database'
 import { unstable_cache } from 'next/cache'
 import { markdownToHtml } from '@/lib/markdown'
+import { mediaUrl } from '@/lib/media'
 import { formatDistanceToNow } from '@/lib/utils'
 import { CommentsSection } from '@/components/comments/CommentsSection'
 import type { Metadata } from 'next'
@@ -11,7 +12,6 @@ import { PostReactionSidebar } from '@/components/blog/PostReactionsSidebar'
 import { PostStatsMobile } from '@/components/blog/PostStatsMobile'
 import { RightSidebar } from '@/components/blog/RightSidebar'
 import { Footer } from '@/components/Footer'
-import { ViewTracker } from './ViewTracker'
 import { PostBodyEnhancer } from '@/components/blog/PostBodyEnhancer'
 import {
   PostBody,
@@ -130,7 +130,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     path: `blog/${post.slug}`,
     title: translation.title,
     description: translation.summary ?? translation.excerpt ?? undefined,
-    image: post.coverImageUrl,
+    image: post.coverImageUrl ? mediaUrl(post.coverImageUrl) : null,
     type: 'article',
     publishedTime: post.publishedAt,
     modifiedTime: post.updatedAt,
@@ -214,7 +214,7 @@ export default async function PostPage({ params }: PageProps) {
           slug: post.slug,
           title: translation.title,
           description: translation.summary ?? translation.excerpt,
-          image: post.coverImageUrl,
+          image: post.coverImageUrl ? mediaUrl(post.coverImageUrl) : null,
           publishedAt: post.publishedAt,
           updatedAt: post.updatedAt,
           authorName: post.author.username,
@@ -230,7 +230,6 @@ export default async function PostPage({ params }: PageProps) {
         ])}
       />
       <Navbar />
-      <ViewTracker postId={post.id} />
 
       <div className="max-w-7xl mx-auto md:px-4 py-20 flex gap-2 relative">
         <aside className="hidden md:flex flex-col items-center w-16 shrink-0">
@@ -247,7 +246,7 @@ export default async function PostPage({ params }: PageProps) {
         <main className="flex-1 min-w-0 max-w-4xl md:px-4 pb-12">
           <article className="rounded-lg shadow-sm">
             {post.coverImageUrl && (
-              <PostCover src={post.coverImageUrl} alt={translation.title} />
+              <PostCover coverKey={post.coverImageUrl} alt={translation.title} />
             )}
 
             <div className="p-4 md:p-6">

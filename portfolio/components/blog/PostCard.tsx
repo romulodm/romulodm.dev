@@ -1,10 +1,12 @@
 // components/ui/PostCard.tsx
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
 import { Heart, Eye, MessageSquare, ArrowRight } from 'lucide-react';
 import { formatDistanceToNow } from '@/lib/utils';
+import { mediaUrl } from '@/lib/media';
 import { formatCount } from '@/lib/format-number';
 import type { PostLayout } from '@/components/blog/BlogHeader';
 
@@ -95,12 +97,14 @@ function PostCardRow({ post }: { post: Post }) {
     <Link href={`/blog/${post.slug}`} className="group block">
       <article className="flex flex-row h-full border border-border bg-card overflow-hidden transition-all duration-300 hover:-translate-y-0.5 hover:border-gray-400/70 dark:hover:border-neutral-700">
         {/* Cover — fixed width on the left */}
-        <div className="shrink-0 w-48 sm:w-56 md:w-64 overflow-hidden">
+        <div className="relative shrink-0 w-48 sm:w-56 md:w-64 overflow-hidden">
           {post.coverImageUrl ? (
-            <img
-              src={post.coverImageUrl}
+            <Image
+              src={mediaUrl(post.coverImageUrl)}
               alt={post.title}
-              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+              fill
+              sizes="(min-width: 768px) 256px, (min-width: 640px) 224px, 192px"
+              className="object-cover transition-transform duration-500 group-hover:scale-105"
             />
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-muted to-muted/50 flex items-center justify-center">
@@ -169,11 +173,15 @@ function PostCardGrid({ post }: { post: Post }) {
         {/* Cover */}
         {post.coverImageUrl ? (
           <div className="overflow-hidden px-4 aspect-video">
-            <img
-              src={post.coverImageUrl}
-              alt={post.title}
-              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-            />
+            <div className="relative w-full h-full">
+              <Image
+                src={mediaUrl(post.coverImageUrl)}
+                alt={post.title}
+                fill
+                sizes="(min-width: 1024px) 400px, (min-width: 768px) 50vw, 100vw"
+                className="object-cover transition-transform duration-500 group-hover:scale-105"
+              />
+            </div>
           </div>
         ) : (
           <div className="aspect-video bg-gradient-to-br from-muted to-muted/50 flex items-center justify-center">

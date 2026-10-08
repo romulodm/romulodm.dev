@@ -1,6 +1,7 @@
 ﻿'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
 import {
@@ -15,6 +16,7 @@ import {
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
+import { mediaUrl } from '@/lib/media';
 import {
   Select,
   SelectContent,
@@ -294,9 +296,8 @@ export function BlogHeader({
                       className="w-full flex items-start gap-3 px-3 py-2.5 hover:bg-muted text-left transition-colors"
                     >
                       {hit.coverImageUrl && (
-                        // eslint-disable-next-line @next/next/no-img-element -- see SearchDialog
-                        <img src={hit.coverImageUrl} alt="" width={36} height={36}
-                          loading="lazy" decoding="async"
+                        // The index stores the cover's storage key (lib/media.ts).
+                        <Image src={mediaUrl(hit.coverImageUrl)} alt="" width={36} height={36}
                           className="w-9 h-9 rounded-lg object-cover shrink-0 mt-0.5" />
                       )}
                       <div className="flex-1 min-w-0">

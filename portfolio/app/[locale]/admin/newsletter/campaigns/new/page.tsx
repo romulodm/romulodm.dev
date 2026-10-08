@@ -3,6 +3,8 @@ import { redirect } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { getLocale, getTranslations } from "next-intl/server";
 import { prisma } from "@romulo/database";
+import { mediaUrl } from "@/lib/media";
+import { absoluteUrl } from "@/lib/seo";
 import { isAdminAuthenticated } from "@/lib/auth-helpers";
 import CampaignForm from "./CampaignForm";
 import {
@@ -61,7 +63,8 @@ export default async function NewCampaignPage() {
     previewHtmlMap[post.id] = campaignTemplate({
       subject: title,
       post: {
-        imageUrl: post.coverImageUrl ?? undefined,
+        // Email clients need an absolute URL; the post stores only the key.
+        imageUrl: post.coverImageUrl ? absoluteUrl(mediaUrl(post.coverImageUrl)) : undefined,
         title,
         summary,
         tags,

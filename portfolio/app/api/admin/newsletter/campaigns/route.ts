@@ -12,6 +12,7 @@ import {
   validationErrorResponse,
 } from "@/lib/api-errors";
 import { getApiTranslator } from "@/lib/api-intl";
+import { mediaUrl } from "@/lib/media";
 import {
   optionalPlainText,
   parseJsonBodyWithMessages,
@@ -19,6 +20,7 @@ import {
   sanitizePlainText,
 } from "@/lib/api-validation";
 import { sanitizeNewsletterHtml } from "@/lib/newsletter-html-sanitizer";
+import { absoluteUrl } from "@/lib/seo";
 import { campaignTemplate, type BrandConfig } from "@romulo/templates";
 import {
   buildCampaignTranslations,
@@ -172,7 +174,8 @@ export async function POST(req: NextRequest) {
           content: campaignTemplate({
             subject: body.subject,
             post: {
-              imageUrl: post.coverImageUrl ?? undefined,
+              // Email clients need an absolute URL; the post stores only the key.
+              imageUrl: post.coverImageUrl ? absoluteUrl(mediaUrl(post.coverImageUrl)) : undefined,
               title: translation.title,
               summary: translation.summary ?? undefined,
               tags: post.postTags.map((pt) => pt.tag),
