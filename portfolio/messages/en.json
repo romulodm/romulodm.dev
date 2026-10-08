@@ -97,11 +97,11 @@
       "queueOnly": "View flushing now runs exclusively through the worker-backed queue path."
     },
     "uploads": {
-      "missingFields": "Missing required fields: filename, contentType, kind.",
+      "missingFields": "Missing required fields: postId and kind.",
       "invalidKind": "Invalid kind. It must be \"cover\" or \"inline\".",
-      "invalidContentType": "Unsupported file type.",
-      "fileTooLarge": "File is too large.",
-      "internal": "Could not prepare the upload. Please try again."
+      "invalidContentType": "Unsupported format. Use JPG, PNG, GIF or WebP.",
+      "fileTooLarge": "The image is larger than 10 MB.",
+      "internal": "Could not save the image. Please try again."
     },
     "admin": {
       "newsletterCampaigns": {
@@ -1675,6 +1675,7 @@
       "errors": {
         "invalidYoutube": "Invalid link. Use a YouTube URL (ex: https://youtu.be/xxxxx).",
         "upload": "Failed to upload the image. Please try again.",
+        "fileTooLarge": "The image is larger than {max} MB. Choose a smaller file.",
         "titleRequired": "Please enter a title.",
         "contentRequired": "Please enter the post content.",
         "invalidYoutubeShort": "The YouTube link is invalid.",

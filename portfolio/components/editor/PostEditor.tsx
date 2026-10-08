@@ -8,7 +8,7 @@ import { EditorToolbar } from './EditorToolbar';
 import { PostPreview } from './PostPreview';
 import { TagInput } from './TagInput';
 import { SUPPORTED_LOCALES, getOtherLocales, type LocaleCode } from '@/lib/locales';
-import { mediaUrl } from '@/lib/media';
+import { MAX_MEDIA_BYTES, mediaUrl } from '@/lib/media';
 
 export interface PostEditorData {
   locale: LocaleCode;
@@ -230,75 +230,71 @@ export function PostEditor({
     }
   };
 
+  /**
+   * Sends the file to /api/uploads and returns the storage key the post keeps
+   * (never a URL, see lib/media.ts), or null after telling the user why.
+   */
+  const uploadImage = async (file: File, kind: 'cover' | 'inline'): Promise<string | null> => {
+    // nginx refuses a bigger body with an HTML 413 the app never sees, so the
+    // limit is checked here to give a reason the user can act on.
+    if (file.size > MAX_MEDIA_BYTES) {
+      alert(t('errors.fileTooLarge', { max: MAX_MEDIA_BYTES / 1024 / 1024 }));
+      return null;
+    }
+
+    try {
+      const params = new URLSearchParams({ postId, kind });
+      const res = await fetch(`/api/uploads?${params}`, {
+        method: 'POST',
+        headers: { 'Content-Type': file.type },
+        body: file,
+      });
+      const data = await res.json().catch(() => null);
+
+      if (!res.ok || typeof data?.key !== 'string') {
+        // The route explains rejections it can name (unsupported type);
+        // anything else gets the generic message.
+        alert(res.status === 400 && data?.error ? data.error : t('errors.upload'));
+        return null;
+      }
+
+      return data.key;
+    } catch {
+      alert(t('errors.upload'));
+      return null;
+    }
+  };
+
   const handleCoverImageUpload = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    try {
-      setIsUploading(true);
-      const presignRes = await fetch('/api/uploads/presign', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ postId, contentType: file.type, kind: 'cover' }),
-      });
-      if (!presignRes.ok) throw new Error(t('errors.upload'));
-
-      const { uploadUrl, key } = await presignRes.json();
-
-      const uploadRes = await fetch(uploadUrl, {
-        method: 'PUT',
-        body: file,
-        headers: { 'Content-Type': file.type },
-      });
-      if (!uploadRes.ok) throw new Error(`S3 upload failed: ${uploadRes.status}`);
-
-      // The post stores the storage key, never a URL (lib/media.ts).
-      setCoverImageUrl(key);
-    } catch {
-      alert(t('errors.upload'));
-    } finally {
-      setIsUploading(false);
-      if (fileInputRef.current) fileInputRef.current.value = '';
-    }
+    setIsUploading(true);
+    const key = await uploadImage(file, 'cover');
+    if (key) setCoverImageUrl(key);
+    setIsUploading(false);
+    if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   const handleInlineImageUpload = async (file: File) => {
-    try {
-      setIsUploading(true);
-      const presignRes = await fetch('/api/uploads/presign', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ postId, contentType: file.type, kind: 'inline' }),
-      });
-      if (!presignRes.ok) throw new Error(t('errors.upload'));
+    setIsUploading(true);
+    const key = await uploadImage(file, 'inline');
+    setIsUploading(false);
+    if (!key) return;
 
-      const { uploadUrl, key } = await presignRes.json();
-
-      const uploadRes = await fetch(uploadUrl, {
-        method: 'PUT',
-        body: file,
-        headers: { 'Content-Type': file.type },
-      });
-      if (!uploadRes.ok) throw new Error(`S3 upload failed: ${uploadRes.status}`);
-
-      const textarea = textareaRef.current;
-      if (textarea) {
-        const start = textarea.selectionStart;
-        const end = textarea.selectionEnd;
-        // A relative /media/ path, so the markdown stays valid on any host.
-        const imageMarkdown = `![${t('content.imageAlt')}](${mediaUrl(key)})`;
-        setContentMarkdown(
-          contentMarkdown.substring(0, start) + imageMarkdown + contentMarkdown.substring(end),
-        );
-        setTimeout(() => {
-          textarea.focus();
-          textarea.setSelectionRange(start + imageMarkdown.length, start + imageMarkdown.length);
-        }, 0);
-      }
-    } catch {
-      alert(t('errors.upload'));
-    } finally {
-      setIsUploading(false);
+    const textarea = textareaRef.current;
+    if (textarea) {
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      // A relative /media/ path, so the markdown stays valid on any host.
+      const imageMarkdown = `![${t('content.imageAlt')}](${mediaUrl(key)})`;
+      setContentMarkdown(
+        contentMarkdown.substring(0, start) + imageMarkdown + contentMarkdown.substring(end),
+      );
+      setTimeout(() => {
+        textarea.focus();
+        textarea.setSelectionRange(start + imageMarkdown.length, start + imageMarkdown.length);
+      }, 0);
     }
   };
 

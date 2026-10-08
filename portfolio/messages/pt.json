@@ -97,11 +97,11 @@
       "queueOnly": "O flush de views agora roda exclusivamente pelo caminho de fila com worker."
     },
     "uploads": {
-      "missingFields": "Campos obrigatórios ausentes: filename, contentType, kind.",
+      "missingFields": "Campos obrigatórios ausentes: postId e kind.",
       "invalidKind": "Tipo inválido. Deve ser \"cover\" ou \"inline\".",
-      "invalidContentType": "Tipo de arquivo não suportado.",
-      "fileTooLarge": "O arquivo é grande demais.",
-      "internal": "Não foi possível preparar o upload. Tente novamente."
+      "invalidContentType": "Formato não suportado. Use JPG, PNG, GIF ou WebP.",
+      "fileTooLarge": "A imagem passa de 10 MB.",
+      "internal": "Não foi possível salvar a imagem. Tente novamente."
     },
     "admin": {
       "newsletterCampaigns": {
@@ -1675,6 +1675,7 @@
       "errors": {
         "invalidYoutube": "Link inválido. Use um link do YouTube (ex: https://youtu.be/xxxxx).",
         "upload": "Falha ao fazer upload da imagem. Tente novamente.",
+        "fileTooLarge": "A imagem passa de {max} MB. Escolha um arquivo menor.",
         "titleRequired": "Por favor, insira um título.",
         "contentRequired": "Por favor, insira o conteúdo do post.",
         "invalidYoutubeShort": "O link do YouTube é inválido.",
