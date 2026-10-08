@@ -62,6 +62,17 @@ describe("getRequestIp", () => {
     expect(getRequestIp(new Headers({ "x-real-ip": "5.5.5.5" }))).toBe("5.5.5.5");
   });
 
+  it("lê o próprio .get() de um Headers que também tem um campo `headers`", () => {
+    // Forma do HeadersAdapter do Next (o que `await headers()` devolve): estende
+    // Headers e guarda o objeto cru em `this.headers`, sem `.get()`.
+    class AdapterLike extends Headers {
+      headers = { "x-real-ip": "ignored" };
+    }
+    const headers = new AdapterLike({ "x-real-ip": "7.7.7.7" });
+
+    expect(getRequestIp(headers)).toBe("7.7.7.7");
+  });
+
   it("prefere x-real-ip quando presente", () => {
     const headers = new Headers({
       "x-real-ip": "5.5.5.5",
