@@ -94,7 +94,9 @@
       "noPosts": "No posts.",
       "notFound": "Post not found.",
       "missingRequiredFields": "Missing required fields.",
-      "queueOnly": "View flushing now runs exclusively through the worker-backed queue path."
+      "queueOnly": "View flushing now runs exclusively through the worker-backed queue path.",
+      "slugInvalid": "The slug needs at least one letter or number.",
+      "slugTaken": "Another post already uses this slug. Pick a different one or leave the field empty."
     },
     "uploads": {
       "missingFields": "Missing required fields: postId and kind.",
@@ -450,7 +452,15 @@
         "commitsHint": "public and private",
         "visitorsLabel": "On the site now",
         "visitorsUnit": "{count, plural, one {person} other {people}}",
-        "visitorsHint": "including you"
+        "visitorsHint": "including you",
+        "presets": {
+          "foco": "Heads down",
+          "reuniao": "In a meeting",
+          "almoco": "At lunch",
+          "estudando": "Studying",
+          "viajando": "Traveling",
+          "ferias": "On vacation"
+        }
       },
       "reach": {
         "label": "Reach out",
@@ -1715,6 +1725,13 @@
         "title": "Summary",
         "placeholder": "A short description of what the reader will find in this post...",
         "remaining": "{count} remaining"
+      },
+      "slug": {
+        "title": "Slug",
+        "placeholder": "generated-from-the-title",
+        "hintNew": "End of the post's address, shared by every language. Left empty, it comes from the title.",
+        "hintEdit": "End of the post's address, shared by every language. Clear it to derive it again from the title.",
+        "movesWarning": "This post has been published. Saving moves it to a new address, and links already shared will break."
       },
       "readingTime": {
         "title": "Reading time",

@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter, useParams, useSearchParams } from 'next/navigation'
-import { PostEditor, type PostEditorData } from '@/components/editor/PostEditor'
+import { PostEditor, saveError, type PostEditorData } from '@/components/editor/PostEditor'
 import { useEffect, useState, useCallback } from 'react'
 import { useTranslations } from 'next-intl'
 import type { LocaleCode } from '@/lib/locales'
@@ -17,6 +17,7 @@ interface PostTranslation {
 
 interface PostWithTranslations {
     id: string
+    slug: string
     coverImageUrl: string | null
     youtubeUrl: string | null
     readingTime: number
@@ -92,9 +93,10 @@ export default function EditPostClient() {
                 status: data.status,
                 readingTime: data.readingTime,
                 translateWithAI: data.translateWithAI,
+                slug: data.slug,
             }),
         })
-        if (!res.ok) throw new Error('Failed to update post')
+        if (!res.ok) throw await saveError(res)
         router.push('/admin/posts')
     }
 
@@ -132,6 +134,7 @@ export default function EditPostClient() {
                 youtubeUrl: post.youtubeUrl ?? '',
                 summary: activeTranslation?.summary ?? '',
                 readingTime: post.readingTime,
+                slug: post.slug,
                 publishedAt: post.publishedAt,
             }}
             onSave={handleSave}

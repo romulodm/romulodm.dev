@@ -94,7 +94,9 @@
       "noPosts": "Nenhum post encontrado.",
       "notFound": "Post não encontrado.",
       "missingRequiredFields": "Campos obrigatórios ausentes.",
-      "queueOnly": "O flush de views agora roda exclusivamente pelo caminho de fila com worker."
+      "queueOnly": "O flush de views agora roda exclusivamente pelo caminho de fila com worker.",
+      "slugInvalid": "O slug precisa ter ao menos uma letra ou número.",
+      "slugTaken": "Outro post já usa esse slug. Escolha outro ou deixe o campo em branco."
     },
     "uploads": {
       "missingFields": "Campos obrigatórios ausentes: postId e kind.",
@@ -450,7 +452,15 @@
         "commitsHint": "públicos e privados",
         "visitorsLabel": "No site agora",
         "visitorsUnit": "{count, plural, one {pessoa} other {pessoas}}",
-        "visitorsHint": "incluindo você"
+        "visitorsHint": "incluindo você",
+        "presets": {
+          "foco": "Em foco",
+          "reuniao": "Em reunião",
+          "almoco": "No almoço",
+          "estudando": "Estudando",
+          "viajando": "Viajando",
+          "ferias": "De férias"
+        }
       },
       "reach": {
         "label": "Fale comigo",
@@ -1715,6 +1725,13 @@
         "title": "Resumo",
         "placeholder": "Uma breve descrição do que o leitor vai encontrar neste post...",
         "remaining": "{count} restantes"
+      },
+      "slug": {
+        "title": "Slug",
+        "placeholder": "gerado-a-partir-do-titulo",
+        "hintNew": "Final do endereço do post, o mesmo em todos os idiomas. Em branco, sai do título.",
+        "hintEdit": "Final do endereço do post, o mesmo em todos os idiomas. Apague para gerar de novo a partir do título.",
+        "movesWarning": "Este post já foi publicado. Ao salvar, o endereço atual deixa de funcionar e links já compartilhados quebram."
       },
       "readingTime": {
         "title": "Tempo de leitura",

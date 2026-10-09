@@ -7,16 +7,18 @@ import { translatePost } from "@/lib/translate";
 import { isAdminAuthenticated } from "@/lib/auth-helpers";
 import {
   badRequestResponse,
+  conflictResponse,
   internalErrorResponse,
   logApiError,
   notFoundResponse,
   unauthorizedResponse,
 } from "@/lib/api-errors";
 import { getApiTranslator } from "@/lib/api-intl";
-import { slugify, uniqueSlug, generateExcerpt } from "@/lib/markdown";
+import { checkRequestedSlug, generateExcerpt, uniqueSlug } from "@/lib/markdown";
 import { sweepUnusedPostMedia } from "@/lib/post-media";
 import { deletePostMedia } from "@/lib/s3";
 import { removePostFromSearch, syncPostToSearch } from "@/lib/search-sync";
+import { slugify } from "@/lib/slug";
 import { invalidatePostIdsCache } from "@/lib/views-internal";
 
 export async function GET(
@@ -89,6 +91,7 @@ export async function PATCH(
       summary,
       readingTime,
       translateWithAI,
+      slug: requestedSlug,
     } = body;
 
     const existingPost = await prisma.post.findUnique({
@@ -115,9 +118,28 @@ export async function PATCH(
 
     const existingTranslation = existingPost.translations[0];
 
-    // Regenerate the slug only when the title actually changes
-    if (title !== undefined && title !== existingTranslation?.title) {
-      postUpdate.slug = await uniqueSlug(slugify(String(title)), params.id);
+    // The slug changes only when the request asks for it: an empty string
+    // means "derive it again from the title", any other value is the slug the
+    // author typed. Editing the title alone never moves the post, because
+    // there is no redirect from an old slug and every link already shared
+    // would break. (Deriving it from the title on every title change also
+    // rewrote the slug from the translated title the first time another
+    // locale was saved.)
+    if (typeof requestedSlug === "string") {
+      let nextSlug: string | null = null;
+      if (requestedSlug.trim()) {
+        const checked = await checkRequestedSlug(requestedSlug, params.id);
+        if (!checked.ok) {
+          return checked.reason === "taken"
+            ? conflictResponse(t("posts.slugTaken"))
+            : badRequestResponse(t("posts.slugInvalid"));
+        }
+        nextSlug = checked.slug;
+      } else {
+        const base = slugify(String(title ?? existingTranslation?.title ?? ""));
+        if (base) nextSlug = await uniqueSlug(base, params.id);
+      }
+      if (nextSlug && nextSlug !== existingPost.slug) postUpdate.slug = nextSlug;
     }
 
     // Build the locale-specific translation update payload
