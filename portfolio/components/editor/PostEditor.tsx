@@ -9,6 +9,7 @@ import { PostPreview } from './PostPreview';
 import { TagInput } from './TagInput';
 import { SUPPORTED_LOCALES, getOtherLocales, type LocaleCode } from '@/lib/locales';
 import { MAX_MEDIA_BYTES, mediaUrl } from '@/lib/media';
+import { MAX_SLUG_LENGTH, slugify } from '@/lib/slug';
 
 export interface PostEditorData {
   locale: LocaleCode;
@@ -21,6 +22,9 @@ export interface PostEditorData {
   youtubeUrl: string;
   summary: string;
   readingTime: number;
+  /** Raw text from the slug field. Empty means "derive it from the title"
+   *  (on edit: derive it again); the API normalizes anything else. */
+  slug: string;
 }
 
 interface ExistingTranslation {
@@ -44,11 +48,25 @@ interface PostEditorProps {
     youtubeUrl?: string;
     summary?: string;
     readingTime?: number;
+    /** Current slug of the post being edited. Shared by every locale. */
+    slug?: string;
     /** Usado so no preview, para mostrar "Publicado ha X" como no post real. */
     publishedAt?: string | null;
   };
   onSave: (data: PostEditorData) => Promise<void>;
   onCancel?: () => void;
+}
+
+/**
+ * Builds the error a save handler throws for a failed response. Rejections
+ * the API explains (400, 409: a slug already in use, for example) carry its
+ * message so the editor can show it; other failures carry none and the
+ * editor falls back to its generic message.
+ */
+export async function saveError(res: Response): Promise<Error> {
+  if (res.status !== 400 && res.status !== 409) return new Error();
+  const data = await res.json().catch(() => null);
+  return new Error(typeof data?.error === 'string' ? data.error : '');
 }
 
 function extractYoutubeId(url: string): string | null {
@@ -210,6 +228,7 @@ export function PostEditor({
   const [youtubeError, setYoutubeError] = useState('');
   const [summary, setSummary] = useState(initialData?.summary ?? '');
   const [readingTime, setReadingTime] = useState<number>(initialData?.readingTime ?? 0);
+  const [slug, setSlug] = useState(initialData?.slug ?? '');
   const [isUploading, setIsUploading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [savingLabel, setSavingLabel] = useState('');
@@ -332,9 +351,10 @@ export function PostEditor({
         youtubeUrl,
         summary,
         readingTime,
+        slug: slug.trim(),
       });
-    } catch {
-      alert(t('errors.save'));
+    } catch (error) {
+      alert(error instanceof Error && error.message ? error.message : t('errors.save'));
     } finally {
       setIsSaving(false);
       setSavingLabel('');
@@ -342,6 +362,16 @@ export function PostEditor({
   };
 
   const youtubePreviewId = extractYoutubeId(youtubeUrl);
+
+  // What the API will store if saved now: the typed slug, or the title's.
+  // On a post that was ever published, a different value moves its URL and
+  // old links stop working, so the author is told before saving.
+  const effectiveSlug = slugify(slug) || slugify(title);
+  const slugMoves =
+    mode === 'edit' &&
+    Boolean(initialData?.publishedAt) &&
+    Boolean(initialData?.slug) &&
+    effectiveSlug !== initialData?.slug;
 
   return (
     <div className="min-h-screen bg-background">
@@ -517,6 +547,37 @@ export function PostEditor({
                 className="w-full text-5xl font-bold placeholder:text-muted-foreground text-foreground bg-transparent focus:outline-none resize-none"
                 rows={2}
               />
+            </div>
+
+            <div className="px-6 pb-4">
+              <p className="text-sm font-medium text-foreground mb-2">
+                {t('slug.title')} <span className="text-muted-foreground font-normal">({t('common.optional')})</span>
+              </p>
+              <div className="flex items-center border border-border rounded-md bg-background focus-within:ring-2 focus-within:ring-ring overflow-hidden">
+                <span className="pl-3 text-sm text-muted-foreground whitespace-nowrap select-none">/{locale}/blog/</span>
+                <input
+                  type="text"
+                  value={slug}
+                  onChange={(event) => setSlug(event.target.value)}
+                  onBlur={() => {
+                    // Show the normalized form once the author leaves the
+                    // field. Input that normalizes to nothing stays as typed
+                    // so the API can say why it was refused.
+                    const normalized = slugify(slug);
+                    if (normalized) setSlug(normalized);
+                  }}
+                  placeholder={slugify(title) || t('slug.placeholder')}
+                  maxLength={MAX_SLUG_LENGTH}
+                  spellCheck={false}
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  className="flex-1 min-w-0 pr-3 py-2 text-sm bg-transparent text-foreground focus:outline-none placeholder:text-muted-foreground"
+                />
+              </div>
+              <p className="mt-1 text-xs text-muted-foreground">
+                {mode === 'edit' ? t('slug.hintEdit') : t('slug.hintNew')}
+              </p>
+              {slugMoves && <p className="mt-1 text-xs text-destructive">{t('slug.movesWarning')}</p>}
             </div>
 
             <div className="px-6 pb-4">

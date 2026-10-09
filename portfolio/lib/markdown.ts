@@ -20,6 +20,7 @@ import rehypeExternalLinks from 'rehype-external-links'
 import rehypeStringify from 'rehype-stringify'
 import { preprocessYoutube } from './remark-youtube'
 import { prisma } from '@romulo/database'
+import { slugify } from './slug'
 
 /**
  * Schema de sanitização que estende o padrão seguro do rehype-sanitize com
@@ -103,18 +104,6 @@ export async function markdownToHtml(
   return result.toString()
 }
 
-export function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')   // remove accents
-    .replace(/[^a-z0-9\s-]/g, '')
-    .trim()
-    .replace(/\s+/g, '-')
-    .replace(/-+/g, '-')
-    .substring(0, 80)
-}
-
 export async function uniqueSlug(base: string, excludeId?: string): Promise<string> {
   let slug = base
   let attempt = 0
@@ -124,6 +113,27 @@ export async function uniqueSlug(base: string, excludeId?: string): Promise<stri
     attempt++
     slug = `${base}-${attempt}`
   }
+}
+
+export type RequestedSlug =
+  | { ok: true; slug: string }
+  | { ok: false; reason: 'invalid' | 'taken' }
+
+/**
+ * Validates a slug the author typed in the editor. Unlike uniqueSlug, a
+ * collision is an error instead of a silent "-1" suffix: the author picked
+ * this exact URL, and storing a different one would publish the post at an
+ * address nobody chose.
+ */
+export async function checkRequestedSlug(
+  raw: string,
+  excludeId?: string,
+): Promise<RequestedSlug> {
+  const slug = slugify(raw)
+  if (!slug) return { ok: false, reason: 'invalid' }
+  const owner = await prisma.post.findUnique({ where: { slug }, select: { id: true } })
+  if (owner && owner.id !== excludeId) return { ok: false, reason: 'taken' }
+  return { ok: true, slug }
 }
 
 export function generateExcerpt(markdown: string, maxLength: number = 160): string {

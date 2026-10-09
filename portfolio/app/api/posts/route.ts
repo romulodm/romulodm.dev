@@ -5,6 +5,7 @@ import { prisma } from "@romulo/database";
 import { isAdminAuthenticated, getSession } from "@/lib/auth-helpers";
 import {
   badRequestResponse,
+  conflictResponse,
   internalErrorResponse,
   logApiError,
   unauthorizedResponse,
@@ -13,8 +14,9 @@ import { getApiTranslator } from "@/lib/api-intl";
 import { getOtherLocales } from "@/lib/locales";
 import { sweepUnusedPostMedia } from "@/lib/post-media";
 import { isValidPostId } from "@/lib/s3";
-import { slugify, uniqueSlug } from "@/lib/markdown";
+import { checkRequestedSlug, uniqueSlug } from "@/lib/markdown";
 import { syncPostToSearch } from "@/lib/search-sync";
+import { slugify } from "@/lib/slug";
 import { translatePost } from "@/lib/translate";
 import { invalidatePostIdsCache } from "@/lib/views-internal";
 
@@ -77,6 +79,7 @@ export async function POST(req: NextRequest) {
     youtubeUrl,
     summary,
     readingTime,
+    slug: requestedSlug,
   } = body;
 
   if (!locale || !title || !contentMarkdown) {
@@ -92,7 +95,22 @@ export async function POST(req: NextRequest) {
 
   try {
     const normalizedStatus = status === "PUBLISHED" ? "PUBLISHED" : "DRAFT";
-    const slug = await uniqueSlug(slugify(String(title)));
+
+    // A slug typed in the editor is used as-is (normalized) or the request
+    // is refused; without one, the slug is derived from the title. This runs
+    // before the AI translations so a refused slug costs no API calls.
+    let slug: string;
+    if (typeof requestedSlug === "string" && requestedSlug.trim()) {
+      const checked = await checkRequestedSlug(requestedSlug);
+      if (!checked.ok) {
+        return checked.reason === "taken"
+          ? conflictResponse(t("posts.slugTaken"))
+          : badRequestResponse(t("posts.slugInvalid"));
+      }
+      slug = checked.slug;
+    } else {
+      slug = await uniqueSlug(slugify(String(title)));
+    }
 
     const translations: Array<{
       locale: string;

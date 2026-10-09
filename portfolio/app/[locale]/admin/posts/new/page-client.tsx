@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { PostEditor, type PostEditorData } from '@/components/editor/PostEditor'
+import { PostEditor, saveError, type PostEditorData } from '@/components/editor/PostEditor'
 
 export default function NewPostClient({ postId }: { postId: string }) {
     const router = useRouter()
@@ -12,7 +12,7 @@ export default function NewPostClient({ postId }: { postId: string }) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ ...data, id: postId }),
         })
-        if (!res.ok) throw new Error('Failed to create post')
+        if (!res.ok) throw await saveError(res)
         router.push('/admin/posts')
     }
 
