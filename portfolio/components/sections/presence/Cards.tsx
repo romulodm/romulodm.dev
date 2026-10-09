@@ -2,7 +2,9 @@
 
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { ArrowRight } from 'lucide-react';
-import { useFormatter, useNow, useTranslations } from 'next-intl';
+import { useFormatter, useLocale, useNow, useTranslations } from 'next-intl';
+
+import type { StatusPreset } from '@/lib/presence/status-presets';
 
 import { CellBody, Eyebrow, cellClass } from './Cell';
 
@@ -26,7 +28,13 @@ import { CellBody, Eyebrow, cellClass } from './Cell';
 type Presence = {
     /** Server clock at the time of the answer, used to correct client skew. */
     now: string;
-    status: { label: string; since: string; until: string } | null;
+    status: {
+        label: string;
+        labels?: Partial<Record<string, string>>;
+        preset?: StatusPreset;
+        since: string;
+        until: string;
+    } | null;
     music: {
         isPlaying: boolean;
         title: string;
@@ -65,6 +73,7 @@ const TRACK_END_COOLDOWN_MS = 15_000;
 export default function Cards({ startIndex }: { startIndex: number }) {
     const t = useTranslations('home.built.presence');
     const format = useFormatter();
+    const locale = useLocale();
     // `relativeTime` needs an explicit reference point. Without it next-intl
     // falls back to the current time, which differs between the server render
     // and the client hydration and logs a warning on every render. The one
@@ -161,6 +170,20 @@ export default function Cards({ startIndex }: { startIndex: number }) {
     const commits = data?.commits;
     const visitors = data?.visitors;
 
+    // A preset is stored as a key and translated here, so it reads in the
+    // page's language. Free text uses the visitor's locale when one was typed
+    // for it, and the Portuguese original otherwise.
+    const statusText = status
+        ? status.preset
+            ? t(`presets.${status.preset}`)
+            : (status.labels?.[locale] ?? status.label)
+        : t('statusFree');
+
+    // "until 14:00" is ambiguous for a status that runs past today (/viajando
+    // lasts a day, /ferias three), so the date joins the time when it differs.
+    const statusUntil = status ? new Date(status.until) : null;
+    const untilOtherDay = statusUntil !== null && statusUntil.toDateString() !== now.toDateString();
+
     // ── Status ────────────────────────────────────────────────────────────────
     // Always present, even with nothing set: "available" is a true answer, and
     // this cell closes the first row.
@@ -179,13 +202,14 @@ export default function Cards({ startIndex }: { startIndex: number }) {
                                 <span className="relative inline-flex h-2 w-2 rounded-full bg-[var(--vision-color)]" />
                             </span>
                         )}
-                        <span className="truncate">{status ? status.label : t('statusFree')}</span>
+                        <span className="truncate">{statusText}</span>
                     </>
                 }
                 subtitle={
-                    status
+                    statusUntil
                         ? t('statusUntil', {
-                            time: format.dateTime(new Date(status.until), {
+                            time: format.dateTime(statusUntil, {
+                                ...(untilOtherDay ? { day: '2-digit', month: '2-digit' } : {}),
                                 hour: '2-digit',
                                 minute: '2-digit',
                             }),
