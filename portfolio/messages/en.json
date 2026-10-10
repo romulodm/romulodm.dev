@@ -2085,7 +2085,8 @@
       "viewComments": "View comments",
       "support": "Support",
       "share": "Share",
-      "shareAria": "Share this post"
+      "shareAria": "Share this post",
+      "moreActions": "More actions"
     },
     "summarize": {
       "button": "Summary",

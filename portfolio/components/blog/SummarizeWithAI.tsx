@@ -44,6 +44,12 @@ import { cn } from '@/lib/utils';
  * Only one instance per page may listen: the sidebar and the mobile bar are
  * both mounted (one is hidden with CSS), and two listeners would open two
  * dialogs on top of each other.
+ *
+ * OPENING FROM ELSEWHERE
+ * On narrow screens the mobile bar hides this trigger and offers the action
+ * from its "+" menu instead. Passing `open`/`onOpenChange` makes the dialog
+ * controlled, so the menu can open it while it stays mounted outside the
+ * menu (a dialog rendered inside a dropdown would unmount when it closes).
  */
 
 export const SUMMARIZE_ANCHOR = '#resumir';
@@ -106,19 +112,45 @@ interface Props {
   variant: 'sidebar' | 'inline';
   /** Set on exactly one instance per page. See the note on `#resumir`. */
   listenForAnchor?: boolean;
+  /** Controlled mode. See the note on opening from elsewhere. */
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  /** Extra classes for the trigger button, e.g. to hide it at a breakpoint. */
+  triggerClassName?: string;
 }
 
-export function SummarizeWithAI({ variant, listenForAnchor = false }: Props) {
+export function SummarizeWithAI({
+  variant,
+  listenForAnchor = false,
+  open: controlledOpen,
+  onOpenChange,
+  triggerClassName,
+}: Props) {
   const t = useTranslations('blogUi.summarize');
-  const [open, setOpen] = useState(false);
-  const [prompt, setPrompt] = useState('');
+  const [internalOpen, setInternalOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  const openDialog = useCallback(() => {
-    setPrompt(t('prompt', { url: currentPostUrl() }));
-    setCopied(false);
-    setOpen(true);
-  }, [t]);
+  const isControlled = controlledOpen !== undefined;
+  const open = isControlled ? controlledOpen : internalOpen;
+
+  const setOpen = useCallback(
+    (next: boolean) => {
+      if (!isControlled) setInternalOpen(next);
+      onOpenChange?.(next);
+    },
+    [isControlled, onOpenChange],
+  );
+
+  // Built while open only: it reads window.location, which the server lacks,
+  // and the dialog is always closed on the first render.
+  const prompt = open ? t('prompt', { url: currentPostUrl() }) : '';
+
+  // Reset per opening, whoever opened it (this trigger or a parent).
+  useEffect(() => {
+    if (open) setCopied(false);
+  }, [open]);
+
+  const openDialog = useCallback(() => setOpen(true), [setOpen]);
 
   useEffect(() => {
     if (!listenForAnchor) return;
@@ -150,7 +182,7 @@ export function SummarizeWithAI({ variant, listenForAnchor = false }: Props) {
       <button
         type="button"
         onClick={openDialog}
-        className="flex flex-col items-center justify-center gap-1 rounded-xl text-muted-foreground transition-colors hover:text-primary"
+        className={cn('flex flex-col items-center justify-center gap-1 rounded-xl text-muted-foreground transition-colors hover:text-primary', triggerClassName)}
         aria-label={t('buttonAria')}
       >
         <Sparkles size={20} />
@@ -160,7 +192,7 @@ export function SummarizeWithAI({ variant, listenForAnchor = false }: Props) {
       <button
         type="button"
         onClick={openDialog}
-        className="flex items-center justify-center gap-1 rounded-xl text-muted-foreground transition-colors hover:text-primary"
+        className={cn('flex items-center justify-center gap-1 rounded-xl text-muted-foreground transition-colors hover:text-primary', triggerClassName)}
         aria-label={t('buttonAria')}
       >
         <Sparkles size={15} />
