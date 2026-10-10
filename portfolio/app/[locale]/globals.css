@@ -807,12 +807,12 @@
 }
 
 /* ---- Author-year citations (markup: lib/rehype-citations.ts) ---- */
-.post-body .cite {
-  white-space: nowrap;
-}
-
+/* Each label stays on one line, but a group may break after its "; ". Making
+ * the whole [a; b] group nowrap pushed it past narrow columns and gave the
+ * page a horizontal scroll. */
 .post-body .cite__link {
   position: relative;
+  white-space: nowrap;
   color: hsl(var(--primary));
   text-decoration: none;
   font-weight: 500;
