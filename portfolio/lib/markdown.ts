@@ -18,7 +18,7 @@ import prismaGrammar from './highlight-prisma'
 import rehypeSlug from 'rehype-slug'
 import rehypeExternalLinks from 'rehype-external-links'
 import rehypeStringify from 'rehype-stringify'
-import { preprocessYoutube } from './remark-youtube'
+import remarkYoutube, { preprocessYoutube } from './remark-youtube'
 import { prisma } from '@romulo/database'
 import { slugify } from './slug'
 
@@ -27,6 +27,8 @@ import { slugify } from './slug'
  * suporte explícito a iframes do YouTube (únicos embeds permitidos).
  *
  * Ordem da pipeline:
+ *   remarkYoutube                     → ::youtube vira <div><iframe> como elemento HAST, não HTML raw
+ *                                       (raw é descartado pelo sanitize; ver lib/remark-youtube.ts)
  *   remarkRehype (allowDangerousHtml) → converte HTML raw em nós HAST
  *   rehypeSanitize                    → limpa o HAST por whitelist
  *   rehypeCitations                   → [@chave] vira citação autor-ano (lib/rehype-citations.ts)
@@ -49,7 +51,8 @@ const youtubeSchema: Schema = {
       ['src', /^https:\/\/www\.youtube\.com\/embed\//],
       'title',
       'allow',
-      'allowfullscreen',
+      // Nome da propriedade HAST, não do atributo HTML: 'allowfullscreen' nunca casava
+      'allowFullScreen',
     ],
   },
 }
@@ -73,13 +76,15 @@ export async function markdownToHtml(
   markdown: string,
   { codeBlockChrome = false, mediaOrigin }: MarkdownToHtmlOptions = {},
 ): Promise<string> {
-  // Substitui ::youtube[...](url) por HTML raw ANTES do remark parsear
-  // Isso evita que o remarkGfm interprete [título](url) como link markdown
+  // Substitui ::youtube[...](url) por um marcador ANTES do remark parsear
+  // Isso evita que o remarkGfm interprete [título](url) como link markdown;
+  // o remarkYoutube depois troca o marcador pelo embed de verdade
   const preprocessed = preprocessYoutube(markdown)
 
   const result = await unified()
     .use(remarkParse)
     .use(remarkGfm)
+    .use(remarkYoutube)
     .use(remarkRehype as any, { allowDangerousHtml: true }) // converte raw HTML → HAST raw nodes
     .use(rehypeSanitize, youtubeSchema)                    // sanitiza por whitelist (remove raw nodes inseguros)
     // After sanitize (it would prefix the anchor ids but not the #links) and
