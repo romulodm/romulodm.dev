@@ -27,14 +27,14 @@ type PreviewEntry = {
  */
 export const HOME_BLOG_PREVIEW = {
     featured: [
-        { slug: "seedicon-os-avatares-desse-blog-viraram-meu-primeiro-pacote-no-npm", icon: "📦" },
-        { slug: "recriamos-o-msn-na-web-e-o-que-mais-chamou-atencao-foi-o-que-ja-tinha-20-anos", icon: "💬" },
+        { slug: "seedicon", icon: "📦" },
+        { slug: "msn-revival", icon: "💬" },
     ],
     list: [
-        { slug: "pac-man-e-2048-os-jogos-que-fiz-antes-de-saber-o-que-estava-fazendo", icon: "👾" },
-        { slug: "um-xadrez-em-go-feito-em-cinco-dias-e-os-bugs-que-achei-quase-tres-anos-depois", icon: "♟️" },
+        { slug: "pacman-2048", icon: "👾" },
+        { slug: "go-chess", icon: "♟️" },
     ],
-    closing: { slug: "o-nda-escondeu-meu-melhor-trabalho-entao-construi-algo-que-eu-pudesse-mostrar", icon: "📄" },
+    closing: { slug: "building-beyond-nda", icon: "📄" },
 } as const satisfies {
     featured: readonly PreviewEntry[]
     list: readonly PreviewEntry[]
