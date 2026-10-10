@@ -26,6 +26,23 @@ interface TranslationOutput {
   excerpt: string
 }
 
+/** Matches PostTranslation.summary (@db.VarChar(500)) and the editor's maxLength. */
+const SUMMARY_MAX_LENGTH = 500
+
+/**
+ * Cuts text to at most `max` characters, at a word boundary when one is close,
+ * ending with an ellipsis. Counts code points (as Postgres VARCHAR does), so a
+ * surrogate pair is never split.
+ */
+function clampText(text: string, max: number): string {
+  const chars = Array.from(text.trim())
+  if (chars.length <= max) return chars.join('')
+  const cut = chars.slice(0, max - 1).join('')
+  const lastSpace = cut.lastIndexOf(' ')
+  const head = lastSpace > max * 0.8 ? cut.slice(0, lastSpace) : cut
+  return head.trimEnd() + '…'
+}
+
 export async function translatePost(
   post: TranslationInput,
   sourceLocale: string,
@@ -48,6 +65,8 @@ export async function translatePost(
           `- Translate text content only, never translate code or URLs.`,
           `- Keep citation markers such as [@key] or [@a; @b, p. 3] exactly as-is, and do not translate the \`\`\`references block.`,
           `- Keep technical terms in their widely-accepted form in the target language.`,
+          `- Translate summary and excerpt as given; never write new ones. If a field is an empty string, return an empty string.`,
+          `- summary must stay under ${SUMMARY_MAX_LENGTH} characters.`,
           `- Return ONLY a valid JSON object with keys: title, contentMarkdown, summary, excerpt.`,
         ].join('\n'),
       },
@@ -65,7 +84,19 @@ export async function translatePost(
 
   const raw = completion.choices[0].message.content ?? '{}'
   const parsed = JSON.parse(raw) as TranslationOutput
-  return parsed
+
+  // The model's output is not bound by the column: a translated summary can
+  // run longer than the source, and with an empty source the model tends to
+  // write a summary of its own. Either one overflows VARCHAR(500) and the
+  // insert fails, so the translation is lost.
+  const summary = post.summary?.trim() && typeof parsed.summary === 'string'
+    ? clampText(parsed.summary, SUMMARY_MAX_LENGTH)
+    : ''
+  const excerpt = post.excerpt?.trim() && typeof parsed.excerpt === 'string'
+    ? parsed.excerpt
+    : ''
+
+  return { ...parsed, summary, excerpt }
 }
 
 // ── Newsletter campaign copy ─────────────────────────────────────────────────
