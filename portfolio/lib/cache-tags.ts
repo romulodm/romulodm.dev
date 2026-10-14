@@ -9,3 +9,10 @@
 
 /** Entrada de `unstable_cache` do perfil publico (getProfileByUsername). */
 export const PROFILE_CACHE_TAG = "profile-by-username";
+
+/**
+ * Tag of the `unstable_cache` entry behind /[locale]/blog/[slug]
+ * (getCachedPostBySlug). One tag per post, so a like on one post does not
+ * invalidate the others.
+ */
+export const blogPostCacheTag = (slug: string) => `blog-post-${slug}`;
