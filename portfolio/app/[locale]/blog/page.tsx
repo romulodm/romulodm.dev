@@ -11,9 +11,16 @@ import { buildPageMetadata } from '@/lib/seo'
 
 const BLOG_INDEX_REVALIDATE_SECONDS = 300
 
-// Estatica com revalidacao. Nao ha `dynamic` aqui: a pagina e gerada na primeira
-// requisicao (ver generateStaticParams em app/[locale]/layout.tsx) e o HTML fica
-// cacheado, entao a navegacao nao passa pelo loading.tsx.
+// Static with revalidation. There is no `dynamic` export: the page is generated on
+// the first request (see generateStaticParams in app/[locale]/layout.tsx) and the
+// HTML is cached.
+//
+// There is deliberately no loading.tsx next to this file (or next to [slug]). A
+// loading.tsx wraps the page in a Suspense boundary, and with it the cached HTML
+// was served as the skeleton first, with the real content in a hidden <div> that
+// a script near the end of the document swapped in. Visitors saw a skeleton even
+// on a cache HIT, where there is nothing to wait for, and on every client-side
+// navigation. Navigation feedback comes from NextTopLoader in the root layout.
 //
 // Mesmo TTL do unstable_cache abaixo, de proposito: se o HTML durasse mais que o
 // dado, a pagina serviria markup velho com cache de dados ja renovado.
