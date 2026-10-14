@@ -3,7 +3,7 @@
 import { useRef, useState, useCallback } from "react";
 import { useTranslations } from "next-intl";
 import "@/styles/apoiase.css";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { FaArrowRightLong } from "react-icons/fa6";
 
 type FaceState = "neutral" | "surprised" | "happy";

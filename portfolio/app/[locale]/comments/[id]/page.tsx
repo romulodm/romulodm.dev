@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import Navbar from "@/components/navigation/Navbar";
 import { CommentCard } from "@/components/comments/CommentCard";
 import { cache } from "react";
