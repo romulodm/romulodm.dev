@@ -14,19 +14,25 @@ import { getIntlLocaleCode } from '@/lib/locales';
  * Topo da pagina /status: audiencia dos ultimos 7 dias, no formato do
  * dashboard do Umami (totais, ambiente, localizacao e mapa de calor).
  *
- * Busca a parte, em /api/status/analytics, para que uma falha ou lentidao do
+ * Atualiza a parte, em /api/status/analytics, para que uma falha ou lentidao do
  * GA4 nao segure o resto da pagina.
  */
 
-type Payload = Audience & { collectedAt: string };
+export type AudiencePayload = Audience & { collectedAt: string };
+type Payload = AudiencePayload;
 
 // O GA4 consolida com horas de atraso e a rota cacheia por 10 min; recarregar
 // mais que isso nao traz numero novo.
 const REFRESH_MS = 5 * 60_000;
 
-export function WeeklyAudience() {
+/**
+ * `initialData` is the payload rendered by the /status page on the server; null
+ * when GA4 failed there, in which case the skeleton shows until the poll
+ * answers.
+ */
+export function WeeklyAudience({ initialData = null }: { initialData?: Payload | null }) {
     const t = useTranslations('statusPage.audience');
-    const [data, setData] = useState<Payload | null>(null);
+    const [data, setData] = useState<Payload | null>(initialData);
     const [failed, setFailed] = useState(false);
 
     useEffect(() => {
