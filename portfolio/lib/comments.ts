@@ -7,26 +7,16 @@ import { getLocale } from "next-intl/server";
 
 import { AVATAR_SELECT } from "@/lib/avatar";
 import { getCommentDepth } from "@/lib/comment-depth";
+import { queryPostComments } from "@/lib/comments-query";
 
 export type SortOrder = "score" | "newest" | "oldest";
 
-const PAGE_SIZE = 20;
-
-// Nested include helper — 4 levels deep
-const replyInclude = (depth: number): any => {
-    if (depth === 0) return undefined;
-    return {
-        replies: {
-            orderBy: [{ score: "desc" as const }, { createdAt: "asc" as const }],
-            include: {
-                author: { select: { id: true, ...AVATAR_SELECT } },
-                votes: { select: { userId: true, value: true } },
-                ...(depth > 1 ? replyInclude(depth - 1) : {}),
-            },
-        },
-    };
-};
-
+/**
+ * Server action behind sorting, "load more" and the refresh after posting.
+ * Same query as the public list rendered into the cached post page (see
+ * lib/comments-query.ts), plus the visitor's own vote on each comment, which is
+ * why it reads the session and why it cannot run during that page's render.
+ */
 export async function listPostComments({
     postId,
     cursor = null,
@@ -39,46 +29,7 @@ export async function listPostComments({
     const session = await getServerSession(authOptions);
     const userId = session?.user?.id ?? null;
 
-    const orderBy =
-        sort === "score"
-            ? [{ score: "desc" as const }, { createdAt: "desc" as const }]
-            : sort === "newest"
-                ? [{ createdAt: "desc" as const }]
-                : [{ createdAt: "asc" as const }];
-
-    const comments = await prisma.comment.findMany({
-        where: { postId, parentId: null },
-        orderBy,
-        take: PAGE_SIZE + 1,
-        ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
-        include: {
-            author: { select: { id: true, ...AVATAR_SELECT } },
-            votes: { select: { userId: true, value: true } },
-            ...replyInclude(4),
-        },
-    });
-
-    const hasMore = comments.length > PAGE_SIZE;
-    const items = hasMore ? comments.slice(0, PAGE_SIZE) : comments;
-    const nextCursor = hasMore ? items[items.length - 1].id : null;
-
-    // Attach userVote to each comment recursively
-    function attachVote(comment: any): any {
-        const userVote = userId
-            ? (comment.votes?.find((v: any) => v.userId === userId)?.value ?? 0)
-            : 0;
-        return {
-            ...comment,
-            userVote,
-            votes: undefined, // strip raw votes from client payload
-            replies: comment.replies?.map(attachVote) ?? [],
-        };
-    }
-
-    return {
-        items: items.map(attachVote),
-        nextCursor,
-    };
+    return queryPostComments({ postId, cursor, sort, userId });
 }
 
 export async function getCommentById(id: string) {
