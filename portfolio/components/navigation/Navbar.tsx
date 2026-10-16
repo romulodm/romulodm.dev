@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef, type ReactNode } from "react";
 import { BookOpen, Rss, Home, Languages, LogIn } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { useSession } from "next-auth/react";
 import { AuthModal } from "../auth/AuthModal";
@@ -15,7 +15,15 @@ import { NavMore } from "./NavMore";
 import type { NavLinkKey } from "./moreItems";
 import { IconTooltip } from "./IconTooltip";
 import { ThemeToggle } from "./ThemeToggle";
-import { useAnnouncementOffset } from "./AnnouncementBar";
+import { AnnouncementBar, useAnnouncementOffset } from "./AnnouncementBar";
+
+/**
+ * Single switch for the announcement strip. The nav's server-rendered `top`
+ * reserves room for the strip whenever it is shown, so rendering and that
+ * reservation must read the same flag: when they disagree, the nav paints
+ * 2.25rem low and jumps up after hydration.
+ */
+const SHOW_ANNOUNCEMENT = false;
 
 export const navItems: { key: NavLinkKey; href: string; icon: ReactNode }[] = [
     { key: "home", href: "/", icon: <Home className="h-4 w-4" /> },
@@ -40,25 +48,33 @@ const Navbar = () => {
 
     const navRef = useRef<HTMLElement>(null);
     const announcementRef = useRef<HTMLDivElement>(null);
-    const hasAnnouncement = t.has("navigation.announcement");
+    const hasAnnouncement = SHOW_ANNOUNCEMENT && t.has("navigation.announcement");
     useAnnouncementOffset(navRef, announcementRef);
 
     useEffect(() => {
         const handler = () => setScrolled(window.scrollY > 50);
-        window.addEventListener("scroll", handler);
+        // On reload the browser restores the scroll position before this
+        // listener exists, so no scroll event fires: read the position once.
+        handler();
+        window.addEventListener("scroll", handler, { passive: true });
         return () => window.removeEventListener("scroll", handler);
     }, []);
 
     return (
         <>
-            {/* {hasAnnouncement && <AnnouncementBar ref={announcementRef} />} */}
+            {hasAnnouncement && <AnnouncementBar ref={announcementRef} />}
 
             <nav
                 ref={navRef}
                 // Fallback until useAnnouncementOffset runs: 2.25rem is the
                 // strip's single-line height (py-2 + 20px line).
                 style={{ top: `var(--announcement-offset, ${hasAnnouncement ? "2.25rem" : "0px"})` }}
-                className={`fixed left-0 right-0 z-50 ${scrolled ? "surface-elevated  backdrop-blur-xl bg-background/80" : ""}`}
+                // The background past 50px of scroll comes from CSS
+                // (`.nav-surface` in globals.css), so it is right on the first
+                // paint after a reload. `data-scrolled` only drives the fallback
+                // for browsers without scroll-driven animations.
+                data-scrolled={scrolled}
+                className="nav-surface fixed left-0 right-0 z-50"
             >
                 <div className="container max-w-7xl mx-auto flex items-center justify-between py-4 px-6">
                     <div className="flex items-center gap-5">
