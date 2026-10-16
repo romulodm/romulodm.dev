@@ -7,6 +7,7 @@ import {
     welcomeTemplate,
     unsubscribeConfirmTemplate,
     passwordResetTemplate,
+    emailVerificationTemplate,
     campaignTemplate,
     digestTemplate,
     type BrandConfig,
@@ -83,6 +84,18 @@ function buildPreviews(t: Translator, locale: string) {
             html: passwordResetTemplate({
                 code: "482917",
                 expiresInMinutes: 15,
+                brand: BRAND,
+                recipient: PREVIEW_RECIPIENT,
+            }),
+            interactive: false,
+        },
+        {
+            id: "email-verification",
+            label: t("items.emailVerification.label"),
+            description: t("items.emailVerification.description"),
+            html: emailVerificationTemplate({
+                verifyUrl: `${base}/${locale}/verify-email/abc123`,
+                expiresInHours: 24,
                 brand: BRAND,
                 recipient: PREVIEW_RECIPIENT,
             }),
