@@ -1,6 +1,7 @@
 // app/providers.tsx
 "use client";
 import { AuthModalProvider } from "@/components/auth/AuthModalProvider";
+import { ChooseUsernameDialog } from "@/components/auth/ChooseUsernameDialog";
 import SentryUserContext from "@/components/observability/SentryUserContext";
 import { SessionProvider } from "next-auth/react";
 import type { ReactNode } from "react";
@@ -14,6 +15,7 @@ export default function Providers({ children }: { children: ReactNode }) {
                 <ParallaxProvider>
                     {children}
                 </ParallaxProvider>
+                <ChooseUsernameDialog />
             </AuthModalProvider>
         </SessionProvider>
     );

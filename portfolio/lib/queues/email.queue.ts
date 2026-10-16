@@ -107,6 +107,27 @@ export async function enqueuePasswordReset(
   });
 }
 
+export async function enqueueEmailVerification(
+  email: string,
+  verifyUrl: string,
+  displayName: string,
+  locale: string,
+  expiresInHours = 24,
+) {
+  const job: TransactionalEmailJob = {
+    type: "EMAIL_VERIFICATION",
+    email,
+    verifyUrl,
+    expiresInHours,
+    displayName,
+    locale,
+  };
+  await getTransactionalQueue().add("email-verification", job, {
+    ...transactionalEmailJobOptions,
+    jobId: buildTransactionalJobId(job),
+  });
+}
+
 export async function enqueueCampaignEmail(job: CampaignEmailJob, delayMs = 0) {
   await getCampaignQueue().add(
     `campaign-${job.campaignId}-${job.recipientId}`,

@@ -9,6 +9,10 @@ import { MarkdownEditor } from '@/components/comments/MarkdownEditor';
 import { CommentPreview } from '@/components/comments/CommentPreview';
 import { avatarUserFromSession } from '@/lib/avatar';
 import { useAuthGuard } from '@/hooks/auth-guard';
+import {
+  EmailVerificationNotice,
+  useNeedsEmailVerification,
+} from '@/components/auth/EmailVerificationNotice';
 
 interface CommentComposerProps {
   postId: string;
@@ -22,6 +26,7 @@ export function CommentComposer({ postId, parentId = null, onSuccess, onCancel, 
   const t = useTranslations('commentsUi.composer');
   const { data: session } = useSession();
   const { guard } = useAuthGuard();
+  const needsVerification = useNeedsEmailVerification();
   const [body, setBody] = useState('');
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -70,6 +75,10 @@ export function CommentComposer({ postId, parentId = null, onSuccess, onCancel, 
         </p>
       </div>
     );
+  }
+
+  if (needsVerification) {
+    return <EmailVerificationNotice action="comment" />;
   }
 
   return (

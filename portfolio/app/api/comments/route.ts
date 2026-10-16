@@ -20,6 +20,7 @@ import { getCommentDepth } from "@/lib/comment-depth";
 import { canReplyAtDepth } from "@/lib/comment-rules";
 import { enqueueNotification } from '@/lib/queues/notification.queue';
 import { moderate } from '@/lib/moderation';
+import { getPostingBlock, postingBlockedResponse } from '@/lib/posting-gate';
 import { getRequestIp, rateLimit } from '@/lib/rate-limit';
 import { getApiTranslator } from '@/lib/api-intl';
 
@@ -105,12 +106,9 @@ export async function POST(request: NextRequest) {
             return rateLimitResponse(t('comments.rateLimited'));
         }
 
-        const user = await prisma.user.findUnique({
-            where: { id: auth.user.id },
-            select: { banned: true },
-        });
-        if (user?.banned) {
-            return forbiddenResponse(t('comments.cannotComment'));
+        const block = await getPostingBlock(auth.user.id);
+        if (block) {
+            return postingBlockedResponse(block, t, t('comments.cannotComment'));
         }
 
         const { postId, parentId, bodyMd } = await parseJsonBodyWithMessages(

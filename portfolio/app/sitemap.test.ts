@@ -3,6 +3,8 @@ import { join } from 'node:path'
 
 import { describe, expect, it } from 'vitest'
 
+import { routing } from '@/i18n/routing'
+
 import { STATIC_ROUTES } from './sitemap'
 
 /**
@@ -29,6 +31,7 @@ const INTENTIONALLY_EXCLUDED: Array<{ prefix: string; reason: string }> = [
   { prefix: 'profile', reason: 'conteudo de usuario' },
   { prefix: 'comments', reason: 'conteudo de usuario' },
   { prefix: 'newsletter/confirm', reason: 'token na URL' },
+  { prefix: 'verify-email', reason: 'token na URL' },
   { prefix: 'newsletter/unsubscribe', reason: 'token na URL' },
   { prefix: 'blog/[slug]', reason: 'rota dinamica, vem do banco' },
   { prefix: 'legal', reason: 'redirect para /legal/terms' },
@@ -150,9 +153,9 @@ describe('hreflang', () => {
         }
         if (!entry.endsWith('.tsx') && !entry.endsWith('.ts')) continue
 
-        // Comentarios sao removidos antes do scan: este proprio arquivo e as
-        // notas em legal/* mencionam o 'es-ES' antigo ao explicar por que ele
-        // saiu, e sem isso a explicacao dispararia o teste que ela documenta.
+        // Comments are stripped before the scan so that a comment quoting a
+        // hreflang pair (as an example, or to explain a removal) does not
+        // trigger the check it documents.
         const src = readFileSync(full, 'utf8')
           .replace(/\/\*[\s\S]*?\*\//g, '')
           .replace(/(^|[^:])\/\/.*$/gm, '$1')
@@ -160,7 +163,8 @@ describe('hreflang', () => {
         // Procura chaves de hreflang tipo 'es-ES': '/es/...'
         for (const match of src.matchAll(/['"]([a-z]{2})(?:-[A-Z]{2})?['"]\s*:\s*['"]\/([a-z]{2})\//g)) {
           const [, tag, pathLocale] = match
-          if (!['en', 'pt'].includes(tag) || !['en', 'pt'].includes(pathLocale)) {
+          const known: readonly string[] = routing.locales
+          if (!known.includes(tag) || !known.includes(pathLocale)) {
             offenders.push(`${full.replace(LOCALE_DIR, 'app/[locale]')}: ${match[0]}`)
           }
         }

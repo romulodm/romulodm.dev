@@ -9,6 +9,7 @@ import { AVATAR_SELECT } from "@/lib/avatar";
 import { revalidatePath, updateTag } from "next/cache";
 
 import { PROFILE_CACHE_TAG } from "@/lib/cache-tags";
+import { checkUsername, normalizeUsernameInput } from "@/lib/username-rules";
 
 // ── Cached public profile ─────────────────────────────────────────────────────
 
@@ -101,7 +102,20 @@ export async function updateProfileSettings(data: {
 
     const userId = (session.user as any).id as string;
 
-    const nextUsername = data.username?.trim();
+    // Same rules as sign-up and the "choose a username" dialog
+    // (lib/username-rules.ts). Before them, this was the one path that still
+    // accepted spaces, uppercase or a full e-mail address as a username.
+    const nextUsername = data.username !== undefined
+        ? normalizeUsernameInput(data.username)
+        : undefined;
+
+    if (nextUsername) {
+        const problem = checkUsername(nextUsername);
+        const isAdmin = Boolean((session.user as any).admin);
+        if (problem && !(problem === "reserved" && isAdmin)) {
+            return { error: "username_invalid" as const, problem };
+        }
+    }
 
     // Username uniqueness check
     if (nextUsername) {
@@ -115,7 +129,8 @@ export async function updateProfileSettings(data: {
     const updated = await prisma.user.update({
         where: { id: userId },
         data: {
-            ...(nextUsername ? { username: nextUsername } : {}),
+            // Picking a name here also settles the "choose a username" prompt.
+            ...(nextUsername ? { username: nextUsername, usernameChosenAt: new Date() } : {}),
             ...(data.githubUrl !== undefined ? { githubUrl: data.githubUrl } : {}),
             ...(data.linkedinUrl !== undefined ? { linkedinUrl: data.linkedinUrl } : {}),
         },

@@ -31,6 +31,10 @@ export function buildTransactionalJobId(job: TransactionalEmailJob): string {
             return `txn:unsubscribe:${stableHash([job.email, job.unsubscribeUrl])}`;
         case "PASSWORD_RESET":
             return `txn:password-reset:${stableHash([job.email, job.code])}`;
+        case "EMAIL_VERIFICATION":
+            // The URL carries the token, so every new link is a new job, and
+            // a BullMQ retry of the same link keeps the same id.
+            return `txn:email-verification:${stableHash([job.email, job.verifyUrl])}`;
         default:
             return `txn:unknown:${stableHash([JSON.stringify(job)])}`;
     }

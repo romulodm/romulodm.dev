@@ -8,12 +8,13 @@ import { prisma } from "@romulo/database";
 import { headers } from "next/headers";
 import { AVATAR_SELECT, DEFAULT_AVATAR_STYLE, generateAvatarSeed } from "./avatar";
 import { getRequestIp, rateLimit } from "./rate-limit";
-import { generateUniqueUsername } from "./username";
+import { generatePlaceholderUsername } from "./username";
 
 type OAuthProvider = "GOOGLE" | "GITHUB";
 
 const ERRORS = {
   accountNotLinked: "/?error=AccountNotLinked",
+  oauthCallback: "/?error=OAuthCallbackError",
 } as const;
 
 // ── Newsletter linking helper ─────────────────────────────────────────────────
@@ -36,7 +37,12 @@ async function linkNewsletterIfExists(userId: string, email: string): Promise<vo
     );
 }
 
-async function handleOAuthSignIn(user: any, account: any, provider: OAuthProvider) {
+async function handleOAuthSignIn(
+  user: any,
+  account: any,
+  profile: any,
+  provider: OAuthProvider,
+) {
   const email = user.email?.trim().toLowerCase();
   if (!email) return false;
 
@@ -44,7 +50,15 @@ async function handleOAuthSignIn(user: any, account: any, provider: OAuthProvide
 
   const existing = await prisma.user.findUnique({
     where: { email },
-    select: { id: true, provider: true, sub: true, admin: true, username: true },
+    select: {
+      id: true,
+      provider: true,
+      sub: true,
+      admin: true,
+      username: true,
+      emailVerified: true,
+      usernameChosenAt: true,
+    },
   });
 
   // E-mail already registered with a different provider
@@ -54,7 +68,12 @@ async function handleOAuthSignIn(user: any, account: any, provider: OAuthProvide
 
   // New user — create
   if (!existing) {
-    const username = await generateUniqueUsername(email, user.name);
+    // A placeholder, not a derivation of the e-mail or the provider name:
+    // the owner picks the real one in the "choose a username" dialog, which
+    // opens while usernameChosenAt is null. See lib/username.ts.
+    const username = await generatePlaceholderUsername(
+      provider === "GITHUB" ? profile?.login : null,
+    );
     const created = await prisma.user.create({
       data: {
         email,
@@ -78,6 +97,8 @@ async function handleOAuthSignIn(user: any, account: any, provider: OAuthProvide
     user.provider = provider;
     user.admin = created.admin;
     user.username = created.username;
+    user.emailVerified = true;
+    user.usernameChosen = false;
 
     // Link newsletter subscription if one already exists for this email
     await linkNewsletterIfExists(created.id, email);
@@ -98,6 +119,8 @@ async function handleOAuthSignIn(user: any, account: any, provider: OAuthProvide
   user.provider = provider;
   user.admin = existing.admin;
   user.username = existing.username;
+  user.emailVerified = existing.emailVerified;
+  user.usernameChosen = existing.usernameChosenAt !== null;
 
   // Existing user signing in — link newsletter if not yet linked
   await linkNewsletterIfExists(existing.id, email);
@@ -150,6 +173,8 @@ export const authOptions: NextAuthOptions = {
             provider: true,
             password: true,
             banned: true,
+            emailVerified: true,
+            usernameChosenAt: true,
             ...AVATAR_SELECT,
           },
         });
@@ -174,6 +199,8 @@ export const authOptions: NextAuthOptions = {
           avatarSeed: user.avatarSeed,
           avatarStyle: user.avatarStyle,
           avatarSource: user.avatarSource,
+          emailVerified: user.emailVerified,
+          usernameChosen: user.usernameChosenAt !== null,
         };
       },
     }),
@@ -182,10 +209,22 @@ export const authOptions: NextAuthOptions = {
   session: { strategy: "jwt" },
 
   callbacks: {
-    async signIn({ user, account }) {
-      if (account?.provider === "google") return handleOAuthSignIn(user, account, "GOOGLE");
-      if (account?.provider === "github") return handleOAuthSignIn(user, account, "GITHUB");
-      return true;
+    async signIn({ user, account, profile }) {
+      const provider =
+        account?.provider === "google" ? "GOOGLE" : account?.provider === "github" ? "GITHUB" : null;
+      if (!provider) return true;
+
+      // Anything thrown here is turned by NextAuth into /api/auth/error?error=<message>.
+      // A Prisma error message carries the whole query, including the visitor's
+      // e-mail, and characters such as "→" that are not valid in a Location
+      // header, so the redirect itself crashed with a ByteString TypeError. The
+      // error is logged here and the visitor gets the generic OAuth toast.
+      try {
+        return await handleOAuthSignIn(user, account, profile, provider);
+      } catch (err) {
+        console.error("[auth] OAuth sign-in failed:", err);
+        return ERRORS.oauthCallback;
+      }
     },
 
     async jwt({ token, user, trigger }) {
@@ -197,6 +236,8 @@ export const authOptions: NextAuthOptions = {
         token.avatarSeed = (user as any).avatarSeed ?? null;
         token.avatarStyle = (user as any).avatarStyle ?? null;
         token.avatarSource = (user as any).avatarSource ?? null;
+        token.emailVerified = Boolean((user as any).emailVerified);
+        token.usernameChosen = Boolean((user as any).usernameChosen);
       }
 
       // Recarrega do banco em tres situacoes:
@@ -213,12 +254,31 @@ export const authOptions: NextAuthOptions = {
       // confiar nele deixaria qualquer um escrever seed e estilo arbitrarios no
       // proprio token — divergindo do banco. A fonte da verdade e sempre o
       // banco, e update() serve so como sinal de "va reler".
-      const staleToken = !token.id || !token.provider || !token.avatarSeed;
+      //
+      // Two pending states also force a reload on every read, until they clear:
+      // an unconfirmed e-mail and an unchosen username. Both are usually
+      // resolved somewhere this token never hears about (the confirmation link
+      // opened on a phone, another tab), and the session should pick that up
+      // the next time the page asks for it rather than at the next sign-in.
+      // `undefined` covers tokens issued before these fields existed.
+      const staleToken =
+        !token.id ||
+        !token.provider ||
+        !token.avatarSeed ||
+        token.emailVerified !== true ||
+        token.usernameChosen !== true;
 
       if (token.email && (trigger === "update" || staleToken)) {
         const dbUser = await prisma.user.findUnique({
           where: { email: token.email },
-          select: { id: true, provider: true, admin: true, ...AVATAR_SELECT },
+          select: {
+            id: true,
+            provider: true,
+            admin: true,
+            emailVerified: true,
+            usernameChosenAt: true,
+            ...AVATAR_SELECT,
+          },
         });
         if (dbUser) {
           token.id = dbUser.id;
@@ -232,6 +292,8 @@ export const authOptions: NextAuthOptions = {
           token.avatarSeed = dbUser.avatarSeed;
           token.avatarStyle = dbUser.avatarStyle;
           token.avatarSource = dbUser.avatarSource;
+          token.emailVerified = dbUser.emailVerified;
+          token.usernameChosen = dbUser.usernameChosenAt !== null;
         }
       }
 
@@ -247,6 +309,8 @@ export const authOptions: NextAuthOptions = {
         (session.user as any).avatarSeed = (token.avatarSeed as string) ?? null;
         (session.user as any).avatarStyle = (token.avatarStyle as string) ?? null;
         (session.user as any).avatarSource = (token.avatarSource as string) ?? null;
+        (session.user as any).emailVerified = token.emailVerified === true;
+        (session.user as any).usernameChosen = token.usernameChosen === true;
       }
       return session;
     },

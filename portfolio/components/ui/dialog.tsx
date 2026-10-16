@@ -126,9 +126,15 @@ function DialogClose({ asChild, children, className }: DialogCloseProps) {
 interface DialogContentProps {
   className?: string;
   children?: React.ReactNode;
+  /**
+   * Drops the corner X. For dialogs that must be answered, pair it with an
+   * `onOpenChange` that ignores close requests (Escape and backdrop clicks go
+   * through it too).
+   */
+  hideClose?: boolean;
 }
 
-function DialogContent({ className, children }: DialogContentProps) {
+function DialogContent({ className, children, hideClose = false }: DialogContentProps) {
   const t = useTranslations("common.dialog");
   const { open, onOpenChange } = useDialog();
 
@@ -176,14 +182,14 @@ function DialogContent({ className, children }: DialogContentProps) {
           onClick={(event) => event.stopPropagation()}
         >
           {children}
-          <button
+          {!hideClose && <button
             type="button"
             onClick={() => onOpenChange(false)}
             className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none"
             aria-label={t("close")}
           >
             <X className="h-4 w-4" />
-          </button>
+          </button>}
         </div>
       </div>
     </DialogPortal>

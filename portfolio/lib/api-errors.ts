@@ -14,7 +14,11 @@ type ErrorCode =
   | "not_found"
   | "conflict"
   | "rate_limited"
-  | "internal_error";
+  | "internal_error"
+  // Forbidden for a reason the user can fix, so the client can show the fix
+  // instead of a generic refusal (lib/posting-gate.ts).
+  | "email_not_verified"
+  | "username_required";
 
 function buildErrorPayload(message: string, code: ErrorCode) {
   return {
@@ -39,8 +43,11 @@ export function unauthorizedResponse(
   });
 }
 
-export function forbiddenResponse(message = "Acesso negado.") {
-  return NextResponse.json(buildErrorPayload(message, "forbidden"), {
+export function forbiddenResponse(
+  message = "Acesso negado.",
+  code: ErrorCode = "forbidden",
+) {
+  return NextResponse.json(buildErrorPayload(message, code), {
     status: 403,
   });
 }

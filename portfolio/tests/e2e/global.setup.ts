@@ -37,6 +37,8 @@ async function globalSetup(): Promise<void> {
       password,
       provider: "EMAIL_PASSWORD",
       username: PLAYWRIGHT_ADMIN_USERNAME,
+      // Without it the "choose a username" dialog would cover every page.
+      usernameChosenAt: new Date(),
     },
     create: {
       admin: true,
@@ -46,6 +48,7 @@ async function globalSetup(): Promise<void> {
       password,
       provider: "EMAIL_PASSWORD",
       username: PLAYWRIGHT_ADMIN_USERNAME,
+      usernameChosenAt: new Date(),
     },
   });
 

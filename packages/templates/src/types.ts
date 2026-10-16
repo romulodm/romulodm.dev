@@ -78,6 +78,13 @@ export interface PasswordResetTemplateOptions {
   recipient: RecipientContext;
 }
 
+export interface EmailVerificationTemplateOptions {
+  verifyUrl: string;
+  expiresInHours?: number;
+  brand: BrandConfig;
+  recipient: RecipientContext;
+}
+
 export interface PostMeta {
   imageUrl?: string;
   title: string;

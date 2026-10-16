@@ -7,6 +7,10 @@ declare module "next-auth" {
             provider: "EMAIL_PASSWORD" | "GOOGLE" | "GITHUB";
             admin: boolean;
             username?: string | null;
+            /** False only for EMAIL_PASSWORD accounts that have not confirmed the address. */
+            emailVerified: boolean;
+            /** False while the account still has the username the system assigned. */
+            usernameChosen: boolean;
         } & DefaultSession["user"];
     }
 
@@ -24,5 +28,7 @@ declare module "next-auth/jwt" {
         provider?: "EMAIL_PASSWORD" | "GOOGLE" | "GITHUB";
         admin?: boolean;
         username?: string | null;
+        emailVerified?: boolean;
+        usernameChosen?: boolean;
     }
 }

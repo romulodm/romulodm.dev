@@ -1,5 +1,7 @@
 ﻿import { z } from "zod"
 
+import { USERNAME_PATTERN, normalizeUsernameInput } from "@/lib/username-rules"
+
 type Translate = (key: string) => string
 
 export type LoginValues = z.infer<typeof loginSchema>
@@ -25,7 +27,12 @@ export function createLoginSchema(t: Translate) {
 export function createRegisterSchema(t: Translate) {
     return z
         .object({
-            username: z.string().min(2, t("validation.usernameTooShort")).max(80),
+            // Same rule the API applies (lib/username-rules.ts). Reserved
+            // names are left to the server, which answers with its own message.
+            username: z
+                .string()
+                .transform(normalizeUsernameInput)
+                .pipe(z.string().regex(USERNAME_PATTERN, t("validation.usernameFormat"))),
             email: z.string().email(t("validation.emailInvalid")),
             password: z.string().min(8, t("validation.passwordMin")).max(100),
             confirmPassword: z.string(),

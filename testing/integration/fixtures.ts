@@ -113,6 +113,9 @@ export async function createTestUser(overrides?: {
       admin: overrides?.admin ?? false,
       provider: overrides?.provider ?? "EMAIL_PASSWORD",
       emailVerified: true,
+      // A finished account by default: confirmed e-mail, chosen username, so
+      // tests that comment or post are not stopped by lib/posting-gate.ts.
+      usernameChosenAt: new Date(),
     },
   });
 }
