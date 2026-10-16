@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, type JSX, type ReactNode } from "react";
 import { useLocale, useTranslations } from "next-intl";
+import { getIntlLocaleCode } from "@/lib/locales";
 
 /*
  * Building blocks shared by every terminal output: the echoed prompt, the grey
@@ -23,7 +24,7 @@ export function useFakeLoadTime(min: number, max: number): number {
 }
 
 export function useIntlLocale(): string {
-    return useLocale() === "pt" ? "pt-BR" : "en-US";
+    return getIntlLocaleCode(useLocale());
 }
 
 export function formatSeconds(ms: number, intlLocale: string): string {

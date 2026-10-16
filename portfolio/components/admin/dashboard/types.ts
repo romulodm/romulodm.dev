@@ -134,7 +134,10 @@ export interface DashboardData {
 
     contentHealth: {
         publishedTotal: number;
-        translationCoverage: { pt: number; en: number; ptPercent: number; enPercent: number };
+        translationCoverage: {
+            pt: number; en: number; es: number;
+            ptPercent: number; enPercent: number; esPercent: number;
+        };
         untranslatedPosts: number;
         orphanPosts: number;
         avgReadingTime: number;

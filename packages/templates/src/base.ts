@@ -12,11 +12,11 @@ export const DEFAULT_ACCENT = "#f57842";
 export const DEFAULT_POSTAL_ADDRESS = "Av. Itália, Carreiros · Rio Grande, RS · Brasil";
 
 /**
- * The site only serves /pt and /en, while emails also render in "es". Map
- * anything that is not "pt" to "en" so links never land on a 404.
+ * The site serves /pt, /en and /es. Anything else (a missing or legacy value
+ * stored on a subscriber) maps to "en" so links never land on a 404.
  */
-function siteLocale(locale?: string | null): "pt" | "en" {
-  return locale === "pt" ? "pt" : "en";
+function siteLocale(locale?: string | null): "pt" | "en" | "es" {
+  return locale === "pt" || locale === "es" ? locale : "en";
 }
 
 export function privacyPolicyUrl(brand: BrandConfig, locale?: string | null): string {

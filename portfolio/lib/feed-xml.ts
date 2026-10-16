@@ -43,6 +43,8 @@ export function toRfc822(date: Date): string {
 }
 
 /** Tag de idioma do canal, no formato que os leitores esperam. */
+const RSS_LANGUAGE: Record<string, string> = { pt: 'pt-BR', en: 'en-US', es: 'es-ES' }
+
 export function rssLanguage(locale: string): string {
-  return locale === 'pt' ? 'pt-BR' : 'en-US'
+  return RSS_LANGUAGE[locale] ?? 'en-US'
 }

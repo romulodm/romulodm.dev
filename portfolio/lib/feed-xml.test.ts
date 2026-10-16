@@ -73,5 +73,6 @@ describe('rssLanguage', () => {
   it('mapeia os locales suportados', () => {
     expect(rssLanguage('pt')).toBe('pt-BR')
     expect(rssLanguage('en')).toBe('en-US')
+    expect(rssLanguage('es')).toBe('es-ES')
   })
 })

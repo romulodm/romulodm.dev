@@ -71,6 +71,7 @@ export const TURNSTILE_SCRIPT_SRC =
 const TURNSTILE_LANGUAGE: Record<string, string> = {
   pt: 'pt-br',
   en: 'en',
+  es: 'es',
 };
 
 export interface UseTurnstileOptions {

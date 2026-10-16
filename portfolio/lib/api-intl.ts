@@ -1,8 +1,8 @@
 import { createTranslator } from "use-intl/core";
 
-type SupportedApiLocale = "en" | "pt";
+type SupportedApiLocale = "en" | "pt" | "es";
 
-const SUPPORTED_API_LOCALES: SupportedApiLocale[] = ["en", "pt"];
+const SUPPORTED_API_LOCALES: SupportedApiLocale[] = ["en", "pt", "es"];
 
 function normalizeLocale(candidate: string | null | undefined): SupportedApiLocale | null {
   if (!candidate) {
@@ -17,6 +17,10 @@ function normalizeLocale(candidate: string | null | undefined): SupportedApiLoca
 
   if (normalized.startsWith("en")) {
     return "en";
+  }
+
+  if (normalized.startsWith("es")) {
+    return "es";
   }
 
   return null;
@@ -36,7 +40,7 @@ function getPathLocale(pathLike: string | null): SupportedApiLocale | null {
     return null;
   }
 
-  const match = pathLike.match(/\/(en|pt)(?:\/|$)/i);
+  const match = pathLike.match(/\/(en|pt|es)(?:\/|$)/i);
   return normalizeLocale(match?.[1]);
 }
 

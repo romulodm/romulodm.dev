@@ -21,7 +21,7 @@ export const MAX_SECONDS = 72 * 3600;
 export const DEFAULT_SECONDS = 4 * 3600;
 
 /** The locales the site is served in (see i18n/routing.ts). */
-export type StatusLocale = 'pt' | 'en';
+export type StatusLocale = 'pt' | 'en' | 'es';
 
 export type Presence = {
     /**
@@ -111,10 +111,12 @@ export function parseDuration(token: string): number | null {
  * happens to contain a number ("reunião 2h de retro") keeps its text: only a
  * trailing token shaped like `2h`, `90m` or `3d` is consumed.
  *
- * The text may carry one translation after a pipe, Portuguese first:
- * `/status em foco | heads down 2h`. Without a pipe the same text is shown in
- * every locale. More than two parts is rejected rather than guessed at, since
- * the site has two locales and a third part is more likely a typo than intent.
+ * The text may carry translations after pipes, in the order Portuguese,
+ * English, Spanish: `/status em foco | heads down | concentrado 2h`. Without a
+ * pipe the same text is shown in every locale; a locale left out falls back to
+ * the Portuguese text. More than three parts is rejected rather than guessed
+ * at, since the site has three locales and a fourth part is more likely a typo
+ * than intent.
  */
 export function parseStatusCommand(input: string): { status: StatusInput; seconds: number } | null {
     const text = input.trim().replace(/\s+/g, ' ');
@@ -135,11 +137,13 @@ export function parseStatusCommand(input: string): { status: StatusInput; second
     }
 
     const parts = body.split('|').map((part) => part.trim().slice(0, MAX_LABEL));
-    if (parts.length > 2 || parts.some((part) => !part)) return null;
+    if (parts.length > 3 || parts.some((part) => !part)) return null;
 
-    const [pt, en] = parts;
+    const [pt, en, es] = parts;
+    if (!en) return { status: { label: pt }, seconds };
+
     return {
-        status: en ? { label: pt, labels: { pt, en } } : { label: pt },
+        status: { label: pt, labels: es ? { pt, en, es } : { pt, en } },
         seconds,
     };
 }

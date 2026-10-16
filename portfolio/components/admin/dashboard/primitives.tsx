@@ -244,9 +244,9 @@ export function SectionHeading({
 
 // ─── LocaleChips
 
-/** Mostra de relance se o post tem as duas traduções. */
+/** Mostra de relance quais traduções o post tem. */
 export function LocaleChips({ locales }: { locales: string[] }) {
-    const all = ['pt', 'en'];
+    const all = ['pt', 'en', 'es'];
     return (
         <span className="flex shrink-0 items-center gap-1">
             {all.map((l) => {

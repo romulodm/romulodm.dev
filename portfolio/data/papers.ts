@@ -4,7 +4,7 @@
  * the award line are localized.
  */
 
-type Localized = { pt: string; en: string };
+type Localized = { pt: string; en: string; es: string };
 
 export interface Paper {
     title: string;
@@ -23,9 +23,10 @@ export const PAPERS: readonly Paper[] = [
         venue: {
             pt: 'CBlockchain · CSBC 2026, Gramado/RS',
             en: 'CBlockchain · CSBC 2026, Gramado, Brazil',
+            es: 'CBlockchain · CSBC 2026, Gramado, Brasil',
         },
         year: 2026,
-        award: { pt: 'Best Paper', en: 'Best Paper' },
+        award: { pt: 'Best Paper', en: 'Best Paper', es: 'Best Paper' },
         url: 'https://sol.sbc.org.br/index.php/cblockchain/article/view/43037',
     },
     {
@@ -34,6 +35,7 @@ export const PAPERS: readonly Paper[] = [
         venue: {
             pt: 'XXII Escola Regional de Redes de Computadores (ERRC 2025)',
             en: '22nd Regional School of Computer Networks (ERRC 2025)',
+            es: 'XXII Escuela Regional de Redes de Computadoras (ERRC 2025)',
         },
         year: 2025,
         url: 'https://sol.sbc.org.br/index.php/errc/article/view/39174',

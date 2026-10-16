@@ -228,7 +228,8 @@ export function VisitorsMessage(): JSX.Element {
 
 export function PapersMessage(): JSX.Element {
     const t = useTranslations("terminal");
-    const locale = useLocale() === "pt" ? "pt" : "en";
+    const current = useLocale();
+    const locale = current === "pt" || current === "es" ? current : "en";
     const ms = useFakeLoadTime(300, 900);
 
     return (
