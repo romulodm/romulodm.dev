@@ -1,9 +1,7 @@
-import Link from 'next/link'
 import type { Metadata } from 'next';
 import { useLocale, useTranslations } from 'next-intl';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 
-import { FaArrowRightLong } from 'react-icons/fa6';
 import { FiCode, FiUser } from 'react-icons/fi';
 
 import { JsonLd } from '@/components/seo/JsonLd';
@@ -22,6 +20,7 @@ import { FAQ } from '@/components/FAQ';
 import Bento from '@/components/sections/bento/Bento';
 import { Footer } from '@/components/Footer';
 import Presence from '@/components/sections/presence/Presence';
+import ActivityCallout from '@/components/sections/presence/ActivityCallout';
 
 // The blog preview near the bottom (components/sections/posts/BlogList.tsx)
 // reads posts from the database. Without a revalidate this page would be
@@ -105,28 +104,12 @@ function HomeContent() {
 
       <Stack />
 
-      <section className='w-full flex items-center justify-center pb-16 px-4 max-w-7xl mx-auto'>
-        <div className="w-full">
-          <hr className="mt-3 mb-5 dark:border-[#2f3031]" />
-
-          <div className="flex items-center justify-between w-full py-4 px-2 sm:py-8 sm:px-6 bg-card border rounded-lg dark:border-neutral-800 flex-col sm:flex-row text-center sm:text-left">
-            <div className="mb-2 sm:mb-0">
-              <p className="text-slate-700 dark:text-neutral-300 font-bold mb-1 text-lg sm:text-2xl">{t('home.vision.link-title')} 📝</p>
-              <p className="text-slate-500 dark:text-neutral-400 text-sm sm:text-lg">{t('home.vision.link-content')}</p>
-            </div>
-            <Link href="/blog">
-              <button className="flex px-5 min-w-44 text-sm md:text-md justify-center w-full font-semibold items-center gap-2 p-3 bg-purple-600 dark:bg-purple-700 hover:bg-purple-700 dark:hover:bg-purple-600 rounded-lg text-white">
-                {t('home.vision.link-button')}
-                <FaArrowRightLong />
-              </button>
-            </Link>
-          </div>
-        </div>
-      </section>
-
+      {/* GitHub contributions and the call to the blog, one card. The heat
+          map only shows once the calendar arrives; the call-out always does. */}
+      <ActivityCallout />
       <Vision />
 
-      <section className='w-full flex items-center justify-center py-16 px-4 max-w-7xl mx-auto'>
+      <section className='w-full flex items-center justify-center pb-16 px-4 max-w-7xl mx-auto'>
         <div className="flex flex-col justify-center items-center w-full">
           <FAQ />
           <div className="mt-16 w-full">
