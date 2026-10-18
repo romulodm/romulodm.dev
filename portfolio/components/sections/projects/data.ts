@@ -169,14 +169,19 @@ const mainProjects: MainProjectConfig[] = [
         descriptionKey: 'goBet',
     },
     {
-        name: 'interzap',
-        extraLanguages: [],
-        descriptionKey: 'interzap',
-    },
-    {
         name: 'pac-man',
         extraLanguages: [],
         descriptionKey: 'pacMan',
+    },
+    {
+        name: '2048',
+        extraLanguages: [],
+        descriptionKey: 'game2048',
+    },
+    {
+        name: 'interzap',
+        extraLanguages: [],
+        descriptionKey: 'interzap',
     },
     {
         name: 'e-commerce',
@@ -184,9 +189,9 @@ const mainProjects: MainProjectConfig[] = [
         descriptionKey: 'eCommerce',
     },
     {
-        name: '2048',
+        name: 'git-minicourse-saicc',
         extraLanguages: [],
-        descriptionKey: 'game2048',
+        descriptionKey: 'gitMinicourse',
     },
 ];
 

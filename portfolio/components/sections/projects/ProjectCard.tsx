@@ -35,7 +35,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
     const weeklyDownloads = project.weeklyDownloads;
 
     return (
-        <div className="flex h-full px-4 flex-col border rounded-lg border-border dark:bg-neutral-900/60">
+        <div className="flex h-full px-4 flex-col border rounded-2xl border-border dark:bg-neutral-900/60">
             <div className="flex mt-4 items-center gap-2">
                 <div
                     className={`flex shrink-0 items-center border rounded-md border-neutral-200 text-neutral-700 dark:border-neutral-600 dark:text-white dark:bg-neutral-800 ${
@@ -43,7 +43,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
                         // by a radius of its own, so its corners match every other rounded
                         // element on the card exactly and nothing rounds twice.
                         project.iconSeed ? "overflow-hidden" : "p-3"
-                    }`}
+                        }`}
                 >
                     {project.iconSeed ? (
                         /*
