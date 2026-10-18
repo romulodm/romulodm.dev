@@ -387,6 +387,40 @@
   --ts-arrow: #d4d4d4;
 }
 
+/* Active terminal tab. It takes the pane's background and grows two concave
+   corners at its base, so the tab flows into the pane below as in Windows
+   Terminal and Chromium. --tab-bg must match the pane's background in
+   TerminalClient (white / neutral-900), or the seam shows. */
+.terminal-tab-active {
+  --tab-bg: #ffffff;
+  position: relative;
+  background-color: var(--tab-bg);
+}
+
+.dark .terminal-tab-active {
+  --tab-bg: #171717;
+}
+
+.terminal-tab-active::before,
+.terminal-tab-active::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  width: 8px;
+  height: 8px;
+  pointer-events: none;
+}
+
+.terminal-tab-active::before {
+  left: -8px;
+  background: radial-gradient(circle at 0 0, transparent 7.5px, var(--tab-bg) 8px);
+}
+
+.terminal-tab-active::after {
+  right: -8px;
+  background: radial-gradient(circle at 100% 0, transparent 7.5px, var(--tab-bg) 8px);
+}
+
 @supports not selector(::-webkit-scrollbar) {
   .terminal-scroll {
     scrollbar-color: var(--ts-face) var(--ts-track);

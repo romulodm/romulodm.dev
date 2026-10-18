@@ -336,6 +336,30 @@
       "observabilityTitle": "Observabilidad",
       "observabilityBody": "Medir antes de confiar."
     },
+    "contactComment": {
+      "pinned": "fijado",
+      "inCity": "en Rio Grande",
+      "body": "Escríbeme sobre una vacante, un freelance o algo que leíste por aquí. Suelo responder en menos de un día.",
+      "copied": "¡Copiado!",
+      "resume": "Currículum",
+      "writeAnother": "Escribir otro",
+      "onlyOwner": "solo Romulo lo ve"
+    },
+    "contactWindow": {
+      "windowTitle": "Nuevo mensaje",
+      "groupWrite": "Escribir",
+      "here": "Por aquí",
+      "yourEmail": "Desde tu correo",
+      "groupLinks": "Enlaces",
+      "resume": "Currículum",
+      "to": "Para",
+      "bodyPlaceholder": "Deja un mensaje...",
+      "send": "Enviar",
+      "writeAnother": "Escribir otro",
+      "role": "Desarrollador backend",
+      "city": "Rio Grande, Brasil",
+      "responseTime": "Suelo responder en menos de un día"
+    },
     "lastConnect": {
       "title": "Conectemos.",
       "formEmail": "Tu correo",
@@ -390,18 +414,9 @@
       "loadError": "No fue posible cargar los proyectos.",
       "blogPost": "Leer en el blog",
       "stars": "estrellas en GitHub",
+      "forks": "forks en GitHub",
+      "downloads": "descargas en npm la última semana",
       "open": "Abrir proyecto",
-      "view": {
-        "group": "Modo de visualización de los proyectos",
-        "simple": "Simple",
-        "detailed": "Detallada"
-      },
-      "status": {
-        "active": "Activo",
-        "building": "En desarrollo",
-        "done": "Terminado",
-        "archived": "Archivado"
-      },
       "featured": {
         "romulodm": {
           "tagline": "Un portafolio que se volvió plataforma: CMS propio, newsletter, buscador y donaciones en un VPS",
@@ -436,14 +451,6 @@
             "El servidor mantiene salas de dos jugadores y reenvía cada jugada por Gorilla WebSocket.",
             "El tablero está dibujado en React."
           ]
-        },
-        "goBet": {
-          "tagline": "Un casino de mentira para estudiar microservicios de verdad",
-          "bullets": [
-            "Servicios separados en Go para autenticación, correo y ruleta, que se comunican por gRPC.",
-            "Autenticación con JWT y acceso a la base de datos con queries SQL generadas por sqlc, sin ORM.",
-            "Un front en React que consume los servicios."
-          ]
         }
       },
       "items": {
@@ -453,8 +460,9 @@
         "goChess": "Ajedrez multijugador hecho en una asignatura cuyo objetivo era usar un lenguaje nuevo para nosotros. El tablero es React y Go sincroniza salas de dos jugadores por WebSocket.",
         "goBet": "Casino de mentira para estudiar microservicios: servicios en Go de autenticación, correo y ruleta que se comunican por gRPC, con JWT, queries generadas por sqlc y front en React.",
         "interzap": "Un WhatsApp de terminal con sockets en Python, hecho para Redes de Computadoras siguiendo el protocolo del profesor. Grupos, confirmación de lectura y SQLite guardando mensajes offline.",
-        "pacMan": "Pac-Man en Python, mi primer proyecto de la carrera. El mapa es una matriz de 28x31 y cada fantasma persigue a su manera, con A* trazando la ruta de los que cazan.",
         "eCommerce": "Tienda completa hecha para aprender el stack que pedía el mercado: React y Redux en el front, Express y MySQL detrás, con login JWT, carrito, panel de admin y recuperación de contraseña.",
+        "gitMinicourse": "Repositorio del minicurso de Git de la XIII SAICC. Los participantes hacen fork y practican el flujo real, solos y en equipo: branch, commit y pull request sobre una página en React con Material UI y Tailwind.",
+        "pacMan": "Pac-Man en Python, mi primer proyecto de la carrera. El mapa es una matriz de 28x31 y cada fantasma persigue a su manera, con A* trazando la ruta de los que cazan.",
         "game2048": "2048 en Python, hecho por sugerencia de un amigo. Todo el juego vive en una matriz de 4x4: compactar filas, unir fichas, comprobar victoria o derrota. La interfaz solo dibuja."
       }
     },
@@ -780,6 +788,8 @@
       "rewardLink": "recompensa"
     },
     "close-tab": "Cerrar pestaña",
+    "new-tab": "Nueva pestaña",
+    "dismiss-tooltip": "Descartar sugerencia",
     "weather": {
       "wind": "Viento",
       "temperature": "Temperatura",

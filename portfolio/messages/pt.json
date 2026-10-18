@@ -364,6 +364,30 @@
       "observabilityTitle": "Observabilidade",
       "observabilityBody": "Medir antes de confiar."
     },
+    "contactComment": {
+      "pinned": "fixado",
+      "inCity": "em Rio Grande",
+      "body": "Me chama pra conversar sobre uma vaga, um freela ou algo que você leu por aqui. Costumo responder em até 1 dia.",
+      "copied": "Copiado!",
+      "resume": "Currículo",
+      "writeAnother": "Escrever outra",
+      "onlyOwner": "só o Romulo vê"
+    },
+    "contactWindow": {
+      "windowTitle": "Nova mensagem",
+      "groupWrite": "Escrever",
+      "here": "Por aqui",
+      "yourEmail": "Pelo seu e-mail",
+      "groupLinks": "Links",
+      "resume": "Currículo",
+      "to": "Para",
+      "bodyPlaceholder": "Deixe uma mensagem...",
+      "send": "Enviar",
+      "writeAnother": "Escrever outra",
+      "role": "Desenvolvedor backend",
+      "city": "Rio Grande, RS",
+      "responseTime": "Costumo responder em até 1 dia"
+    },
     "lastConnect": {
       "title": "Vamos nos conectar.",
       "formEmail": "Seu e-mail",
@@ -418,18 +442,9 @@
       "loadError": "Não foi possível carregar os projetos.",
       "blogPost": "Ler no blog",
       "stars": "estrelas no GitHub",
+      "forks": "forks no GitHub",
+      "downloads": "downloads no npm na última semana",
       "open": "Abrir projeto",
-      "view": {
-        "group": "Modo de visualização dos projetos",
-        "simple": "Simples",
-        "detailed": "Detalhada"
-      },
-      "status": {
-        "active": "Ativo",
-        "building": "Em desenvolvimento",
-        "done": "Concluído",
-        "archived": "Arquivado"
-      },
       "featured": {
         "romulodm": {
           "tagline": "Um portfolio que virou plataforma: CMS próprio, newsletter, busca e doações rodando numa VPS",
@@ -464,14 +479,6 @@
             "O servidor mantém salas de dois jogadores e repassa cada lance pelo Gorilla WebSocket.",
             "O tabuleiro é desenhado em React."
           ]
-        },
-        "goBet": {
-          "tagline": "Um cassino de mentira para estudar microsserviços de verdade",
-          "bullets": [
-            "Serviços separados em Go para autenticação, e-mail e roleta, conversando entre si por gRPC.",
-            "Autenticação com JWT e acesso ao banco por queries SQL geradas pelo sqlc, sem ORM.",
-            "Front-end em React consumindo os serviços."
-          ]
         }
       },
       "items": {
@@ -481,8 +488,9 @@
         "goChess": "Xadrez multiplayer feito numa disciplina cujo objetivo era usar uma linguagem nova para nós. O tabuleiro é React e o Go sincroniza salas de dois jogadores por WebSocket.",
         "goBet": "Cassino de mentira para eu estudar microsserviços: serviços em Go de autenticação, e-mail e roleta conversando por gRPC, com JWT, queries geradas pelo sqlc e front em React.",
         "interzap": "Um WhatsApp de terminal com sockets em Python, feito para Redes de Computadores seguindo o protocolo do professor. Grupos, confirmação de leitura e SQLite guardando mensagens offline.",
-        "pacMan": "Pac-Man em Python, meu primeiro projeto da graduação. O mapa é uma matriz 28x31 e cada fantasma persegue do seu jeito, com o A* traçando a rota dos que caçam.",
         "eCommerce": "Loja completa feita para aprender a stack que o mercado pedia: React e Redux no front, Express e MySQL atrás, com login JWT, carrinho, painel de admin e recuperação de senha.",
+        "gitMinicourse": "Repositório do minicurso de Git da XIII SAICC. Os participantes fazem fork e praticam o fluxo de verdade, sozinhos e em equipe: branch, commit e pull request sobre uma página em React com Material UI e Tailwind.",
+        "pacMan": "Pac-Man em Python, meu primeiro projeto da graduação. O mapa é uma matriz 28x31 e cada fantasma persegue do seu jeito, com o A* traçando a rota dos que caçam.",
         "game2048": "2048 em Python, feito por sugestão de um amigo. O jogo inteiro vive numa matriz 4x4: compactar linhas, juntar peças, checar vitória ou derrota. A interface só desenha."
       }
     },
@@ -808,6 +816,8 @@
       "rewardLink": "recompensa"
     },
     "close-tab": "Fechar aba",
+    "new-tab": "Nova aba",
+    "dismiss-tooltip": "Dispensar dica",
     "weather": {
       "wind": "Vento",
       "temperature": "Temperatura",
