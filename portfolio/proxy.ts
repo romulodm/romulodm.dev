@@ -3,7 +3,7 @@ import { NextRequest } from "next/server";
 import createIntlMiddleware from "next-intl/middleware";
 
 const intl = createIntlMiddleware({
-    locales: ["pt", "en"],
+    locales: ["pt", "en", "es"],
     defaultLocale: "pt",
     localePrefix: "always",
 });

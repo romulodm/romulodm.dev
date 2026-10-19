@@ -4,6 +4,7 @@ import * as Sentry from '@sentry/nextjs'
 import { useEffect, useState } from 'react'
 import en from '@/messages/en.json'
 import pt from '@/messages/pt.json'
+import es from '@/messages/es.json'
 
 /**
  * Last line of defense: catches errors thrown inside the root layout itself —
@@ -14,13 +15,13 @@ import pt from '@/messages/pt.json'
  * have failed). The copy is imported straight from messages/*.json and picked
  * by the locale prefix of the URL, bypassing the provider entirely.
  */
-const MESSAGES = { en: en.error, pt: pt.error } as const
+const MESSAGES = { en: en.error, pt: pt.error, es: es.error } as const
 type Locale = keyof typeof MESSAGES
 
 function localeFromPath(): Locale {
   if (typeof window === 'undefined') return 'pt'
   const seg = window.location.pathname.split('/')[1]
-  return seg === 'en' ? 'en' : 'pt'
+  return seg === 'en' || seg === 'es' ? seg : 'pt'
 }
 
 export default function GlobalError({

@@ -6,6 +6,7 @@ export type {
   WelcomeTemplateOptions,
   UnsubscribeConfirmTemplateOptions,
   PasswordResetTemplateOptions,
+  EmailVerificationTemplateOptions,
   PostMeta,
   CampaignTemplateOptions,
   DigestTemplateOptions,
@@ -20,6 +21,7 @@ export { confirmationTemplate } from "./templates/confirmation.template";
 export { welcomeTemplate } from "./templates/welcome.template";
 export { unsubscribeConfirmTemplate } from "./templates/unsubscribe.template";
 export { passwordResetTemplate } from "./templates/password-reset.template";
+export { emailVerificationTemplate } from "./templates/email-verification.template";
 export { campaignTemplate } from "./templates/campaign.template";
 export { digestTemplate } from "./templates/digest.template";
 

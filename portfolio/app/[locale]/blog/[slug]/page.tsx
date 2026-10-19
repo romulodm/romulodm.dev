@@ -6,6 +6,7 @@ import { markdownToHtml } from '@/lib/markdown'
 import { mediaUrl } from '@/lib/media'
 import { formatDistanceToNow } from '@/lib/utils'
 import { CommentsSection } from '@/components/comments/CommentsSection'
+import { getPublicPostComments } from '@/lib/comments-query'
 import type { Metadata } from 'next'
 import Navbar from '@/components/navigation/Navbar'
 import { PostReactionSidebar } from '@/components/blog/PostReactionsSidebar'
@@ -23,6 +24,9 @@ import {
   PostYoutubeEmbed,
 } from '@/components/blog/PostArticle'
 import { JsonLd } from '@/components/seo/JsonLd'
+import { blogPostCacheTag } from '@/lib/cache-tags'
+import { postLikeStateUrl } from '@/lib/post-like-state'
+import { preload } from 'react-dom'
 import { absoluteUrl, blogPostingJsonLd, breadcrumbJsonLd, buildPageMetadata } from '@/lib/seo'
 
 interface PageProps {
@@ -63,7 +67,7 @@ const getCachedPostBySlug = (slug: string) =>
       })
     },
     [`blog-post-by-slug-${slug}`], // ✅ chave única por slug
-    { revalidate: BLOG_POST_REVALIDATE_SECONDS },
+    { revalidate: BLOG_POST_REVALIDATE_SECONDS, tags: [blogPostCacheTag(slug)] },
   )()
 
 // ✅ Factory por locale + postId
@@ -172,6 +176,16 @@ export default async function PostPage({ params }: PageProps) {
     post.translations.find((t) => t.locale === locale) ?? post.translations[0]
   if (!translation) notFound()
 
+  // The page is cached and shared by every visitor, so whether *this* visitor
+  // liked the post, and the live like count, cannot be part of the HTML. The
+  // reaction bar fetches them from the client (usePostInteractions). Preloading
+  // that URL here starts the request while the HTML is still downloading,
+  // instead of after hydration, so the answer is usually already there when the
+  // hook asks for it and the heart renders filled without a visible delay.
+  // `crossOrigin: 'anonymous'` matches the mode of a default same-origin
+  // fetch(); with any other value the browser would not reuse the preload.
+  preload(postLikeStateUrl(post.id), { as: 'fetch', crossOrigin: 'anonymous' })
+
   const tags = post.postTags.map((t) => t.tag)
   const defaultSort = 'score' as const
 
@@ -180,20 +194,21 @@ export default async function PostPage({ params }: PageProps) {
     avatarUrl: post.author.image ?? null,
   }
 
-  // Os comentarios NAO sao buscados aqui de proposito.
+  // Comments render with the page, but only as anyone sees them.
   //
-  // `listPostComments` chama getServerSession para marcar em quais comentarios o
-  // visitante votou — ou seja, le cookie. Uma pagina que le cookie no render nao
-  // pode ser estatica: o Next aborta com DYNAMIC_SERVER_USAGE e devolve 500. Era
-  // a causa do erro em /[locale]/blog/[slug].
+  // `listPostComments` calls getServerSession to mark which comments the visitor
+  // voted on, i.e. it reads a cookie. A page that reads a cookie while rendering
+  // cannot be static: Next aborts with DYNAMIC_SERVER_USAGE and answers 500,
+  // which was the cause of an earlier error on /[locale]/blog/[slug].
   //
-  // O conteudo do post e igual para todo mundo e deve ser cacheado; o estado de
-  // voto e por usuario e nao pode. Entao a parte por usuario sai do render e vai
-  // para o cliente: o CommentsSection ja busca sozinho quando recebe a lista
-  // vazia (ver o useEffect com o comentario "pagina estatica" la dentro).
-  const [htmlContent, relatedRaw] = await Promise.all([
+  // So the page renders the public list (getPublicPostComments: same query, no
+  // session, no vote marked) and CommentsSection swaps in the visitor's copy
+  // right after hydration. Before this, the HTML carried an empty list and a
+  // spinner until the client fetch answered.
+  const [htmlContent, relatedRaw, publicComments] = await Promise.all([
     markdownToHtml(translation.contentMarkdown, { codeBlockChrome: true }),
     getCachedRelatedPosts(locale, post.id),
+    getPublicPostComments(post.id),
   ])
 
   const relatedPosts = relatedRaw.map((p) => ({
@@ -257,6 +272,7 @@ export default async function PostPage({ params }: PageProps) {
               <div className="flex flex-col gap-2 mb-8 pb-2 border-b border-border">
                 <PostByline
                   author={author}
+                  locale={locale}
                   publishedLabel={
                     post.publishedAt
                       ? t('published', { time: formatDistanceToNow(post.publishedAt, locale) })
@@ -301,8 +317,8 @@ export default async function PostPage({ params }: PageProps) {
               <div id="comments-section">
                 <CommentsSection
                   postId={post.id}
-                  initialComments={[]}
-                  initialNextCursor={null}
+                  initialComments={publicComments.items}
+                  initialNextCursor={publicComments.nextCursor}
                   totalCount={post.commentsCount}
                   initialSort={defaultSort}
                 />

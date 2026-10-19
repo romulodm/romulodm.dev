@@ -44,6 +44,14 @@ export interface EmailStrings {
   passwordResetBody: (minutes: number) => string;
   passwordResetIgnore: string;
 
+  // E-mail verification (account sign-up with password)
+  verifyEmailSubject: (brandName: string) => string;
+  verifyEmailHeading: string;
+  verifyEmailBody: string;
+  verifyEmailCta: string;
+  verifyEmailExpiry: (hours: number) => string;
+  verifyEmailIgnore: string;
+
   // Campaign
   newPostLabel: string;
   readArticle: string;
@@ -90,6 +98,15 @@ const en: EmailStrings = {
     `Use the code below to reset your password. It's valid for <strong>${min} minutes</strong> and can only be used once.`,
   passwordResetIgnore:
     "If you didn't request a password reset, ignore this email. Your account remains secure.",
+
+  verifyEmailSubject: (brand) => `Confirm your email — ${brand}`,
+  verifyEmailHeading: "Confirm your email",
+  verifyEmailBody:
+    "Your account is ready. Confirm this address to comment on posts and leave a message on the wall.",
+  verifyEmailCta: "Confirm email",
+  verifyEmailExpiry: (hours) => `This link expires in <strong>${hours} hours</strong> and works only once.`,
+  verifyEmailIgnore:
+    "If you didn't create an account, ignore this email. Nothing will be published with this address.",
 
   newPostLabel: "New post 🚀",
   readArticle: "Read full article",
@@ -138,6 +155,15 @@ const pt: EmailStrings = {
   passwordResetIgnore:
     "Se você não solicitou a recuperação, ignore este e-mail. Sua conta permanece segura.",
 
+  verifyEmailSubject: (brand) => `Confirme seu e-mail — ${brand}`,
+  verifyEmailHeading: "Confirme seu e-mail",
+  verifyEmailBody:
+    "Sua conta está pronta. Confirme este endereço para comentar nos posts e deixar um recado no mural.",
+  verifyEmailCta: "Confirmar e-mail",
+  verifyEmailExpiry: (hours) => `Este link expira em <strong>${hours} horas</strong> e só pode ser usado uma vez.`,
+  verifyEmailIgnore:
+    "Se você não criou uma conta, ignore este e-mail. Nada será publicado com este endereço.",
+
   newPostLabel: "Nova postagem 🚀",
   readArticle: "Ler artigo completo",
   campaignReceivedBecause: (brand) =>
@@ -184,6 +210,15 @@ const es: EmailStrings = {
     `Usa el código de abajo para restablecer tu contraseña. Es válido por <strong>${min} minutos</strong> y solo puede usarse una vez.`,
   passwordResetIgnore:
     "Si no solicitaste esto, ignora este correo. Tu cuenta está segura.",
+
+  verifyEmailSubject: (brand) => `Confirma tu correo — ${brand}`,
+  verifyEmailHeading: "Confirma tu correo",
+  verifyEmailBody:
+    "Tu cuenta está lista. Confirma esta dirección para comentar en las publicaciones y dejar un mensaje en el mural.",
+  verifyEmailCta: "Confirmar correo",
+  verifyEmailExpiry: (hours) => `Este enlace expira en <strong>${hours} horas</strong> y solo funciona una vez.`,
+  verifyEmailIgnore:
+    "Si no creaste una cuenta, ignora este correo. No se publicará nada con esta dirección.",
 
   newPostLabel: "Nueva publicación 🚀",
   readArticle: "Leer artículo completo",

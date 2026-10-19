@@ -9,7 +9,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ThemeMenuItems } from "./ThemeMenuItems";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { navItems } from "./Navbar";
 import { moreItems } from "./moreItems";
 import { useLocale, useTranslations } from "next-intl";

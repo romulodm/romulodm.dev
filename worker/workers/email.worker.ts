@@ -27,6 +27,8 @@ import {
   campaignTemplate,
   confirmationTemplate,
   digestTemplate,
+  emailVerificationTemplate,
+  getStrings,
   passwordResetTemplate,
   unsubscribeConfirmTemplate,
   welcomeTemplate,
@@ -299,6 +301,21 @@ export async function processTransactionalEmailJob(job: TransactionalJobContext)
         html: passwordResetTemplate({
           code: data.code,
           expiresInMinutes: data.expiresInMinutes,
+          brand: BRAND,
+          recipient: r,
+        }),
+        messageId,
+        isFinalAttempt: lastAttempt,
+      });
+      return;
+
+    case "EMAIL_VERIFICATION":
+      await emailService.send({
+        to: data.email,
+        subject: getStrings(data.locale).verifyEmailSubject(BRAND.name),
+        html: emailVerificationTemplate({
+          verifyUrl: data.verifyUrl,
+          expiresInHours: data.expiresInHours,
           brand: BRAND,
           recipient: r,
         }),

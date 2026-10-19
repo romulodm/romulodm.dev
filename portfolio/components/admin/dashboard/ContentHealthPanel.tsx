@@ -71,6 +71,7 @@ export function ContentHealthPanel({ health }: { health: DashboardData['contentH
                 <div className="space-y-2.5">
                     <CoverageBar locale="pt" done={cov.pt} total={health.publishedTotal} percent={cov.ptPercent} />
                     <CoverageBar locale="en" done={cov.en} total={health.publishedTotal} percent={cov.enPercent} />
+                    <CoverageBar locale="es" done={cov.es} total={health.publishedTotal} percent={cov.esPercent} />
                 </div>
                 {health.untranslatedPosts > 0 && (
                     <p className="mt-2 text-[11px] text-amber-600 dark:text-amber-500">

@@ -2,7 +2,7 @@
 
 import type { Bucket } from './types';
 
-const LOCALE_TAG: Record<string, string> = { pt: 'pt-BR', en: 'en-US' };
+const LOCALE_TAG: Record<string, string> = { pt: 'pt-BR', en: 'en-US', es: 'es-ES' };
 
 export function localeTag(locale: string) {
     return LOCALE_TAG[locale] ?? 'en-US';
@@ -41,6 +41,8 @@ export function fmtPercent(value: number, locale: string) {
     return `${new Intl.NumberFormat(localeTag(locale), { maximumFractionDigits: 1 }).format(value)}%`;
 }
 
+const JUST_NOW: Record<string, string> = { pt: 'agora', en: 'just now', es: 'ahora' };
+
 /**
  * Distância relativa com granularidade adaptativa — "agora", "12min",
  * "5h", "3d", "2sem". Evita o "0d atrás" para tudo que é recente.
@@ -50,7 +52,7 @@ export function timeAgo(iso: string, locale: string): string {
     const diffMs = Date.now() - new Date(iso).getTime();
     const min = Math.round(diffMs / 60000);
 
-    if (min < 1) return locale === 'pt' ? 'agora' : 'just now';
+    if (min < 1) return JUST_NOW[locale] ?? JUST_NOW.en;
     if (min < 60) return rtf.format(-min, 'minute');
 
     const hours = Math.round(min / 60);

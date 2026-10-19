@@ -119,6 +119,20 @@ export function CommentCard({
   const localeCode = getIntlLocaleCode(locale);
   const [optimisticScore, setOptimisticScore] = useState(Math.max(0, comment.score));
   const [optimisticVote, setOptimisticVote] = useState(comment.userVote ?? 0);
+
+  // The card first renders from the cached post page, where no vote is marked,
+  // and CommentsSection then replaces the list with the visitor's copy. Without
+  // this, the useState initializers above would keep the first values and the
+  // visitor's vote would never show. Adjusting state during render (instead of
+  // in an effect) avoids painting the stale value first.
+  const serverVote = comment.userVote ?? 0;
+  const serverScore = Math.max(0, comment.score);
+  const [synced, setSynced] = useState({ vote: serverVote, score: serverScore });
+  if (synced.vote !== serverVote || synced.score !== serverScore) {
+    setSynced({ vote: serverVote, score: serverScore });
+    setOptimisticVote(serverVote);
+    setOptimisticScore(serverScore);
+  }
   const [isPending, startTransition] = useTransition();
   const [collapsed, setCollapsed] = useState(false);
   const [replying, setReplying] = useState(false);

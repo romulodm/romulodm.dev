@@ -376,8 +376,10 @@ export async function GET(req: NextRequest) {
         translationCoverage: {
             pt: coverage.pt ?? 0,
             en: coverage.en ?? 0,
+            es: coverage.es ?? 0,
             ptPercent: rate(coverage.pt ?? 0, publishedTotal),
             enPercent: rate(coverage.en ?? 0, publishedTotal),
+            esPercent: rate(coverage.es ?? 0, publishedTotal),
         },
         untranslatedPosts: n(untranslatedDrafts[0]?.count),
         orphanPosts,

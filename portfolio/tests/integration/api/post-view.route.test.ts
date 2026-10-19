@@ -14,9 +14,9 @@ async function cleanupRedis() {
   const redis = getRedis();
   await redis.del(VIEWS_BUFFER_KEY);
 
-  const cooldownKeys = await redis.keys("view:cooldown:*");
-  if (cooldownKeys.length > 0) {
-    await redis.del(...cooldownKeys);
+  const capKeys = await redis.keys("views:cap:*");
+  if (capKeys.length > 0) {
+    await redis.del(...capKeys);
   }
 }
 
@@ -26,7 +26,7 @@ describe("POST /api/posts/[id]/view", () => {
     await cleanupIntegrationFixtures();
   });
 
-  it("delegates compatibility requests to the shared buffered view path", async () => {
+  it("counts every request as a page view through the shared buffered path", async () => {
     const redis = getRedis();
 
     const author = await createTestUser();
@@ -35,8 +35,6 @@ describe("POST /api/posts/[id]/view", () => {
     const firstResponse = await POST(
       new Request(`http://localhost/api/posts/${post.id}/view`, {
         method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ sessionId: `session:${post.id}` }),
       }) as any,
       { params: Promise.resolve({ id: post.id }) },
     );
@@ -44,18 +42,14 @@ describe("POST /api/posts/[id]/view", () => {
     const secondResponse = await POST(
       new Request(`http://localhost/api/posts/${post.id}/view`, {
         method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ sessionId: `session:${post.id}` }),
       }) as any,
       { params: Promise.resolve({ id: post.id }) },
     );
 
+    // Page views, not sessions: a second load by the same reader counts too.
     expect(await firstResponse.json()).toEqual({ counted: true });
-    expect(await secondResponse.json()).toEqual({
-      counted: false,
-      reason: "cooldown",
-    });
-    expect(await redis.hget(VIEWS_BUFFER_KEY, post.id)).toBe("1");
+    expect(await secondResponse.json()).toEqual({ counted: true });
+    expect(await redis.hget(VIEWS_BUFFER_KEY, post.id)).toBe("2");
 
     await redis.quit();
   });

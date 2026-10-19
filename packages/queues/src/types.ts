@@ -27,6 +27,14 @@ export type TransactionalEmailJob =
         expiresInMinutes?: number;
         displayName: string;
         locale: string;
+    }
+    | {
+        type: "EMAIL_VERIFICATION";
+        email: string;
+        verifyUrl: string;
+        expiresInHours?: number;
+        displayName: string;
+        locale: string;
     };
 
 export interface CampaignEmailJob {

@@ -19,7 +19,7 @@ export function SettingsTab({ profile }: { profile: Profile }) {
     const [githubUrl, setGithubUrl] = useState(profile.githubUrl ?? "");
     const [linkedinUrl, setLinkedinUrl] = useState(profile.linkedinUrl ?? "");
     const [profileStatus, setProfileStatus] = useState<
-        "idle" | "saving" | "ok" | "error" | "username_taken"
+        "idle" | "saving" | "ok" | "error" | "username_taken" | "username_invalid"
     >("idle");
 
     // Password fields
@@ -49,7 +49,9 @@ export function SettingsTab({ profile }: { profile: Profile }) {
                 // estreitar o union e liberar `result.username` abaixo.
                 if ("error" in result) {
                     setProfileStatus(
-                        result.error === "username_taken" ? "username_taken" : "error",
+                        result.error === "username_taken" || result.error === "username_invalid"
+                            ? result.error
+                            : "error",
                     );
                     return;
                 }
@@ -102,12 +104,17 @@ export function SettingsTab({ profile }: { profile: Profile }) {
                 <Field label={t("profile.username")}>
                     <input
                         value={username}
-                        onChange={(e) => setUsername(e.target.value)}
+                        onChange={(e) => setUsername(e.target.value.replace(/\s+/g, "").toLowerCase())}
                         className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm focus:outline-none focus:border-primary transition-colors"
-                        maxLength={32}
+                        maxLength={24}
+                        autoCapitalize="none"
+                        spellCheck={false}
                     />
                     {profileStatus === "username_taken" && (
                         <p className="text-xs text-red-500 mt-1">{t("profile.usernameTaken")}</p>
+                    )}
+                    {profileStatus === "username_invalid" && (
+                        <p className="text-xs text-red-500 mt-1">{t("profile.usernameInvalid")}</p>
                     )}
                 </Field>
 

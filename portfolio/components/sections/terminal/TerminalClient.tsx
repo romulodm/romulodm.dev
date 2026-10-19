@@ -6,6 +6,7 @@ import {
     VscChromeClose,
     VscChromeMaximize,
     VscChromeMinimize,
+    VscChevronDown,
     VscTerminalPowershell,
 } from "react-icons/vsc";
 
@@ -59,6 +60,7 @@ import {
 import { suggestCommand } from "./catalog";
 import CustomTooltip from "./CustomTooltip";
 import { useTranslations } from "next-intl";
+import { cn } from "@/lib/utils";
 
 const SECRET_PASSWORD = process.env.NEXT_PUBLIC_TERMINAL_SECRET_PASSWORD ?? "";
 
@@ -118,11 +120,13 @@ const commands: CommandsMap = {
     sl: SlMessage,
 };
 
-const TAB_BASE_CLASS =
-    "dark:text-white flex px-3 ml-1.5 py-1 flex-row w-56 h-8 rounded-lg items-center justify-between";
-const TAB_ACTIVE_CLASS = "bg-neutral-300 dark:bg-neutral-800";
-const TAB_INACTIVE_CLASS =
-    "bg-neutral-200 hover:bg-neutral-300 dark:bg-neutral-900 dark:hover:bg-neutral-800/70";
+/** Small icon button in the tab strip: "+", the dropdown and a tab's close. */
+const STRIP_ICON_CLASS =
+    "flex items-center justify-center rounded-md text-neutral-600 transition-colors hover:bg-neutral-300/70 hover:text-neutral-900 dark:text-neutral-300 dark:hover:bg-white/10 dark:hover:text-white";
+
+/** Minimise, maximise and close, at Windows' 46px caption-button width. */
+const WINDOW_CONTROL_CLASS =
+    "flex w-[46px] items-center justify-center text-neutral-700 transition-colors hover:bg-neutral-300/70 dark:text-neutral-200 dark:hover:bg-white/10";
 
 interface TerminalTabProps {
     active: boolean;
@@ -134,16 +138,36 @@ interface TerminalTabProps {
     trailing: ReactNode;
 }
 
+/**
+ * The active tab shares the pane's background and sits flush with the bottom
+ * of the strip, so it reads as the top of the pane (see `.terminal-tab-active`
+ * in globals.css for the curved base). Inactive tabs float as rounded chips
+ * 4px above the pane. The active tab is 4px taller to reach the pane, and its
+ * pb-1 takes that extra height back out of the content box, so the labels of
+ * both kinds of tab sit on the same line.
+ */
 function TerminalTab({ active, onSelect, trailing }: TerminalTabProps): JSX.Element {
     return (
-        <div className={`${TAB_BASE_CLASS} ${active ? TAB_ACTIVE_CLASS : TAB_INACTIVE_CLASS}`}>
+        <div
+            className={cn(
+                "flex w-52 items-center gap-1 pl-3 pr-1.5 text-xs transition-colors",
+                active
+                    ? "terminal-tab-active h-9 rounded-t-lg pb-1 font-medium text-neutral-900 dark:text-white"
+                    : "mb-1 h-8 rounded-lg text-neutral-600 hover:bg-neutral-300/60 hover:text-neutral-900 dark:text-neutral-300 dark:hover:bg-white/10 dark:hover:text-white",
+            )}
+        >
             <button
                 type="button"
                 onClick={onSelect}
-                className={`flex flex-1 h-full flex-row items-center gap-2 ${active ? "cursor-default" : "cursor-pointer"}`}
+                className={cn(
+                    "flex h-full min-w-0 flex-1 items-center gap-2",
+                    active ? "cursor-default" : "cursor-pointer",
+                )}
             >
-                <VscTerminalPowershell />
-                <span>pwsh in romulodm</span>
+                <VscTerminalPowershell
+                    className={cn("shrink-0 text-sm", active && "text-sky-600 dark:text-sky-400")}
+                />
+                <span className="truncate">pwsh in romulodm</span>
             </button>
             {trailing}
         </div>
@@ -251,23 +275,42 @@ export default function TerminalClient({ data, locale }: ResumePageClientProps):
         setShowTooltip(false);
     }
 
-    return (
-        <div className="flex flex-col overflow-hidden rounded-lg shadow-xl pt-10">
-            <div className="flex flex-row justify-between bg-gray-100 w-full border-t rounded-tl-lg rounded-tr-lg shadow-3xl dark:bg-neutral-700 dark:border-neutral-700">
-                <div className="flex flex-row items-center text-sm py-1.5">
-                    <TerminalTab
-                        active={displayedNavigationTab === 0}
-                        onSelect={() => setDisplayedNavigationTab(0)}
-                        trailing={
-                            // Decorative: the first tab cannot be closed.
-                            <span aria-hidden="true" className="flex flex-row items-center text-xs">
-                                <VscChromeClose />
-                            </span>
-                        }
-                    />
+    // With both tabs open there is nothing left for "+" to do, so it is drawn
+    // as decoration only, like the window controls.
+    const addTabButton = showSecondNavigationTab ? (
+        <span aria-hidden="true" className={cn(STRIP_ICON_CLASS, "size-7")}>
+            <IoAddOutline />
+        </span>
+    ) : (
+        <button
+            type="button"
+            aria-label={t("new-tab")}
+            onClick={openAndChangeTab}
+            className={cn(STRIP_ICON_CLASS, "size-7 cursor-pointer")}
+        >
+            <IoAddOutline />
+        </button>
+    );
 
-                    {showSecondNavigationTab ? (
-                        <>
+    return (
+        // pt-10 leaves room above the window for the "you can use this
+        // terminal" hint, which would otherwise be clipped by the section.
+        <div className="pt-10">
+            <div className="rounded-xl border border-neutral-300 bg-neutral-200 shadow-xl shadow-black/5 dark:border-neutral-700 dark:bg-neutral-800 dark:shadow-black/40">
+                <div className="flex h-10 select-none items-end justify-between rounded-t-[11px]">
+                    <div className="flex items-end gap-1 pl-2">
+                        <TerminalTab
+                            active={displayedNavigationTab === 0}
+                            onSelect={() => setDisplayedNavigationTab(0)}
+                            trailing={
+                                // The first tab cannot be closed.
+                                <span aria-hidden="true" className={cn(STRIP_ICON_CLASS, "size-5")}>
+                                    <VscChromeClose className="text-xs" />
+                                </span>
+                            }
+                        />
+
+                        {showSecondNavigationTab && (
                             <TerminalTab
                                 active={displayedNavigationTab === 1}
                                 onSelect={() => setDisplayedNavigationTab(1)}
@@ -276,70 +319,72 @@ export default function TerminalClient({ data, locale }: ResumePageClientProps):
                                         type="button"
                                         aria-label={t("close-tab")}
                                         onClick={closeNavigationTab}
-                                        className="flex flex-row items-center text-xs cursor-pointer"
+                                        className={cn(STRIP_ICON_CLASS, "size-5 cursor-pointer")}
                                     >
-                                        <VscChromeClose />
+                                        <VscChromeClose className="text-xs" />
                                     </button>
                                 }
                             />
+                        )}
 
-                            <button
-                                onClick={() => setShowSecondNavigationTab(true)}
-                                className="flex cursor-pointer bg-neutral-200 hover:bg-neutral-300 dark:bg-neutral-900 dark:hover:dark:bg-neutral-800 dark:text-white px-3 ml-1.5 flex-row h-8 rounded-lg items-center justify-between"
-                            >
-                                <IoAddOutline />
-                            </button>
-                        </>
-                    ) : showTooltip ? (
-                        <CustomTooltip
-                            position="top"
-                            content={t("tooltip")}
-                            onClose={() => setShowTooltip(false)}
+                        <div className="mb-1 flex h-8 items-center gap-0.5 pl-0.5">
+                            {showTooltip && !showSecondNavigationTab ? (
+                                <CustomTooltip
+                                    position="top"
+                                    content={t("tooltip")}
+                                    closeLabel={t("dismiss-tooltip")}
+                                    onClose={() => setShowTooltip(false)}
+                                >
+                                    {addTabButton}
+                                </CustomTooltip>
+                            ) : (
+                                addTabButton
+                            )}
+
+                            <span aria-hidden="true" className={cn(STRIP_ICON_CLASS, "h-7 w-5")}>
+                                <VscChevronDown className="text-xs" />
+                            </span>
+                        </div>
+                    </div>
+
+                    <div className="flex self-stretch">
+                        <span aria-hidden="true" className={WINDOW_CONTROL_CLASS}>
+                            <VscChromeMinimize />
+                        </span>
+                        <span aria-hidden="true" className={WINDOW_CONTROL_CLASS}>
+                            <VscChromeMaximize />
+                        </span>
+                        {/* #c42b1c is the close-button red of Windows 11. */}
+                        <span
+                            aria-hidden="true"
+                            className={cn(
+                                WINDOW_CONTROL_CLASS,
+                                "rounded-tr-[11px] hover:bg-[#c42b1c] hover:text-white dark:hover:bg-[#c42b1c] dark:hover:text-white",
+                            )}
                         >
-                            <button
-                                onClick={() => openAndChangeTab()}
-                                className="flex cursor-pointer bg-neutral-200 hover:bg-neutral-300 dark:bg-neutral-900 dark:hover:dark:bg-neutral-800 dark:text-white px-3 ml-1.5 flex-row h-8 rounded-lg items-center justify-between"
-                            >
-                                <IoAddOutline />
-                            </button>
-                        </CustomTooltip>
+                            <VscChromeClose />
+                        </span>
+                    </div>
+                </div>
+
+                <div
+                    ref={scrollContainerRef}
+                    className="terminal-scroll flex h-110 flex-row overflow-auto rounded-b-[11px] bg-white p-3 dark:bg-neutral-900"
+                >
+                    {displayedNavigationTab === 0 ? (
+                        <TerminalExperience data={data} />
                     ) : (
-                        <button
-                            onClick={() => openAndChangeTab()}
-                            className="flex cursor-pointer bg-neutral-200 hover:bg-neutral-300 dark:bg-neutral-900 dark:hover:dark:bg-neutral-800 dark:text-white px-3 ml-1.5 flex-row h-8 rounded-lg items-center justify-between"
-                        >
-                            <IoAddOutline />
-                        </button>
+                        <TerminalFunctional
+                            componentsToShow={componentsToShow}
+                            textTypedByUser={textTypedByUser}
+                            setTextTypedByUser={setTextTypedByUser}
+                            checkMessageEntered={checkMessageEntered}
+                            scrollContainerRef={scrollContainerRef}
+                            history={commandHistory}
+                            onShowCompletions={showCompletions}
+                        />
                     )}
                 </div>
-
-                <div className="flex flex-row">
-                    <div className="flex cursor-pointer justify-center items-center px-4 dark:text-white hover:bg-neutral-300/80 dark:hover:bg-neutral-800/80">
-                        <VscChromeMinimize />
-                    </div>
-                    <div className="flex cursor-pointer justify-center items-center px-4 dark:text-white hover:bg-neutral-300/80 dark:hover:bg-neutral-800/80">
-                        <VscChromeMaximize />
-                    </div>
-                    <div className="flex cursor-pointer justify-center items-center px-4 dark:text-white hover:text-white hover:bg-red-500/90 dark:hover:bg-red-600/90 rounded-tr-lg">
-                        <VscChromeClose />
-                    </div>
-                </div>
-            </div>
-
-            <div ref={scrollContainerRef} className="flex flex-row p-2 h-110 overflow-auto border dark:bg-neutral-900 dark:border-neutral-800 rounded-bl-lg rounded-br-lg terminal-scroll">
-                {displayedNavigationTab === 0 ? (
-                    <TerminalExperience data={data} />
-                ) : (
-                    <TerminalFunctional
-                        componentsToShow={componentsToShow}
-                        textTypedByUser={textTypedByUser}
-                        setTextTypedByUser={setTextTypedByUser}
-                        checkMessageEntered={checkMessageEntered}
-                        scrollContainerRef={scrollContainerRef}
-                        history={commandHistory}
-                        onShowCompletions={showCompletions}
-                    />
-                )}
             </div>
         </div>
     );

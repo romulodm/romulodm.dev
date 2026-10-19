@@ -91,8 +91,14 @@ export function PostByline({
   author,
   publishedLabel,
   readingTimeLabel,
+  locale,
 }: {
   author: PostAuthor
+  /**
+   * Prefixes the profile link. Without it the link points at /profile/<name>
+   * and every click pays a redirect from the locale middleware first.
+   */
+  locale?: string
   /** Ja traduzido ("Publicado ha 3 dias"); null esconde o item. */
   publishedLabel: string | null
   /** Ja traduzido ("10 min de leitura"); null esconde o item. */
@@ -114,7 +120,7 @@ export function PostByline({
             {author.name.charAt(0).toUpperCase()}
           </div>
         )}
-        <Link href={`/profile/${author.name}`} className="hover:underline">
+        <Link href={locale ? `/${locale}/profile/${author.name}` : `/profile/${author.name}`} className="hover:underline">
           <span className="font-medium text-foreground">@{author.name}</span>
         </Link>
       </div>

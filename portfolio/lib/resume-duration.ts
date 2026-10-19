@@ -1,6 +1,6 @@
 /*
  * Resume dates are stored as localized display strings ("Janeiro de 2025",
- * "March 2024", "Atualmente", "Present"). This module turns a start/end pair
+ * "March 2024", "Enero 2025", "Atualmente", "Present", "Actualidad"). This module turns a start/end pair
  * into a whole-month duration without changing that data format.
  */
 
@@ -11,9 +11,13 @@ const MONTHS: Record<string, number> = {
   // English.
   january: 0, february: 1, march: 2, april: 3, may: 4, june: 5,
   july: 6, august: 7, september: 8, october: 9, november: 10, december: 11,
+  // Spanish. "abril" and "agosto" are spelled as in Portuguese and already
+  // covered above; "setiembre" is the Latin American variant of "septiembre".
+  enero: 0, febrero: 1, marzo: 2, mayo: 4, junio: 5, julio: 6,
+  septiembre: 8, setiembre: 8, octubre: 9, noviembre: 10, diciembre: 11,
 };
 
-const ONGOING = new Set(['atualmente', 'presente', 'present', 'current', 'now']);
+const ONGOING = new Set(['atualmente', 'actualmente', 'actualidad', 'presente', 'present', 'current', 'now']);
 
 function normalize(value: string): string {
   return value

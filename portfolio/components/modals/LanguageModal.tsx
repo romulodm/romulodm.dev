@@ -24,6 +24,7 @@ interface LocaleData {
 const locales: Record<Locale, LocaleData> = {
     pt: { label: "PT", flag: "/flags/pt.svg", name: "Português" },
     en: { label: "EN", flag: "/flags/en.svg", name: "English" },
+    es: { label: "ES", flag: "/flags/es.svg", name: "Español" },
 };
 
 interface LanguageModalProps {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { CommentCard, CommentData } from "@/components/comments/CommentCard";
 import { CommentComposer } from "@/components/comments/CommentComposer";
 import { listPostComments, SortOrder } from "@/lib/comments";
@@ -31,25 +31,43 @@ export function CommentsSection({
     const t = useTranslations("commentsUi.section");
     const [comments, setComments] = useState<CommentData[]>(initialComments);
     const [nextCursor, setNextCursor] = useState<string | null>(initialNextCursor);
-    const [loading, setLoading] = useState(initialComments.length === 0);
+    const [loading, setLoading] = useState(false);
     const [sort, setSort] = useState<SortOrder>(initialSort);
 
+    // Bumped by every request that replaces the whole list. A response is applied
+    // only if no newer one was started, so the background sync below cannot
+    // overwrite a list the visitor already re-sorted.
+    const listRequest = useRef(0);
+
     const fetchSorted = useCallback(async (newSort: SortOrder) => {
+        const request = ++listRequest.current;
         setLoading(true);
         try {
             const result = await listPostComments({ postId, cursor: null, sort: newSort });
+            if (request !== listRequest.current) return;
             setComments(result.items);
             setNextCursor(result.nextCursor);
         } finally {
-            setLoading(false);
+            if (request === listRequest.current) setLoading(false);
         }
     }, [postId]);
 
-    // Carrega comentários no cliente quando não há initialComments (página estática)
+    // `initialComments` comes from the cached post page: the public list, no
+    // vote marked, possibly a few minutes old. Swap in the visitor's copy (with
+    // their votes) in the background, without the loading overlay, since there
+    // is already a list on screen.
     useEffect(() => {
-        if (initialComments.length > 0) return;
-        fetchSorted(initialSort);
-    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+        const request = ++listRequest.current;
+        listPostComments({ postId, cursor: null, sort: initialSort })
+            .then((result) => {
+                if (request !== listRequest.current) return;
+                setComments(result.items);
+                setNextCursor(result.nextCursor);
+            })
+            .catch(() => {
+                // The cached list stays; votes simply stay unmarked.
+            });
+    }, [postId, initialSort]);
 
     const handleSortChange = (newSort: SortOrder) => {
         if (newSort === sort) return;
@@ -70,6 +88,8 @@ export function CommentsSection({
     };
 
     const refresh = useCallback(async () => {
+        // Newer than any background sync still in flight; see listRequest.
+        listRequest.current++;
         setLoading(true);
         try {
             const result = await listPostComments({ postId, cursor: null, sort });

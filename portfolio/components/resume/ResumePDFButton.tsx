@@ -15,11 +15,16 @@ const PDF_BY_LOCALE: Record<string, string> = {
 
 const FALLBACK_PDF = '/resume-en.pdf';
 
+/** Path of the résumé PDF for a locale, falling back to the English one. */
+export function resumePdfFor(locale: string): string {
+    return PDF_BY_LOCALE[locale] ?? FALLBACK_PDF;
+}
+
 export function ResumePDFButton() {
     const locale = useLocale();
     const t = useTranslations('ResumePDFButton');
 
-    const pdfPath = PDF_BY_LOCALE[locale] ?? FALLBACK_PDF;
+    const pdfPath = resumePdfFor(locale);
     const fileName = `Resume-${locale.toUpperCase()}.pdf`;
 
     const [loading, setLoading] = useState<'view' | 'download' | null>(null);

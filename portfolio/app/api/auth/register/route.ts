@@ -11,15 +11,15 @@ import {
   rateLimitResponse,
   validationErrorResponse,
 } from "@/lib/api-errors";
-import { getApiTranslator } from "@/lib/api-intl";
+import { getApiTranslator, resolveApiLocale } from "@/lib/api-intl";
 import {
-  optionalPlainText,
   parseJsonBodyWithMessages,
   RequestValidationError,
-  sanitizePlainText,
 } from "@/lib/api-validation";
 import { DEFAULT_AVATAR_STYLE, generateAvatarSeed } from "@/lib/avatar";
+import { sendEmailVerification } from "@/lib/email-verification";
 import { getRequestIp, rateLimit } from "@/lib/rate-limit";
+import { checkUsername, normalizeUsernameInput } from "@/lib/username-rules";
 
 function createRegisterSchema(t: Awaited<ReturnType<typeof getApiTranslator>>) {
   return z.object({
@@ -33,10 +33,17 @@ function createRegisterSchema(t: Awaited<ReturnType<typeof getApiTranslator>>) {
       .min(1, t("auth.register.passwordRequired"))
       .min(8, t("auth.register.passwordMin"))
       .max(128, t("auth.register.passwordMax")),
+    // Required: the old fallback used the e-mail local part as the username,
+    // which published part of the address next to every comment.
     username: z
-      .string()
-      .optional()
-      .transform((value) => optionalPlainText(value, 32)),
+      .string({ required_error: t("username.required") })
+      .transform(normalizeUsernameInput)
+      .superRefine((value, ctx) => {
+        const problem = checkUsername(value);
+        if (problem) {
+          ctx.addIssue({ code: z.ZodIssueCode.custom, message: t(`username.${problem}`) });
+        }
+      }),
   });
 }
 
@@ -68,14 +75,14 @@ export async function POST(req: NextRequest) {
     }
 
     const passwordHash = await bcrypt.hash(password, 12);
-    const fallbackUsername = sanitizePlainText(email.split("@")[0] ?? "user", 24) || "user";
 
     const created = await prisma.user.create({
       data: {
         email,
         provider: "EMAIL_PASSWORD",
         password: passwordHash,
-        username: username ?? fallbackUsername,
+        username,
+        usernameChosenAt: new Date(),
         emailVerified: false,
         // Conta por e-mail nao tem foto de provider, entao o avatar gerado e a
         // unica imagem que ela tem — e ja nasce com uma, em vez do default.png
@@ -86,6 +93,14 @@ export async function POST(req: NextRequest) {
       },
       select: { id: true },
     });
+
+    // The account exists either way; a failed enqueue only means the first
+    // link never leaves. The comment box offers "send a new link", so the
+    // user is not stuck, and failing the whole sign-up here would leave them
+    // with an account they think was not created.
+    await sendEmailVerification({ id: created.id, email, username }, resolveApiLocale(req)).catch(
+      (err) => logApiError("register.verification_email", err),
+    );
 
     // ── Link newsletter subscription if one exists for this email ─────────────
     // Fire-and-forget: linking is non-critical and must not fail the registration
@@ -106,6 +121,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true, userId: created.id }, { status: 201 });
   } catch (error) {
     if ((error as { code?: string })?.code === "P2002") {
+      const target = (error as { meta?: { target?: unknown } }).meta?.target;
+      if (Array.isArray(target) ? target.includes("username") : String(target ?? "").includes("username")) {
+        return conflictResponse(t("username.taken"));
+      }
       return conflictResponse(t("auth.register.conflictRetry"));
     }
     if (error instanceof z.ZodError || error instanceof RequestValidationError) {

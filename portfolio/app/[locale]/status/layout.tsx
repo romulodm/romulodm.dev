@@ -21,9 +21,8 @@ export async function generateMetadata({
   })
 }
 
-// Navbar e Footer ficam no layout, e nao na page, porque a page e client
-// component (polling de /api/status) e assim o shell nao re-renderiza a cada
-// atualizacao.
+// Navbar and Footer live in the layout, not in StatusDashboard, so the client
+// component's 30 s polling never re-renders the shell.
 export default function StatusLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-background">

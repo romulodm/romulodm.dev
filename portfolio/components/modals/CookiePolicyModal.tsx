@@ -28,6 +28,7 @@ interface Section {
 const PRIVACY_OPT_OUT_ANCHOR: Record<string, string> = {
   pt: '74-como-gerenciar-ou-se-opor',
   en: '74-how-to-manage-or-object',
+  es: '74-cómo-gestionarlas-u-oponerte',
 };
 
 const SECTIONS: Section[] = [

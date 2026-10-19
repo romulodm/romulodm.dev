@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 
 import { routing } from '@/i18n/routing'
+import { getIntlLocaleCode } from '@/lib/locales'
 
 export const SITE_URL = (
   process.env.SITE_URL ||
@@ -23,7 +24,7 @@ export const SITE_DESCRIPTION =
   'Portfolio e blog sobre desenvolvimento de software.'
 
 /**
- * Fonte: data/resume/{pt,en}.ts, que e o registro autoritativo do nome no repo.
+ * Fonte: data/resume/{pt,en,es}.ts, que e o registro autoritativo do nome no repo.
  * Nao invente variacao aqui — JSON-LD, RSS e Open Graph todos derivam disto.
  */
 export const AUTHOR_NAME = 'Romulo de Moraes'
@@ -36,10 +37,19 @@ export const AUTHOR_NAME = 'Romulo de Moraes'
  * is a WebGL render of card.glb, which Next's ImageResponse cannot produce.
  */
 export function defaultOgImage(locale: string): string {
-  return `/og/home-${locale === 'en' ? 'en' : 'pt'}.jpg`
+  return `/og/home-${locale === 'en' || locale === 'es' ? locale : 'pt'}.jpg`
 }
 
 export type Locale = (typeof routing.locales)[number]
+
+/** Open Graph wants `ll_TT` (underscore), unlike the BCP 47 tags used elsewhere. */
+const OG_LOCALE: Record<string, string> = { pt: 'pt_BR', en: 'en_US', es: 'es_ES' }
+
+const JOB_TITLE: Record<string, string> = {
+  pt: 'Engenheiro de Software',
+  en: 'Software Engineer',
+  es: 'Ingeniero de Software',
+}
 
 /** Junta um path relativo com a origem publica. Aceita URL absoluta e devolve como esta. */
 export function absoluteUrl(path = '/'): string {
@@ -124,7 +134,7 @@ export function buildPageMetadata({
     openGraph: {
       type: type === 'profile' ? 'profile' : type,
       siteName: SITE_NAME,
-      locale: locale === 'pt' ? 'pt_BR' : 'en_US',
+      locale: OG_LOCALE[locale] ?? 'en_US',
       url: canonical,
       title,
       description: resolvedDescription,
@@ -166,7 +176,7 @@ export function personJsonLd(locale: string, description?: string) {
     image: absoluteUrl(defaultOgImage(locale)),
     // Estava fixo em ingles nos dois locales; o JSON-LD declara inLanguage por
     // pagina, entao o cargo precisa acompanhar.
-    jobTitle: locale === 'pt' ? 'Engenheiro de Software' : 'Software Engineer',
+    jobTitle: JOB_TITLE[locale] ?? JOB_TITLE.en,
     description: description || SITE_DESCRIPTION,
     sameAs: [
       'https://github.com/romulodm',
@@ -182,7 +192,7 @@ export function websiteJsonLd(locale: string, description?: string) {
     name: SITE_NAME,
     url: absoluteUrl(`/${locale}`),
     description: description || SITE_DESCRIPTION,
-    inLanguage: locale === 'pt' ? 'pt-BR' : 'en-US',
+    inLanguage: getIntlLocaleCode(locale),
     author: { '@type': 'Person', name: AUTHOR_NAME },
   }
 }
@@ -224,7 +234,7 @@ export function blogPostingJsonLd({
     image: [absoluteUrl(image || defaultOgImage(locale))],
     datePublished: toIso(publishedAt),
     dateModified: toIso(updatedAt) ?? toIso(publishedAt),
-    inLanguage: locale === 'pt' ? 'pt-BR' : 'en-US',
+    inLanguage: getIntlLocaleCode(locale),
     author: {
       '@type': 'Person',
       name: authorName || AUTHOR_NAME,

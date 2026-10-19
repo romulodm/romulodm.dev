@@ -14,12 +14,21 @@ vi.mock("@/lib/rate-limit", () => ({
   getRequestIp: getRequestIpMock,
 }));
 
+// The confirmation e-mail goes through BullMQ/Redis, which these database
+// tests do not run. What matters here is that sign-up asks for it.
+const sendEmailVerificationMock = vi.hoisted(() => vi.fn());
+vi.mock("@/lib/email-verification", () => ({
+  sendEmailVerification: sendEmailVerificationMock,
+}));
+
 import { POST } from "../../../app/api/auth/register/route";
 
 describe("POST /api/auth/register", () => {
   beforeEach(() => {
     rateLimitMock.mockReset();
     rateLimitMock.mockResolvedValue(false);
+    sendEmailVerificationMock.mockReset();
+    sendEmailVerificationMock.mockResolvedValue(undefined);
   });
 
   afterEach(async () => {
@@ -49,6 +58,56 @@ describe("POST /api/auth/register", () => {
     expect(payload.ok).toBe(true);
     expect(created?.provider).toBe("EMAIL_PASSWORD");
     expect(created?.password).not.toBe("password-123");
+    expect(created?.emailVerified).toBe(false);
+    expect(created?.usernameChosenAt).not.toBeNull();
+    expect(sendEmailVerificationMock).toHaveBeenCalledWith(
+      expect.objectContaining({ id: created?.id, email }),
+      expect.any(String),
+    );
+  });
+
+  it("stores the username normalized to lowercase", async () => {
+    const email = `${uniqueToken("lower")}@example.com`;
+    const response = await POST(
+      new Request("http://localhost/api/auth/register", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ email, password: "password-123", username: "@Phase3Lower" }),
+      }) as any,
+    );
+
+    const created = await prisma.user.findUnique({ where: { email } });
+    expect(response.status).toBe(201);
+    expect(created?.username).toBe("phase3lower");
+  });
+
+  it("rejects a missing username instead of deriving one from the e-mail", async () => {
+    const response = await POST(
+      new Request("http://localhost/api/auth/register", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          email: `${uniqueToken("nouser")}@example.com`,
+          password: "password-123",
+        }),
+      }) as any,
+    );
+
+    expect(response.status).toBe(400);
+  });
+
+  it("still creates the account when the confirmation e-mail cannot be queued", async () => {
+    sendEmailVerificationMock.mockRejectedValue(new Error("redis down"));
+    const email = `${uniqueToken("noqueue")}@example.com`;
+    const response = await POST(
+      new Request("http://localhost/api/auth/register", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ email, password: "password-123", username: "phase3noqueue" }),
+      }) as any,
+    );
+
+    expect(response.status).toBe(201);
   });
 
   it("returns conflict for an existing email", async () => {
@@ -69,6 +128,7 @@ describe("POST /api/auth/register", () => {
         body: JSON.stringify({
           email,
           password: "password-123",
+          username: "phase3existing",
         }),
       }) as any,
     );
@@ -104,6 +164,7 @@ describe("POST /api/auth/register", () => {
         body: JSON.stringify({
           email: `${uniqueToken("limited")}@example.com`,
           password: "password-123",
+          username: "phase3limited",
         }),
       }) as any,
     );

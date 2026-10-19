@@ -25,6 +25,10 @@ import {
   type CardArtTone,
 } from "./cardArt";
 import { CardFace } from "./cards/CardFace";
+import {
+  EmailVerificationNotice,
+  useNeedsEmailVerification,
+} from "@/components/auth/EmailVerificationNotice";
 import type { WallAuthor, WallMsg } from "./utils";
 
 const MAX = 100;
@@ -52,6 +56,7 @@ export function PublishModal({ user, open, onOpenChange, onPosted }: Props) {
   const [style, setStyle] = useState<CardArtStyle>(DEFAULT_CARD_ART_STYLE);
   const [tone, setTone] = useState<CardArtTone>(DEFAULT_CARD_ART_TONE);
   const [loading, setLoading] = useState(false);
+  const needsVerification = useNeedsEmailVerification();
 
   const canContinue = text.trim().length > 0;
   const seed = wallCardSeed(user.id, text);
@@ -79,7 +84,13 @@ export function PublishModal({ user, open, onOpenChange, onPosted }: Props) {
       });
 
       if (res.status === 409) { toast.error(t("alreadyPosted")); return; }
-      if (!res.ok) { toast.error(t("error")); return; }
+      if (!res.ok) {
+        // 403 carries a message the user can act on (ban, unconfirmed e-mail,
+        // username not chosen yet); everything else gets the generic one.
+        const data = res.status === 403 ? await res.json().catch(() => null) : null;
+        toast.error(typeof data?.error === "string" ? data.error : t("error"));
+        return;
+      }
 
       const created: WallMsg = await res.json();
       onPosted(created);
@@ -91,6 +102,19 @@ export function PublishModal({ user, open, onOpenChange, onPosted }: Props) {
       setLoading(false);
     }
   };
+
+  if (needsVerification) {
+    return (
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent className="max-w-md border border-border">
+          <DialogHeader>
+            <DialogTitle>{t("writeTitle")}</DialogTitle>
+          </DialogHeader>
+          <EmailVerificationNotice action="wall" />
+        </DialogContent>
+      </Dialog>
+    );
+  }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

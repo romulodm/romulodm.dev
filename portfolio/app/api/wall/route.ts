@@ -7,6 +7,7 @@ import { prisma } from "@romulo/database";
 import { AVATAR_SELECT } from "@/lib/avatar";
 import { rateLimitResponse } from "@/lib/api-errors";
 import { getApiTranslator } from "@/lib/api-intl";
+import { getPostingBlock, postingBlockedResponse } from "@/lib/posting-gate";
 import { getRequestIp, rateLimit } from "@/lib/rate-limit";
 import { PICKABLE_CARD_ART_TONES, isCardArtStyle, isCardArtTone } from "@/components/wall/cardArt";
 
@@ -31,6 +32,12 @@ export async function POST(req: NextRequest) {
   if (limited) {
     const t = await getApiTranslator(req);
     return rateLimitResponse(t("common.rateLimited"));
+  }
+
+  const block = await getPostingBlock(session.user.id);
+  if (block) {
+    const t = await getApiTranslator(req);
+    return postingBlockedResponse(block, t, t("account.banned"));
   }
 
   let message: unknown;

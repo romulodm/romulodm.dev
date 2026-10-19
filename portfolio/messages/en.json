@@ -70,6 +70,10 @@
         "passwordRequired": "Password is required.",
         "passwordMin": "Password must be at least 8 characters.",
         "passwordMax": "Password must be at most 128 characters."
+      },
+      "verifyEmail": {
+        "invalid": "This confirmation link is no longer valid.",
+        "resendRateLimited": "You asked for several links just now. Wait a few minutes and check your spam folder."
       }
     },
     "donations": {
@@ -136,6 +140,18 @@
       "newsletterTesters": {
         "notSubscribed": "This email is not a confirmed newsletter subscriber."
       }
+    },
+    "username": {
+      "required": "Choose a username.",
+      "format": "Use 3 to 24 characters: lowercase letters, digits, _ or -.",
+      "reserved": "That name is reserved. Pick another one.",
+      "taken": "That username is already taken.",
+      "alreadyChosen": "You have already chosen your username."
+    },
+    "account": {
+      "usernameRequired": "Choose your username before posting.",
+      "emailNotVerified": "Confirm your email before posting. The link is in your inbox.",
+      "banned": "Your account cannot post on the wall."
     }
   },
   "ResumePDFButton": {
@@ -197,13 +213,13 @@
     "validation": {
       "emailInvalid": "Invalid email.",
       "passwordRequired": "Password is required.",
-      "usernameTooShort": "Username is too short.",
+      "usernameFormat": "Use 3 to 24 characters: lowercase letters, digits, _ or -.",
       "passwordMin": "Minimum 8 characters.",
       "passwordsDoNotMatch": "Passwords do not match."
     },
     "toasts": {
       "loginSuccess": "Welcome back!",
-      "registerSuccess": "Account created successfully!",
+      "registerSuccess": "Account created! We sent a confirmation link to your email.",
       "invalidCredentials": "Incorrect email or password.",
       "rateLimited": "Too many attempts. Please wait a few minutes and try again.",
       "accountBanned": "This account has been suspended. Contact us through the blog.",
@@ -215,6 +231,18 @@
       "verification": "Verification link is invalid or expired.",
       "sessionRequired": "You need to be logged in to access this.",
       "generic": "An unexpected error occurred. Please try again."
+    },
+    "chooseUsername": {
+      "title": "Choose your username",
+      "description": "It is how you appear in comments and on the wall, and the address of your profile. Your email is never shown anywhere on the site. You can change it later in your profile settings.",
+      "label": "Username",
+      "hint": "3 to 24 characters: lowercase letters, digits, _ or -.",
+      "submit": "Continue",
+      "signOut": "Sign out",
+      "errors": {
+        "format": "Use 3 to 24 characters: lowercase letters, digits, _ or -.",
+        "generic": "Could not save right now. Try again."
+      }
     }
   },
   "authGuard": {
@@ -336,6 +364,30 @@
       "observabilityTitle": "Observability",
       "observabilityBody": "Measure before you trust."
     },
+    "contactComment": {
+      "pinned": "pinned",
+      "inCity": "in Rio Grande",
+      "body": "Reach out about a job, a freelance project or something you read here. I usually reply within a day.",
+      "copied": "Copied!",
+      "resume": "Résumé",
+      "writeAnother": "Write another",
+      "onlyOwner": "only Romulo sees this"
+    },
+    "contactWindow": {
+      "windowTitle": "New message",
+      "groupWrite": "Write",
+      "here": "Right here",
+      "yourEmail": "From your email",
+      "groupLinks": "Links",
+      "resume": "Résumé",
+      "to": "To",
+      "bodyPlaceholder": "Leave a message...",
+      "send": "Send",
+      "writeAnother": "Write another",
+      "role": "Backend developer",
+      "city": "Rio Grande, Brazil",
+      "responseTime": "I usually reply within a day"
+    },
     "lastConnect": {
       "title": "Let's connect.",
       "formEmail": "Your email",
@@ -388,6 +440,47 @@
       "description": "Things I built alone, with a team and out of pure curiosity. Open source whenever possible.",
       "downloadsWeek": "/week",
       "loadError": "Couldn't load the projects.",
+      "blogPost": "Read the post",
+      "stars": "GitHub stars",
+      "forks": "GitHub forks",
+      "downloads": "npm downloads in the last week",
+      "open": "Open project",
+      "featured": {
+        "romulodm": {
+          "tagline": "A portfolio that became a platform: its own CMS, newsletter, search and donations on one VPS",
+          "bullets": [
+            "TypeScript monorepo: site and admin in Next.js 16, a BullMQ worker and shared packages for the database, queues and email templates.",
+            "A search service written in Go with an in-memory index: a trie for prefixes, a BK-tree for typos, TF-IDF and Snowball stemming.",
+            "A homemade CMS with posts in PT/EN, campaign newsletters rendered in each reader's language, and a guestbook wall.",
+            "Images are built in CI and published to GHCR; the VPS only pulls them and runs Postgres, Redis, MinIO and nginx with Docker Compose."
+          ]
+        },
+        "seedicon": {
+          "tagline": "Any string becomes an SVG avatar: same seed, same picture, nothing stored",
+          "bullets": [
+            "FNV-1a seeds a mulberry32 PRNG, and every style is a pure function that returns an SVG string. No canvas, so it renders on the server.",
+            "The pixels style matches blockies cell for cell, checked across more than a thousand seeds by a test that compares against the original package.",
+            "One entry point per style: importing a single one costs about 4KB, against 76KB for the whole package.",
+            "Published from GitHub Actions with Trusted Publishing (OIDC), with no npm token stored in the repository."
+          ]
+        },
+        "modernLiveMessenger": {
+          "tagline": "MSN back in the browser, with winks, nudges and ChatGPT on the contact list",
+          "bullets": [
+            "Built for a Distributed Systems course in the last year of undergrad, in about a month.",
+            "React interface on top of 7.css, which recreates the Windows 7 look in plain CSS.",
+            "Real-time chat with the original's quirks: winks and the nudge that shakes the window."
+          ]
+        },
+        "goChess": {
+          "tagline": "Real-time chess for two, with Go holding each room over WebSocket",
+          "bullets": [
+            "Built for a course whose point was learning a new language: Go took the server.",
+            "The server keeps two-player rooms and relays every move over Gorilla WebSocket.",
+            "The board is drawn in React."
+          ]
+        }
+      },
       "items": {
         "romulodm": "This site: a highly over-engineered portfolio and blog, built to show what I've done and what I plan to do. Next.js up front, a queue worker and a search engine in Go, all on one VPS.",
         "seedicon": "An npm package that turns any string into a deterministic SVG avatar. 17 styles, zero dependencies, no image storage. It draws the avatars on this very site.",
@@ -395,10 +488,32 @@
         "goChess": "Multiplayer chess for a course whose point was picking a language new to us. React draws the board, and Go keeps two-player rooms in sync over Gorilla WebSocket.",
         "goBet": "A toy casino built to study microservices: Go services for auth, email and roulette talking over gRPC, with JWT, queries generated by sqlc and a React front end.",
         "interzap": "A terminal WhatsApp on Python sockets, built for a Computer Networks course following the professor's protocol. Groups, read receipts, and SQLite holding messages for offline users.",
-        "pacMan": "Pac-Man in Python, my first undergraduate project. The maze is a 28x31 matrix and each ghost chases in its own way, with A* plotting routes for the hunters.",
         "eCommerce": "A full storefront built to learn the stack the market wanted: React and Redux up front, Express and MySQL behind, with JWT login, a cart, an admin panel and password recovery.",
+        "gitMinicourse": "The repository for the Git workshop at the 13th SAICC. Participants fork it and practice the real workflow, alone and as a team: branches, commits and pull requests on a React page built with Material UI and Tailwind.",
+        "pacMan": "Pac-Man in Python, my first undergraduate project. The maze is a 28x31 matrix and each ghost chases in its own way, with A* plotting routes for the hunters.",
         "game2048": "2048 in Python, made at a friend's suggestion. The whole game lives in a 4x4 matrix: compressing rows, merging tiles, checking for a win or a loss. The interface just draws it."
       }
+    },
+    "contributions": {
+      "section": "GitHub contributions",
+      "unit": "{count, plural, one {contribution} other {contributions}}",
+      "amount": "{count, plural, =0 {No contributions} one {# contribution} other {# contributions}}",
+      "onDate": "on {date}",
+      "days": "{count, plural, one {day} other {days}}",
+      "yearTotal": "1 year total",
+      "busiestDay": "Busiest day",
+      "longestStreak": "Longest streak",
+      "currentStreak": "Current streak",
+      "chart": "{amount} between {range}. Use the arrow keys to read individual days.",
+      "less": "Less",
+      "more": "More",
+      "levels": [
+        "No contributions",
+        "Light",
+        "Moderate",
+        "Heavy",
+        "Heaviest"
+      ]
     },
     "built": {
       "eyebrow": "What I've built",
@@ -470,7 +585,7 @@
     "vision": {
       "title": "Vision on",
       "link-title": "Want to know more?",
-      "link-content": "You can read more about what I think on my blog.",
+      "link-content": "The squares show when I write code. The blog is where I write about what I learned doing it.",
       "link-button": "View posts"
     },
     "contact": {
@@ -701,6 +816,8 @@
       "rewardLink": "reward"
     },
     "close-tab": "Close tab",
+    "new-tab": "New tab",
+    "dismiss-tooltip": "Dismiss tip",
     "weather": {
       "wind": "Wind",
       "temperature": "Temperature",
@@ -1997,6 +2114,10 @@
           "label": "Password recovery",
           "description": "Sent when a password reset is requested."
         },
+        "emailVerification": {
+          "label": "Email verification",
+          "description": "Sent after an email and password sign-up to confirm the account's address."
+        },
         "campaignPost": {
           "label": "Newsletter — Single post",
           "description": "Campaign based on a blog article, with image, tags and summary."
@@ -2366,6 +2487,7 @@
         "title": "Profile information",
         "username": "Username",
         "usernameTaken": "This username is already taken.",
+        "usernameInvalid": "Use 3 to 24 characters: lowercase letters, digits, _ or -. Some names are reserved.",
         "github": "GitHub URL",
         "linkedin": "LinkedIn URL",
         "githubPlaceholder": "https://github.com/username",
@@ -2710,6 +2832,46 @@
         "title": "Traffic",
         "tooltip": "{count, plural, =0 {no visits} one {# visit} other {# visits}}"
       }
+    }
+  },
+  "verifyEmail": {
+    "metaTitle": "Confirm email",
+    "eyebrow": "Account",
+    "loading": {
+      "title": "Confirming your email",
+      "description": "Just a moment."
+    },
+    "success": {
+      "title": "Email confirmed",
+      "description": "All set. You can now comment on posts and leave a message on the wall."
+    },
+    "invalid": {
+      "title": "This link no longer works",
+      "description": "Confirmation links last 24 hours and work only once. If you already clicked it before, your email is confirmed. If not, sign in and ask for a new link from the comment box of any post.",
+      "descriptionCanResend": "Confirmation links last 24 hours and work only once. Ask for a new one and use the most recent.",
+      "sent": "We sent a new link. It lasts 24 hours."
+    },
+    "failed": {
+      "title": "Could not confirm right now",
+      "description": "The server did not respond. The link is still valid, so you can try again in a moment."
+    },
+    "actions": {
+      "blog": "Read the blog",
+      "wall": "Go to the wall",
+      "resend": "Send a new link",
+      "retry": "Try again",
+      "home": "Go to the home page"
+    },
+    "resendError": "Could not send right now. Try again.",
+    "notice": {
+      "title": {
+        "comment": "Confirm your email to comment",
+        "wall": "Confirm your email to leave a message"
+      },
+      "description": "We need to confirm that {email} is yours. Look for the link in your inbox (or spam), or ask for a new one.",
+      "sent": "Link sent to {email}. It lasts 24 hours.",
+      "resend": "Send a new link",
+      "sending": "Sending…"
     }
   }
 }

@@ -79,15 +79,15 @@ const hours = (seconds: number) => `${seconds / 3600}h`;
  * that list lives in Telegram and has to be updated by hand as well.
  */
 const HELP = [
-    'Status no site (traduzido para quem visita em inglês):',
+    'Status no site (traduzido para quem visita em inglês ou espanhol):',
     '',
     ...(Object.keys(STATUS_PRESETS) as StatusPreset[]).map(
         (preset) => `/${preset} → "${presetLabel(preset)}" por ${hours(STATUS_PRESETS[preset])}`,
     ),
     'Todos aceitam outra duração no fim: /foco 3h',
     '',
-    '/status em foco | heads down 2h',
-    `Texto livre. A parte depois do | aparece para quem visita em inglês; sem ela, o mesmo texto vale para os dois idiomas. A duração no fim é opcional: m, h ou d (padrão ${hours(DEFAULT_SECONDS)}, máximo ${hours(MAX_SECONDS)}).`,
+    '/status em foco | heads down | concentrado 2h',
+    `Texto livre, na ordem português | inglês | espanhol. As traduções são opcionais; o idioma que faltar mostra o texto em português. A duração no fim é opcional: m, h ou d (padrão ${hours(DEFAULT_SECONDS)}, máximo ${hours(MAX_SECONDS)}).`,
     '',
     '/status off',
     'Limpa o status.',
@@ -105,7 +105,7 @@ const HELP = [
 ].join('\n');
 
 const STATUS_USAGE =
-    'Use: /status em foco | heads down 2h. O texto depois do | é o inglês e é opcional; '
+    'Use: /status em foco | heads down | concentrado 2h. Depois de cada | vêm o inglês e o espanhol, ambos opcionais; '
     + `a duração também (m, h ou d; padrão ${hours(DEFAULT_SECONDS)}). Para limpar: /status off. `
     + 'Atalhos prontos: /comandos';
 
@@ -140,7 +140,10 @@ async function applyStatus(chatId: number | string, input: StatusInput, seconds:
 
 function describe(presence: Presence): string {
     if (presence.preset) return `"${presetLabel(presence.preset)}"`;
-    if (presence.labels?.en) return `"${presence.labels.pt ?? presence.label}" / "${presence.labels.en}"`;
+    if (presence.labels?.en) {
+        const parts = [presence.labels.pt ?? presence.label, presence.labels.en, presence.labels.es];
+        return parts.filter(Boolean).map((part) => `"${part}"`).join(' / ');
+    }
     return `"${presence.label}"`;
 }
 

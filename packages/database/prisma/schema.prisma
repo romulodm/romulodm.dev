@@ -34,6 +34,13 @@ model User {
   avatarSource          AvatarSource           @default(SEEDICON)
   admin                 Boolean                @default(false)
   emailVerified         Boolean                @default(false)
+  /// When the user picked (or confirmed) their username. Null means the
+  /// username was assigned by the system at sign-up and the user still has to
+  /// choose one before posting: OAuth accounts get a neutral placeholder, and
+  /// accounts created before this column existed with a username derived from
+  /// the e-mail address were left null by the migration so their owners are
+  /// prompted too.
+  usernameChosenAt      DateTime?
   password              String?                @db.VarChar(255)
   provider              AuthProvider
   sub                   String?
@@ -48,6 +55,7 @@ model User {
   donations             Donation[]
   newsletterSubscribers NewsletterSubscriber[]
   passwordResetTokens   PasswordResetToken[]
+  emailVerificationTokens EmailVerificationToken[]
   posts                 Post[]
   postLikes             PostLike[]
   suspiciousComments    SuspiciousComment[]
@@ -62,6 +70,20 @@ model PasswordResetToken {
   usedAt    DateTime?
   createdAt DateTime  @default(now())
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+/// One-time link that proves an EMAIL_PASSWORD account owns its address.
+/// Only the SHA-256 of the token is stored, so a database leak does not hand
+/// out working links. Every new link deletes the user's previous ones.
+model EmailVerificationToken {
+  id        String   @id @default(cuid())
+  tokenHash String   @unique
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
 }

@@ -1,0 +1,2808 @@
+{
+  "api": {
+    "common": {
+      "emailRequired": "Escribe tu correo.",
+      "emailInvalid": "Ese correo no parece válido.",
+      "invalidBody": "No pude leer los datos enviados.",
+      "invalidRequest": "Revisa los campos e inténtalo de nuevo.",
+      "internalError": "Algo se rompió de mi lado. Inténtalo de nuevo en unos instantes.",
+      "rateLimited": "Demasiados intentos seguidos. Espera un poco antes de volver a intentarlo.",
+      "unauthorized": "Necesitas iniciar sesión para hacer esto.",
+      "forbidden": "No tienes acceso a esto.",
+      "notFound": "No encontré esto."
+    },
+    "contact": {
+      "rateLimited": "Ya enviaste algunos mensajes hace poco. Inténtalo de nuevo más tarde.",
+      "captchaFailed": "No pude enviar tu mensaje. Inténtalo de nuevo en unos instantes.",
+      "nameRequired": "Escribe tu nombre.",
+      "messageTooShort": "Escribe un poco más en el mensaje."
+    },
+    "newsletter": {
+      "subscribe": {
+        "success": "Suscripción recibida. Revisa tu correo para confirmarla.",
+        "rateLimited": "Demasiados intentos de suscripción seguidos. Espera unos minutos e inténtalo de nuevo.",
+        "internal": "No pude registrar tu suscripción ahora. Inténtalo de nuevo en unos instantes."
+      },
+      "confirm": {
+        "missingToken": "El enlace de confirmación está incompleto.",
+        "invalidToken": "Este enlace de confirmación expiró o ya se usó.",
+        "success": "Suscripción confirmada.",
+        "internal": "No pude confirmar tu suscripción ahora. Inténtalo de nuevo en unos instantes."
+      },
+      "unsubscribe": {
+        "missingToken": "El enlace de cancelación está incompleto.",
+        "invalidToken": "Este enlace de cancelación no corresponde a ninguna suscripción.",
+        "success": "Suscripción cancelada.",
+        "internal": "No pude cancelar tu suscripción ahora. Inténtalo de nuevo en unos instantes."
+      },
+      "requestUnsubscribe": {
+        "success": "Si ese correo está suscrito, le llegará un enlace para confirmar la cancelación.",
+        "rateLimited": "Demasiadas solicitudes de cancelación seguidas. Espera unos minutos e inténtalo de nuevo.",
+        "internal": "No pude registrar la solicitud ahora. Inténtalo de nuevo en unos instantes."
+      }
+    },
+    "comments": {
+      "invalidVote": "Voto inválido.",
+      "rateLimited": "Demasiados intentos seguidos. Espera un poco antes de volver a intentarlo.",
+      "notFound": "Comentario no encontrado.",
+      "ownComment": "No puedes votar tu propio comentario.",
+      "scoreFloor": "Este comentario ya está en 0 y no puede recibir votos negativos.",
+      "votingBlocked": "Tu cuenta no puede votar ahora porque casi todos tus votos son negativos.",
+      "maxDepth": "Esta conversación ya llegó al límite de respuestas.",
+      "empty": "Escribe algo antes de publicar.",
+      "tooLong": "El comentario es demasiado largo.",
+      "postIdRequired": "No se indicó el post.",
+      "postNotFound": "Post no encontrado.",
+      "parentNotFound": "El comentario al que respondes ya no existe.",
+      "cannotComment": "Tu cuenta no puede comentar.",
+      "commentNotFound": "Comentario no encontrado."
+    },
+    "auth": {
+      "forgot": {
+        "rateLimited": "Demasiados intentos. Inténtalo de nuevo en 10 minutos.",
+        "success": "Si ese correo está registrado, recibirás un enlace en breve.",
+        "internal": "Error interno."
+      },
+      "register": {
+        "rateLimited": "Demasiados intentos de registro. Inténtalo de nuevo más tarde.",
+        "conflict": "No fue posible completar el registro con los datos indicados.",
+        "conflictRetry": "No fue posible completar el registro. Inténtalo de nuevo.",
+        "passwordRequired": "La contraseña es obligatoria.",
+        "passwordMin": "La contraseña debe tener al menos 8 caracteres.",
+        "passwordMax": "La contraseña debe tener como máximo 128 caracteres."
+      }
+    },
+    "donations": {
+      "eth": {
+        "invalidTransaction": "Transacción inválida."
+      },
+      "pix": {
+        "notAvailableInProduction": "No disponible en producción.",
+        "missingDonationId": "Falta donationId.",
+        "chargeDescription": "{count}x café para el blog",
+        "internal": "No fue posible crear el cobro PIX. Inténtalo de nuevo.",
+        "checkFailed": "No fue posible verificar el pago. Reintentando..."
+      },
+      "stripe": {
+        "missingSignature": "Falta la firma.",
+        "invalidSignature": "Firma inválida.",
+        "internal": "No fue posible crear la intención de pago de Stripe. Inténtalo de nuevo."
+      },
+      "invalidCoffeeCount": "Cantidad de cafés inválida."
+    },
+    "posts": {
+      "noPosts": "No se encontró ningún post.",
+      "notFound": "Post no encontrado.",
+      "missingRequiredFields": "Faltan campos obligatorios.",
+      "queueOnly": "El flush de vistas ahora se ejecuta exclusivamente por la cola con el worker.",
+      "slugInvalid": "El slug necesita al menos una letra o un número.",
+      "slugTaken": "Otro post ya usa ese slug. Elige otro o deja el campo en blanco."
+    },
+    "uploads": {
+      "missingFields": "Faltan campos obligatorios: postId y kind.",
+      "invalidKind": "Tipo inválido. Debe ser \"cover\" o \"inline\".",
+      "invalidContentType": "Formato no compatible. Usa JPG, PNG, GIF o WebP.",
+      "fileTooLarge": "La imagen supera los 10 MB.",
+      "internal": "No fue posible guardar la imagen. Inténtalo de nuevo."
+    },
+    "admin": {
+      "newsletterCampaigns": {
+        "subjectRequired": "El asunto es obligatorio.",
+        "digestMinPosts": "Un digest necesita al menos 2 posts.",
+        "digestInvalidPosts": "Todos los posts del digest deben existir y estar publicados.",
+        "postIdRequired": "postId es obligatorio para campañas basadas en un post.",
+        "postNotFound": "Post no encontrado.",
+        "postMustBePublished": "Solo se pueden crear campañas para posts publicados.",
+        "missingPortugueseTranslation": "El post necesita tener primero la traducción al portugués.",
+        "customContentRequired": "El contenido es obligatorio para campañas personalizadas.",
+        "notFound": "Campaña no encontrada.",
+        "draftOnlyEdit": "Solo se pueden editar campañas en borrador.",
+        "invalidPost": "Post inválido o no publicado.",
+        "cannotDeleteSending": "No se puede eliminar una campaña que se está enviando.",
+        "deleted": "Campaña eliminada.",
+        "draftOnlySend": "Solo se pueden enviar campañas en borrador.",
+        "invalidScheduledAt": "scheduledAt inválido.",
+        "futureScheduledAt": "scheduledAt debe ser una fecha futura.",
+        "scheduled": "Campaña programada con éxito.",
+        "queued": "Campaña en cola para envío.",
+        "dispatchFailed": "Error al despachar la campaña.",
+        "draftOnlyTest": "Solo se pueden probar campañas en borrador.",
+        "noTestRecipients": "No hay ningún correo de prueba registrado. Agrega un suscriptor confirmado a la lista de prueba.",
+        "testQueued": "Prueba en cola."
+      },
+      "suspiciousComments": {
+        "notFound": "Comentario sospechoso no encontrado."
+      },
+      "newsletterTesters": {
+        "notSubscribed": "Ese correo no es un suscriptor confirmado de la newsletter."
+      }
+    }
+  },
+  "ResumePDFButton": {
+    "view": "Ver",
+    "download": "Descargar"
+  },
+  "language": {
+    "title": "Selecciona tu idioma",
+    "subtitle": "Elige el idioma que quieres usar para navegar por este sitio."
+  },
+  "auth": {
+    "title": "Inicia sesión en tu cuenta y empieza a interactuar.",
+    "common": {
+      "or": "O"
+    },
+    "modal": {
+      "loginDescription": "Inicia sesión para empezar a interactuar en las publicaciones del blog.",
+      "registerDescription": "Crea tu cuenta y empieza a interactuar en las publicaciones del blog.",
+      "forgotDescription": "Escribe tu correo y sigue las instrucciones."
+    },
+    "google": {
+      "continue": "Continuar con Google"
+    },
+    "github": {
+      "continue": "Continuar con GitHub"
+    },
+    "password": {
+      "signIn": "Entrar con contraseña",
+      "signUp": "Registrarse con contraseña"
+    },
+    "login": {
+      "emailPlaceholder": "Correo electrónico",
+      "passwordPlaceholder": "Contraseña",
+      "submit": "Entrar",
+      "forgotPassword": "¿Olvidaste tu contraseña?",
+      "noAccount": "¿No tienes cuenta?",
+      "createNow": "Crear ahora"
+    },
+    "register": {
+      "usernamePlaceholder": "Nombre de usuario",
+      "emailPlaceholder": "Correo electrónico",
+      "passwordPlaceholder": "Contraseña",
+      "confirmPasswordPlaceholder": "Confirmar contraseña",
+      "submit": "Crear cuenta",
+      "genericError": "No fue posible crear tu cuenta.",
+      "hasAccount": "¿Ya tienes cuenta?",
+      "login": "Entrar"
+    },
+    "forgot": {
+      "emailPlaceholder": "Correo electrónico",
+      "submit": "Enviar enlace de recuperación",
+      "genericError": "No fue posible enviar el correo.",
+      "successTitle": "Revisa tu bandeja de entrada",
+      "successDescription": "Si ese correo está registrado, recibirás un enlace para restablecer tu contraseña. El enlace expira en 1 hora.",
+      "rememberedPassword": "¿Recordaste la contraseña?",
+      "didntForgetPassword": "¿No olvidaste tu contraseña?",
+      "login": "Entrar"
+    },
+    "validation": {
+      "emailInvalid": "Correo inválido.",
+      "passwordRequired": "Contraseña obligatoria.",
+      "usernameTooShort": "Nombre de usuario demasiado corto.",
+      "passwordMin": "Mínimo 8 caracteres.",
+      "passwordsDoNotMatch": "Las contraseñas no coinciden."
+    },
+    "toasts": {
+      "loginSuccess": "¡Bienvenido de nuevo!",
+      "registerSuccess": "¡Cuenta creada con éxito!",
+      "invalidCredentials": "Correo o contraseña incorrectos.",
+      "rateLimited": "Demasiados intentos. Espera unos minutos e inténtalo de nuevo.",
+      "accountBanned": "Esta cuenta fue suspendida. Ponte en contacto a través del blog.",
+      "accountNotLinked": "Correo ya registrado con otro método.",
+      "accountNotLinkedDescription": "Usa el mismo método con el que creaste tu cuenta (Google, GitHub o correo y contraseña).",
+      "accessDenied": "Acceso denegado.",
+      "oauthCallback": "Error al conectar con el proveedor. Inténtalo de nuevo.",
+      "oauthSignin": "No fue posible iniciar sesión. Inténtalo de nuevo.",
+      "verification": "Enlace de verificación inválido o expirado.",
+      "sessionRequired": "Necesitas iniciar sesión para acceder a esto.",
+      "generic": "Ocurrió un error inesperado. Inténtalo de nuevo."
+    }
+  },
+  "authGuard": {
+    "title": "Inicia sesión o crea tu cuenta",
+    "description": "Necesitas iniciar sesión para interactuar.",
+    "action": "Entrar"
+  },
+  "wall": {
+    "page": {
+      "title": "El mural recuerda",
+      "description": "Palabras que resuenan en el tiempo y dejan una marca aquí. ¡Comparte pensamientos, recuerdos o simplemente saluda!",
+      "count": "{count, plural, one {<strong>#</strong> mensaje} other {<strong>#</strong> mensajes}}"
+    },
+    "signIn": {
+      "title": "“Entra al mural…”",
+      "subtitle": "Inicia sesión para dejar tu marca",
+      "cta": "Escribir mensaje…"
+    },
+    "posted": {
+      "title": "Tu marca está en el mural ✓",
+      "subtitle": "Desplázate hacia abajo para encontrar tu mensaje"
+    },
+    "list": {
+      "previous": "Anterior",
+      "next": "Siguiente",
+      "pagination": "Páginas del mural"
+    },
+    "actions": {
+      "copyLink": "Copiar enlace",
+      "linkCopied": "Enlace copiado",
+      "delete": "Eliminar mensaje",
+      "confirmDelete": "¿Eliminar?",
+      "yes": "Sí",
+      "no": "No"
+    },
+    "compose": {
+      "title": "Deja tu marca en el mural",
+      "cta": "Escribir mensaje"
+    },
+    "publish": {
+      "step": "Paso {current} de {total}",
+      "writeTitle": "Deja tu mensaje",
+      "writeDescription": "Hasta 100 caracteres. En el siguiente paso eliges el aspecto de la tarjeta.",
+      "placeholder": "Escribe algo genial…",
+      "continue": "Continuar",
+      "styleTitle": "Elige el aspecto",
+      "styleDescription": "El arte se genera automáticamente a partir de tu texto y de tu ID de usuario: el mismo mensaje siempre genera la misma tarjeta. Tú eliges el estilo; los colores salen del mensaje. ¿Cambiaste el texto? Vuelve y la tarjeta se rehace.",
+      "toneLabel": "Tono",
+      "styleLabel": "Estilo",
+      "tones": {
+        "dark": "Oscuro",
+        "light": "Claro"
+      },
+      "styles": {
+        "mesh": "Mesh",
+        "rays": "Rayos",
+        "truchet": "Truchet",
+        "terrain": "Relieve",
+        "lifehash": "LifeHash"
+      },
+      "now": "Ahora",
+      "back": "Volver",
+      "publish": "Publicar",
+      "publishing": "Publicando…",
+      "alreadyPosted": "¡Ya dejaste un mensaje!",
+      "error": "Algo salió mal. Inténtalo de nuevo.",
+      "success": "¡Mensaje publicado!"
+    }
+  },
+  "contact": {
+    "modal-title": "Hablemos",
+    "modal-subtitle": "Cuéntame tu idea, duda u oportunidad.",
+    "form-email": "Tu correo",
+    "form-name": "Tu nombre",
+    "form-text": "¿Qué tienes en mente?",
+    "form-button": "Enviar",
+    "sended-title": "¡Gracias por escribir!",
+    "sended-content": "Tu mensaje se envió con éxito.",
+    "topic-FULL_TIME": "Puesto full-time",
+    "topic-FREELANCE": "Proyecto freelance",
+    "topic-SAYING_HI": "Solo pasaba a saludar",
+    "topic-BUG_REPORT": "Reporte de bug",
+    "topic-OTHER": "Otro",
+    "error-generic": "No pude enviar tu mensaje. Inténtalo de nuevo en unos instantes.",
+    "form-topic-placeholder": "Selecciona un asunto",
+    "privacy-notice": "Uso tus datos solo para responder este mensaje. No terminan en ninguna lista de correo y nunca se venden. Detalles en la <link>política de privacidad</link>."
+  },
+  "vision": {
+    "software": {
+      "titleHighlight": "Software",
+      "description": "Las mejores decisiones técnicas que tomé vinieron de la <b>revisión de código</b> y de conversaciones difíciles, no de la inspiración solitaria.",
+      "cursorName": "Romulo",
+      "frameOne": "Diseñar.",
+      "frameTwo": "Prototipar.",
+      "frameThree": "Desarrollar.",
+      "frameFour": "Mejorar.",
+      "productivityTitle": "Productividad en su mejor forma.",
+      "productivityBody": "Con <b>calidad</b> y <b>sostenibilidad</b> en el centro.",
+      "commits": "{count, plural, one {# commit nuevo} other {# commits nuevos}}",
+      "commentAuthor": "Manager",
+      "commentTime": "hace 2 horas",
+      "commentBody": "¡No te olvides de la reunión, amigo!",
+      "walletCommentBody": "No confíes, verifica (y compra crypto).",
+      "ctaSecurity": "Seguridad",
+      "ctaCollaborative": "Desarrollo colaborativo",
+      "ctaFlexibility": "Flexibilidad",
+      "innovateTitle": "Innovación",
+      "innovateBody": "Definiendo las reglas del mañana.",
+      "communityTitle": "Comunidad",
+      "communityBody": "Haciendo la vida más fácil a las personas.",
+      "academiaTitle": "Academia",
+      "academiaBody": "Siempre en el estado del arte.",
+      "web3Title": "Web3",
+      "web3Body": "La descentralización es el camino.",
+      "securityTitle": "Seguridad",
+      "securityBody": "Blindado por defecto.",
+      "performanceTitle": "Rendimiento",
+      "performanceBody": "Cada milisegundo cuenta.",
+      "observabilityTitle": "Observabilidad",
+      "observabilityBody": "Medir antes de confiar."
+    },
+    "contactComment": {
+      "pinned": "fijado",
+      "inCity": "en Rio Grande",
+      "body": "Escríbeme sobre una vacante, un freelance o algo que leíste por aquí. Suelo responder en menos de un día.",
+      "copied": "¡Copiado!",
+      "resume": "Currículum",
+      "writeAnother": "Escribir otro",
+      "onlyOwner": "solo Romulo lo ve"
+    },
+    "contactWindow": {
+      "windowTitle": "Nuevo mensaje",
+      "groupWrite": "Escribir",
+      "here": "Por aquí",
+      "yourEmail": "Desde tu correo",
+      "groupLinks": "Enlaces",
+      "resume": "Currículum",
+      "to": "Para",
+      "bodyPlaceholder": "Deja un mensaje...",
+      "send": "Enviar",
+      "writeAnother": "Escribir otro",
+      "role": "Desarrollador backend",
+      "city": "Rio Grande, Brasil",
+      "responseTime": "Suelo responder en menos de un día"
+    },
+    "lastConnect": {
+      "title": "Conectemos.",
+      "formEmail": "Tu correo",
+      "formName": "Tu nombre",
+      "formMessage": "Escribe tu mensaje...",
+      "submitButton": "Enviar mensaje",
+      "sentButton": "Mensaje enviado",
+      "genericError": "Algo salió mal en el envío. ¿Lo intentas de nuevo en unos instantes?",
+      "thanksShort": "¡Gracias!",
+      "thanksLong": "¡Gracias por escribir!",
+      "thanksBody": "Respondo en cuanto pueda.",
+      "statusTimezone": "Rio Grande · UTC−3",
+      "statusWorkHours": "horario laboral por aquí",
+      "statusOffHours": "fuera del horario laboral por aquí",
+      "statusLateNight": "madrugada por aquí, quizá tarde en responder",
+      "responseLabel": "Respuesta media",
+      "responseValue": "~1 día",
+      "responseNote": "responderé lo antes posible",
+      "uplinkReady": "listo para transmitir tu mensaje",
+      "readout": {
+        "lat": "LAT",
+        "lon": "LON",
+        "signal": "SEÑ"
+      },
+      "satelliteAlt": "Satélite"
+    }
+  },
+  "home": {
+    "hero": {
+      "greeting": "Hola,",
+      "greetingMorning": "¡Buenos días, visitante!",
+      "greetingAfternoon": "¡Buenas tardes, visitante!",
+      "greetingEvening": "¡Buenas noches, visitante!",
+      "intro": "Me llamo Romulo de Moraes y decidí crear este sitio para mostrar un poco de quién soy, lo que hice, lo que aprendí y lo que planeo alcanzar como desarrollador full-stack y estudiante."
+    },
+    "profile": {
+      "title": "Quién está detrás del código.",
+      "link-title": "¿Quieres ver mi currículum?",
+      "link-content": "Resumí mis experiencias y lo dejé disponible para descargar.",
+      "link-button": "Ver currículum online",
+      "eyebrow": "Perfil",
+      "description": "Experiencias, formación y el camino que me trajo hasta aquí — en orden cronológico."
+    },
+    "projects": {
+      "title": "Del borrador al deploy.",
+      "code": "Código",
+      "preview": "Abrir",
+      "public": "repositorios públicos",
+      "eyebrow": "Proyectos",
+      "description": "Cosas que construí solo, en equipo y por pura curiosidad. Código abierto siempre que se puede.",
+      "downloadsWeek": "/semana",
+      "loadError": "No fue posible cargar los proyectos.",
+      "blogPost": "Leer en el blog",
+      "stars": "estrellas en GitHub",
+      "forks": "forks en GitHub",
+      "downloads": "descargas en npm la última semana",
+      "open": "Abrir proyecto",
+      "featured": {
+        "romulodm": {
+          "tagline": "Un portafolio que se volvió plataforma: CMS propio, newsletter, buscador y donaciones en un VPS",
+          "bullets": [
+            "Monorepo TypeScript: sitio y admin en Next.js 16, un worker BullMQ y paquetes compartidos de base de datos, colas y plantillas de correo.",
+            "Buscador propio en Go con índice en memoria: Trie para prefijos, BK-tree para errores de tipeo, TF-IDF y stemming Snowball.",
+            "CMS propio con posts en PT/EN, newsletter por campañas renderizada en el idioma de cada lector y un muro de visitas.",
+            "Imágenes construidas en CI y publicadas en GHCR; el VPS solo las descarga y levanta Postgres, Redis, MinIO y nginx con Docker Compose."
+          ]
+        },
+        "seedicon": {
+          "tagline": "Cualquier string se vuelve un avatar SVG: la misma seed, siempre la misma imagen, sin guardar nada",
+          "bullets": [
+            "FNV-1a alimenta un PRNG mulberry32, y cada estilo es una función pura que devuelve un string SVG. Sin canvas, así que renderiza en el servidor.",
+            "El estilo pixels reproduce blockies celda por celda, comprobado en más de mil seeds por un test que compara con el paquete original.",
+            "Un entry point por estilo: importar uno solo cuesta unos 4KB, contra 76KB del paquete completo.",
+            "Publicado desde GitHub Actions con Trusted Publishing (OIDC), sin ningún token de npm guardado en el repositorio."
+          ]
+        },
+        "modernLiveMessenger": {
+          "tagline": "MSN de vuelta en el navegador, con winks, zumbidos y ChatGPT en la lista de contactos",
+          "bullets": [
+            "Hecho para la asignatura de Sistemas Distribuidos, en el último año de la carrera, en cerca de un mes.",
+            "Interfaz en React sobre 7.css, que recrea el aspecto de Windows 7 en CSS puro.",
+            "Chat en tiempo real con las manías del original: winks y el zumbido que sacude la ventana."
+          ]
+        },
+        "goChess": {
+          "tagline": "Ajedrez para dos en tiempo real, con Go sosteniendo cada sala por WebSocket",
+          "bullets": [
+            "Hecho en una asignatura cuyo objetivo era aprender un lenguaje nuevo: Go se quedó con el servidor.",
+            "El servidor mantiene salas de dos jugadores y reenvía cada jugada por Gorilla WebSocket.",
+            "El tablero está dibujado en React."
+          ]
+        }
+      },
+      "items": {
+        "romulodm": "Este sitio: un portafolio y blog con bastante más ingeniería de la necesaria, hecho para mostrar lo que ya hice y lo que pretendo hacer. Next.js al frente, un worker de colas y un buscador en Go, todo en un VPS.",
+        "seedicon": "Paquete npm que transforma cualquier string en un avatar SVG determinista. 17 estilos, cero dependencias, ninguna imagen almacenada. Es lo que dibuja los avatares de este sitio.",
+        "modernLiveMessenger": "MSN Messenger rehecho en el navegador con dos amigos, en React sobre 7.css. Chat en tiempo real, winks, el \"zumbido\" que sacude la ventana y ChatGPT como contacto.",
+        "goChess": "Ajedrez multijugador hecho en una asignatura cuyo objetivo era usar un lenguaje nuevo para nosotros. El tablero es React y Go sincroniza salas de dos jugadores por WebSocket.",
+        "goBet": "Casino de mentira para estudiar microservicios: servicios en Go de autenticación, correo y ruleta que se comunican por gRPC, con JWT, queries generadas por sqlc y front en React.",
+        "interzap": "Un WhatsApp de terminal con sockets en Python, hecho para Redes de Computadoras siguiendo el protocolo del profesor. Grupos, confirmación de lectura y SQLite guardando mensajes offline.",
+        "eCommerce": "Tienda completa hecha para aprender el stack que pedía el mercado: React y Redux en el front, Express y MySQL detrás, con login JWT, carrito, panel de admin y recuperación de contraseña.",
+        "gitMinicourse": "Repositorio del minicurso de Git de la XIII SAICC. Los participantes hacen fork y practican el flujo real, solos y en equipo: branch, commit y pull request sobre una página en React con Material UI y Tailwind.",
+        "pacMan": "Pac-Man en Python, mi primer proyecto de la carrera. El mapa es una matriz de 28x31 y cada fantasma persigue a su manera, con A* trazando la ruta de los que cazan.",
+        "game2048": "2048 en Python, hecho por sugerencia de un amigo. Todo el juego vive en una matriz de 4x4: compactar filas, unir fichas, comprobar victoria o derrota. La interfaz solo dibuja."
+      }
+    },
+    "contributions": {
+      "section": "Contribuciones en GitHub",
+      "unit": "{count, plural, one {contribución} other {contribuciones}}",
+      "amount": "{count, plural, =0 {Ninguna contribución} one {# contribución} other {# contribuciones}}",
+      "onDate": "el {date}",
+      "days": "{count, plural, one {día} other {días}}",
+      "yearTotal": "Total del año",
+      "busiestDay": "Día más activo",
+      "longestStreak": "Racha más larga",
+      "currentStreak": "Racha actual",
+      "chart": "{amount} entre {range}. Usa las flechas del teclado para leer cada día.",
+      "less": "Menos",
+      "more": "Más",
+      "levels": [
+        "Ninguna contribución",
+        "Poca",
+        "Moderada",
+        "Alta",
+        "Máxima"
+      ]
+    },
+    "built": {
+      "eyebrow": "Lo que construí",
+      "headline": "Hasta aquí,",
+      "items": [
+        "publiqué seedicon.",
+        "clasifiqué GPS agrícola.",
+        "migré la API a FastAPI.",
+        "escribí una lotería on-chain.",
+        "armé un ajedrez en Go.",
+        "reescribí el Pac-Man.",
+        "gané un Best Paper.",
+        "di un minicurso de Git.",
+        "construí este sitio."
+      ],
+      "lede": {
+        "before": "Nada de esto nació listo:",
+        "highlight": "cada uno empezó como un archivo vacío",
+        "after": "y un problema que todavía no sabía resolver. Código abierto siempre que se puede."
+      },
+      "cards": [
+        {
+          "label": "Trabajando",
+          "title": "Desarrollador",
+          "subtitle": "Agrifence · Rio Grande"
+        },
+        {
+          "label": "Construyendo",
+          "title": "seedicon",
+          "subtitle": "Avatares SVG deterministas"
+        },
+        {
+          "label": "Escribiendo",
+          "title": "Blog de ingeniería",
+          "subtitle": "Decisiones, errores e infra"
+        }
+      ],
+      "presence": {
+        "statusLabel": "Estado",
+        "statusFree": "Disponible",
+        "statusFreeHint": "sin estado definido",
+        "statusUntil": "hasta las {time}, definido en Telegram",
+        "musicLabel": "Escuchando",
+        "musicLastLabel": "Última canción escuchada",
+        "commitEmptyHint": "nada público en los últimos días",
+        "commitEmpty": "Sin commits recientes",
+        "musicEmptyHint": "Spotify está en silencio",
+        "musicEmpty": "No suena nada",
+        "commitLabel": "Último commit",
+        "commitsLabel": "Commits · {days} días",
+        "commitsHint": "públicos y privados",
+        "visitorsLabel": "En el sitio ahora",
+        "visitorsUnit": "{count, plural, one {persona} other {personas}}",
+        "visitorsHint": "incluyéndote a ti",
+        "presets": {
+          "foco": "Concentrado",
+          "reuniao": "En una reunión",
+          "almoco": "Almorzando",
+          "estudando": "Estudiando",
+          "viajando": "De viaje",
+          "ferias": "De vacaciones"
+        }
+      },
+      "reach": {
+        "label": "Habla conmigo",
+        "button": "Empezar una conversación"
+      }
+    },
+    "vision": {
+      "title": "Visión sobre",
+      "link-title": "¿Quieres saber más?",
+      "link-content": "Los cuadraditos muestran cuándo programo. En el blog cuento lo que aprendí haciéndolo.",
+      "link-button": "Ver publicaciones"
+    },
+    "contact": {
+      "title": "Ponte en"
+    },
+    "showcase": {
+      "eyebrow": "Tecnologías",
+      "title": "Trabaja con todo.",
+      "description": "Frontend, backend, bases de datos, DevOps, blockchain, sistemas embebidos, pasarelas de pago, APIs y más.",
+      "highlight": "Sí, casi no cabe en la pantalla."
+    },
+    "software": {
+      "eyebrow": "Visión",
+      "title": "Software que nace de la colaboración.",
+      "description": "Las mejores decisiones técnicas que tomé vinieron de la revisión de código y de conversaciones difíciles, no de la inspiración solitaria."
+    },
+    "faq": {
+      "eyebrow": "FAQ",
+      "title": "Preguntas que siempre aparecen.",
+      "description": "Cómo trabajo, qué uso y la mejor forma de llamarme para un proyecto.",
+      "contact": "¿Algo no quedó muy claro? Envía un <link>mensaje</link>."
+    },
+    "about": {
+      "eyebrow": "Sobre mí",
+      "headline": "Hasta aquí, trabajé en",
+      "builds": [
+        "telemetría para tractores.",
+        "IoT para tratamiento de agua.",
+        "monitoreo de cintas transportadoras.",
+        "una app de salud femenina.",
+        "ahorro con premios.",
+        "loterías on-chain.",
+        "un paquete npm.",
+        "soluciones a medida."
+      ],
+      "lede": "Desarrollador en Agrifence y estudiante de maestría en Ingeniería de Computación en la FURG. En el día a día, transformo el GPS en bruto de máquinas agrícolas en información que el productor puede usar; el resto del tiempo, investigo smart contracts y sistemas distribuidos, sobre todo cómo hacer que la aleatoriedad de una blockchain pública sea lo bastante justa como para sostener una lotería.",
+      "whyTitle": "Por qué existe este sitio",
+      "whyProblems": "Este blog es donde escribo sobre el problema detrás del código: las suposiciones que parecían obvias hasta que producción demostró lo contrario, lo que hace falta para sortear un ganador de forma justa en una blockchain pública y los atajos cuyo costo solo apareció meses después.",
+      "whyProjects": "También es donde viven los proyectos que todavía no construí. Algunos se convertirán en posts, otros en repositorios, otros seguirán siendo ideas, pero todos serán públicos.",
+      "location": "Rio Grande, RS - Brasil",
+      "available": "Abierto a oportunidades",
+      "viewProjects": "Ver proyectos",
+      "github": "GitHub",
+      "contact": "Contacto",
+      "statsTitle": "En números",
+      "stats": {
+        "years": "Años programando",
+        "users": "Usuarios impactados",
+        "projects": "Proyectos entregados",
+        "articles": "Artículo publicado"
+      },
+      "photos": {
+        "whiteboard": "Sesión en la pizarra",
+        "collaboration": "Colaborando con el equipo",
+        "member": "Miembro del equipo",
+        "coworking": "Espacio de coworking",
+        "workspace": "Espacio de trabajo"
+      }
+    },
+    "timeline": {
+      "today": "Hoy"
+    }
+  },
+  "navigation": {
+    "login": "Entrar",
+    "announcement": "¡Novedades muy pronto!",
+    "tooltip": {
+      "search": "Buscar posts",
+      "language": "Cambiar idioma",
+      "theme": "Cambiar tema",
+      "rss": "Feed RSS"
+    },
+    "themeOptions": {
+      "light": "Claro",
+      "dark": "Oscuro",
+      "system": "Sistema"
+    },
+    "home": "Inicio",
+    "theme": "Tema",
+    "language": "Idioma",
+    "modal": {
+      "profile": "Perfil",
+      "logout": "Salir"
+    },
+    "more": "Más",
+    "admin": "Admin",
+    "rss": "RSS",
+    "links": {
+      "home": {
+        "label": "Inicio"
+      },
+      "blog": {
+        "label": "Blog"
+      },
+      "guestbook": {
+        "label": "Guestbook",
+        "description": "Deja un mensaje aquí"
+      },
+      "support": {
+        "label": "Apóyame",
+        "description": "Apóyame para seguir creando"
+      },
+      "resume": {
+        "label": "Currículum",
+        "description": "Mi experiencia profesional"
+      },
+      "newsletter": {
+        "label": "Newsletter",
+        "description": "Suscríbete para recibir novedades"
+      },
+      "status": {
+        "label": "Estado",
+        "description": "Uptime de mis servicios"
+      }
+    }
+  },
+  "terminal": {
+    "xp": "experiencia",
+    "loading-xp-title": "Buscando experiencias...",
+    "loading-xp": "Cargar las experiencias del sistema tardó {years, plural, one {# año} other {# años}}.",
+    "education": "formación",
+    "loading-education-title": "Buscando formación...",
+    "loading-education": "Cargar la formación tardó {years, plural, one {# año} other {# años}}.",
+    "visitor": "visitante",
+    "tooltip": "Puedes usar esta terminal",
+    "not-found-first": "Comando no encontrado, escribe ",
+    "not-found-second": " para ver la lista de comandos.",
+    "loadings": {
+      "help": "Cargar el mensaje de ayuda tardó {ms} ms.",
+      "initial": "Cargar el mensaje inicial tardó {ms} ms.",
+      "follow": "Cargar las redes sociales tardó {ms} ms.",
+      "who": "Cargar esta información inútil tardó {age} años.",
+      "whoami": "Cargar esta píldora tardó {ms} ms.",
+      "cats": "Convencer a estos gatos de posar tardó {ms} ms.",
+      "inter": "Cargar el escudo del SC Internacional tardó {ms} ms.",
+      "spotify": "Cargar esta playlist increíble tardó {ms} ms.",
+      "secret": "Cargar este enigma tardó {ms} ms.",
+      "secret-hint": "Pensar en esta pista tardó {ms} ms. No esperes mucho de ella.",
+      "secret-wrong": "Comprobar la contraseña tardó {ms} ms. No es esa.",
+      "secret-correct": "Abrir la caja fuerte tardó {ms} ms.",
+      "unknown": "Buscar ese comando en todo el sistema tardó {ms} ms.",
+      "weather": "Mirar por la ventana tardó {ms} ms.",
+      "quote": "Consultar a los estoicos tardó {ms} ms.",
+      "ping": "64 bytes de romulo: icmp_seq=1 ttl=64 tiempo={ms} ms",
+      "sudo": "Negarte el acceso tardó {ms} ms. Ni lo pensé dos veces.",
+      "date": "Mirar el reloj tardó {ms} ms.",
+      "neofetch": "Recopilar información sobre mí tardó {ms} ms.",
+      "uptime": "Contar los segundos desde el primer commit tardó {ms} ms.",
+      "matrix": "Elegir la píldora roja tardó {ms} ms.",
+      "hack-bank": "Encontrar un banco vulnerable tardó {ms} ms.",
+      "coffee": "Calentar el agua tardó {ms} ms.",
+      "joke": "Pensar en este chiste tardó {ms} ms. Debería haber tardado más.",
+      "papers": "Buscar mis artículos en Google Académico tardó {ms} ms.",
+      "blog": "Buscar los posts en la base de datos tardó {ms} ms.",
+      "git-log": "Ejecutar git log en todos mis repositorios tardó {ms} ms.",
+      "visitors": "Contar quién está aquí tardó {ms} ms.",
+      "top": "Listar mis procesos tardó {ms} ms.",
+      "npm-install": "Resolver el árbol de dependencias tardó {ms} ms.",
+      "sl": "Llamar al tren tardó {ms} ms.",
+      "cowsay": "Despertar a la vaca tardó {ms} ms.",
+      "seedicon": "Generar los avatares tardó {ms} ms. Sin red, solo tu texto.",
+      "man": "Abrir el manual tardó {ms} ms. Total, nadie lo lee.",
+      "history": "Recordar lo que hiciste tardó {ms} ms.",
+      "completions": "Adivinar lo que querías tardó {ms} ms.",
+      "wordmark": "Encender cada píxel a mano tardó {ms} ms."
+    },
+    "commands": {
+      "help": "Lista de comandos",
+      "clear": "Limpiar la terminal",
+      "initial": "Mostrar el encabezado",
+      "follow": "Mis redes sociales",
+      "who": "¿Quién es Romulo?",
+      "whoami": "¿Quién eres tú?",
+      "cats": "Arte de gatos maravillosos",
+      "inter": "El club de fútbol más grande del mundo",
+      "spotify": "Una de mis playlists",
+      "secret": "Enigma simple, ¿cuál es la contraseña?",
+      "weather": "Clima actual en Rio Grande - RS",
+      "quote": "Cita estoica + reflexión",
+      "ping": "Comprueba si estoy despierto",
+      "joke": "Chiste de programador",
+      "sudo": "Intenta algo prohibido",
+      "date": "Fecha y hora actual",
+      "neofetch": "Información del sistema (yo)",
+      "uptime": "Tiempo desde que arrancó el sistema",
+      "matrix": "Modo hacker",
+      "hack-bank": "Simulación totalmente legal",
+      "coffee": "Hacer café para programar",
+      "papers": "Artículos publicados de los que soy autor",
+      "blog": "Últimos posts del blog",
+      "git-log": "Mis últimos commits públicos",
+      "visitors": "Cuántas personas hay en el sitio ahora",
+      "top": "Mis procesos, en vivo",
+      "htop": "El top, pero a color",
+      "npm-install": "Instala todo lo que no necesitas",
+      "sl": "Un tren. Nada más.",
+      "cowsay": "Una vaca repite lo que digas",
+      "seedicon": "Genera avatares a partir de un texto",
+      "man": "Manual de un comando",
+      "history": "Comandos que ya escribiste",
+      "exit": "Cierra esta pestaña",
+      "wordmark": "Escribe un texto en píxeles parpadeantes"
+    },
+    "initial": {
+      "content": "Para ver la lista de comandos disponibles, escribe "
+    },
+    "who": {
+      "so": "Entonces...",
+      "about": "Tengo {age} años, solo soy un estudiante y entusiasta de la tecnología al que le gusta jugar, leer libros y hacer otras cosas nerds. 🤓"
+    },
+    "whoami": {
+      "title": "La vida no es un misterio por resolver, sino una experiencia por vivir.",
+      "paragraph1": "Vi esta frase en la película Dune y pensé mucho en ella. Creo que muchas veces convertimos nuestra insignificancia en una forma de martirio y duda, cuando en realidad las cosas deberían ser más simples de lo que son.",
+      "paragraph2": "Tú y yo no somos meros candidatos a un lugar en el cielo. Si siempre vives pensando en una recompensa futura, terminas olvidándote de vivir el presente y te olvidas de quién eres.",
+      "paragraph3": "Según Jean-Paul Sartre, la existencia precede a la esencia. Eso significa que los seres humanos no tienen una naturaleza predeterminada. Creas tu propia naturaleza a través de tus acciones y elecciones. Por lo tanto, esta pregunta no tiene una respuesta correcta. Las responsabilidades que asumes y las elecciones que haces a lo largo de tu vida determinan quién eres.",
+      "paragraph4": "Hoy puedes ser un programador, un estudiante, un profesional... Sin embargo, mañana puedes ser una persona totalmente distinta, todo depende de ti."
+    },
+    "spotify": {
+      "alert": "¡Cuidado con el volumen muy alto y disfruta con moderación!"
+    },
+    "secret": {
+      "how-first": "Para ver el mensaje misterioso tienes que escribir ",
+      "how-try": "tu intento",
+      "how-second": ", donde tu intento es un número de cuatro dígitos.",
+      "how-hint": "Para ver una pista, escribe ",
+      "hint": "La pista es: es un año 🤯 ¡guau, qué pista increíble! Otra más: ese año aparece en un mensaje aquí en la terminal...",
+      "reward": "¡Correcto! Tu recompensa está aquí: ",
+      "rewardLink": "recompensa"
+    },
+    "close-tab": "Cerrar pestaña",
+    "new-tab": "Nueva pestaña",
+    "dismiss-tooltip": "Descartar sugerencia",
+    "weather": {
+      "wind": "Viento",
+      "temperature": "Temperatura",
+      "condition": "Condición",
+      "cloudy": "Nublado"
+    },
+    "quote": {
+      "translation": "Soporta y abstente.",
+      "reflection": "La idea es simple, pero poderosa: soportar aquello que no está bajo nuestro control y evitar reaccionar impulsivamente a lo que nos afecta. En un mundo lleno de distracciones y presiones, eso se vuelve casi una \"skill rara\"."
+    },
+    "ping": {
+      "online": "🟢 online",
+      "maybe": "🟡 quizá online",
+      "offline": "🔴 offline",
+      "morning": "Probablemente empezando el día con café ☕",
+      "afternoon": "Trabajando / programando 🚀",
+      "evening": "Quizá descansando o estudiando 📚",
+      "night": "Durmiendo 😴 (o debería)",
+      "timezone": "zona horaria",
+      "hour": "hora",
+      "status": "estado"
+    },
+    "sudo": {
+      "denied": "Permission denied: no eres root 😎",
+      "reported": "Este incidente será reportado."
+    },
+    "date": {
+      "night": "🌙 Hora de descansar...",
+      "morning": "☀️ ¡A programar!",
+      "afternoon": "🚀 Productividad en marcha",
+      "evening": "🌆 Hora de bajar el ritmo"
+    },
+    "neofetch": {
+      "uptime": "{age} años",
+      "name": "Nombre",
+      "age": "Edad",
+      "location": "Ubicación",
+      "stack": "Stack",
+      "stack-value": "Next.js, Go, Kafka, Redis y más",
+      "interests": "Intereses",
+      "interests-value": "Sistemas distribuidos, backend, Web3",
+      "status": "Estado",
+      "status-value": "Siempre construyendo algo"
+    },
+    "uptime": {
+      "loading": "Buscando el primer commit...",
+      "error": "GitHub no respondió ahora. Inténtalo de nuevo en un rato.",
+      "value": "en línea desde hace {days}d {hours}h {minutes}m {seconds}s"
+    },
+    "hack-bank": {
+      "initializing": "Inicializando...",
+      "accessing": "Accediendo al servidor...",
+      "injecting": "Inyectando payload...",
+      "bypassing": "Evadiendo el firewall...",
+      "done": "💰 Transferencia completada en {seconds} segundos.",
+      "disclaimer": "Monto transferido: R$ 0,00. Ningún banco resultó herido en esta simulación."
+    },
+    "coffee": {
+      "brewing": "Preparando café",
+      "done": "El café tardó {seconds} segundos en estar listo.",
+      "ready": "☕ Café listo. Ahora sí se puede programar."
+    },
+    "joke": {
+      "items": [
+        "¿Por qué los programadores programan a oscuras? Porque la luz atrae bugs. 🥁",
+        "Hay 10 tipos de personas: las que entienden binario y las que no.",
+        "Funciona en mi máquina. Entonces enviemos mi máquina al cliente.",
+        "Una query SQL entra en un bar, se acerca a dos mesas y pregunta: ¿puedo hacer un JOIN?",
+        "Resolví un problema con regex. Ahora tengo dos problemas."
+      ]
+    },
+    "suggestion": "¿Quisiste decir <cmd>{command}</cmd>?",
+    "args": {
+      "text": "texto",
+      "command": "comando"
+    },
+    "papers": {
+      "award": "🏆 {award}",
+      "note": "Estos son solo los artículos ya publicados de los que soy autor. Tengo otros enviados, a la espera de revisión, y sigo escribiendo."
+    },
+    "blog": {
+      "empty": "Todavía no hay posts publicados. Vuelve pronto.",
+      "error": "La base de datos no respondió ahora. Inténtalo de nuevo en un rato.",
+      "reading": "{minutes} min de lectura",
+      "all": "Todos los posts:"
+    },
+    "git-log": {
+      "empty": "Ningún commit público reciente.",
+      "error": "fatal: GitHub no respondió ahora. Inténtalo de nuevo en un rato."
+    },
+    "visitors": {
+      "count": "👀 {count, plural, one {# persona} other {# personas}} en el sitio ahora, contándote a ti.",
+      "error": "No pude contar ahora, pero al menos tú estás aquí."
+    },
+    "top": {
+      "tasks": "Tareas: {total} en total, {running} en ejecución, 1 durmiendo poco",
+      "processes": [
+        "cafe.exe",
+        "tesis.tex",
+        "agrifence-api",
+        "articulo-isys.tex",
+        "spotify",
+        "next-server",
+        "inter-1909",
+        "sueno.sh"
+      ]
+    },
+    "npm-install": {
+      "done": "se agregaron {count} paquetes, de los cuales necesitas 0, en {seconds}s",
+      "funding": "{count} paquetes están buscando financiamiento. Incluido este sitio."
+    },
+    "sl": {
+      "passed": "🚂 El tren pasó en {seconds} segundos. ¿Querías escribir ls?"
+    },
+    "cowsay": {
+      "default": "¡Muuu! Escribe cowsay seguido de un texto."
+    },
+    "seedicon": {
+      "usage": "Uso: seedicon seguido de un texto. Ejemplo: <cmd>seedicon romulo</cmd>",
+      "same": "Mismo texto, mismo avatar, en cualquier máquina.",
+      "install": "Para usarlo en tu proyecto:"
+    },
+    "man": {
+      "what": "¿Qué página del manual quieres?",
+      "example": "Por ejemplo, prueba <cmd>man man</cmd>.",
+      "missing": "No hay entrada de manual para {command}.",
+      "name": "NOMBRE",
+      "synopsis": "SINOPSIS",
+      "description": "DESCRIPCIÓN",
+      "bugs": "BUGS",
+      "pages": {
+        "help": "Lista más comandos de los que caben en la pantalla.",
+        "clear": "Limpia la terminal, pero no tu conciencia.",
+        "initial": "El © 2024 nunca se actualizó.",
+        "who": "La edad se calcula al momento; el autor envejece sin previo aviso.",
+        "whoami": "Responde una pregunta simple con un ensayo de filosofía.",
+        "follow": "Seguir no garantiza un follow de vuelta.",
+        "papers": "El revisor 2 sigue insatisfecho.",
+        "blog": "Los posts salen con menos frecuencia de lo prometido.",
+        "git-log": "Mensajes como 'fix' y 'ahora sí' son intencionales.",
+        "visitors": "Te cuenta dos veces si abres dos pestañas.",
+        "weather": "Los datos son fijos; mira por la ventana para la versión en vivo.",
+        "quote": "Leer a los estoicos no impide que nadie se irrite con el CI.",
+        "ping": "A veces responde online mientras el autor duerme.",
+        "cats": "Ningún gato fue consultado sobre el uso de su propia imagen.",
+        "inter": "No acepta argumentos en contra.",
+        "spotify": "El gusto musical no está incluido en la garantía.",
+        "joke": "Los chistes no mejoran con la repetición.",
+        "sudo": "Solo funciona para root. Tú no eres root.",
+        "date": "No vuelve en el tiempo, a pesar de las peticiones.",
+        "neofetch": "El kernel a base de café no tiene versión estable.",
+        "top": "sueno.sh nunca recibe suficiente CPU.",
+        "htop": "Igual que top, con más colores y el mismo sueño.",
+        "uptime": "Mide el tiempo desde un repositorio de ajedrez, por motivos históricos.",
+        "matrix": "No hay cuchara.",
+        "hack-bank": "No se transfirió ni un real. El autor revisó su propio saldo.",
+        "coffee": "No sirve café de verdad. Todavía.",
+        "npm-install": "node_modules pesa más que todo el resto del proyecto.",
+        "sl": "Existe para castigar a quien se equivoca al escribir ls.",
+        "cowsay": "La vaca lo repite todo, sin filtro.",
+        "seedicon": "No se aceptan quejas sobre el avatar: lo eligió tu texto.",
+        "man": "Leer el manual sigue siendo opcional, como siempre.",
+        "history": "Lo olvida todo cuando la página se recarga. A veces es mejor así.",
+        "secret": "La pista es peor que el enigma.",
+        "exit": "Cierra la pestaña, pero siempre puedes volver.",
+        "wordmark": "Los píxeles parpadeantes no son un bug, pero tampoco nadie demostró lo contrario."
+      }
+    },
+    "history": {
+      "empty": "Todavía no hay comandos."
+    }
+  },
+  "footer": {
+    "cta": {
+      "title": "¿Tienes un proyecto en mente?",
+      "button": "Ponerse en contacto",
+      "disclaimer": "Construyamos algo juntos."
+    },
+    "newsletter": {
+      "title": "Mantente al día",
+      "subtitle": "Recibe novedades sobre posts, proyectos e ideas directamente en tu correo."
+    },
+    "nav": {
+      "resources": {
+        "title": "Recursos",
+        "links": {
+          "blog": "Blog",
+          "wall": "Mural",
+          "support": "Apoyar",
+          "profile": "Perfil",
+          "resume": "Currículum",
+          "status": "Estado"
+        }
+      },
+      "newsletter": {
+        "title": "Newsletter",
+        "links": {
+          "about": "Acerca de",
+          "login": "Entrar",
+          "logout": "Salir"
+        }
+      },
+      "legal": {
+        "title": "Legal",
+        "links": {
+          "privacy": "Política de privacidad",
+          "terms": "Términos de servicio"
+        }
+      },
+      "about": {
+        "title": "Sobre este sitio",
+        "description": "Creo que construir en público es la mejor forma de crecer. Creé este portafolio y blog para compartir ideas, proyectos y aprendizajes acumulados a lo largo del camino.",
+        "community": "Si estás por aquí, ya formas parte de esta comunidad."
+      }
+    },
+    "legal": {
+      "madeWith": "Hecho con ",
+      "coffee": " y mucho café",
+      "copyright": "Romulo © {year}. Todos los derechos reservados."
+    },
+    "social": {
+      "lattes": "Currículum Lattes"
+    }
+  },
+  "faq": {
+    "title": "Preguntas frecuentes",
+    "subtitle": "Lo básico sobre este espacio, en pocas líneas.",
+    "items": [
+      {
+        "q": "¿Qué es este sitio?",
+        "a": "Es mi portafolio y mi blog en el mismo lugar. Por un lado, lo que construí y el stack que uso en el día a día; por el otro, textos sobre ingeniería, infraestructura y las decisiones técnicas detrás de los proyectos — incluidos los errores, que suelen enseñar más que los aciertos.",
+        "cta": "Leer el blog",
+        "href": "/blog"
+      },
+      {
+        "q": "¿Tengo que pagar algo?",
+        "a": "No. Todo el contenido es gratuito, sin paywall, sin límite de lectura y sin anuncios. Ni siquiera necesitas crear una cuenta para leer."
+      },
+      {
+        "q": "¿Cómo puedo ayudar?",
+        "a": "Compartir un post con alguien a quien le vaya a gustar ya ayuda bastante. Si quieres apoyar económicamente, puedes invitarme un café vía PIX, tarjeta o cripto — el monto cubre el hosting y el tiempo de escribir. Señalar un error en un texto también vale mucho.",
+        "cta": "Invitarme un café",
+        "href": "/support"
+      },
+      {
+        "q": "¿Qué recibo al suscribirme a la newsletter?",
+        "a": "Un correo cuando sale un post nuevo, y nada más. Sin spam, sin venta de listas, sin correos de marketing. El enlace para darte de baja va en cada mensaje y funciona con un clic.",
+        "cta": "Suscribirme a la newsletter",
+        "href": "/newsletter"
+      },
+      {
+        "q": "¿Qué es el mural?",
+        "a": "Un espacio abierto para que quien pasa por aquí deje un mensaje corto. No tiene tema ni reglas más allá del sentido común: puede ser un hola, una sugerencia de tema o simplemente dejar constancia de que pasaste.",
+        "cta": "Ver el mural",
+        "href": "/wall"
+      },
+      {
+        "q": "¿Necesito una cuenta para comentar?",
+        "a": "Para leer, no. Para comentar o dar like, sí — entrando con Google, GitHub o correo y contraseña. La cuenta sirve solo para evitar spam y mantener la conversación rastreable; no uso tus datos para nada más."
+      },
+      {
+        "q": "¿El código de este sitio es abierto?",
+        "a": "Sí. Todo el sitio, la infraestructura y los workers son públicos en GitHub. Si quieres entender cómo funciona alguna parte, o reutilizar algo, solo tienes que mirar el repositorio.",
+        "cta": "Ver en GitHub",
+        "href": "https://github.com/romulodm"
+      }
+    ]
+  },
+  "bento": {
+    "guestbook": {
+      "eyebrow": "Mural",
+      "title": "Deja un mensaje en el mural."
+    },
+    "location": {
+      "eyebrow": "Dónde estoy",
+      "title": "Rio Grande, RS. Disponible globalmente.",
+      "base": "Rio Grande, RS",
+      "global": "Remoto"
+    },
+    "newsletter": {
+      "eyebrow": "Newsletter",
+      "title": "Recibe los posts nuevos por correo."
+    }
+  },
+  "support": {
+    "metadata": {
+      "title": "Apoya el blog",
+      "description": "¡Invítame un café y ayuda a mantener el blog en línea!"
+    },
+    "page": {
+      "title": "Invítame un café",
+      "description": "Este sitio es de <repo>código abierto</repo> bajo licencia MIT. Tu apoyo sirve de incentivo para mantener el blog y mejorar una base de código que otras personas pueden usar y adaptar libremente.",
+      "supporters": "<strong>{count}</strong> personas que apoyan"
+    },
+    "trustNote": "Pago seguro. Tus datos bancarios y de tarjeta nunca pasan por este sitio. Puedes revisar la política de privacidad <link>aquí</link>.",
+    "widget": {
+      "namePlaceholder": "Nombre o @red social",
+      "messagePlaceholder": "Deja un mensaje...",
+      "payWith": "Pagar con",
+      "privateMessage": "Mensaje privado",
+      "loading": "Espera...",
+      "supportWith": "Apoyar con R$ {amount}",
+      "amountLabel": "Monto del apoyo",
+      "genericError": "Algo salió mal. Inténtalo de nuevo.",
+      "methods": {
+        "pix": "PIX",
+        "card": "Tarjeta",
+        "crypto": "Crypto"
+      },
+      "linkedToAccount": "· vinculado a tu cuenta",
+      "privateHint": {
+        "crypto": "Tu nombre y tu mensaje no aparecerán públicamente. El mensaje se cifra con X25519 antes de salir del navegador.",
+        "fiat": "Tu nombre y tu mensaje no aparecerán en la lista pública de personas que apoyan."
+      },
+      "linkAccount": {
+        "label": "Vincular a mi cuenta",
+        "hint": "Asocia este apoyo a tu perfil @{username}. Tu nombre de usuario reemplazará el campo de nombre y el apoyo aparecerá públicamente en la pestaña \"Donaciones\" de tu perfil."
+      }
+    },
+    "pix": {
+      "title": "Paga vía PIX",
+      "description": "Escanea el código QR o copia el código. El pago se confirma automáticamente.",
+      "qrAlt": "Código QR PIX",
+      "copy": "Copiar código PIX",
+      "copied": "¡Copiado!",
+      "simulate": "Simular pago (dev)",
+      "simulating": "Simulando...",
+      "alreadyPaid": "Ya pagué",
+      "expired": "Este código QR expiró. Vuelve y genera un nuevo cobro.",
+      "back": "Volver"
+    },
+    "crypto": {
+      "genericError": "Error al procesar ETH.",
+      "coffees": "{count} café(s)",
+      "errors": {
+        "connect": "Error al conectar la billetera.",
+        "switchNetwork": "No fue posible cambiar de red.",
+        "priceUnavailable": "Precio del ETH no disponible.",
+        "cancelled": "Transacción cancelada.",
+        "unexpected": "Error inesperado."
+      },
+      "steps": {
+        "idle": "Apoyar con ${amount}",
+        "switching": "Cambiando de red…",
+        "sending": "Esperando la billetera…",
+        "confirming": "Enviando…",
+        "done": "¡Enviado!"
+      },
+      "to": "Para",
+      "connectWallet": "Conectar billetera",
+      "viewTransaction": "Ver transacción en el explorer",
+      "chooseWallet": "Elige tu billetera",
+      "noWallets": "No se detectó ninguna billetera. Instala MetaMask, Rainbow o Coinbase Wallet."
+    },
+    "stripe": {
+      "back": "Volver",
+      "cardError": "Error en la tarjeta.",
+      "unexpectedError": "Ocurrió un error inesperado.",
+      "processing": "Procesando...",
+      "pay": "Pagar",
+      "securityNote": "Datos de la tarjeta procesados directamente por <link>Stripe</link> (PCI-DSS nivel 1). Nunca pasan por nuestro servidor."
+    },
+    "success": {
+      "title": "¡Gracias por el café!",
+      "description": "Tu apoyo significa mucho. ¡Sigue acompañando el blog!",
+      "supportAgain": "Apoyar de nuevo"
+    },
+    "sidebar": {
+      "privateMessage": "Mensaje privado.",
+      "noMessage": "Sin mensaje.",
+      "viewMessage": "Ver mensaje",
+      "topSupporters": "Top de apoyos",
+      "recentSupport": "Apoyos recientes",
+      "beFirst": "¡Sé el primero en apoyar!",
+      "anonymous": "Anónimo",
+      "someone": "Alguien",
+      "coffees": "{count} café(s)",
+      "period": {
+        "label": "Período del ranking",
+        "all": "General",
+        "week": "Semana",
+        "month": "Mes",
+        "empty": {
+          "all": "Todavía no hay apoyos.",
+          "week": "Ningún apoyo en los últimos 7 días.",
+          "month": "Ningún apoyo en los últimos 30 días."
+        }
+      },
+      "pagination": {
+        "label": "Páginas del ranking",
+        "previous": "Página anterior",
+        "next": "Página siguiente"
+      }
+    },
+    "messageModal": {
+      "defaultName": "Anónimo",
+      "label": "dejó el siguiente mensaje:"
+    },
+    "apoiase": {
+      "title": "Apoya este proyecto",
+      "description": "¡Tu contribución marca toda la diferencia!",
+      "button": "Apoyar"
+    }
+  },
+  "admin": {
+    "sidebar": {
+      "toggleTheme": "Cambiar tema",
+      "toggleLanguage": "Cambiar idioma",
+      "fallbackUser": "Admin",
+      "collapseSidebar": "Contraer menú",
+      "expandSidebar": "Fijar menú abierto",
+      "nav": {
+        "dashboard": "Dashboard",
+        "posts": "Posts",
+        "allPosts": "Todos los posts",
+        "newPost": "Nuevo post",
+        "newsletter": "Newsletter",
+        "newsletterOverview": "Visión general",
+        "campaigns": "Campañas",
+        "newCampaign": "Nueva campaña",
+        "templates": "Plantillas",
+        "suspiciousComments": "Comentarios sospechosos",
+        "bannedUsers": "Usuarios baneados",
+        "coffees": "Cafés",
+        "donations": "Donaciones",
+        "onchain": "Donaciones on-chain",
+        "observability": "Observabilidad",
+        "system": "Sistema",
+        "search": "Motor de búsqueda",
+        "backups": "Backups",
+        "blog": "Blog",
+        "contact": "Contacto"
+      }
+    },
+    "dashboard": {
+      "title": "Dashboard",
+      "description": "Visión general de tu blog y de las donaciones.",
+      "greeting": "Hola, {name}",
+      "subtitle": "Blog, comunidad y donaciones en un solo lugar.",
+      "liveUpdate": "actualizado a las {time}",
+      "refresh": "Actualizar",
+      "statusPage": "Página de estado",
+      "error": {
+        "title": "No fue posible cargar el dashboard",
+        "unknown": "Error desconocido al obtener los datos.",
+        "retry": "Intentar de nuevo"
+      },
+      "period": {
+        "label": "Período de análisis",
+        "options": {
+          "7d": "7 días",
+          "30d": "30 días",
+          "90d": "90 días",
+          "12m": "12 meses"
+        }
+      },
+      "growth": {
+        "flat": "estable",
+        "noBaseline": "sin base"
+      },
+      "kpi": {
+        "raised": "Recaudado",
+        "raisedSub": "{count, plural, one {# persona que apoya} other {# personas que apoyan}}",
+        "views": "Vistas",
+        "viewsSub": "{count, plural, one {# post} other {# posts}}",
+        "likes": "Me gusta",
+        "comments": "Comentarios",
+        "newUsers": "Nuevos usuarios",
+        "published": "Publicados",
+        "inPeriod": "en {period}",
+        "previous": "período anterior: {value}",
+        "perWeek": "{value}/semana"
+      },
+      "sections": {
+        "attention": "Requiere atención",
+        "performance": "Rendimiento",
+        "performanceHint": "comparado con el período anterior de {period}",
+        "community": "Comunidad",
+        "content": "Contenido",
+        "donations": "Donaciones"
+      },
+      "alerts": {
+        "title": "Cola de acciones",
+        "summary": "{critical} críticos · {warning} avisos",
+        "allClear": "Nada pendiente",
+        "allClearSubtitle": "No se requiere ninguna acción",
+        "allClearHint": "Sin donaciones trabadas, campañas con fallos ni contenido esperando revisión.",
+        "kinds": {
+          "staleDonations": {
+            "label": "{count, plural, one {# donación atascada en PENDING} other {# donaciones atascadas en PENDING}}",
+            "hint": "Más de 24 h sin confirmación — probable fallo de webhook."
+          },
+          "failingCampaigns": {
+            "label": "{count, plural, one {# envío de correo falló} other {# envíos de correo fallaron}}",
+            "hint": "Distribuidos en {campaigns, plural, one {# campaña} other {# campañas}}. Revisa el proveedor de envío."
+          },
+          "suspiciousComments": {
+            "label": "{count, plural, one {# comentario sospechoso} other {# comentarios sospechosos}}",
+            "hint": "Marcados en las últimas 72 h y aún sin revisar."
+          },
+          "suspiciousBacklog": {
+            "label": "{count, plural, one {# comentario sospechoso antiguo} other {# comentarios sospechosos antiguos}}",
+            "hint": "Fuera de la ventana de 72 h, pero siguen en la cola de revisión."
+          },
+          "untranslatedPosts": {
+            "label": "{count, plural, one {# post sin traducción} other {# posts sin traducción}}",
+            "hint": "Publicado en un solo idioma — pierde alcance en las otras versiones del sitio."
+          },
+          "pendingSubscribers": {
+            "label": "{count, plural, one {# suscripción sin confirmar} other {# suscripciones sin confirmar}}",
+            "hint": "El correo de confirmación puede estar cayendo en spam."
+          },
+          "orphanPosts": {
+            "label": "{count, plural, one {# post sin ningún comentario} other {# posts sin ningún comentario}}",
+            "hint": "Publicados hace más de 30 días y nunca generaron conversación."
+          },
+          "unverifiedUsers": {
+            "label": "{count, plural, one {# cuenta sin correo verificado} other {# cuentas sin correo verificado}}",
+            "hint": "Creadas en los últimos 30 días."
+          },
+          "staleDrafts": {
+            "label": "{count, plural, one {# borrador abierto} other {# borradores abiertos}}",
+            "hint": "Contenido empezado y aún sin publicar."
+          }
+        }
+      },
+      "funnel": {
+        "title": "Embudo de engagement",
+        "subtitle": "Cuánto del tráfico se convierte en interacción",
+        "steps": {
+          "views": "Vistas",
+          "likes": "Me gusta",
+          "comments": "Comentarios"
+        },
+        "benchmarkTooltip": "Referencia de mercado: {value}%",
+        "engagementRate": "Tasa de engagement",
+        "depth": "Profundidad",
+        "depthHint": "La profundidad es la razón comentarios/me gusta: cuanto más alta, más escribe el público en lugar de solo reaccionar."
+      },
+      "contentHealth": {
+        "title": "Salud del contenido",
+        "subtitle": "{count, plural, one {# post publicado} other {# posts publicados}}",
+        "coverage": "Cobertura de traducción",
+        "untranslated": "{count, plural, one {# post en un solo idioma} other {# posts en un solo idioma}}",
+        "velocity": "Ritmo de publicación",
+        "perWeek": "{value}/sem",
+        "velocityHint": "{current} ahora · {previous} antes",
+        "avgReadingTime": "Lectura media",
+        "minutes": "{value} min",
+        "avgViews": "{value} vistas por post",
+        "orphans": "Posts sin conversación",
+        "orphansHint": "Publicados hace +30 d, cero comentarios",
+        "velocityTrend": "Tendencia",
+        "orphanShare": "Eso representa {value} del catálogo publicado."
+      },
+      "recentComments": {
+        "title": "Comentarios recientes",
+        "subtitle": "Últimas interacciones en el blog",
+        "subtitleFlagged": "{count, plural, one {# marcado en las últimas 72 h} other {# marcados en las últimas 72 h}}",
+        "moderateAll": "Moderar",
+        "empty": "Todavía no hay comentarios. En cuanto alguien responda a un post, aparecerá aquí.",
+        "banned": "baneado",
+        "edited": "Editado después de publicarse",
+        "onPost": "en {title}"
+      },
+      "topPosts": {
+        "title": "Posts más vistos",
+        "subtitle": "Ranking por vistas, con tasa de engagement",
+        "allPosts": "Todos los posts",
+        "empty": "Todavía no hay posts publicados.",
+        "createPost": "Crear el primero",
+        "engagementTooltip": "Me gusta + comentarios divididos entre vistas"
+      },
+      "tags": {
+        "title": "Rendimiento por tag",
+        "subtitle": "Vistas medias por post, no solo volumen",
+        "empty": "Ninguna tag en uso.",
+        "perPost": "/post",
+        "avgViewsTooltip": "Media en {count, plural, one {# post} other {# posts}}",
+        "footnote": "La tag {tag} tiene la mejor media: {value} vistas por post."
+      },
+      "newsletter": {
+        "title": "Newsletter",
+        "subtitle": "{count, plural, one {# suscriptor activo} other {# suscriptores activos}}",
+        "manage": "Gestionar",
+        "netGrowth": "Crecimiento neto",
+        "gained": "Nuevos",
+        "lost": "Se fueron",
+        "confirmed": "Confirmados",
+        "pending": "Pendientes",
+        "confirmRate": "Confirmación",
+        "openRate": "Apertura",
+        "churn": "Churn de {value} en el período.",
+        "sent": "{count, plural, one {# envío} other {# envíos}}",
+        "opened": "{value} de apertura",
+        "failed": "{count, plural, one {# fallo} other {# fallos}}",
+        "noCampaign": "Ninguna campaña enviada hasta ahora.",
+        "scheduled": "{count, plural, one {# campaña programada} other {# campañas programadas}}"
+      },
+      "drafts": {
+        "title": "Borradores",
+        "subtitle": "{count, plural, =0 {nada abierto} one {# abierto} other {# abiertos}}",
+        "newPost": "Nuevo post",
+        "empty": "Ningún borrador pendiente.",
+        "startWriting": "Escribir algo",
+        "highlight": "Destacado del período",
+        "noHighlight": "Ningún post publicado en este período."
+      },
+      "donations": {
+        "anonymous": "Anónimo",
+        "someone": "Alguien",
+        "coffees": "{count, plural, one {# café} other {# cafés}}",
+        "empty": "Todavía no hay donaciones.",
+        "recentTitle": "Transacciones recientes",
+        "recentSubtitle": "Últimas 10 confirmadas",
+        "topTitle": "Quienes más apoyan",
+        "topSubtitle": "Ordenado por monto donado",
+        "mixTitle": "Composición de las donaciones",
+        "mixSubtitle": "Por medio de pago",
+        "txCount": "{count, plural, one {# transacción} other {# transacciones}}",
+        "supporters": "Personas que apoyan",
+        "repeat": "Recurrentes",
+        "avgTicket": "Ticket medio"
+      },
+      "charts": {
+        "views": "Vistas",
+        "likes": "Me gusta",
+        "comments": "Comentarios",
+        "newUsers": "Nuevos usuarios",
+        "donations": "Donaciones",
+        "postsPublished": "Posts publicados",
+        "engagementTitle": "Engagement a lo largo del tiempo",
+        "engagementSubtitle": "Por fecha del me gusta y del comentario · {period}",
+        "audienceTitle": "Audiencia e ingresos",
+        "audienceSubtitle": "Registros nuevos frente a monto donado",
+        "monthlyTitle": "Historial de 12 meses",
+        "monthlySubtitle": "Vistas acumuladas y volumen de publicación",
+        "engagementAria": "Gráfico de me gusta y comentarios a lo largo del tiempo",
+        "audienceAria": "Gráfico de nuevos usuarios y donaciones",
+        "monthlyAria": "Gráfico de vistas y posts publicados por mes",
+        "tagAria": "Distribución de vistas por tag"
+      },
+      "footer": {
+        "autoRefresh": "Se actualiza automáticamente cada {seconds}s",
+        "collectedAt": "Recopilado a las {time}"
+      }
+    },
+    "donationsPage": {
+      "title": "Donaciones",
+      "description": "Gestiona a quienes apoyan y sus mensajes.",
+      "stats": {
+        "raised": "Total recaudado",
+        "supporters": "Personas que apoyan",
+        "donations": "Total de donaciones",
+        "averageTicket": "Ticket medio"
+      },
+      "preview": {
+        "topSupporters": {
+          "title": "Las 10 personas que más apoyan",
+          "subtitle": "Aparece en el ranking de la página de apoyo"
+        },
+        "recent": {
+          "title": "Las 10 más recientes",
+          "subtitle": "Aparece en los apoyos recientes de la página de apoyo"
+        }
+      }
+    },
+    "postsPage": {
+      "title": "Posts",
+      "total": "{count, plural, one {# post en total} other {# posts en total}}",
+      "newPost": "Nuevo post",
+      "empty": "Todavía no hay posts.",
+      "createFirst": "Crear el primer post",
+      "untitled": "(sin título)",
+      "missingTranslation": "Sin traducción: {locale}",
+      "columns": {
+        "title": "Título",
+        "status": "Estado",
+        "locales": "Idiomas",
+        "tags": "Tags",
+        "updated": "Actualizado",
+        "actions": "Acciones"
+      },
+      "status": {
+        "published": "Publicado",
+        "draft": "Borrador"
+      },
+      "actions": {
+        "edit": "Editar",
+        "view": "Ver"
+      }
+    },
+    "bannedUsers": {
+      "title": "Usuarios baneados",
+      "description": "Gestiona los usuarios que no pueden comentar.",
+      "loading": "Cargando...",
+      "empty": "Ningún usuario baneado.",
+      "unban": "Desbanear",
+      "searchPlaceholder": "Buscar por usuario o correo",
+      "viewReason": "Ver motivo",
+      "table": {
+        "username": "Usuario",
+        "email": "Correo",
+        "bannedAt": "Baneado el",
+        "actions": "Acciones"
+      },
+      "pagination": {
+        "showing": "Mostrando {from}–{to} de {total}",
+        "previous": "Anterior",
+        "next": "Siguiente"
+      },
+      "reasonModal": {
+        "title": "Motivo del baneo",
+        "description": "Registrado en el momento en que se baneó al usuario."
+      }
+    },
+    "newsletterPage": {
+      "title": "Newsletter",
+      "subtitle": "{count, plural, one {# suscriptor en total} other {# suscriptores en total}}",
+      "newCampaign": "Nueva campaña",
+      "recentCampaigns": "Campañas recientes",
+      "seeAll": "Ver todas",
+      "scheduledFor": "Programado: {date}",
+      "stats": {
+        "active": "Suscriptores activos",
+        "pending": "Esperando confirmación",
+        "unsubscribed": "Bajas",
+        "openRate": "Tasa de apertura general"
+      },
+      "empty": {
+        "title": "Todavía no hay campañas",
+        "description": "Crea tu primera campaña para empezar."
+      },
+      "status": {
+        "draft": "Borrador",
+        "scheduled": "Programado",
+        "sending": "Enviando",
+        "sent": "Enviado",
+        "failed": "Falló"
+      },
+      "metrics": {
+        "sent": "enviados",
+        "openRate": "apertura"
+      }
+    },
+    "donationsTable": {
+      "title": "Todas las donaciones",
+      "empty": "No se encontró ninguna donación.",
+      "anonymous": "Anónimo",
+      "private": "privado",
+      "coffees": "{count, plural, one {# café} other {# cafés}}",
+      "messagePlaceholder": "Mensaje (déjalo vacío para eliminarlo)",
+      "cancel": "Cancelar",
+      "save": "Guardar",
+      "saving": "Guardando...",
+      "viewFullMessage": "Ver mensaje completo",
+      "noMessage": "sin mensaje",
+      "editMessage": "Editar mensaje",
+      "deleteDonation": "Eliminar donación",
+      "confirmDelete": "¿Eliminar esta donación? Esta acción no se puede deshacer.",
+      "page": "Página {page} de {totalPages}",
+      "filters": {
+        "all": "Todas",
+        "completed": "Completadas",
+        "pending": "Pendientes"
+      },
+      "status": {
+        "completed": "Completada",
+        "pending": "Pendiente",
+        "failed": "Falló",
+        "expired": "Expirada"
+      }
+    },
+    "donationsPreview": {
+      "empty": "Ninguna donación.",
+      "anonymous": "Anónimo",
+      "messagePlaceholder": "Mensaje (déjalo vacío para eliminarlo)",
+      "cancel": "Cancelar",
+      "save": "Guardar",
+      "saving": "Guardando...",
+      "viewFullMessage": "Ver mensaje completo",
+      "noMessage": "sin mensaje",
+      "editMessage": "Editar mensaje"
+    },
+    "campaignDelete": {
+      "title": "Eliminar campaña",
+      "confirm": "¿Estás seguro?",
+      "cancel": "Cancelar",
+      "deleting": "Eliminando...",
+      "delete": "Eliminar"
+    },
+    "suspiciousCommentsPage": {
+      "title": "Comentarios sospechosos",
+      "pending": "{count} comentario(s) esperando revisión",
+      "loading": "Cargando...",
+      "empty": "No hay comentarios sospechosos por ahora.",
+      "flagged": "marcado",
+      "approve": "Aprobar",
+      "reject": "Rechazar",
+      "previous": "Anterior",
+      "page": "Página {page} de {totalPages}",
+      "next": "Siguiente"
+    },
+    "newCampaignPage": {
+      "title": "Nueva campaña",
+      "description": "Guárdala primero como borrador y después envíala o prográmala."
+    },
+    "campaignsList": {
+      "title": "Campañas",
+      "total": "{count} en total",
+      "newCampaign": "Nueva campaña",
+      "unavailableTitle": "Título no disponible",
+      "empty": "Todavía no se creó ninguna campaña.",
+      "previous": "Anterior",
+      "page": "Página {page} de {totalPages}",
+      "next": "Siguiente",
+      "columns": {
+        "subject": "Asunto",
+        "type": "Tipo",
+        "status": "Estado",
+        "sent": "Enviados",
+        "openRate": "Apertura",
+        "date": "Fecha"
+      },
+      "status": {
+        "draft": "Borrador",
+        "scheduled": "Programado",
+        "sending": "Enviando",
+        "sent": "Enviado",
+        "failed": "Falló"
+      },
+      "type": {
+        "post": "Post",
+        "html": "HTML"
+      }
+    },
+    "campaignDetail": {
+      "unavailableTitle": "Título no disponible",
+      "createdAt": "Creado el {date}",
+      "linkedPost": "Post vinculado:",
+      "editTitle": "Editar campaña",
+      "sentContent": "Contenido enviado",
+      "status": {
+        "draft": "Borrador",
+        "scheduled": "Programado",
+        "sending": "Enviando",
+        "sent": "Enviado",
+        "failed": "Falló"
+      },
+      "type": {
+        "post": "Post",
+        "html": "HTML"
+      },
+      "stats": {
+        "total": "Total",
+        "sent": "Enviados",
+        "opens": "Aperturas",
+        "openRate": "Tasa de apertura"
+      },
+      "delivery": {
+        "title": "Estado de entrega",
+        "delivered": "Entregados",
+        "failed": "Fallos",
+        "pending": "Pendientes"
+      }
+    },
+    "campaignForm": {
+      "autoSubject": "Nuevo artículo: {title}",
+      "common": {
+        "optional": "opcional"
+      },
+      "errors": {
+        "save": "No fue posible guardar la campaña.",
+        "send": "No fue posible enviar la campaña."
+      },
+      "type": {
+        "label": "Tipo de campaña",
+        "post": {
+          "title": "Basada en un post",
+          "description": "Plantilla fija con título, resumen y enlace del artículo"
+        },
+        "custom": {
+          "title": "HTML personalizado",
+          "description": "Escribe tu propio HTML para el correo"
+        },
+        "digest": {
+          "title": "Digest",
+          "description": "Reúne varios posts en un único correo."
+        }
+      },
+      "post": {
+        "label": "Post",
+        "empty": "No se encontró ningún post publicado. Publica un post antes de crear este tipo de campaña.",
+        "placeholder": "Selecciona un post..."
+      },
+      "template": {
+        "previewLabel": "Vista previa de la plantilla",
+        "hideHtml": "Ocultar",
+        "showPreview": "Ver vista previa"
+      },
+      "subject": {
+        "label": "Asunto del correo",
+        "placeholderPost": "Se completa automáticamente al seleccionar el post",
+        "placeholderCustom": "Ej.: Nuevo artículo: Cómo escalar una aplicación Node.js",
+        "counter": "{count}/150 caracteres"
+      },
+      "previewText": {
+        "label": "Preview text",
+        "placeholder": "Texto que se muestra antes de abrir el correo en el cliente de correo"
+      },
+      "content": {
+        "label": "Contenido (HTML)",
+        "help": "HTML con estilos inline. La plantilla base (header, footer, unsubscribe) se aplica automáticamente.",
+        "placeholder": "<h2>Título de la campaña</h2>\n<p>Cuerpo del correo...</p>\n<a href=\"...\">Leer más -></a>"
+      },
+      "schedule": {
+        "label": "Programar envío",
+        "hint": "déjalo vacío para enviar de inmediato"
+      },
+      "save": {
+        "saved": "¡Guardado! ✓",
+        "action": "Guardar borrador"
+      },
+      "send": {
+        "confirm": "Confirmar envío ahora",
+        "schedule": "Programar envío",
+        "action": "Enviar campaña",
+        "confirmHelp": "Haz clic de nuevo para confirmar. Esta acción enviará correos a todos los suscriptores activos."
+      },
+      "sendSuccess": {
+        "scheduled": "¡Campaña programada con éxito!",
+        "queued": "¡Campaña en cola con éxito!"
+      },
+      "builder": {
+        "iframeTitle": "Vista previa del correo",
+        "selected": "Posts incluidos ({count}) — arrastra para reordenar",
+        "selectPosts": "Selecciona los posts",
+        "addMore": "Agregar más posts",
+        "minimum": "mínimo {count}",
+        "allAdded": "Se agregaron todos los posts.",
+        "orderPreview": "Vista previa del orden",
+        "digestLabel": "digest — {count} posts",
+        "hidePreview": "Ocultar vista previa",
+        "showPreview": "Ver vista previa",
+        "customLabel": "HTML personalizado — vista previa",
+        "editHtml": "Editar HTML",
+        "customIframeTitle": "Vista previa del correo personalizado"
+      },
+      "translations": {
+        "title": "Traducciones (EN y ES)",
+        "hint": "El asunto y el preview se traducen automáticamente al inglés y al español al guardar. Después puedes ajustar cada uno aquí.",
+        "stale": "El texto en portugués cambió. Las traducciones se rehacen al guardar; lo que edites aquí ahora se conserva.",
+        "failed": "La traducción automática falló. Quien recibe en inglés o español verá el texto en portugués. Guarda de nuevo para intentarlo otra vez.",
+        "subject": "Asunto",
+        "previewText": "Preview text"
+      },
+      "test": {
+        "title": "Enviar prueba",
+        "description": "Envía el borrador solo a los correos de abajo, cada uno en el idioma de su suscriptor. La campaña sigue como borrador y nada entra en las estadísticas.",
+        "empty": "Todavía no hay correos de prueba. Agrega un suscriptor confirmado de la newsletter.",
+        "emailPlaceholder": "tu-correo@ejemplo.com",
+        "add": "Agregar",
+        "remove": "Quitar {email} de la lista de prueba",
+        "send": "Guardar y enviar prueba ({count})",
+        "sent": "{count, plural, one {Prueba en cola para 1 correo.} other {Prueba en cola para # correos.}}",
+        "errors": {
+          "add": "No fue posible agregar el correo.",
+          "send": "No fue posible enviar la prueba."
+        }
+      }
+    },
+    "postEditor": {
+      "locale": {
+        "postLanguage": "Idioma del post:",
+        "translateWithAi": "Traducir con IA",
+        "translation": "Traducción:",
+        "editing": "editando"
+      },
+      "common": {
+        "optional": "opcional"
+      },
+      "errors": {
+        "invalidYoutube": "Enlace inválido. Usa un enlace de YouTube (ej.: https://youtu.be/xxxxx).",
+        "upload": "Error al subir la imagen. Inténtalo de nuevo.",
+        "fileTooLarge": "La imagen supera los {max} MB. Elige un archivo más pequeño.",
+        "titleRequired": "Por favor, escribe un título.",
+        "contentRequired": "Por favor, escribe el contenido del post.",
+        "invalidYoutubeShort": "El enlace de YouTube es inválido.",
+        "save": "Error al guardar el post. Inténtalo de nuevo.",
+        "load": "Error al cargar el post",
+        "notFound": "Post no encontrado"
+      },
+      "saving": {
+        "translating": "Generando traducciones con IA...",
+        "publishing": "Publicando...",
+        "saving": "Guardando..."
+      },
+      "title": {
+        "edit": "Editar post",
+        "new": "Nuevo post",
+        "placeholder": "Título del post..."
+      },
+      "mode": {
+        "edit": "Editar",
+        "preview": "Vista previa"
+      },
+      "cover": {
+        "title": "Imagen de portada",
+        "uploading": "Subiendo...",
+        "upload": "Subir imagen de portada",
+        "alt": "Imagen de portada",
+        "remove": "Quitar"
+      },
+      "youtube": {
+        "title": "Video de YouTube",
+        "placeholder": "https://www.youtube.com/watch?v=xxxxx",
+        "preview": "Vista previa:",
+        "previewTitle": "Vista previa de YouTube",
+        "remove": "Quitar video"
+      },
+      "summary": {
+        "title": "Resumen",
+        "placeholder": "Una breve descripción de lo que el lector va a encontrar en este post...",
+        "remaining": "{count} restantes"
+      },
+      "slug": {
+        "title": "Slug",
+        "placeholder": "generado-a-partir-del-titulo",
+        "hintNew": "Final de la dirección del post, la misma en todos los idiomas. En blanco, sale del título.",
+        "hintEdit": "Final de la dirección del post, la misma en todos los idiomas. Bórralo para generarlo de nuevo a partir del título.",
+        "movesWarning": "Este post ya se publicó. Al guardar, la dirección actual deja de funcionar y los enlaces ya compartidos se rompen."
+      },
+      "readingTime": {
+        "title": "Tiempo de lectura",
+        "unit": "minutos"
+      },
+      "content": {
+        "imageAlt": "Descripción de la imagen",
+        "placeholderEditor": "Escribe aquí el contenido del post..."
+      },
+      "actions": {
+        "publish": "Publicar",
+        "saveDraft": "Guardar borrador",
+        "cancel": "Cancelar"
+      },
+      "toolbar": {
+        "bold": "Negrita",
+        "italic": "Cursiva",
+        "link": "Enlace",
+        "unorderedList": "Lista",
+        "orderedList": "Lista numerada",
+        "heading": "Título",
+        "quote": "Cita",
+        "inlineCode": "Código inline",
+        "codeBlock": "Bloque de código",
+        "uploadImage": "Subir imagen",
+        "embedYoutube": "Insertar YouTube"
+      },
+      "preview": {
+        "coverAlt": "Portada",
+        "untitled": "Sin título"
+      }
+    },
+    "banButton": {
+      "ban": "Banear",
+      "unban": "Desbanear",
+      "modal": {
+        "title": "Banear usuario",
+        "description": "El usuario deja de poder comentar de inmediato. Puedes deshacerlo después.",
+        "reasonLabel": "Motivo",
+        "optional": "opcional",
+        "reasonPlaceholder": "Ej.: spam recurrente en los comentarios",
+        "cancel": "Cancelar",
+        "confirm": "Confirmar baneo",
+        "banning": "Baneando..."
+      }
+    },
+    "contact": {
+      "title": "Mensajes de contacto",
+      "description": "Todo lo que llegó por el formulario del sitio.",
+      "unreadCount": "{count} sin leer",
+      "searchPlaceholder": "Buscar por nombre, correo o texto…",
+      "loading": "Cargando…",
+      "empty": "No hay mensajes por aquí.",
+      "linkMissing": "Este mensaje ya no existe — el enlace apunta a algo que se borró.",
+      "dismiss": "Cerrar aviso",
+      "openMessage": "Abrir",
+      "markAs": "Marcar como",
+      "delete": "Borrar",
+      "filters": {
+        "status": "Filtrar por estado",
+        "topic": "Filtrar por asunto",
+        "allStatuses": "Todos los estados",
+        "allTopics": "Todos los asuntos"
+      },
+      "status": {
+        "RECEIVED": "Recibido",
+        "READ": "Leído",
+        "REPLIED": "Respondido",
+        "CLOSED": "Cerrado",
+        "SPAM": "Spam"
+      },
+      "topic": {
+        "FULL_TIME": "Puesto full-time",
+        "FREELANCE": "Proyecto freelance",
+        "SAYING_HI": "Solo un hola",
+        "BUG_REPORT": "Reporte de bug",
+        "OTHER": "Otro"
+      },
+      "table": {
+        "from": "De",
+        "topic": "Asunto",
+        "message": "Mensaje",
+        "status": "Estado",
+        "received": "Recibido el",
+        "actions": "Acciones"
+      },
+      "pagination": {
+        "showing": "Mostrando {from}–{to} de {total}",
+        "previous": "Anterior",
+        "next": "Siguiente"
+      }
+    },
+    "observability": {
+      "system": {
+        "title": "Monitor del sistema",
+        "subtitle": "Uso de recursos del host y de los contenedores · se actualiza cada 30s",
+        "refresh": "Actualizar",
+        "loadError": "No fue posible cargar las métricas",
+        "cards": {
+          "cpu": "Carga de CPU",
+          "cpuSub": "carga actual",
+          "memory": "Memoria usada",
+          "uptime": "Uptime del host",
+          "uptimeSub": "desde el último reinicio",
+          "containers": "Contenedores",
+          "containersSub": "en ejecución",
+          "volumes": "Volúmenes",
+          "volumesSub": "volúmenes en total",
+          "images": "Imágenes",
+          "memorySub": "de {total} MB ({percent}%)"
+        },
+        "charts": {
+          "cpuMemory": "CPU y memoria",
+          "percentOverTime": "% a lo largo del tiempo",
+          "memoryUsage": "Uso de memoria",
+          "mbOverTime": "MB a lo largo del tiempo",
+          "network": "Red (agregado)",
+          "disk": "I/O de disco (agregado)",
+          "cumulative": "MB acumulados entre contenedores"
+        },
+        "series": {
+          "cpu": "CPU",
+          "memory": "Memoria",
+          "rx": "RX",
+          "tx": "TX",
+          "read": "Lectura",
+          "write": "Escritura"
+        },
+        "table": {
+          "name": "Nombre",
+          "status": "Estado",
+          "memPercent": "Mem %"
+        },
+        "logs": {
+          "title": "Logs del worker",
+          "empty": "Todavía no hay logs",
+          "context": "Contexto",
+          "raw": "JSON en bruto",
+          "copied": "Copiado",
+          "copy": "Copiar JSON"
+        },
+        "unknownError": "Error desconocido",
+        "collectedAt": "Recopilado a las {time}"
+      },
+      "search": {
+        "title": "Servicio de búsqueda",
+        "subtitle": "Estado y controles del microservicio de búsqueda en Go",
+        "refresh": "Actualizar",
+        "unreachable": "Servicio inaccesible",
+        "cards": {
+          "status": "Estado",
+          "statusSub": "salud actual",
+          "indexed": "Documentos indexados",
+          "indexedSub": "sumando todos los idiomas",
+          "uptime": "Uptime",
+          "uptimeSub": "desde el último reinicio",
+          "snapshotSize": "Tamaño del snapshot",
+          "snapshotSizeSub": "en disco"
+        },
+        "byLocale": "Documentos por idioma",
+        "snapshot": {
+          "title": "Persistencia del snapshot",
+          "empty": "Todavía no hay snapshot — se creará después del primer reindex.",
+          "lastSaved": "Último guardado {time}"
+        },
+        "reindex": {
+          "success": "Reindex completado — {count} documentos indexados",
+          "running": "Reindexando…",
+          "action": "Reindexar ahora"
+        },
+        "unknownError": "Error desconocido",
+        "docsCount": "{count} docs",
+        "fetchedAt": "Consultado a las {time}"
+      },
+      "backups": {
+        "title": "Backups",
+        "refresh": "Actualizar",
+        "list": {
+          "title": "Backups disponibles",
+          "empty": "No se encontró ningún backup",
+          "emptyHint": "Haz clic en \"Nuevo backup\" para crear el primero",
+          "download": "Descargar (requiere contraseña)",
+          "delete": "Eliminar (requiere contraseña)"
+        },
+        "modal": {
+          "deleteTitle": "Eliminar backup",
+          "downloadTitle": "Descargar backup",
+          "deleteWarning": "Esta acción es <strong>irreversible</strong>. El archivo se eliminará permanentemente de S3.",
+          "confirmDelete": "Eliminar",
+          "confirmDownload": "Generar enlace",
+          "password": "Contraseña operativa",
+          "cancel": "Cancelar"
+        },
+        "errors": {
+          "fetch": "Error al obtener los backups",
+          "unknown": "Error desconocido",
+          "create": "Error al crear el backup",
+          "passwordRequired": "Escribe la contraseña operativa",
+          "link": "Error al generar el enlace",
+          "delete": "Error al eliminar",
+          "list": "Error al listar los backups"
+        },
+        "count": "{count, plural, one {# backup} other {# backups}} en S3",
+        "creating": "Creando...",
+        "create": "Nuevo backup",
+        "securityNotice": "<strong>Seguridad:</strong> la descarga y la eliminación exigen una contraseña operativa distinta del login. Tras 3 intentos inválidos, el acceso se bloquea durante 15 minutos."
+      }
+    },
+    "cryptoDonations": {
+      "title": "Donaciones on-chain",
+      "subtitle": "Pagos directos en ETH, USDC y USDT — Arbitrum, Polygon y Base.",
+      "byNetwork": {
+        "title": "Por red",
+        "subtitle": "Volumen recaudado por blockchain",
+        "count": "({count, plural, one {# donación} other {# donaciones}})",
+        "share": "{pct}% del total",
+        "viewWallet": "Ver billetera"
+      },
+      "noData": "Todavía no hay datos.",
+      "byToken": {
+        "title": "Por token",
+        "subtitle": "Distribución por moneda",
+        "count": "{count, plural, one {# donación} other {# donaciones}}"
+      },
+      "stats": {
+        "total": "Total recaudado",
+        "usdApprox": "≈ ${amount} USD",
+        "supporters": "Personas que apoyan",
+        "supportersSub": "donaciones únicas",
+        "coffees": "Cafés",
+        "average": "Ticket medio",
+        "averageSub": "por donación"
+      },
+      "table": {
+        "copy": "Copiar",
+        "subtitle": "Pagos verificados on-chain — ETH, USDC y USDT",
+        "empty": "Todavía no hay donaciones on-chain.",
+        "private": "Privada",
+        "viewExplorer": "Ver en el explorer",
+        "title": "Todas las donaciones",
+        "anonymous": "Anónimo",
+        "coffees": "{count, plural, one {# café} other {# cafés}}"
+      }
+    },
+    "emailTemplates": {
+      "title": "Plantillas de correo",
+      "subtitle": "Vista de todas las plantillas transaccionales y de newsletter.",
+      "iframeTitle": "Vista previa del correo",
+      "items": {
+        "confirmation": {
+          "label": "Confirmación de suscripción",
+          "description": "Se envía después de que el usuario completa el formulario de la newsletter."
+        },
+        "welcome": {
+          "label": "Bienvenida",
+          "description": "Se envía después de que el usuario confirma el correo."
+        },
+        "unsubscribe": {
+          "label": "Confirmar cancelación",
+          "description": "Se envía cuando el usuario solicita la cancelación."
+        },
+        "passwordReset": {
+          "label": "Recuperación de contraseña",
+          "description": "Se envía al solicitar el restablecimiento de la contraseña."
+        },
+        "emailVerification": {
+          "label": "Verificación de correo",
+          "description": "Se envía después del registro con correo y contraseña para confirmar la dirección de la cuenta."
+        },
+        "campaignPost": {
+          "label": "Newsletter — Post único",
+          "description": "Campaña basada en un artículo del blog, con imagen, tags y resumen."
+        },
+        "campaignDigest": {
+          "label": "Newsletter — Digest (varios posts)",
+          "description": "Recopilatorio semanal/quincenal con varios artículos en un solo correo."
+        },
+        "campaignCustom": {
+          "label": "Newsletter — HTML personalizado",
+          "description": "Campaña con contenido HTML libre. Usa el editor de abajo para ver tu HTML en tiempo real."
+        }
+      },
+      "samples": {
+        "readMore": "Leer el artículo completo",
+        "digestSubject": "Novedades de mayo — 3 artículos para ti",
+        "networks": {
+          "title": "Por qué Todo Dev Debería Aprender los Fundamentos de Redes",
+          "summary": "¿Alguna vez pasaste horas depurando un bug que, al final, era solo un problema de CORS? Entender redes cambia la forma en que programas.",
+          "summaryShort": "¿Alguna vez pasaste horas depurando un bug que, al final, era solo un problema de CORS?"
+        },
+        "typescript": {
+          "title": "TypeScript: Tipos Condicionales en la Práctica",
+          "summary": "Cómo usar infer, extends y tipos condicionales para escribir código más expresivo."
+        },
+        "cleanArchitecture": {
+          "title": "Clean Architecture en Node.js sin Complicarse",
+          "summary": "Un enfoque pragmático para separar responsabilidades sin crear burocracia innecesaria."
+        },
+        "custom": {
+          "title": "Novedades de Mayo 🌱",
+          "intro": "Este mes estuvo lleno de lanzamientos, artículos y aprendizajes. Aquí va un resumen:",
+          "item1": "Publiqué 3 artículos nuevos sobre TypeScript",
+          "item2": "Lancé una nueva feature en el portafolio",
+          "item3": "Contribuí a dos proyectos open-source",
+          "outro": "¡Hasta el próximo mes!"
+        }
+      },
+      "interactive": {
+        "preview": "Vista previa",
+        "html": "HTML",
+        "iframeTitle": "Vista previa en vivo del correo personalizado",
+        "placeholder": "Pega o escribe tu HTML aquí...",
+        "chars": "{count, number} caracteres",
+        "hint": "Cambia a <strong>Vista previa</strong> para ver cómo quedará el correo en el cliente de correo."
+      }
+    }
+  },
+  "blogUi": {
+    "header": {
+      "gridView": "Vista en cuadrícula",
+      "listView": "Vista en lista",
+      "sort": {
+        "placeholder": "Ordenar por",
+        "newest": "Más recientes",
+        "mostLiked": "Más gustados",
+        "mostViewed": "Más vistos",
+        "oldest": "Más antiguos"
+      },
+      "random": {
+        "action": "Post aleatorio",
+        "loading": "Cargando..."
+      },
+      "tag": {
+        "placeholder": "Filtrar por tag",
+        "all": "Todas las tags"
+      }
+    },
+    "list": {
+      "empty": "No se encontró ningún post.",
+      "loadMore": "Cargar más",
+      "loadingMore": "Cargando..."
+    },
+    "card": {
+      "published": "Publicado el {date}",
+      "readingTime": "{minutes} min de lectura",
+      "readMore": "Leer más"
+    },
+    "carousel": {
+      "previousSlide": "Diapositiva anterior",
+      "nextSlide": "Diapositiva siguiente"
+    },
+    "reactions": {
+      "like": "Me gusta el post",
+      "unlike": "Quitar me gusta",
+      "viewComments": "Ver comentarios",
+      "support": "Apoya",
+      "share": "Compartir",
+      "shareAria": "Compartir este post",
+      "moreActions": "Más acciones"
+    },
+    "summarize": {
+      "button": "Resumen",
+      "buttonAria": "Resumir este post con IA",
+      "title": "Resumir con IA",
+      "description": "Este post tiene un prompt listo que le pide a una IA leer el texto completo, resumir los 5 puntos principales y contarte lo que te pierdes por no leerlo todo. Elige dónde abrirlo:",
+      "showPrompt": "Ver el prompt",
+      "copy": "Copiar prompt",
+      "copied": "Prompt copiado",
+      "disclaimer": "El resumen lo genera la IA que elijas, en tu cuenta, y puede contener errores.",
+      "prompt": "Lee el artículo completo en este enlace: {url}\n\nCon base en el texto real, y no solo en el título:\n1) Di en dos frases de qué trata, enumera las 5 ideas principales y explica la conclusión, si la hay.\n2) Señala lo que un resumen deja fuera: ejemplos, números o decisiones que justifican la lectura completa.\n3) Sugiere una pregunta para que sigamos conversando sobre el artículo."
+    },
+    "sidebar": {
+      "otherPosts": "Otras publicaciones"
+    },
+    "toc": {
+      "title": "En esta página",
+      "scrollToTop": "Volver arriba"
+    },
+    "intro": "Las opiniones aquí son reflexiones personales sobre cómo veo la tecnología y otros temas; siéntete libre de interactuar, compartir tus ideas y enviar sugerencias."
+  },
+  "commentsUi": {
+    "composer": {
+      "tooManyComments": "Demasiados comentarios seguidos. Espera un momento.",
+      "publishError": "Error al publicar.",
+      "published": "¡Comentario publicado!",
+      "publishCommentError": "Error al publicar el comentario.",
+      "loginAction": "Inicia sesión",
+      "loginPrompt": "para comentar.",
+      "reply": "Responder",
+      "comment": "Comentar"
+    },
+    "editor": {
+      "tabs": {
+        "write": "Escribir",
+        "preview": "Vista previa"
+      },
+      "tools": {
+        "bold": "Negrita (Ctrl+B)",
+        "italic": "Cursiva (Ctrl+I)",
+        "link": "Enlace",
+        "list": "Lista",
+        "orderedList": "Lista numerada",
+        "quote": "Cita",
+        "inlineCode": "Código inline",
+        "codeBlock": "Bloque de código"
+      },
+      "placeholder": "Escribe tu comentario...",
+      "nothingToPreview": "Nada que previsualizar.",
+      "remaining": "{count} restantes",
+      "cancel": "Cancelar",
+      "saving": "Guardando...",
+      "submit": "Comentar"
+    },
+    "deleteModal": {
+      "title": "Borrar comentario",
+      "subtitle": "Esta acción no se puede deshacer.",
+      "close": "Cerrar",
+      "previewLabel": "Tu comentario",
+      "cancel": "Cancelar",
+      "deleting": "Borrando...",
+      "confirm": "Borrar",
+      "warning": {
+        "prefix": "Al borrar este comentario, todas las respuestas también se eliminarán",
+        "highlight": "permanentemente"
+      },
+      "errors": {
+        "delete": "No fue posible borrar el comentario."
+      }
+    },
+    "card": {
+      "updated": "Comentario actualizado.",
+      "deleted": "Comentario borrado.",
+      "saveEdit": "Guardar edición",
+      "editing": "Editando comentario",
+      "shareTitle": "Comentario de @{username}",
+      "linkCopied": "¡Enlace copiado!",
+      "collapsedCount": "{count} ocultos",
+      "vote": {
+        "up": "Voto positivo",
+        "down": "Voto negativo",
+        "own": "No puedes votar tu propio comentario",
+        "floor": "Ya está en 0"
+      },
+      "hideComment": "Ocultar comentario",
+      "contextLabel": "Comentando en",
+      "edited": "editado",
+      "edit": "Editar",
+      "delete": "Borrar",
+      "reply": "Responder",
+      "share": "Compartir",
+      "time": {
+        "now": "ahora",
+        "minutes": "hace {count} min",
+        "hours": "hace {count} h",
+        "days": "hace {count} días"
+      },
+      "errors": {
+        "edit": "No fue posible editar el comentario.",
+        "delete": "No fue posible borrar el comentario."
+      }
+    },
+    "section": {
+      "title": "Comentarios",
+      "count": "{count, plural, one {# comentario} other {# comentarios}}",
+      "sort": {
+        "score": "Relevancia",
+        "newest": "Más recientes",
+        "oldest": "Más antiguos"
+      },
+      "empty": "Todavía no hay comentarios. ¡Sé el primero!",
+      "loadMore": "Cargar más comentarios"
+    }
+  },
+  "common": {
+    "dialog": {
+      "close": "Cerrar"
+    }
+  },
+  "newsletterCard": {
+    "title": "Los mejores posts en tu bandeja de entrada",
+    "medalAlt": "Newsletter destacada",
+    "description": "Mantente al día con nuevos posts y novedades.",
+    "subscribers": {
+      "prefix": "Aprobada por",
+      "suffix": "{count, plural, one {suscriptor} other {suscriptores}}."
+    },
+    "privacy": {
+      "prefix": "Sin spam, nunca.",
+      "suffix": "Puedes revisar la política de privacidad <link>aquí</link>."
+    }
+  },
+  "newsletterForm": {
+    "emailLabel": "Correo electrónico",
+    "emailPlaceholder": "tu@correo.com",
+    "submit": "Suscribirme",
+    "success": {
+      "title": "¡Revisa tu correo!",
+      "description": "Te enviamos un enlace de confirmación para activar tu suscripción."
+    },
+    "error": {
+      "title": "No pude completar tu suscripción"
+    },
+    "errors": {
+      "generic": "Algo salió mal. Inténtalo de nuevo.",
+      "connection": "Error de conexión. Revisa tu internet e inténtalo de nuevo."
+    }
+  },
+  "newsletterPage": {
+    "meta": {
+      "title": "Newsletter",
+      "description": "Contenido sobre desarrollo web, TypeScript e ingeniería de software. Directo en tu correo."
+    },
+    "hero": {
+      "title": "{count, plural, =0 {Sé el primer lector suscrito} one {Únete a # lector suscrito} other {Únete a # lectores suscritos}}",
+      "description": "Recibe posts sobre desarrollo, arquitectura, carrera, vida académica y mucho más directamente en tu correo.",
+      "note": "Sin spam, cancela cuando quieras. Tu correo nunca se compartirá.",
+      "benefits": {
+        "newPosts": "Nuevos artículos en cuanto se publican",
+        "tips": "Consejos y contenido técnico exclusivo",
+        "projects": "Proyectos y novedades de primera mano"
+      }
+    },
+    "stats": {
+      "posts": "Posts publicados",
+      "views": "Visualizaciones totales",
+      "likes": "Me gusta en los posts",
+      "comments": "Comentarios"
+    },
+    "recent": {
+      "title": "Posts recientes",
+      "viewAll": "Ver todos",
+      "empty": "Todavía no hay posts publicados.",
+      "readingTime": "{minutes} min"
+    }
+  },
+  "cookieBanner": {
+    "ariaLabel": "Banner de consentimiento de cookies",
+    "title": "¿Permitir cookies?",
+    "description": "Google Analytics siempre está activo. \"Permitir\" incluye datos demográficos.",
+    "descriptionPrefix": "Más información en la ",
+    "policyLink": "Política de Cookies",
+    "accept": "Permitir",
+    "essentialOnly": "Solo esenciales"
+  },
+  "legal": {
+    "cookiePolicy": {
+      "title": "Política de Cookies",
+      "updatedAt": "Última actualización: septiembre de 2026",
+      "close": "Cerrar",
+      "sections": {
+        "whatAreCookies": {
+          "title": "¿Qué son las cookies?",
+          "body": "Las cookies son pequeños archivos de texto que se guardan en tu dispositivo cuando visitas un sitio. Se usan ampliamente para que los sitios funcionen de forma más eficiente y para ofrecer información a sus propietarios."
+        },
+        "essential": {
+          "title": "1. Cookies esenciales",
+          "body": "Siempre activas. Incluyen las cookies de sesión y seguridad, la cookie que registra tu elección en el aviso y las cookies de Google Analytics 4 (_ga y _ga_*), usadas para medir de forma agregada qué páginas se visitan, de dónde viene el tráfico y cómo navegan las personas. La medición se basa en el interés legítimo (LGPD, art. 7, IX) y no se usa para publicidad."
+        },
+        "performance": {
+          "title": "2. Métricas de audiencia",
+          "body": "Google Analytics 4 registra visualizaciones de página, desplazamiento, clics en enlaces externos, búsquedas, descargas e interacciones con formularios y videos, junto con datos técnicos como navegador, dispositivo y ubicación aproximada (ciudad). Google no registra ni almacena la dirección IP completa. Los datos los trata Google en los Estados Unidos."
+        },
+        "functionality": {
+          "title": "3. Cookies de funcionalidad",
+          "body": "Permiten que el sitio recuerde tus elecciones, como el idioma y el tema. Se quedan solo en tu navegador y no rastrean tu navegación en otros sitios."
+        },
+        "targeting": {
+          "title": "4. Señales de Google (opcionales)",
+          "body": "Solo se activan cuando haces clic en \"Permitir\". Con ellas, Google asocia las visitas de quien tiene sesión iniciada en una cuenta de Google para generar informes agregados de edad, género, intereses y uso en varios dispositivos. Ningún dato se usa para personalizar anuncios. Con \"Solo esenciales\", las señales quedan desactivadas."
+        },
+        "manage": {
+          "title": "5. Cómo gestionarlas u oponerte",
+          "body": "Para desactivar Google Analytics en este navegador, usa el enlace de la sección 7.4 de la <link>Política de Privacidad</link>. Para cambiar la elección hecha en el aviso, borra la cookie cookie_consent y el aviso vuelve a aparecer. También puedes bloquear cookies en la configuración del navegador."
+        }
+      }
+    },
+    "page": {
+      "toc": "En esta página",
+      "updatedAt": "Vigente desde el {date}",
+      "documentsNav": "Documentos legales",
+      "tabs": {
+        "terms": "Términos de Uso",
+        "privacyPolicy": "Política de Privacidad"
+      },
+      "descriptions": {
+        "terms": "Reglas de uso del sitio, contenido publicado por usuarios, moderación, propiedad intelectual, apoyo económico y limitación de responsabilidad.",
+        "privacyPolicy": "Qué datos se recogen, por qué, con qué base legal, durante cuánto tiempo, con quién se comparten y cómo ejercer tus derechos según la LGPD."
+      }
+    }
+  },
+  "profilePage": {
+    "memberSince": "Miembro desde {date}",
+    "signOut": "Salir",
+    "tabs": {
+      "profile": "Perfil",
+      "comments": "Comentarios",
+      "wall": "Mural",
+      "donations": "Donaciones",
+      "newsletter": "Newsletter",
+      "settings": "Configuración"
+    },
+    "stats": {
+      "title": "Estadísticas",
+      "comments": "Comentarios"
+    },
+    "emptyComments": "Todavía no hay comentarios.",
+    "loadMore": "Cargar más",
+    "commentingOn": "Comentando en",
+    "viewComment": "Ver comentario ->",
+    "avatar": {
+      "title": "Imagen de perfil",
+      "description": "Tu avatar se genera a partir de un UUID. Genera otro para cambiar la imagen, o elige un estilo distinto.",
+      "source": {
+        "label": "Imagen",
+        "provider": "Foto de la cuenta",
+        "generated": "Avatar generado",
+        "note": "Tu foto de {provider} se guarda de todos modos — puedes volver a ella después."
+      },
+      "seed": {
+        "label": "UUID",
+        "copy": "Copiar UUID",
+        "regenerate": "Generar nuevo UUID"
+      },
+      "style": "Estilo",
+      "status": {
+        "rateLimited": "Cambiaste de avatar demasiadas veces. Inténtalo de nuevo más tarde.",
+        "error": "Error al guardar.",
+        "saved": "¡Guardado!"
+      },
+      "cancel": "Cancelar",
+      "save": "Guardar",
+      "edit": "Editar imagen de perfil"
+    },
+    "settings": {
+      "profile": {
+        "title": "Información del perfil",
+        "username": "Nombre de usuario",
+        "usernameTaken": "Este nombre de usuario ya está en uso.",
+        "github": "URL de GitHub",
+        "linkedin": "URL de LinkedIn",
+        "githubPlaceholder": "https://github.com/username",
+        "linkedinPlaceholder": "https://linkedin.com/in/username"
+      },
+      "save": "Guardar",
+      "saved": "¡Guardado!",
+      "saveError": "Error al guardar.",
+      "password": {
+        "title": "Cambiar contraseña",
+        "current": "Contraseña actual",
+        "new": "Nueva contraseña",
+        "confirm": "Confirmar nueva contraseña",
+        "mismatch": "Las contraseñas no coinciden.",
+        "error": "Error al cambiar la contraseña. Verifica la contraseña actual.",
+        "submit": "Cambiar contraseña",
+        "changed": "¡Contraseña cambiada!"
+      }
+    },
+    "links": "Enlaces",
+    "newsletter": {
+      "subscribe": {
+        "title": "Suscríbete a la newsletter",
+        "description": "Recibe nuevos artículos directamente en tu correo",
+        "sendTo": "Los enviaremos a <strong>{email}</strong>",
+        "checkEmail": "¡Revisa tu correo para confirmar!",
+        "action": "Suscribirme"
+      },
+      "pending": {
+        "title": "Confirmación pendiente",
+        "description": "Enviamos un enlace de confirmación a <strong>{email}</strong>. Revisa tu bandeja de entrada.",
+        "resend": "Reenviar correo de confirmación"
+      },
+      "active": {
+        "subscribed": "Suscrito",
+        "saved": "Guardado",
+        "language": "Idioma de los correos"
+      },
+      "unsubscribe": {
+        "title": "Cancelar suscripción",
+        "description": "Recibirás un correo de confirmación antes de la cancelación.",
+        "checkEmail": "Revisa tu correo para confirmar.",
+        "sending": "Enviando…",
+        "action": "Solicitar cancelación"
+      }
+    },
+    "donations": {
+      "empty": {
+        "title": "Ninguna donación vinculada",
+        "own": "Al apoyar el blog con la sesión iniciada, puedes vincular el apoyo a tu cuenta para que aparezca aquí.",
+        "other": "Este usuario todavía no vinculó ninguna donación a su perfil."
+      },
+      "coffees": "{count}x café",
+      "providers": {
+        "PIX": "PIX",
+        "STRIPE": "Tarjeta",
+        "ETH": "Crypto"
+      },
+      "privateMessage": "Mensaje privado"
+    },
+    "wall": {
+      "empty": {
+        "title": "Todavía no hay mensajes en el mural",
+        "own": "Todavía no dejaste ningún mensaje en el mural público.",
+        "other": "Este usuario todavía no dejó ningún mensaje en el mural."
+      },
+      "goToWall": "Ir al mural →"
+    }
+  },
+  "seo": {
+    "home": {
+      "title": "Romulo de Moraes — Ingeniero de Software",
+      "description": "Portafolio y blog de Romulo de Moraes. Proyectos, artículos y notas sobre ingeniería de software, backend e infraestructura."
+    },
+    "blog": {
+      "title": "Blog",
+      "description": "Artículos sobre desarrollo de software, arquitectura, infraestructura y las cosas que aprendo construyendo productos."
+    },
+    "resume": {
+      "title": "Currículum",
+      "description": "Experiencia profesional, formación y stack técnico de Romulo de Moraes."
+    },
+    "wall": {
+      "title": "Mural",
+      "description": "Deja un mensaje en el mural y mira lo que escribieron otras personas."
+    },
+    "support": {
+      "title": "Apoya el blog",
+      "description": "Invítame un café y ayuda a mantener el blog en línea. Donaciones vía PIX, tarjeta o cripto."
+    },
+    "status": {
+      "title": "Estado",
+      "description": "Métricas públicas y salud de los servicios que mantienen el sitio en línea."
+    },
+    "feed": {
+      "title": "Feed RSS",
+      "description": "Suscríbete al feed RSS para recibir los nuevos posts del blog."
+    }
+  },
+  "error": {
+    "title": "Algo se rompió por aquí.",
+    "description": "El error quedó registrado y le voy a echar un vistazo. Puedes intentarlo de nuevo o volver al inicio.",
+    "retry": "Intentar de nuevo",
+    "home": "Volver al inicio",
+    "digest": "Código del error"
+  },
+  "notFound": {
+    "title": "Página no encontrada.",
+    "description": "Puede que el enlace esté roto o que la página se haya movido.",
+    "home": "Volver al inicio",
+    "blog": "Ir al blog"
+  },
+  "experienceList": {
+    "duration": {
+      "years": "{count, plural, one {# año} other {# años}}",
+      "months": "{count, plural, one {# mes} other {# meses}}",
+      "both": "{years} y {months}"
+    },
+    "showMore": "Ver más",
+    "showLess": "Ver menos"
+  },
+  "blogPost": {
+    "notFound": "Post no encontrado",
+    "videoTitle": "Video del post",
+    "published": "Publicado {time}",
+    "readingTime": "{minutes} min de lectura",
+    "originallyPublished": "Publicado originalmente en:",
+    "copyCode": "Copiar código",
+    "copied": "Copiado",
+    "expandImage": "Ampliar imagen",
+    "closeImage": "Cerrar imagen"
+  },
+  "commentPage": {
+    "notFound": "Comentario no encontrado",
+    "metaTitle": "Comentario de @{username} en \"{post}\"",
+    "breadcrumb": {
+      "blog": "Blog",
+      "comment": "Comentario"
+    },
+    "replyingTo": "Respondiendo a @{username}",
+    "backToPost": "Ir a \"{title}\""
+  },
+  "newsletterConfirm": {
+    "metaTitle": "Confirmar suscripción",
+    "eyebrow": "Newsletter",
+    "loading": {
+      "title": "Confirmando tu suscripción",
+      "description": "Solo un momento."
+    },
+    "success": {
+      "title": "Suscripción confirmada 🎉",
+      "description": "Las próximas ediciones de la newsletter llegarán a este correo. Cada una trae un post, un resumen de varios o una novedad, y siempre un enlace para cancelar."
+    },
+    "invalid": {
+      "title": "Este enlace ya no funciona",
+      "description": "Los enlaces de confirmación valen 24 horas y solo se pueden usar una vez. Si ya hiciste clic antes, tu suscripción está activa. Si no, suscríbete de nuevo para recibir un enlace nuevo."
+    },
+    "failed": {
+      "title": "No se pudo confirmar ahora",
+      "description": "El servidor no respondió. El enlace sigue siendo válido hasta 24 horas después de la suscripción, así que puedes intentarlo de nuevo en un rato."
+    },
+    "actions": {
+      "blog": "Leer el blog",
+      "home": "Ir al inicio",
+      "subscribeAgain": "Suscribirme de nuevo",
+      "retry": "Intentar de nuevo"
+    }
+  },
+  "newsletterUnsubscribe": {
+    "metaTitle": "Cancelar suscripción",
+    "eyebrow": "Newsletter",
+    "confirm": {
+      "title": "¿Cancelar la suscripción?",
+      "description": "Dejarás de recibir los correos de la newsletter. Puedes suscribirte de nuevo cuando quieras."
+    },
+    "success": {
+      "title": "Suscripción cancelada 😢",
+      "description": "No te llegará ningún otro correo de la newsletter. Si cambias de idea, el formulario está en la página de la newsletter."
+    },
+    "invalid": {
+      "title": "Enlace inválido",
+      "description": "Este enlace no corresponde a ninguna suscripción. Comprueba que se copió completo, o usa el enlace de cancelación al final de cualquier correo de la newsletter."
+    },
+    "failed": {
+      "title": "No se pudo cancelar ahora",
+      "description": "El servidor no respondió. El enlace sigue siendo válido, así que puedes intentarlo de nuevo en un rato."
+    },
+    "actions": {
+      "unsubscribe": "Cancelar suscripción",
+      "working": "Cancelando…",
+      "stay": "Seguir suscrito",
+      "home": "Ir al inicio",
+      "newsletter": "Ver la newsletter",
+      "retry": "Intentar de nuevo"
+    }
+  },
+  "githubStars": {
+    "label": "Star",
+    "aria": "Dar una estrella a {repo} en GitHub"
+  },
+  "blogSearch": {
+    "title": "Buscar posts",
+    "placeholder": "Buscar posts...",
+    "clear": "Limpiar búsqueda",
+    "escKey": "Esc",
+    "results": "{count, plural, one {# resultado} other {# resultados}}",
+    "timeMs": "{ms}ms",
+    "noResults": "Ningún resultado para <strong>\"{query}\"</strong>",
+    "keepTyping": "Sigue escribiendo...",
+    "prompt": "Escribe para buscar en los posts",
+    "engine": "Motor Go · TF-IDF + BK-tree"
+  },
+  "lanyard": {
+    "name": "Romulo de Moraes",
+    "role": "Ingeniero de Software",
+    "city": "Rio Grande, Brasil"
+  },
+  "statusPage": {
+    "title": "Estadísticas y estado del sitio",
+    "sections": {
+      "activity": "Actividad de usuarios",
+      "engagement": "Engagement general",
+      "donations": "Donaciones",
+      "newsletter": "Newsletter",
+      "database": "Base de datos",
+      "webServer": "Servidor web"
+    },
+    "charts": {
+      "signups": "Nuevos registros",
+      "posts": "Nuevos posts publicados",
+      "comments": "Nuevos comentarios",
+      "replies": "Nuevas respuestas",
+      "votes": "Votos en comentarios",
+      "suspicious": "Comentarios sospechosos detectados",
+      "donations": "Donaciones completadas por día",
+      "donationAmount": "Monto recaudado por día (BRL)",
+      "unsubscribes": "Cancelaciones por día",
+      "wallMessages": "Mensajes en el mural"
+    },
+    "engagement": {
+      "posts": "Posts publicados",
+      "avgComments": "Media de comentarios",
+      "avgViews": "Media de vistas",
+      "avgLikes": "Media de likes",
+      "wallMessages": "Mensajes en el mural"
+    },
+    "topPosts": {
+      "title": "Top posts (últimos 7 días)",
+      "columns": {
+        "title": "Título",
+        "views": "Vistas",
+        "likes": "Likes",
+        "comments": "Coments."
+      }
+    },
+    "newsletter": {
+      "total": "Total de suscriptores",
+      "confirmed": "Confirmados",
+      "pending": "Pendientes",
+      "confirmationRate": "Tasa de confirmación"
+    },
+    "campaigns": {
+      "title": "Últimas campañas enviadas",
+      "columns": {
+        "subject": "Asunto",
+        "sent": "Enviados",
+        "opens": "Aperturas",
+        "openRate": "Tasa apert.",
+        "failed": "Fallos"
+      }
+    },
+    "common": {
+      "status": "Estado"
+    },
+    "database": {
+      "availableConnections": "Conexiones disponibles",
+      "openConnections": "Conexiones abiertas",
+      "latency": "Latencia",
+      "postgresVersion": "Versión de PostgreSQL",
+      "size": "Tamaño de la base de datos"
+    },
+    "tables": {
+      "title": "Tablas más grandes",
+      "columns": {
+        "table": "Tabla",
+        "size": "Tamaño",
+        "rows": "Filas (estimado)"
+      }
+    },
+    "webServer": {
+      "provider": "Proveedor",
+      "environment": "Entorno",
+      "awsRegion": "Región en AWS",
+      "vercelRegion": "Región en Vercel",
+      "timezone": "Zona horaria",
+      "commitAuthor": "Autor del último commit",
+      "commitSha": "SHA del commit",
+      "nodeVersion": "Versión de Node.js"
+    },
+    "noData": "Sin datos en los últimos 60 días",
+    "tooltipTotal": "total",
+    "updatedAt": "Actualizado el {date}",
+    "audience": {
+      "title": "Visitantes en los últimos 7 días",
+      "source": "Google Analytics · se actualiza cada 10 min",
+      "unavailable": "No fue posible cargar los datos de audiencia ahora.",
+      "vsPrevious": "7 días anteriores: {value}",
+      "metrics": {
+        "visitors": "Visitantes",
+        "visits": "Visitas",
+        "views": "Visualizaciones",
+        "bounceRate": "Tasa de rebote",
+        "visitDuration": "Duración de la visita"
+      },
+      "environment": {
+        "title": "Entorno",
+        "browsers": "Navegadores",
+        "os": "Sistemas",
+        "devices": "Dispositivos",
+        "browser": "Navegador",
+        "system": "Sistema",
+        "device": "Dispositivo"
+      },
+      "location": {
+        "title": "Ubicación",
+        "countries": "Países",
+        "regions": "Regiones",
+        "cities": "Ciudades",
+        "country": "País",
+        "region": "Región",
+        "city": "Ciudad"
+      },
+      "deviceNames": {
+        "desktop": "Escritorio",
+        "mobile": "Móvil",
+        "tablet": "Tablet"
+      },
+      "visitorsColumn": "Visitantes",
+      "unknown": "Desconocido",
+      "empty": "Sin visitas en el período",
+      "traffic": {
+        "title": "Tráfico",
+        "tooltip": "{count, plural, =0 {ninguna visita} one {# visita} other {# visitas}}"
+      }
+    }
+  }
+}

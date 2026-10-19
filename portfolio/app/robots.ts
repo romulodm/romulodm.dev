@@ -62,6 +62,7 @@ export default function robots(): MetadataRoute.Robots {
           '/*/comments/',
           '/*/newsletter/confirm/',
           '/*/newsletter/unsubscribe/',
+          '/*/verify-email/',
         ],
       },
     ],

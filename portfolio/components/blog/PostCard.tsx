@@ -2,7 +2,7 @@
 'use client';
 
 import Image from 'next/image';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import { useLocale, useTranslations } from 'next-intl';
 import { Heart, Eye, MessageSquare, ArrowRight } from 'lucide-react';
 import { formatDistanceToNow } from '@/lib/utils';

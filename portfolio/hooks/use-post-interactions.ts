@@ -1,7 +1,9 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useSession } from 'next-auth/react';
+
+import { postLikeStateUrl } from '@/lib/post-like-state';
 
 interface UsePostInteractionsOptions {
     postId: string;
@@ -38,6 +40,43 @@ function recordView(postId: string): Promise<boolean> {
     return pending;
 }
 
+interface LikeState {
+    liked: boolean;
+    likes: number;
+}
+
+/**
+ * Live `{ liked, likes }` for the current visitor, shared by the two instances of
+ * this hook on a post page, like `inFlightViews` above.
+ *
+ * Fetched on mount without waiting for `useSession`: the route resolves the
+ * session from the cookie itself. Waiting for next-auth first meant two
+ * sequential round trips (`/api/auth/session`, then this) after hydration,
+ * which is why the heart used to fill in seconds after the page appeared. The
+ * post page also preloads this exact URL, so this call normally resolves from
+ * the preload instead of going to the network.
+ */
+const inFlightLikeState = new Map<string, Promise<LikeState | null>>();
+
+function fetchLikeState(postId: string): Promise<LikeState | null> {
+    let pending = inFlightLikeState.get(postId);
+
+    if (!pending) {
+        pending = fetch(postLikeStateUrl(postId))
+            .then((r) => (r.ok ? r.json() : null))
+            .then((d) =>
+                d && typeof d.likes === 'number'
+                    ? { liked: d.liked === true, likes: d.likes }
+                    : null,
+            )
+            .catch(() => null)
+            .finally(() => inFlightLikeState.delete(postId));
+        inFlightLikeState.set(postId, pending);
+    }
+
+    return pending;
+}
+
 export function usePostInteractions({
     postId,
     initialLikes,
@@ -45,21 +84,44 @@ export function usePostInteractions({
     initialComments,
     initialLiked = false,
 }: UsePostInteractionsOptions) {
-    const { data: session } = useSession();
+    const { data: session, status } = useSession();
     const [likes, setLikes] = useState(initialLikes);
     const [views, setViews] = useState(initialViews);
     const [comments] = useState(initialComments);
     const [liked, setLiked] = useState(initialLiked);
     const [likeLoading, setLikeLoading] = useState(false);
 
-    // Verificar se o usuário já curtiu ao montar (se logado)
+    // The count in `initialLikes` comes from the cached page and can be stale;
+    // whether this visitor liked the post is not in the page at all. Both come
+    // from fetchLikeState (see above), once per post on mount.
+    const [likeStateVersion, setLikeStateVersion] = useState(0);
     useEffect(() => {
-        if (!session?.user?.id) return;
-        fetch(`/api/posts/${postId}/like`)
-            .then((r) => r.json())
-            .then((d) => setLiked(d.liked ?? false))
-            .catch(() => { });
-    }, [postId, session?.user?.id]);
+        let active = true;
+
+        fetchLikeState(postId).then((state) => {
+            if (!active || !state) return;
+            setLiked(state.liked);
+            setLikes(state.likes);
+        });
+
+        return () => {
+            active = false;
+        };
+    }, [postId, likeStateVersion]);
+
+    // Signing in or out without a reload (the auth modal) changes the answer,
+    // so the state is fetched again. The first resolution of the session
+    // ('loading' -> known) is not a change: the mount fetch above already sent
+    // the cookie, and refetching there would double the request on every load.
+    const userId = status === 'loading' ? undefined : (session?.user?.id ?? null);
+    const lastUserId = useRef<string | null | undefined>(undefined);
+    useEffect(() => {
+        if (userId === undefined) return;
+        if (lastUserId.current !== undefined && lastUserId.current !== userId) {
+            setLikeStateVersion((v) => v + 1);
+        }
+        lastUserId.current = userId;
+    }, [userId]);
 
     // Uma visualização por carregamento do post (ver recordView acima).
     useEffect(() => {

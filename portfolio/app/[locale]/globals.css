@@ -387,6 +387,40 @@
   --ts-arrow: #d4d4d4;
 }
 
+/* Active terminal tab. It takes the pane's background and grows two concave
+   corners at its base, so the tab flows into the pane below as in Windows
+   Terminal and Chromium. --tab-bg must match the pane's background in
+   TerminalClient (white / neutral-900), or the seam shows. */
+.terminal-tab-active {
+  --tab-bg: #ffffff;
+  position: relative;
+  background-color: var(--tab-bg);
+}
+
+.dark .terminal-tab-active {
+  --tab-bg: #171717;
+}
+
+.terminal-tab-active::before,
+.terminal-tab-active::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  width: 8px;
+  height: 8px;
+  pointer-events: none;
+}
+
+.terminal-tab-active::before {
+  left: -8px;
+  background: radial-gradient(circle at 0 0, transparent 7.5px, var(--tab-bg) 8px);
+}
+
+.terminal-tab-active::after {
+  right: -8px;
+  background: radial-gradient(circle at 100% 0, transparent 7.5px, var(--tab-bg) 8px);
+}
+
 @supports not selector(::-webkit-scrollbar) {
   .terminal-scroll {
     scrollbar-color: var(--ts-face) var(--ts-track);
@@ -806,6 +840,15 @@
   color: inherit;
 }
 
+/* A link whose text is a bare URL (github.com/user/repo...) is one unbreakable
+ * word, wider than a phone column, and gave the page a horizontal scroll.
+ * `anywhere` (not `break-word`) also lowers the min-content width, so it
+ * holds inside table cells and flex items too. Citation links keep their own
+ * nowrap below, which wins over this. */
+.post-body a {
+  overflow-wrap: anywhere;
+}
+
 /* ---- Author-year citations (markup: lib/rehype-citations.ts) ---- */
 /* Each label stays on one line, but a group may break after its "; ". Making
  * the whole [a; b] group nowrap pushed it past narrow columns and gave the
@@ -1167,5 +1210,43 @@
   .announcement-bar::before,
   .dark .announcement-bar::before {
     animation: none;
+  }
+}
+
+/*
+ * Navbar background once the page is scrolled past 50px.
+ *
+ * Driven by a scroll timeline instead of React state: the server cannot know
+ * the scroll position, so a state-driven background always painted transparent
+ * after a reload and filled in once hydration ran. The timeline is evaluated on
+ * every paint, including the first one.
+ *
+ * Browsers without scroll-driven animations fall back to `data-scrolled`,
+ * which Navbar.tsx sets from a scroll listener.
+ */
+@keyframes nav-surface {
+  from {
+    background-color: transparent;
+    backdrop-filter: none;
+  }
+
+  to {
+    background-color: hsl(var(--background) / 0.8);
+    backdrop-filter: blur(24px);
+  }
+}
+
+@supports (animation-timeline: scroll()) {
+  .nav-surface {
+    animation: nav-surface linear both;
+    animation-timeline: scroll(root block);
+    animation-range: 50px 51px;
+  }
+}
+
+@supports not (animation-timeline: scroll()) {
+  .nav-surface[data-scrolled="true"] {
+    background-color: hsl(var(--background) / 0.8);
+    backdrop-filter: blur(24px);
   }
 }

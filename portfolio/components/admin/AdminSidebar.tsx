@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useTheme } from 'next-themes';
 import { useLocale, useTranslations } from 'next-intl';
+import { routing } from '@/i18n/routing';
 import {
   LayoutDashboard,
   FileText,
@@ -162,8 +163,11 @@ export function AdminSidebar({ user, collapsed, onToggleCollapsed }: Props) {
   }
 
   function toggleLocale() {
-    const nextLocale = locale === 'pt' ? 'en' : 'pt';
-    const nextPath = pathname.replace(/^\/(pt|en)(?=\/|$)/, `/${nextLocale}`);
+    // Steps through routing.locales in order and wraps around, so a single
+    // button still reaches every locale.
+    const order = routing.locales;
+    const nextLocale = order[(order.indexOf(locale as (typeof order)[number]) + 1) % order.length];
+    const nextPath = pathname.replace(/^\/(pt|en|es)(?=\/|$)/, `/${nextLocale}`);
     router.push(nextPath === pathname ? `/${nextLocale}` : nextPath);
   }
 

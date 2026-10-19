@@ -82,6 +82,8 @@ export function RegisterForm({ onSuccess, onLogin }: Props) {
       redirect: false,
     })
 
+    // The account works right away, but commenting and the wall wait for the
+    // confirmation link, so the toast says where to look.
     toast.success(t("toasts.registerSuccess"))
     onSuccess()
   }
@@ -116,10 +118,18 @@ export function RegisterForm({ onSuccess, onLogin }: Props) {
           >
             <span className="ml-3 text-gray-400 dark:text-neutral-400 text-sm font-medium shrink-0">Aa</span>
             <input
-              {...register("username")}
+              {...register("username", {
+                // Typed as it will be stored, so nobody is surprised when
+                // "Ana" shows up as "ana" on their first comment.
+                onChange: (e) => {
+                  e.target.value = e.target.value.replace(/\s+/g, "").toLowerCase()
+                },
+              })}
               placeholder={t("register.usernamePlaceholder")}
               type="text"
-              autoComplete="name"
+              autoComplete="username"
+              autoCapitalize="none"
+              spellCheck={false}
               className="flex-1 bg-transparent dark:text-neutral-100 text-gray-800 px-2 outline-none text-sm"
             />
           </div>
