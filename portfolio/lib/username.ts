@@ -1,5 +1,5 @@
 // lib/username.ts
-import { randomBytes } from "crypto";
+import { randomInt } from "crypto";
 
 import { prisma } from "@romulo/database";
 
@@ -14,9 +14,8 @@ const PLACEHOLDER_ALPHABET = "abcdefghijkmnpqrstuvwxyz23456789";
  * who they are. The alphabet drops 0/o and 1/l so it can be read aloud.
  */
 function placeholderCandidate(): string {
-  const bytes = randomBytes(6);
   let suffix = "";
-  for (const byte of bytes) suffix += PLACEHOLDER_ALPHABET[byte % PLACEHOLDER_ALPHABET.length];
+  for (let i = 0; i < 6; i++) suffix += PLACEHOLDER_ALPHABET[randomInt(PLACEHOLDER_ALPHABET.length)];
   return `user_${suffix}`;
 }
 
