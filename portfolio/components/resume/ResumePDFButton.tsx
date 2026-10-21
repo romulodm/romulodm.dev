@@ -16,7 +16,7 @@ const PDF_BY_LOCALE: Record<string, string> = {
 const FALLBACK_PDF = '/resume-en.pdf';
 
 /** Path of the résumé PDF for a locale, falling back to the English one. */
-export function resumePdfFor(locale: string): string {
+function resumePdfFor(locale: string): string {
     return PDF_BY_LOCALE[locale] ?? FALLBACK_PDF;
 }
 

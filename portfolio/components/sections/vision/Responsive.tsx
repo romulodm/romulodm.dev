@@ -24,22 +24,11 @@ function useMedia(query: string) {
   return matches;
 }
 
-export const useDesktopMode = () => useMedia('(min-width: 992px)');
-export const useTabletMode = () => useMedia('(min-width: 768px) and (max-width: 991px)');
 export const useMobileMode = () => useMedia('(max-width: 767px)');
-export const useNonMobileMode = () => !useMedia('(max-width: 767px)');
-export const useNonDesktopMode = () => useMedia('(max-width: 991px)');
+const useNonMobileMode = () => !useMedia('(max-width: 767px)');
 
-export interface ResponsiveProps {
+interface ResponsiveProps {
   children: ReactElement | null;
-}
-
-export function Desktop({ children }: ResponsiveProps) {
-  return useDesktopMode() ? children : null;
-}
-
-export function Tablet({ children }: ResponsiveProps) {
-  return useTabletMode() ? children : null;
 }
 
 export function Mobile({ children }: ResponsiveProps) {

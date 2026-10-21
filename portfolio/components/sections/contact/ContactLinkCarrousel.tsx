@@ -133,7 +133,7 @@ const LINKS: LinkItem[] = [
 const LINK_SIZE = '3.125rem';
 const LINK_GAP = '0.5rem';
 
-/** Largura total da fileira de icones. O formulario usa isso como largura maxima. */
+/** Total width of the icon row. The home contact comment uses it as its width. */
 export const LINK_CARROUSEL_WIDTH =
   `calc(${LINKS.length} * ${LINK_SIZE} + ${LINKS.length - 1} * ${LINK_GAP})`;
 
