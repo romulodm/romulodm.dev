@@ -365,49 +365,9 @@
       "observabilityBody": "Medir antes de confiar."
     },
     "contactComment": {
+      "title": "Vamos nos conectar.",
       "inCity": "em Rio Grande",
       "body": "Vamos conversar sobre uma vaga, uma ideia ou algo que você leu por aqui. Costumo responder em até 1 dia."
-    },
-    "contactWindow": {
-      "windowTitle": "Nova mensagem",
-      "groupWrite": "Escrever",
-      "here": "Por aqui",
-      "yourEmail": "Pelo seu e-mail",
-      "groupLinks": "Links",
-      "resume": "Currículo",
-      "to": "Para",
-      "bodyPlaceholder": "Deixe uma mensagem...",
-      "send": "Enviar",
-      "writeAnother": "Escrever outra",
-      "role": "Desenvolvedor backend",
-      "city": "Rio Grande, RS",
-      "responseTime": "Costumo responder em até 1 dia"
-    },
-    "lastConnect": {
-      "title": "Vamos nos conectar.",
-      "formEmail": "Seu e-mail",
-      "formName": "Seu nome",
-      "formMessage": "Escreva sua mensagem...",
-      "submitButton": "Enviar mensagem",
-      "sentButton": "Mensagem enviada",
-      "genericError": "Algo deu errado no envio. Tenta de novo em alguns instantes?",
-      "thanksShort": "Obrigado!",
-      "thanksLong": "Obrigado por escrever!",
-      "thanksBody": "Respondo assim que possível.",
-      "statusTimezone": "Rio Grande · UTC−3",
-      "statusWorkHours": "horário comercial por aqui",
-      "statusOffHours": "fora do expediente por aqui",
-      "statusLateNight": "madrugada por aqui, talvez eu demore a responder",
-      "responseLabel": "Resposta média",
-      "responseValue": "~1 dia",
-      "responseNote": "responderei o mais rápido possível",
-      "uplinkReady": "pronto pra transmitir sua mensagem",
-      "readout": {
-        "lat": "LAT",
-        "lon": "LON",
-        "signal": "SIN"
-      },
-      "satelliteAlt": "Satélite"
     }
   },
   "home": {

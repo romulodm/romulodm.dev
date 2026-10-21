@@ -365,49 +365,9 @@
       "observabilityBody": "Measure before you trust."
     },
     "contactComment": {
+      "title": "Let's connect.",
       "inCity": "in Rio Grande",
       "body": "Let's talk about a job, an idea or something you read here. I usually reply within a day."
-    },
-    "contactWindow": {
-      "windowTitle": "New message",
-      "groupWrite": "Write",
-      "here": "Right here",
-      "yourEmail": "From your email",
-      "groupLinks": "Links",
-      "resume": "Résumé",
-      "to": "To",
-      "bodyPlaceholder": "Leave a message...",
-      "send": "Send",
-      "writeAnother": "Write another",
-      "role": "Backend developer",
-      "city": "Rio Grande, Brazil",
-      "responseTime": "I usually reply within a day"
-    },
-    "lastConnect": {
-      "title": "Let's connect.",
-      "formEmail": "Your email",
-      "formName": "Your name",
-      "formMessage": "Write your message...",
-      "submitButton": "Send message",
-      "sentButton": "Message sent",
-      "genericError": "Something went wrong while sending. Mind trying again in a moment?",
-      "thanksShort": "Thank you!",
-      "thanksLong": "Thanks for reaching out!",
-      "thanksBody": "I'll get back to you as soon as I can.",
-      "statusTimezone": "Rio Grande · UTC−3",
-      "statusWorkHours": "working hours here",
-      "statusOffHours": "after hours here",
-      "statusLateNight": "it's the middle of the night here, I may take a while to reply",
-      "responseLabel": "Average reply",
-      "responseValue": "~1 day",
-      "responseNote": "I'll reply as soon as I can",
-      "uplinkReady": "ready to transmit your message",
-      "readout": {
-        "lat": "LAT",
-        "lon": "LON",
-        "signal": "SIG"
-      },
-      "satelliteAlt": "Satellite"
     }
   },
   "home": {

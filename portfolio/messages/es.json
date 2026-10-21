@@ -337,54 +337,9 @@
       "observabilityBody": "Medir antes de confiar."
     },
     "contactComment": {
-      "pinned": "fijado",
-      "inCity": "en Rio Grande",
-      "body": "Escríbeme sobre una vacante, un freelance o algo que leíste por aquí. Suelo responder en menos de un día.",
-      "copied": "¡Copiado!",
-      "resume": "Currículum",
-      "writeAnother": "Escribir otro",
-      "onlyOwner": "solo Romulo lo ve"
-    },
-    "contactWindow": {
-      "windowTitle": "Nuevo mensaje",
-      "groupWrite": "Escribir",
-      "here": "Por aquí",
-      "yourEmail": "Desde tu correo",
-      "groupLinks": "Enlaces",
-      "resume": "Currículum",
-      "to": "Para",
-      "bodyPlaceholder": "Deja un mensaje...",
-      "send": "Enviar",
-      "writeAnother": "Escribir otro",
-      "role": "Desarrollador backend",
-      "city": "Rio Grande, Brasil",
-      "responseTime": "Suelo responder en menos de un día"
-    },
-    "lastConnect": {
       "title": "Conectemos.",
-      "formEmail": "Tu correo",
-      "formName": "Tu nombre",
-      "formMessage": "Escribe tu mensaje...",
-      "submitButton": "Enviar mensaje",
-      "sentButton": "Mensaje enviado",
-      "genericError": "Algo salió mal en el envío. ¿Lo intentas de nuevo en unos instantes?",
-      "thanksShort": "¡Gracias!",
-      "thanksLong": "¡Gracias por escribir!",
-      "thanksBody": "Respondo en cuanto pueda.",
-      "statusTimezone": "Rio Grande · UTC−3",
-      "statusWorkHours": "horario laboral por aquí",
-      "statusOffHours": "fuera del horario laboral por aquí",
-      "statusLateNight": "madrugada por aquí, quizá tarde en responder",
-      "responseLabel": "Respuesta media",
-      "responseValue": "~1 día",
-      "responseNote": "responderé lo antes posible",
-      "uplinkReady": "listo para transmitir tu mensaje",
-      "readout": {
-        "lat": "LAT",
-        "lon": "LON",
-        "signal": "SEÑ"
-      },
-      "satelliteAlt": "Satélite"
+      "inCity": "en Rio Grande",
+      "body": "Hablemos de una vacante, una idea o algo que leíste por aquí. Suelo responder en menos de un día."
     }
   },
   "home": {
