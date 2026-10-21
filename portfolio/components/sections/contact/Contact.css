@@ -12,6 +12,8 @@
     --color-discord-rgb: 114, 137, 218;
     --color-lattes: #00549f;
     --color-lattes-rgb: 0, 84, 159;
+    --color-orcid: #a6ce39;
+    --color-orcid-rgb: 166, 206, 57;
     --color-instagram: #c13584;
     --color-instagram-rgb: 193, 53, 132;
 
@@ -82,6 +84,12 @@
     color: var(--color-lattes);
     border-color: var(--color-lattes);
     filter: drop-shadow(0 0.15rem 0 rgba(var(--color-lattes-rgb), 1)) drop-shadow(0 0.2rem 0 rgba(var(--color-lattes-rgb), 0.3)) drop-shadow(0 0.4rem 0 rgba(var(--color-lattes-rgb), 0.2)) drop-shadow(0 0.6rem 0 rgba(var(--color-lattes-rgb), 0.1))
+}
+
+#orcid:hover {
+    color: var(--color-orcid);
+    border-color: var(--color-orcid);
+    filter: drop-shadow(0 0.15rem 0 rgba(var(--color-orcid-rgb), 1)) drop-shadow(0 0.2rem 0 rgba(var(--color-orcid-rgb), 0.3)) drop-shadow(0 0.4rem 0 rgba(var(--color-orcid-rgb), 0.2)) drop-shadow(0 0.6rem 0 rgba(var(--color-orcid-rgb), 0.1))
 }
 
 #instagram:hover {

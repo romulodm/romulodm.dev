@@ -5,7 +5,7 @@ import './Contact.css';
 import React from 'react';
 import { AiFillInstagram } from 'react-icons/ai';
 import { FaGithub, FaLinkedin, FaTwitch } from 'react-icons/fa';
-import { SiOnlyfans } from 'react-icons/si';
+import { SiOnlyfans, SiOrcid } from 'react-icons/si';
 import * as TooltipPrimitive from '@radix-ui/react-tooltip';
 import { LattesIcon } from '@/components/icons/LattesIcon'
 
@@ -95,6 +95,13 @@ const LINKS: LinkItem[] = [
     color: '#333',
     title: 'GitHub',
     id: 'github',
+  },
+  {
+    url: 'https://orcid.org/0009-0007-4003-5653',
+    icon: <SiOrcid />,
+    color: '#a6ce39',
+    title: 'ORCID',
+    id: 'orcid',
   },
   {
     url: 'http://lattes.cnpq.br/0179162809960172',

@@ -7,6 +7,7 @@ import { Logo } from './Logo'
 import { FaLinkedinIn } from 'react-icons/fa'
 import { BsGithub, BsInstagram } from 'react-icons/bs'
 import { FaArrowRightLong } from 'react-icons/fa6'
+import { SiOrcid } from 'react-icons/si'
 import { Mail, MapPin } from 'lucide-react'
 import { ContactModal } from './modals/ContactModal'
 import { GitHubStarsButton } from './GitHubStarsButton'
@@ -163,6 +164,9 @@ export function Footer() {
                     <div className="flex gap-2">
                         <SocialBtn href="http://lattes.cnpq.br/0179162809960172" aria-label={t('social.lattes')}>
                             <LattesIcon />
+                        </SocialBtn>
+                        <SocialBtn href="https://orcid.org/0009-0007-4003-5653" aria-label={t('social.orcid')}>
+                            <SiOrcid />
                         </SocialBtn>
                         <SocialBtn href="https://github.com/romulodm" aria-label="GitHub">
                             <BsGithub />
