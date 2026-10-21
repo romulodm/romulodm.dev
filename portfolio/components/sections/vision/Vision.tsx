@@ -7,19 +7,23 @@ import { TbHeartHandshake } from 'react-icons/tb';
 
 import SectionHeader from '../SectionHeader';
 import Software from './Software';
+import Bento from '../bento/Bento';
+import { FAQ } from '@/components/FAQ';
 
 export default function Vision() {
   const t = useTranslations('home.software');
 
   return (
-    <section className="vs-scope w-full overflow-hidden pb-20">
+    <section className="vs-scope w-full overflow-x-clip">
       {/*
-       * `pb-20` e folga para o formulario do <Reach />: ele e absoluto, fica a
-       * 67% de um board de altura fixa e passa um pouco do fim dele. Com
-       * `pb-10` o `overflow-hidden` desta section cortava o aviso de
-       * privacidade. No mobile o <Software /> termina 2.5rem acima do fim
-       * do formulario e conta com este `pb-20` para fechar a secao logo abaixo
-       * dele (ver REACH_TOP_MOBILE).
+       * The section clips overflow on the x axis only. The board breaks out
+       * to 100vw on mobile and its parallax cards drift sideways, which must
+       * not widen the page. It must not be `overflow-hidden`: that turns the
+       * section into a scroll container, and the FAQ inside it has a sticky
+       * header (`lg:sticky`) that would then stick to this section instead
+       * of to the viewport, which is to say never. `clip` cuts the overflow
+       * without creating a scroll container, and `overflow-x-hidden` would
+       * not do either, since it forces the y axis to `auto`.
        */}
       {/*
        * `items-center` aqui NAO pode existir: o <Software /> e uma arvore de
@@ -28,8 +32,9 @@ export default function Vision() {
        * do conteudo e todo o board colapsa junto. A centralizacao acontece com
        * `mx-auto` no proprio bloco, que continua ocupando 100% da faixa.
        */}
-      {/* `px-4` e o mesmo gutter da section do FAQ logo abaixo: o formulario
-          encosta na borda esquerda deste bloco, entao os dois alinham. */}
+      {/* `px-4` is the same gutter as the FAQ section below: the contact
+          comment sits against the left edge of this block, so the two line
+          up. */}
       <div className="mx-auto w-full max-w-7xl px-4">
         <SectionHeader
           accent="vision"
@@ -41,6 +46,15 @@ export default function Vision() {
 
         <Software />
       </div>
+
+      <section className='w-full flex items-center justify-center pb-16 px-4 max-w-7xl mx-auto'>
+        <div className="flex flex-col justify-center items-center w-full">
+          <FAQ />
+          <div className="mt-16 w-full">
+            <Bento />
+          </div>
+        </div>
+      </section>
     </section>
   );
 }

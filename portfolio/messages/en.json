@@ -365,13 +365,8 @@
       "observabilityBody": "Measure before you trust."
     },
     "contactComment": {
-      "pinned": "pinned",
       "inCity": "in Rio Grande",
-      "body": "Reach out about a job, a freelance project or something you read here. I usually reply within a day.",
-      "copied": "Copied!",
-      "resume": "Résumé",
-      "writeAnother": "Write another",
-      "onlyOwner": "only Romulo sees this"
+      "body": "Let's talk about a job, an idea or something you read here. I usually reply within a day."
     },
     "contactWindow": {
       "windowTitle": "New message",
@@ -445,6 +440,8 @@
       "forks": "GitHub forks",
       "downloads": "npm downloads in the last week",
       "open": "Open project",
+      "showDetails": "Read more",
+      "hideDetails": "Read less",
       "featured": {
         "romulodm": {
           "tagline": "A portfolio that became a platform: its own CMS, newsletter, search and donations on one VPS",
@@ -1039,7 +1036,8 @@
       "copyright": "Romulo © {year} — All rights reserved."
     },
     "social": {
-      "lattes": "Lattes CV"
+      "lattes": "Lattes CV",
+      "orcid": "ORCID"
     }
   },
   "faq": {

@@ -417,6 +417,8 @@
       "forks": "forks en GitHub",
       "downloads": "descargas en npm la última semana",
       "open": "Abrir proyecto",
+      "showDetails": "Leer más",
+      "hideDetails": "Leer menos",
       "featured": {
         "romulodm": {
           "tagline": "Un portafolio que se volvió plataforma: CMS propio, newsletter, buscador y donaciones en un VPS",
@@ -1011,7 +1013,8 @@
       "copyright": "Romulo © {year}. Todos los derechos reservados."
     },
     "social": {
-      "lattes": "Currículum Lattes"
+      "lattes": "Currículum Lattes",
+      "orcid": "ORCID"
     }
   },
   "faq": {

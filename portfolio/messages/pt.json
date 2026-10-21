@@ -365,13 +365,8 @@
       "observabilityBody": "Medir antes de confiar."
     },
     "contactComment": {
-      "pinned": "fixado",
       "inCity": "em Rio Grande",
-      "body": "Me chama pra conversar sobre uma vaga, um freela ou algo que você leu por aqui. Costumo responder em até 1 dia.",
-      "copied": "Copiado!",
-      "resume": "Currículo",
-      "writeAnother": "Escrever outra",
-      "onlyOwner": "só o Romulo vê"
+      "body": "Vamos conversar sobre uma vaga, uma ideia ou algo que você leu por aqui. Costumo responder em até 1 dia."
     },
     "contactWindow": {
       "windowTitle": "Nova mensagem",
@@ -445,6 +440,8 @@
       "forks": "forks no GitHub",
       "downloads": "downloads no npm na última semana",
       "open": "Abrir projeto",
+      "showDetails": "Ler mais",
+      "hideDetails": "Ler menos",
       "featured": {
         "romulodm": {
           "tagline": "Um portfolio que virou plataforma: CMS próprio, newsletter, busca e doações rodando numa VPS",
@@ -1039,7 +1036,8 @@
       "copyright": "Romulo © {year}. Todos os direitos reservados."
     },
     "social": {
-      "lattes": "Currículo Lattes"
+      "lattes": "Currículo Lattes",
+      "orcid": "ORCID"
     }
   },
   "faq": {

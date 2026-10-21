@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import { useTranslations } from 'next-intl';
 import { TbActivityHeartbeat, TbTopologyStar3 } from 'react-icons/tb';
 import { MdRocketLaunch, MdSecurity } from 'react-icons/md';
@@ -18,7 +18,7 @@ import { animated, useSpringValue } from '@react-spring/web';
 import { pixels } from 'seedicon/pixels';
 import { Avatar, Button, Card, Chip } from './ui';
 import { Default, Mobile, useMobileMode } from './Responsive';
-import Reach, { REACH_MAX_HEIGHT, REACH_TOP_MOBILE } from './Reach';
+import ContactComment from './ContactComment';
 
 const SURFACE_GLOW = 'drop-shadow(0 0 20px var(--vs-background-body))';
 
@@ -294,46 +294,46 @@ function CardStack({ stack, step }: { stack: StackDefinition; step: number }) {
   const tail = mobile ? stack.mobileTail?.(step) : null;
 
   const cards = (
-      <div style={layout}>
-        {stack.cards.map((card) => (
-          <Card
-            key={card.key}
-            variant="outlined"
+    <div style={layout}>
+      {stack.cards.map((card) => (
+        <Card
+          key={card.key}
+          variant="outlined"
+          style={{
+            padding: '0.5rem',
+            filter: SURFACE_GLOW,
+          }}
+        >
+          <div
             style={{
-              padding: '0.5rem',
-              filter: SURFACE_GLOW,
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: '0.5rem',
             }}
           >
-            <div
+            <Avatar
+              size="lg"
               style={{
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'center',
-                gap: '0.5rem',
+                fontSize: '1.5rem',
+                borderRadius: 'var(--vs-radius-md)',
+                flexShrink: 0,
               }}
             >
-              <Avatar
-                size="lg"
-                style={{
-                  fontSize: '1.5rem',
-                  borderRadius: 'var(--vs-radius-md)',
-                  flexShrink: 0,
-                }}
-              >
-                {card.icon}
-              </Avatar>
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <span className="vs-body1" style={{ whiteSpace: 'nowrap' }}>
-                  {t(`${card.key}Title`)}
-                </span>
-                <span className="vs-body2" style={{ whiteSpace: 'nowrap' }}>
-                  {t(`${card.key}Body`)}
-                </span>
-              </div>
+              {card.icon}
+            </Avatar>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <span className="vs-body1" style={{ whiteSpace: 'nowrap' }}>
+                {t(`${card.key}Title`)}
+              </span>
+              <span className="vs-body2" style={{ whiteSpace: 'nowrap' }}>
+                {t(`${card.key}Body`)}
+              </span>
             </div>
-          </Card>
-        ))}
-      </div>
+          </div>
+        </Card>
+      ))}
+    </div>
   );
 
   return (
@@ -468,38 +468,120 @@ const LABEL_TRANSFORMS = {
 
 const CURSOR_STATES = [
   { top: '0', left: '20%', rotate: '0deg', opacity: '0' },
-  { top: '5%', left: '51%', rotate: '0deg', opacity: '1' },
-  { top: '51%', left: '40%', rotate: '-90deg', opacity: '1' },
-  { top: '58.5%', left: '54%', rotate: '-90deg', opacity: '1' },
-  { top: '80%', left: '-1%', rotate: '0deg', opacity: '1' },
-  { top: '100%', left: '30%', rotate: '0deg', opacity: '0' },
+  { top: '6%', left: '51%', rotate: '0deg', opacity: '1' },
+  { top: '48%', left: '40%', rotate: '-90deg', opacity: '1' },
+  { top: '55.2%', left: '51%', rotate: '-90deg', opacity: '1' },
+  { top: '78.6%', left: '25.5%', rotate: '0deg', opacity: '1' },
+  { top: '110%', left: '60%', rotate: '0deg', opacity: '0' },
 ];
 
-function Cursor({ step, name }: { step: number; name: string }) {
-  const currentState = useMemo(() => {
-    const state = CURSOR_STATES[step] ?? CURSOR_STATES[0];
-    return {
-      ...state,
-      labelTransform: LABEL_TRANSFORMS[state.rotate === '0deg' ? 'left' : 'right'],
-    };
-  }, [step]);
+/**
+ * Steps at which the cursor is placed relative to an element instead of on a
+ * fixed spot of the frame: the element marked `data-cursor-target="<name>"`,
+ * shifted by `dx`/`dy` px.
+ *
+ *   - 4: on the owner's comment under the board (ContactComment), which
+ *     opens the contact modal;
+ *   - 5: the exit. The cursor drifts a little down and to the right of the
+ *     comment while it fades out, the mirror of how it fades in on the way to
+ *     step 1. The drift is kept short so the cursor is gone before it
+ *     reaches the content under the comment.
+ *
+ * The comment sits below the board, at a height that depends on the viewport
+ * width and on how its text wraps, so a fixed percentage would drift off it.
+ * The entries of CURSOR_STATES for these steps are the fallback when the
+ * element is not on the page; their rotation and opacity always apply.
+ */
+const CURSOR_TARGETS: Partial<Record<number, { name: string; dx: number; dy: number }>> = {
+  4: { name: 'contact', dx: 70, dy: 10 },
+  5: { name: 'contact', dx: 300, dy: 150 },
+};
 
-  const top = useSpringValue(currentState.top);
-  const left = useSpringValue(currentState.left);
-  const rotate = useSpringValue(currentState.rotate);
-  const labelTransform = useSpringValue(currentState.labelTransform);
-  const opacity = useSpringValue(currentState.opacity);
+/**
+ * Tip of the arrow inside the SVG at rotate(0deg), in px from its top-left
+ * corner: the path's top-right point, scaled from the 17x18 viewBox to the
+ * 25px of height the SVG is drawn at.
+ */
+const ARROW_TIP = { x: 21, y: 3 };
+
+/**
+ * Offset of an element from the top-left of the document, from the
+ * offsetTop/offsetLeft chain. Unlike getBoundingClientRect this ignores CSS
+ * transforms, which matters here: the target sits inside a section that is
+ * still sliding into place (translateY) when the cursor heads for it, and the
+ * cursor has to aim at where it will stop, not where it is mid-way.
+ */
+function pageOffset(element: HTMLElement): { top: number; left: number } {
+  let top = 0;
+  let left = 0;
+  let node: HTMLElement | null = element;
+  while (node) {
+    top += node.offsetTop;
+    left += node.offsetLeft;
+    node = node.offsetParent as HTMLElement | null;
+  }
+  return { top, left };
+}
+
+/**
+ * Position of the cursor, as percentages of its frame (the same unit as
+ * CURSOR_STATES, so the springs interpolate between the two), that puts the
+ * arrow's tip on the target text: a third of the way into it, near its
+ * baseline. The arrow points up and to the right, so its body and the name
+ * label hang below-left of the words instead of covering them.
+ */
+function targetPosition(
+  { name, dx, dy }: { name: string; dx: number; dy: number },
+  frame: HTMLElement,
+): { top: string; left: string } | null {
+  const target = document.querySelector<HTMLElement>(`[data-cursor-target="${name}"]`);
+  if (!target || frame.offsetWidth === 0 || frame.offsetHeight === 0) return null;
+
+  const targetOffset = pageOffset(target);
+  const frameOffset = pageOffset(frame);
+  const tipX = targetOffset.left - frameOffset.left + target.offsetWidth * 0.3 + dx;
+  const tipY = targetOffset.top - frameOffset.top + target.offsetHeight * 0.85 + dy;
+
+  return {
+    top: `${((tipY - ARROW_TIP.y) / frame.offsetHeight) * 100}%`,
+    left: `${((tipX - ARROW_TIP.x) / frame.offsetWidth) * 100}%`,
+  };
+}
+
+function Cursor({ step, name }: { step: number; name: string }) {
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  const initial = CURSOR_STATES[0];
+  const top = useSpringValue(initial.top);
+  const left = useSpringValue(initial.left);
+  const rotate = useSpringValue(initial.rotate);
+  const labelTransform = useSpringValue(LABEL_TRANSFORMS.left);
+  const opacity = useSpringValue(initial.opacity);
 
   useEffect(() => {
-    top.start(currentState.top);
-    left.start(currentState.left);
-    rotate.start(currentState.rotate);
-    labelTransform.start(currentState.labelTransform);
-    opacity.start(currentState.opacity);
-  }, [currentState, top, left, rotate, labelTransform, opacity]);
+    function place(): void {
+      const base = CURSOR_STATES[step] ?? CURSOR_STATES[0];
+      const spec = CURSOR_TARGETS[step];
+      // The frame is the layer <Software /> draws the cursor in.
+      const frame = rootRef.current?.parentElement;
+      const target = spec && frame ? targetPosition(spec, frame) : null;
+      const state = target ? { ...base, ...target } : base;
+
+      top.start(state.top);
+      left.start(state.left);
+      rotate.start(state.rotate);
+      labelTransform.start(LABEL_TRANSFORMS[state.rotate === '0deg' ? 'left' : 'right']);
+      opacity.start(state.opacity);
+    }
+
+    place();
+    // Text rewraps when the window is resized, which moves the targets.
+    window.addEventListener('resize', place);
+    return () => window.removeEventListener('resize', place);
+  }, [step, top, left, rotate, labelTransform, opacity]);
 
   return (
-    <animated.div style={{ zIndex: 99, position: 'absolute', top, left, opacity }}>
+    <animated.div ref={rootRef} style={{ zIndex: 99, position: 'absolute', top, left, opacity }}>
       <Chip
         as={animated.div}
         variant="solid"
@@ -720,6 +802,14 @@ function Board({ step }: { step: number }) {
 /** Share of the scroll progress spent before the board animation starts. */
 const ANIMATION_DELAY = 0.2;
 
+/**
+ * Height of the layer the cursor is drawn in, on desktop. The cursor's fixed
+ * positions (CURSOR_STATES) are percentages of it, tuned when the box under
+ * the board had this height, so it stays their frame of reference whatever
+ * the real height of the box.
+ */
+const CURSOR_FRAME_HEIGHT = '1200px';
+
 export default function Software() {
   const t = useTranslations('vision.software');
   const mobile = useMobileMode();
@@ -751,25 +841,29 @@ export default function Software() {
           display: 'flex',
           flexDirection: 'column',
           width: '100%',
-          // On mobile the section should close right after the form. The form
-          // sits at a fixed offset (from this box's edge, not from inside the
-          // padding) with a capped height; this box stops 2.5rem short of its
-          // bottom, and the `pb-20` (5rem) of <Vision /> makes up the rest, so
-          // the section's `overflow-hidden` ends 2.5rem below the form. That
-          // leaves room for the privacy notice, which overflows the form box a
-          // little. The padding is the same at every width on purpose, so the
-          // desktop layout does not depend on a responsive class.
-          height: mobile
-            ? `calc(${REACH_TOP_MOBILE} + ${REACH_MAX_HEIGHT} - 2.5rem)`
-            : '1200px',
           marginTop: mobile ? '4rem' : '2rem',
           position: 'relative',
-          padding: '37px',
         }}
         id="software"
       >
         <Default>
-          <Cursor step={animationStep} name={t('cursorName')} />
+          {/* The cursor's fixed positions are percentages of this layer
+              (CURSOR_FRAME_HEIGHT), so it lands on the same board cards
+              whatever the real height of the box. Steps 4 and 5 are placed relative to
+              the contact comment instead (CURSOR_TARGETS): on it, then a
+              short drift away from it while the cursor fades out. */}
+          <div
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              height: CURSOR_FRAME_HEIGHT,
+              pointerEvents: 'none',
+            }}
+          >
+            <Cursor step={animationStep} name={t('cursorName')} />
+          </div>
         </Default>
 
         <div
@@ -782,7 +876,7 @@ export default function Software() {
           }}
         >
           <Board step={animationStep} />
-          <Reach step={animationStep} />
+          <ContactComment step={animationStep} />
         </div>
       </div>
     </Parallax>
