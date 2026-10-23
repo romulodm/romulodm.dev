@@ -26,7 +26,7 @@ const BlogList = async () => {
     if (featured.length === 0 && list.length === 0 && !closing) return null;
 
     return (
-        <section className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
+        <section className="w-full max-w-6xl mx-auto px-4 lg:px-6 pt-16 sm:pt-24">
             <BlogPreviewGrid featured={featured} list={list} closing={closing} readMore={t("readMore")} />
         </section>
     );
