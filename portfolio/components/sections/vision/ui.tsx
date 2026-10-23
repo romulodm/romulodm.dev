@@ -57,7 +57,6 @@ export function Button({
   variant = 'solid',
   color = 'primary',
   startDecorator,
-  loading = false,
   className,
   children,
   ...props
@@ -66,7 +65,6 @@ export function Button({
   variant?: 'solid' | 'soft' | 'outlined';
   color?: Tone;
   startDecorator?: ReactNode;
-  loading?: boolean;
   className?: string;
   children?: ReactNode;
 } & Record<string, unknown>) {
@@ -76,26 +74,9 @@ export function Button({
       className={cx('vs-btn', `vs-btn--${variant}`, `vs-color-${color}`, className)}
       {...props}
     >
-      {loading ? <Spinner /> : startDecorator}
+      {startDecorator}
       {children}
     </Component>
-  );
-}
-
-/** Spinner em SVG puro, usado no estado de loading do Button. */
-export function Spinner({ size = '1.25rem' }: { size?: string }) {
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      style={{ animation: 'vs-spin 1s linear infinite' }}
-      aria-hidden
-    >
-      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="3" opacity="0.25" />
-      <path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
-    </svg>
   );
 }
 
@@ -158,45 +139,6 @@ export function Avatar({
       {...props}
     >
       {children}
-    </div>
-  );
-}
-
-/* -------------------------------------------------------------------------- */
-/*                               Input / Textarea                             */
-/* -------------------------------------------------------------------------- */
-
-export function Input({
-  startDecorator,
-  className,
-  style,
-  ...props
-}: {
-  startDecorator?: ReactNode;
-  className?: string;
-  style?: CSSProperties;
-} & React.InputHTMLAttributes<HTMLInputElement>) {
-  return (
-    <div className={cx('vs-input', className)} style={style}>
-      {startDecorator && <span className="vs-input-decorator">{startDecorator}</span>}
-      <input {...props} />
-    </div>
-  );
-}
-
-export function Textarea({
-  className,
-  style,
-  minRows = 3,
-  ...props
-}: {
-  className?: string;
-  style?: CSSProperties;
-  minRows?: number;
-} & React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
-  return (
-    <div className={cx('vs-input', 'vs-textarea', className)} style={style}>
-      <textarea rows={minRows} {...props} />
     </div>
   );
 }

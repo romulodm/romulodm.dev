@@ -3,10 +3,10 @@
 /**
  * Ciclo de vida do widget do Cloudflare Turnstile.
  *
- * Existe como hook porque o site tem DOIS formulários de contato — o do modal
- * (`sections/contact/ContactForm`) e o da seção espacial da home
- * (`sections/vision/Reach`) — e as regras abaixo são fáceis de errar em cada
- * cópia, especialmente a do reset.
+ * Kept as a hook, apart from the contact form that uses it
+ * (`sections/contact/ContactForm`), because the rules below are easy to get
+ * wrong, the reset above all, and any future form that needs a challenge
+ * should reuse them instead of copying them.
  *
  * Uso:
  *

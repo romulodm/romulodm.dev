@@ -190,15 +190,15 @@ export function FAQ({
     }
 
     return (
-        // On the home page the FAQ sits right under the "Let's connect" form,
-        // which only fades in after a few scrolls. With the default reveal the
-        // FAQ was already on screen while the form was still arriving, and the
-        // two read as one block. Here it waits until its top is past ~70% of
+        // On the home page the FAQ sits right under the "Let's connect"
+        // comment, which only fades in after a few scrolls. With the default
+        // reveal the FAQ was already on screen while the comment was still
+        // arriving, and the two read as one block. Here it waits until its top is past ~70% of
         // the viewport, rises from further down and hides again when the
-        // visitor scrolls back up, like the form does. The extra top padding
-        // keeps the two sections apart.
+        // visitor scrolls back up, like the comment does. The top padding keeps
+        // the two sections apart.
         <AnimatedSection
-            className="relative z-10 pt-10 lg:pt-28 w-full"
+            className="relative z-10 pt-10 lg:pt-16 w-full"
             delay={0.1}
             offset={80}
             rootMargin="0px 0px -30% 0px"

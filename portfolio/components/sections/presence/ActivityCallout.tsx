@@ -23,7 +23,7 @@ export default function ActivityCallout() {
     // The button takes GitHub's green so it reads as part of the heat map
     // above it rather than a second accent competing with it.
     return (
-        <section className="mx-auto flex w-full max-w-7xl items-center justify-center px-4 pb-16">
+        <section className="mx-auto flex w-full max-w-6xl items-center justify-center px-4 lg:px-6 pb-16">
             <div className="w-full">
                 <hr className="mb-5 mt-3 dark:border-[#2f3031]" />
 

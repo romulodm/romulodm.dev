@@ -5,6 +5,7 @@ import { FiAlertCircle } from "react-icons/fi";
 import { getTranslations } from "next-intl/server";
 
 import FeaturedProjects from "./FeaturedProjects";
+import FeaturedProjectsList from "./FeaturedProjectsList";
 import ProjectCard from "./ProjectCard";
 import { getMainProjects, type Project } from "./data";
 import { TECH_LOGOS, type TechLogo } from "@/lib/tech-logos";
@@ -59,9 +60,8 @@ export default async function Projects() {
         raw: (key) => t.raw(key),
     });
 
-    // Pinned repos without a case-study entry. On desktop they sit in the
-    // simple grid under the detailed view; below `lg` every project is a
-    // simple card, featured or not.
+    // Pinned repos without a case-study entry: the simple grid under the
+    // detailed view, at every width.
     const featuredIds = new Set(featured.map((project) => project.id));
     const rest = all.filter((project) => !featuredIds.has(project.title));
 
@@ -74,27 +74,33 @@ export default async function Projects() {
         downloads: t("projects.downloads"),
         perWeek: t("projects.downloadsWeek"),
         open: t("projects.open"),
+        more: t("projects.showDetails"),
+        less: t("projects.hideDetails"),
     };
 
     return (
         <div className="flex w-full flex-col pt-5">
-            {/* Both layouts are rendered and CSS picks one, so the breakpoint
-                switch needs no client code and no layout shift on hydration.
-                If no featured repo came back from GitHub, the full grid is all
-                there is, at every width. */}
-            <div className={featured.length > 0 ? "lg:hidden" : undefined}>
-                <ProjectGrid projects={all} />
-            </div>
-
-            {featured.length > 0 && (
-                <div className="hidden lg:block">
-                    <FeaturedProjects projects={featured} labels={labels} />
+            {/* Both detailed layouts are rendered and CSS picks one, so the
+                breakpoint switch needs no client code and no layout shift on
+                hydration: the stacked list with collapsible details below
+                `lg`, the pinned split from `lg` up. If no featured repo came
+                back from GitHub, the full grid is all there is. */}
+            {featured.length > 0 ? (
+                <>
+                    <div className="lg:hidden">
+                        <FeaturedProjectsList projects={featured} labels={labels} />
+                    </div>
+                    <div className="hidden lg:block">
+                        <FeaturedProjects projects={featured} labels={labels} />
+                    </div>
                     {rest.length > 0 && (
-                        <div className="mt-4">
+                        <div className="mt-14 lg:mt-4">
                             <ProjectGrid projects={rest} />
                         </div>
                     )}
-                </div>
+                </>
+            ) : (
+                <ProjectGrid projects={all} />
             )}
 
             <div className="w-full flex items-center justify-center">

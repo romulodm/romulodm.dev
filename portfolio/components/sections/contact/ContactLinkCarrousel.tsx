@@ -5,7 +5,7 @@ import './Contact.css';
 import React from 'react';
 import { AiFillInstagram } from 'react-icons/ai';
 import { FaGithub, FaLinkedin, FaTwitch } from 'react-icons/fa';
-import { SiOnlyfans } from 'react-icons/si';
+import { SiOnlyfans, SiOrcid } from 'react-icons/si';
 import * as TooltipPrimitive from '@radix-ui/react-tooltip';
 import { LattesIcon } from '@/components/icons/LattesIcon'
 
@@ -97,6 +97,13 @@ const LINKS: LinkItem[] = [
     id: 'github',
   },
   {
+    url: 'https://orcid.org/0009-0007-4003-5653',
+    icon: <SiOrcid />,
+    color: '#a6ce39',
+    title: 'ORCID',
+    id: 'orcid',
+  },
+  {
     url: 'http://lattes.cnpq.br/0179162809960172',
     icon: <LattesIcon />,
     color: '#00549f',
@@ -126,7 +133,7 @@ const LINKS: LinkItem[] = [
 const LINK_SIZE = '3.125rem';
 const LINK_GAP = '0.5rem';
 
-/** Largura total da fileira de icones. O formulario usa isso como largura maxima. */
+/** Total width of the icon row. The home contact comment uses it as its width. */
 export const LINK_CARROUSEL_WIDTH =
   `calc(${LINKS.length} * ${LINK_SIZE} + ${LINKS.length - 1} * ${LINK_GAP})`;
 

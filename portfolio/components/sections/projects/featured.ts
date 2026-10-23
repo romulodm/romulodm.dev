@@ -44,8 +44,8 @@ export interface FeaturedScreenshot {
  *   hero image must be a tall capture (see scripts/capture-project-screens.mjs)
  *   or the pan runs out of picture.
  * - `phone`: the browser frame steps back and a phone rises from the bottom
- *   edge, its screen filled with avatars drawn by the project's own package.
- *   Needs the project's `iconSeed` (data.ts).
+ *   edge, its screen filled with avatars drawn by the project's own package
+ *   (seedicon; the tiles are listed in FeaturedProjectCard.tsx).
  * - `second-screen`: the browser frame steps back and a second window with
  *   another page of the project slides in front of it.
  * - `window`: an app window opens on top of the hero, inside the same browser
@@ -252,4 +252,7 @@ export interface FeaturedLabels {
     /** Suffix after the download count, e.g. "/semana". */
     perWeek: string;
     open: string;
+    /** Toggle of the collapsed details in the list below `lg`. */
+    more: string;
+    less: string;
 }

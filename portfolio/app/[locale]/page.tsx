@@ -16,8 +16,6 @@ import Timeline from '@/components/sections/Timeline';
 import Projects from '@/components/sections/projects/Projects';
 import Stack from '@/components/sections/Stack';
 import Vision from '@/components/sections/vision/Vision';
-import { FAQ } from '@/components/FAQ';
-import Bento from '@/components/sections/bento/Bento';
 import { Footer } from '@/components/Footer';
 import Presence from '@/components/sections/presence/Presence';
 import ActivityCallout from '@/components/sections/presence/ActivityCallout';
@@ -107,16 +105,8 @@ function HomeContent() {
       {/* GitHub contributions and the call to the blog, one card. The heat
           map only shows once the calendar arrives; the call-out always does. */}
       <ActivityCallout />
+      {/* Also renders the FAQ and the Bento, under the board (see Vision.tsx). */}
       <Vision />
-
-      <section className='w-full flex items-center justify-center pb-16 px-4 max-w-7xl mx-auto'>
-        <div className="flex flex-col justify-center items-center w-full">
-          <FAQ />
-          <div className="mt-16 w-full">
-            <Bento />
-          </div>
-        </div>
-      </section>
       <Footer />
     </main >
   )
