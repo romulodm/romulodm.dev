@@ -39,15 +39,15 @@ const logos: Logo[] = [
     // DevOps / infra
     TECH_LOGOS["Nginx"],                               // 19
     TECH_LOGOS["RabbitMQ"],                           // 22
-    TECH_LOGOS["AWS"],                               // 18
     TECH_LOGOS["Git"],
+    TECH_LOGOS["AWS"],                               // 18
     TECH_LOGOS["Apache Kafka"], // 23
     TECH_LOGOS["Linux"],                               // 21
 
     // Messaging / queues
     TECH_LOGOS["npm"],                                 // 22
-    TECH_LOGOS["Ethereum"],   // 27
-    TECH_LOGOS["Claude Code"],                  // 24
+    TECH_LOGOS["Ethereum"],   // 27  
+    TECH_LOGOS["GraphQL"],               // 24
     TECH_LOGOS["MQTT"],                               // 25
 
     // Blockchain / Web3
@@ -58,7 +58,7 @@ const logos: Logo[] = [
     TECH_LOGOS["Web3.js"],                         // 30
 
     // Tooling / other
-    TECH_LOGOS["GraphQL"],
+    TECH_LOGOS["Claude Code"],
     TECH_LOGOS["Prisma"],    // 13
     // 31
     TECH_LOGOS["Arduino"],                            // 33
