@@ -1,13 +1,17 @@
 "use client";
 
-import { useCallback, useMemo, useRef, type PointerEvent as ReactPointerEvent, type ReactNode } from "react";
+import { useCallback, useId, useMemo, useRef, type PointerEvent as ReactPointerEvent, type ReactNode } from "react";
 import Image from "next/image";
 import { FiArrowRight } from "react-icons/fi";
+import { gradient } from "seedicon/gradient";
 import { heraldry } from "seedicon/heraldry";
-import { identicon } from "seedicon/identicon";
+import { lifehash } from "seedicon/lifehash";
+import { marble } from "seedicon/marble";
+import { pixelart } from "seedicon/pixelart";
 import { pixels } from "seedicon/pixels";
+import { randomart } from "seedicon/randomart";
 import { streamlines } from "seedicon/streamlines";
-import { terrain } from "seedicon/terrain";
+import { terrain, type StyleOptions } from "seedicon/terrain";
 import { truchet } from "seedicon/truchet";
 import { waves } from "seedicon/waves";
 
@@ -79,7 +83,7 @@ export default function FeaturedProjectCard({ project, labels }: FeaturedProject
             aria-label={`${labels.open}: ${project.title}`}
             draggable={false}
             onPointerEnter={playSound}
-            className="group relative block aspect-[16/11] w-full overflow-hidden rounded-2xl border border-border bg-white p-2 shadow-sm transition-transform duration-500 hover:-translate-y-2 motion-reduce:transition-none motion-reduce:hover:translate-y-0 dark:border-neutral-800 dark:bg-white/[0.04]"
+            className="group relative block w-full lg:aspect-[16/11] overflow-hidden rounded-2xl border border-border bg-white p-2 shadow-sm transition-transform duration-500 hover:-translate-y-2 motion-reduce:transition-none motion-reduce:hover:translate-y-0 dark:border-neutral-800 dark:bg-white/[0.04]"
         >
             <div className="relative flex h-full w-full flex-col overflow-hidden rounded-2xl">
                 <div
@@ -88,8 +92,8 @@ export default function FeaturedProjectCard({ project, labels }: FeaturedProject
                     className="absolute inset-0 transition-[transform,filter] duration-500 ease-in-out group-hover:scale-105 group-hover:brightness-105 group-hover:saturate-125 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
                 />
 
-                <div className="relative z-10 flex items-start justify-between gap-8 px-8 py-7 text-white xl:px-10 xl:py-8">
-                    <h3 className="text-balance text-xl font-medium leading-snug xl:text-2xl">
+                <div className="relative z-10 flex items-start justify-between gap-4 px-5 py-5 text-white sm:gap-8 sm:px-8 sm:py-7 xl:px-10 xl:py-8">
+                    <h3 className="text-balance text-lg font-medium leading-snug sm:text-xl xl:text-2xl">
                         {project.tagline}
                     </h3>
                     <FiArrowRight
@@ -100,8 +104,17 @@ export default function FeaturedProjectCard({ project, labels }: FeaturedProject
 
                 {/* The stage: everything below the tagline. The main frame fills
                     it; the phone and the second window are placed against its
-                    bottom edge and start fully below it, clipped by the card. */}
-                <div className="absolute inset-x-0 bottom-0 top-32 z-10 xl:top-36">
+                    bottom edge and start fully below it, clipped by the card.
+
+                    From `lg` the card has a fixed aspect and the stage fills it
+                    from a fixed offset under the tagline. Below that the card
+                    is full width and the tagline wraps to as many lines as the
+                    phone needs, so the stage follows it in the flow with an
+                    aspect of its own instead, and the frame never ends up
+                    under the text. `min-h-0` makes the aspect a hard cap:
+                    without it the stage grows to fit its content, and the
+                    `scroll` hero is a capture two and a half viewports tall. */}
+                <div className="relative z-10 aspect-[16/9] min-h-0 lg:absolute lg:inset-x-0 lg:bottom-0 lg:top-32 lg:aspect-auto xl:top-36">
                     <div className="flex h-full justify-center">
                         <BrowserFrame
                             host={project.host}
@@ -112,7 +125,7 @@ export default function FeaturedProjectCard({ project, labels }: FeaturedProject
                         </BrowserFrame>
                     </div>
 
-                    {hover.kind === "phone" && project.iconSeed && <Phone seed={project.iconSeed} />}
+                    {hover.kind === "phone" && <Phone />}
 
                     {hover.kind === "second-screen" && (
                         <SecondScreen host={project.host} screen={hover.screen} />
@@ -313,44 +326,118 @@ function useHoverSound(src: string | undefined) {
 }
 
 /**
- * The renderers on the phone's home screen, cycled tile by tile. Each one is
- * imported from its own entry point ("seedicon/<style>"), like `pixels` in
- * ProjectCard.tsx, so the bundle carries these six styles and not all
- * seventeen. All six draw without <defs> ids (unlike gradient, marble and
- * kaleidoscope), so a screenful of them can share the document with no
- * clashing clipPath or filter ids. They are also among the lightest in
- * markup (about 0.3 to 1.5 KB per icon, streamlines aside), which matters
- * because every tile is inlined SVG in the server-rendered HTML.
+ * The phone's home screen, tile by tile: a renderer and a seed for each icon,
+ * in reading order (3 columns, so every three entries are one row).
+ *
+ * The seeds are hand-picked ones from GALLERY_SEEDS, the per-style gallery on
+ * the seedicon site's home page, so each tile shows its style at its best
+ * instead of whatever a derived seed happens to draw. They are fixed strings,
+ * so the screen is the same on the server and the client and hydration
+ * matches. The order keeps neighbouring tiles on different styles.
+ *
+ * Each renderer comes from its own entry point ("seedicon/<style>"), like
+ * `pixels` in ProjectCard.tsx, so the bundle carries only these styles.
+ * Twenty-one tiles (7 rows) fill the screen down to the bottom bezel at every
+ * card width; the grid clips whatever does not fit, so a wider card shows a
+ * partial last row, like a home screen mid-scroll.
  */
-const PHONE_STYLES = [terrain, truchet, waves, heraldry, identicon, streamlines];
+const PHONE_TILES: readonly { render: (options: StyleOptions) => string; seed: string }[] = [
+    { render: pixelart, seed: "fb1bbdeb-c4a4-41e8-8a3c-368a55989d60" },
+    { render: terrain, seed: "fb1bbdeb-c4a4-41e8-8a3c-368a55989d60" },
+    { render: pixels, seed: "fb1bbdeb-c4a4-41e8-8a3c-368a55989d60" },
+
+    { render: truchet, seed: "fb1bbdeb-c4a4-41e8-8a3c-368a55989d60" },
+    { render: lifehash, seed: "ec7da957-89f4-4ff8-9f0f-a6f15b3e0a0e" },
+    { render: heraldry, seed: "66d84a70-2b64-47c6-9531-80a45a4a0be2" },
+
+    { render: randomart, seed: "ff5bbf62-bbae-42a2-97b9-644530688681" },
+    { render: waves, seed: "bd26a2ed-3587-4e55-ad70-226dfbb1d48d" },
+    { render: pixelart, seed: "f72da30c-93df-431e-a5a1-8a847ea77ce6" },
+
+    { render: pixels, seed: "82987161-a8ab-421c-897b-08aec26cbdfc" },
+    { render: gradient, seed: "1988f80a-5126-46b1-a5d7-745bfd40026f" },
+    { render: truchet, seed: "e712c6ef-2081-4ad4-a741-4be1db7163c0" },
+
+    { render: heraldry, seed: "e16107fc-b141-4109-b2ec-c4115441bd79" },
+    { render: pixelart, seed: "1bd8afc4-93ff-44c3-b816-769240d1f0e7" },
+    { render: lifehash, seed: "da1681bf-22d1-4ffb-af8b-94bcda00e208" },
+
+    { render: waves, seed: "70c38d54-4fdd-438e-ba80-e0e5a659d3ec" },
+    { render: randomart, seed: "05b6e73b-bfcd-495b-a01f-e08864677d6d" },
+    { render: marble, seed: "66a2604a-2ceb-485c-9df4-fa55b70c06fb" },
+
+    { render: streamlines, seed: "f0bed51b-2118-41bd-9961-ffb8b481c0be" },
+    { render: pixels, seed: "69d40f05-fca4-43e6-be52-5ef5a193ac7c" },
+    { render: terrain, seed: "da12d14d-5ef0-4694-8a3f-32f97d5bf919" },
+];
+
+const GRID_CELLS = /(<g shape-rendering="crispEdges">)((?:<rect [^>]*\/>)+)(<\/g>)/;
+const GRID_CELL = /<rect x="([^"]+)" y="([^"]+)" width="([^"]+)" height="([^"]+)" fill="([^"]+)"\/>/g;
 
 /**
- * Enough icons to fill the screen down to the bottom bezel at every card
- * width (3 columns by 7 rows). The grid clips whatever does not fit, so a
- * wider card shows a partial last row, like a home screen mid-scroll, rather
- * than an empty strip under the icons.
+ * Closes the hairlines between the cells of a grid style (pixels, randomart).
+ *
+ * Those styles paint every cell as its own <rect>. Scaled down to the phone's
+ * ~45px tiles and rotated, two neighbouring cells no longer cover their shared
+ * edge between them, and the background shows through as a thin line. This
+ * redraws the cells the way seedicon's own lifehash style already does: all
+ * cells of one color merged into a single <path> (no edges inside it), laid
+ * over a copy of itself stroked in the same color, which covers the edges
+ * between different colors. Markup that does not match the expected shape
+ * comes back untouched, so a change in the package degrades to the old
+ * hairlines rather than to missing cells.
  */
-const PHONE_TILES = 21;
+function sealGridCells(svg: string): string {
+    return svg.replace(GRID_CELLS, (group: string, open: string, cells: string, close: string) => {
+        const paths = new Map<string, string>();
+        let count = 0;
+        for (const [, x, y, width, height, fill] of cells.matchAll(GRID_CELL)) {
+            paths.set(fill, `${paths.get(fill) ?? ""}M${x} ${y}h${width}v${height}h-${width}Z`);
+            count += 1;
+        }
+        if (count !== cells.split("<rect").length - 1) return group;
+
+        let under = "";
+        let over = "";
+        for (const [fill, d] of paths) {
+            under += `<path d="${d}" fill="${fill}" stroke="${fill}" stroke-width="0.64"/>`;
+            over += `<path d="${d}" fill="${fill}"/>`;
+        }
+        return open + under + over + close;
+    });
+}
+
+/**
+ * Makes the <defs> ids of one tile unique on the page. gradient and marble
+ * name their gradient and filter after the seed, which is unique among the
+ * tiles, but the card is rendered twice (FeaturedProjects on desktop,
+ * FeaturedProjectsList below `lg`, one of them hidden). With the same id in
+ * both copies, `url(#id)` resolves to the first one in the document, inside
+ * the hidden copy, and the visible tile paints nothing.
+ */
+function scopeIds(svg: string, scope: string): string {
+    return svg.replace(/(id="|url\(#)(seedicon-[\w-]+)/g, `$1$2-${scope}`);
+}
 
 /**
  * Phone for the `phone` hover: a home screen of app icons, each one a seedicon
- * avatar. It rests below the card and rises in on hover, tilting the other way
- * as it lands, while the browser frame steps back (FRAME_MOTION).
+ * avatar (PHONE_TILES). It rests below the card and rises in on hover, tilting
+ * the other way as it lands, while the browser frame steps back (FRAME_MOTION).
  *
- * The seeds derive from the project's fixed icon seed, so the screen is the
- * same on the server and the client and hydration matches. `shape: "square"`
- * keeps the markup free of <clipPath> ids; the rounded icon corners come from
- * the tile's own `rounded-[28%]` and `overflow-hidden`.
+ * `shape: "square"` keeps the markup free of <clipPath> ids; the rounded icon
+ * corners come from the tile's own `rounded-[28%]` and `overflow-hidden`.
+ * useId is stable between the server and the client, so the scoped ids match
+ * on hydration.
  */
-function Phone({ seed }: { seed: string }) {
+function Phone() {
+    const scope = useId().replace(/[^\w-]/g, "");
     const tiles = useMemo(
         () =>
-            Array.from({ length: PHONE_TILES }, (_, index) => {
-                const render = PHONE_STYLES[index % PHONE_STYLES.length];
-                const tileSeed = `${seed}:phone:${index}`;
-                return { key: tileSeed, svg: render({ seed: tileSeed, size: 64, shape: "square" }) };
-            }),
-        [seed],
+            PHONE_TILES.map(({ render, seed }, index) => ({
+                key: `${index}:${seed}`,
+                svg: scopeIds(sealGridCells(render({ seed, size: 64, shape: "square" })), `${scope}-${index}`),
+            })),
+        [scope],
     );
 
     return (

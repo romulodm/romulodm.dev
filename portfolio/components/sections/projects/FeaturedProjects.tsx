@@ -18,7 +18,8 @@ interface FeaturedProjectsProps {
  *
  * Desktop only. Projects.tsx never shows it below `lg`, where a 40%
  * column is too narrow for the panel and a pinned element eats half of a
- * phone screen; small screens keep the simple grid.
+ * phone screen; small screens get FeaturedProjectsList.tsx instead, which
+ * stacks each card over its text.
  *
  * Switching rule: the active project is the last one whose card's top edge
  * is above the middle of the viewport, so a project takes over exactly as its
