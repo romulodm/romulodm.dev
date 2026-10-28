@@ -12,6 +12,7 @@ import { Mail, MapPin } from 'lucide-react'
 import { ContactModal } from './modals/ContactModal'
 import { GitHubStarsButton } from './GitHubStarsButton'
 import { LattesIcon } from './icons/LattesIcon'
+import { AnimatedEmoji } from './ui/AnimatedEmoji'
 import { Link } from '@/i18n/navigation'
 
 const FOOTER_SKY_DARK = `
@@ -188,12 +189,11 @@ export function Footer() {
                     </p>
                     <p className="text-xs text-white/30 flex items-center">
                         {t('legal.madeWith')}
-                        <span className="px-1">
-                            <picture>
-                                <source src="https://fonts.gstatic.com/s/e/notoemoji/latest/2764_fe0f/512.webp" type="image/webp" />
-                                <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/2764_fe0f/512.gif" alt="❤" width="18" height="18" />
-                            </picture>
-                        </span>
+                        {/* The shared component, not a local <picture>: this one had
+                            `src` on the <source>, which browsers ignore, so the
+                            WebP never loaded and every page fetched the GIF. */}
+                        <AnimatedEmoji code="2764_fe0f" className="px-1 text-[18px]" />
+                        <span className="sr-only">❤</span>
                         {t('legal.coffee')}
                     </p>
                 </div>
