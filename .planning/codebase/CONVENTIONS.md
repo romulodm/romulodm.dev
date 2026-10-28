@@ -10,7 +10,7 @@ Monorepo (npm workspaces): `portfolio/` (Next.js 16 App Router), `worker/` (Bull
 - React components: PascalCase `.tsx` — `portfolio/components/comments/DeleteCommentModal.tsx`, `portfolio/components/navigation/Navbar.tsx`
 - shadcn/Radix UI primitives: lowercase kebab — `portfolio/components/ui/button.tsx`, `portfolio/components/ui/dropdown-menu.tsx` (exception: `UserAvatar.tsx`)
 - Library modules: kebab-case `.ts` — `portfolio/lib/api-errors.ts`, `portfolio/lib/rate-limit.ts`, `portfolio/lib/status-cache.ts`
-- Hooks: mixed (`portfolio/hooks/use-mobile.ts`, `use-post-interactions.ts`, `useTurnstile.ts`). Use kebab-case `use-<name>.ts` for new hooks.
+- Hooks: mixed (`portfolio/hooks/use-in-view.ts`, `use-post-interactions.ts`, `useTurnstile.ts`). Use kebab-case `use-<name>.ts` for new hooks.
 - Worker processors: `<domain>.worker.ts` in `worker/workers/` — `views.worker.ts`, `email.worker.ts`
 - Next.js route files follow framework names: `route.ts`, `page.tsx`, `layout.tsx`, `actions.ts` (server actions), `error.tsx`, `not-found.tsx`
 - Client halves of server pages: `<Name>Client.tsx` beside `page.tsx` — `portfolio/app/[locale]/newsletter/confirm/[token]/NewsletterConfirmClient.tsx`, `portfolio/components/blog/BlogListClient.tsx`
