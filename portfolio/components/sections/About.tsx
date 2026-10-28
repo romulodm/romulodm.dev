@@ -2,11 +2,11 @@
 
 import Image from "next/image";
 
-import pic_1 from "@/public/assets/formatura.png";
-import pic_2 from "@/public/assets/work.png";
-import pic_3 from "@/public/assets/curso.png";
-import pic_4 from "@/public/assets/cristo.png";
-import pic_5 from "@/public/assets/evento_3.png";
+import pic_1 from "@/public/assets/formatura.jpg";
+import pic_2 from "@/public/assets/work.jpg";
+import pic_3 from "@/public/assets/curso.jpg";
+import pic_4 from "@/public/assets/cristo.jpg";
+import pic_5 from "@/public/assets/evento_3.jpg";
 import { RefObject, useEffect, useRef, useState } from "react";
 import { ArrowRight, Github, Mail, MapPin } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -173,12 +173,17 @@ const About: React.FC = () => {
                     </div>
                 </div>
 
+                {/* `sizes` per cell, from the cell box and object-cover: a
+                    landscape photo in a near-square cell is height bound, so it
+                    needs more width than the cell has. Without `sizes` Next
+                    assumed 100vw and sent viewport-wide files to ~230px cells. */}
                 <div className="grid grid-cols-5 grid-rows-8 gap-3 md:-mt-24 h-[700px] lg:h-[820px]">
                     {/* pic_2 — top right */}
                     <div className="col-start-4 col-span-2 row-start-1 row-span-2 rounded-2xl overflow-hidden">
                         <Image
                             src={pic_2}
                             alt={t("photos.whiteboard")}
+                            sizes="(min-width: 1024px) 240px, 40vw"
                             className="w-full h-full object-cover"
                         />
                     </div>
@@ -188,6 +193,7 @@ const About: React.FC = () => {
                         <Image
                             src={pic_1}
                             alt={t("photos.collaboration")}
+                            sizes="(min-width: 1024px) 460px, 100vw"
                             className="w-full h-full object-cover shadow-5xl shadow-black dark:shadow-black/40"
                         />
                     </div>
@@ -197,6 +203,7 @@ const About: React.FC = () => {
                         <Image
                             src={pic_4}
                             alt={t("photos.member")}
+                            sizes="(min-width: 1024px) 240px, 40vw"
                             className="w-full h-full object-cover"
                         />
                     </div>
@@ -206,6 +213,7 @@ const About: React.FC = () => {
                         <Image
                             src={pic_3}
                             alt={t("photos.coworking")}
+                            sizes="(min-width: 1024px) 360px, 65vw"
                             className="w-full h-full object-cover"
                         />
                     </div>
@@ -215,6 +223,7 @@ const About: React.FC = () => {
                         <Image
                             src={pic_5}
                             alt={t("photos.workspace")}
+                            sizes="(min-width: 1024px) 320px, 65vw"
                             className="w-full h-full object-cover"
                         />
                     </div>
