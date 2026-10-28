@@ -1,7 +1,7 @@
 // app/[locale]/layout.tsx
 import { ReactNode } from "react";
 import type { Metadata } from "next";
-import { JetBrains_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import { notFound } from "next/navigation";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
@@ -21,7 +21,24 @@ import {
   defaultOgImage,
 } from "@/lib/seo";
 
-const jetbrains = JetBrains_Mono({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--font-jetbrains" });
+/**
+ * JetBrains Mono, self-hosted (latin subset, variable weight 100-800, from
+ * @fontsource-variable/jetbrains-mono 5.3.0; license in app/fonts/).
+ *
+ * It used to come from next/font/google, which downloads the font during
+ * `next build`. Google sometimes answers with extensionless
+ * `/l/font?kit=...&...` URLs, and Turbopack splits that URL on the `&` and
+ * fails the build with "next/font/google queries have exactly one entry"
+ * (vercel/next.js#99114). A file in the repo makes the build independent of
+ * Google, and one variable file replaces the four static weights.
+ */
+const jetbrains = localFont({
+  src: "../fonts/jetbrains-mono-latin-wght-normal.woff2",
+  weight: "100 800",
+  style: "normal",
+  display: "swap",
+  variable: "--font-jetbrains",
+});
 
 export function generateStaticParams() {
   return [];
