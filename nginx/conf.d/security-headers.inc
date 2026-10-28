@@ -58,4 +58,11 @@ add_header X-Robots-Tag           $robots_tag                       always;
 # Enable only after HTTPS is confirmed solid, because the browser remembers the
 # rule for the whole `max-age` and there is no easy way to undo it for visitors
 # who already cached it. Start with something short (e.g. 300) and raise it.
-# add_header Strict-Transport-Security "max-age=63072000" always;
+#
+# Ramp: 300 (5 min) now; after a week with no certificate trouble, 86400 (1 day);
+# then 31536000 (1 year). No `includeSubDomains` until every subdomain
+# (homolog., staging., www.) is confirmed to serve HTTPS, and no `preload`
+# ever without deciding it on purpose: leaving the preload list takes months.
+# Browsers ignore this header on plain-HTTP responses, so the port-80 redirect
+# block is unaffected.
+add_header Strict-Transport-Security "max-age=300" always;
