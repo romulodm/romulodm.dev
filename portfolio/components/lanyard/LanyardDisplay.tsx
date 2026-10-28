@@ -36,7 +36,6 @@ export default function LanyardDisplay({
     const [cardTexture, setCardTexture] = useState<HTMLCanvasElement | null>(null);
     const [isReady, setIsReady] = useState(false);
     const cardTemplateRef = useRef<CardTemplateRef>(null);
-    const canvasRef = useRef<HTMLCanvasElement>(null);
     const today = getTodayFormatted();
     const t = useTranslations("lanyard");
 
@@ -78,7 +77,6 @@ export default function LanyardDisplay({
                                 fov={fov}
                                 containerClassName="absolute inset-0 w-full h-full"
                                 cardTexture={cardTexture}
-                                canvasRef={canvasRef}
                                 onReady={handleSceneReady}
                                 eventSource={eventSource}
                                 frameHeight={frameHeight}
