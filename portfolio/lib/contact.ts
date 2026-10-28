@@ -54,26 +54,23 @@ type Translator = Awaited<ReturnType<typeof getApiTranslator>>;
 export function createContactSchema(t: Translator) {
   return z.object({
     name: z
-      .string({ required_error: t("contact.nameRequired") })
+      .string({ error: t("contact.nameRequired") })
       .trim()
       .min(CONTACT_LIMITS.nameMin, t("contact.nameRequired"))
       .max(CONTACT_LIMITS.nameMax, t("contact.nameTooLong")),
 
     email: z
-      .string({ required_error: t("common.emailRequired") })
+      .string({ error: t("common.emailRequired") })
       .trim()
       .min(1, t("common.emailRequired"))
       .email(t("common.emailInvalid"))
       .max(CONTACT_LIMITS.emailMax, t("common.emailInvalid"))
       .transform((value) => value.toLowerCase()),
 
-    topic: z.enum(CONTACT_TOPICS, {
-      required_error: t("contact.topicInvalid"),
-      invalid_type_error: t("contact.topicInvalid"),
-    }),
+    topic: z.enum(CONTACT_TOPICS, { error: t("contact.topicInvalid") }),
 
     message: z
-      .string({ required_error: t("contact.messageRequired") })
+      .string({ error: t("contact.messageRequired") })
       .trim()
       .min(CONTACT_LIMITS.messageMin, t("contact.messageTooShort"))
       .max(CONTACT_LIMITS.messageMax, t("contact.messageTooLong")),

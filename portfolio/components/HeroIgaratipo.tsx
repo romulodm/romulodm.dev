@@ -1,6 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useId, useMemo, useRef } from "react";
+
+import { useInView } from "@/hooks/use-in-view";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // TYPES
@@ -477,6 +479,10 @@ export default function IgaratipoSignature({
 }: IgaratipoSignatureProps) {
     const rafRef = useRef<number>(0);
     const timeRef = useRef<number>(0);
+    const svgRef = useRef<SVGSVGElement>(null);
+    const inView = useInView(svgRef);
+    // Unique per instance: a fixed id breaks as soon as two signatures share a page.
+    const filterId = `igara-river-${useId().replace(/[^a-zA-Z0-9_-]/g, "")}`;
     const pathRefsRef = useRef<(SVGPathElement | null)[]>([]);
 
     const choicesRef = useRef<number[] | null>(null);
@@ -511,31 +517,43 @@ export default function IgaratipoSignature({
     const slope = 24;
     const intercept = -10;
 
-    // Loop de animação: atualiza o atributo "d" de cada path imperativamente
+    // Loop de animação: atualiza o atributo "d" de cada path imperativamente.
+    // Off screen, or with reduced motion, it draws one still frame and stops:
+    // the goo filter re-rasterizes on every change, so a loop nobody sees is
+    // the most expensive thing the hero does after the scroll.
     useEffect(() => {
         const step = flowSpeed * 0.003;
 
-        const loop = () => {
-            timeRef.current += step;
+        const draw = () => {
             const t = timeRef.current;
-
             curves.forEach((seg, i) => {
                 const el = pathRefsRef.current[i];
                 if (!el) return;
                 el.setAttribute("d", toPathDWithNoise(seg, t, noiseAmount));
             });
+        };
 
+        const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        if (!inView || reduceMotion) {
+            draw();
+            return;
+        }
+
+        const loop = () => {
+            timeRef.current += step;
+            draw();
             rafRef.current = requestAnimationFrame(loop);
         };
 
         rafRef.current = requestAnimationFrame(loop);
         return () => cancelAnimationFrame(rafRef.current);
-    }, [curves, flowSpeed, noiseAmount]);
+    }, [curves, flowSpeed, noiseAmount, inView]);
 
     const hasBackground = backgroundColor !== "transparent" && backgroundColor !== "none";
 
     return (
         <svg
+            ref={svgRef}
             viewBox={`0 0 ${width} ${height}`}
             width="100%"
             className={className}
@@ -547,7 +565,7 @@ export default function IgaratipoSignature({
 
             <defs>
                 <filter
-                    id="igara-river"
+                    id={filterId}
                     x="-25%" y="-65%"
                     width="150%" height="230%"
                     colorInterpolationFilters="sRGB"
@@ -572,7 +590,7 @@ export default function IgaratipoSignature({
                 </filter>
             </defs>
 
-            <g filter="url(#igara-river)">
+            <g filter={`url(#${filterId})`}>
                 {curves.map((seg, i) => (
                     <path
                         key={i}

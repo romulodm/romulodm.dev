@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState, type CSSProperties } from 'react';
+import { useEffect, useRef, useState, useSyncExternalStore, type CSSProperties } from 'react';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
@@ -67,6 +67,32 @@ const TOP_FADE: CSSProperties = {
 /** Quadro de referencia do cracha: o mesmo 107vh do Hero original. */
 const lanyardFrame = () => window.innerHeight * 1.07;
 
+/** Same breakpoint as Tailwind's `md`, which splits the two card versions. */
+const DESKTOP_QUERY = '(min-width: 768px)';
+
+function subscribeToDesktop(onChange: () => void) {
+    const query = window.matchMedia(DESKTOP_QUERY);
+    query.addEventListener('change', onChange);
+    return () => query.removeEventListener('change', onChange);
+}
+
+/**
+ * `true` on desktop, `false` below `md`, `null` on the server and during
+ * hydration.
+ *
+ * The two card versions used to be split with `hidden md:block` / `md:hidden`,
+ * which only hides them: both mounted, so every visitor paid for two WebGL
+ * contexts, two loads of card.glb, two environment maps and two render loops,
+ * with one of them never on screen. Picking the version in JS mounts only one.
+ */
+function useIsDesktop(): boolean | null {
+    return useSyncExternalStore(
+        subscribeToDesktop,
+        () => window.matchMedia(DESKTOP_QUERY).matches,
+        () => null,
+    );
+}
+
 /** Aplica `translateY = fator * scroll` em todo `[data-parallax]` dentro da secao. */
 function useLayerParallax(sectionRef: React.RefObject<HTMLElement | null>) {
     useEffect(() => {
@@ -120,6 +146,7 @@ export default function Hero() {
     }, []);
     const sectionRef = useRef<HTMLElement>(null);
     useLayerParallax(sectionRef);
+    const isDesktop = useIsDesktop();
 
     return (
         <section ref={sectionRef} className="relative isolate w-full overflow-clip">
@@ -149,13 +176,15 @@ export default function Hero() {
             {/* 4 — igaratipo perto da navbar. Desktop: absoluto (o cracha ocupa o miolo);
                    mobile: no fluxo, acima do cartao estatico. */}
             <div className="pointer-events-none relative z-10 mx-auto w-full max-w-4xl px-6 pt-24 md:absolute md:inset-x-0 md:top-0 md:pt-[104px]">
+                {/* One instance colored by the theme. Two (one per theme, one of
+                    them hidden) meant two animation loops and two goo filters. */}
                 <div style={{ aspectRatio: '1400 / 320' }}>
-                    <span className="dark:hidden">
-                        <HeroIgaratipo randomLetters={false} strokeColor="black" letterChoices={LETTER_CHOICES} />
-                    </span>
-                    <span className="hidden dark:inline">
-                        <HeroIgaratipo randomLetters={false} strokeColor="white" letterChoices={LETTER_CHOICES} />
-                    </span>
+                    <HeroIgaratipo
+                        randomLetters={false}
+                        strokeColor="currentColor"
+                        letterChoices={LETTER_CHOICES}
+                        className="text-black dark:text-white"
+                    />
                 </div>
             </div>
 
@@ -182,19 +211,23 @@ export default function Hero() {
                    O canvas fica sem pointer-events para nao bloquear o painel; os
                    eventos vem da secao (eventSource) e o raycast so dispara quando o
                    cursor esta de fato sobre o cracha. */}
-            <div className="hidden md:block">
-                <LanyardDisplay
-                    position={[-3, 0, 20]}
-                    fov={17}
-                    eventSource={sectionRef}
-                    frameHeight={lanyardFrame}
-                    containerClassName="absolute inset-x-0 top-0 z-50 -mt-14 h-[calc(100%+56px)] w-full select-none pointer-events-none"
-                />
-            </div>
+            {isDesktop === true && (
+                <div className="hidden md:block">
+                    <LanyardDisplay
+                        position={[-3, 0, 20]}
+                        fov={17}
+                        eventSource={sectionRef}
+                        frameHeight={lanyardFrame}
+                        containerClassName="absolute inset-x-0 top-0 z-50 -mt-14 h-[calc(100%+56px)] w-full select-none pointer-events-none"
+                    />
+                </div>
+            )}
 
             <div className="relative z-30 flex flex-col items-center px-4 md:px-6 md:pt-[max(76vh,440px)]">
+                {/* Until the breakpoint is known the skeleton holds the card's
+                    place, so the mobile layout does not jump when it resolves. */}
                 <div className="relative z-20 md:hidden">
-                    <StaticCardDisplay />
+                    {isDesktop === false ? <StaticCardDisplay /> : isDesktop === null ? <StaticCardSkeleton /> : null}
                 </div>
 
                 <div

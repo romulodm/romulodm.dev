@@ -8,7 +8,7 @@ import { parseJsonBodyWithMessages, RequestValidationError } from "@/lib/api-val
 
 function createBanSchema(t: Awaited<ReturnType<typeof getApiTranslator>>) {
   return z.object({
-    banned: z.boolean({ required_error: t("common.invalidRequest"), invalid_type_error: t("common.invalidRequest") }),
+    banned: z.boolean({ error: t("common.invalidRequest") }),
     banReason: z.string().max(500).optional(),
   });
 }

@@ -70,12 +70,6 @@ export function timeAgo(iso: string, locale: string): string {
     return rtf.format(-Math.round(days / 365), 'year');
 }
 
-export function fmtDateTime(iso: string, locale: string) {
-    return new Date(iso).toLocaleString(localeTag(locale), {
-        day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit',
-    });
-}
-
 export function fmtTime(iso: string, locale: string) {
     return new Date(iso).toLocaleTimeString(localeTag(locale), {
         hour: '2-digit', minute: '2-digit', second: '2-digit',

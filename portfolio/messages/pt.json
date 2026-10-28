@@ -332,7 +332,6 @@
   },
   "vision": {
     "software": {
-      "titleHighlight": "Software",
       "description": "As melhores decisões técnicas que eu tomei vieram de <b>revisão de código</b> e de conversa difícil, não de inspiração solitária.",
       "cursorName": "Romulo",
       "frameOne": "Design.",
@@ -380,9 +379,6 @@
     },
     "profile": {
       "title": "Quem está por trás do código.",
-      "link-title": "Quer ver meu currículo?",
-      "link-content": "Resumi minhas experiências e disponibilizei o download.",
-      "link-button": "Ver currículo online",
       "eyebrow": "Perfil",
       "description": "Experiências, formação e o caminho que me trouxe até aqui — em ordem cronológica."
     },
@@ -486,11 +482,6 @@
         "dei um minicurso de Git.",
         "construí este site."
       ],
-      "lede": {
-        "before": "Nada disso nasceu pronto:",
-        "highlight": "cada um começou como um arquivo vazio",
-        "after": "e um problema que eu ainda não sabia resolver. Código aberto sempre que dá."
-      },
       "cards": [
         {
           "label": "Trabalhando",
@@ -533,10 +524,6 @@
           "viajando": "Viajando",
           "ferias": "De férias"
         }
-      },
-      "reach": {
-        "label": "Fale comigo",
-        "button": "Começar uma conversa"
       }
     },
     "vision": {
@@ -1108,8 +1095,6 @@
       "back": "Voltar"
     },
     "crypto": {
-      "genericError": "Erro ao processar ETH.",
-      "coffees": "{count} café(s)",
       "errors": {
         "connect": "Falha ao conectar carteira.",
         "switchNetwork": "Não foi possível trocar de rede.",
@@ -1151,7 +1136,6 @@
       "recentSupport": "Apoios recentes",
       "beFirst": "Seja o primeiro a apoiar!",
       "anonymous": "Anônimo",
-      "someone": "Alguém",
       "coffees": "{count} café(s)",
       "period": {
         "label": "Período do ranking",
@@ -1835,7 +1819,6 @@
         "embedYoutube": "Incorporar YouTube"
       },
       "preview": {
-        "coverAlt": "Capa",
         "untitled": "Sem título"
       }
     },

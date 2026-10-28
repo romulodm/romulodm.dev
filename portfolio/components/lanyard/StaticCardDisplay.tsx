@@ -7,6 +7,7 @@ import { useGLTF, Environment, Lightformer } from '@react-three/drei';
 import * as THREE from 'three';
 
 import CardTemplate, { type CardTemplateRef } from '@/components/lanyard/LayardCardTemplate';
+import { useInView } from '@/hooks/use-in-view';
 
 // Pre-load the GLB model to reduce initial loading time
 useGLTF.preload('/card.glb');
@@ -106,8 +107,13 @@ function StaticCardScene({ cardTexture, onReady }: StaticCardSceneProps) {
         lastX.current = e.touches[0].clientX;
     };
 
+    // No render loop while the card is scrolled away.
+    const containerRef = useRef<HTMLDivElement>(null);
+    const inView = useInView(containerRef);
+
     return (
         <div
+            ref={containerRef}
             style={{ width: 420, height: 520 }}
             className="cursor-grab active:cursor-grabbing select-none"
             onMouseDown={onMouseDown}
@@ -118,6 +124,7 @@ function StaticCardScene({ cardTexture, onReady }: StaticCardSceneProps) {
             onTouchMove={onTouchMove}
         >
             <Canvas
+                frameloop={inView ? 'always' : 'never'}
                 camera={{ position: [0, 0, 10], fov: 18 }}
                 dpr={[1, 2]}
                 gl={{ alpha: true }}

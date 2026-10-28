@@ -209,22 +209,3 @@ export async function getWallMessages(userId: string) {
         select: { id: true, message: true, theme: true, createdAt: true },
     });
 }
-
-// ── Linked donations ──────────────────────────────────────────────────────────
-
-export async function getLinkedDonations(userId: string) {
-    return prisma.donation.findMany({
-        where: { userId, status: "COMPLETED" },
-        orderBy: { createdAt: "desc" },
-        select: {
-            id: true,
-            coffees: true,
-            amount: true,
-            currency: true,
-            message: true,
-            isPrivate: true,
-            createdAt: true,
-            provider: true,
-        },
-    });
-}

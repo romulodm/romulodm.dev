@@ -70,6 +70,10 @@
         "passwordRequired": "La contraseña es obligatoria.",
         "passwordMin": "La contraseña debe tener al menos 8 caracteres.",
         "passwordMax": "La contraseña debe tener como máximo 128 caracteres."
+      },
+      "verifyEmail": {
+        "invalid": "Este enlace de confirmación ya no es válido.",
+        "resendRateLimited": "Pediste varios enlaces hace poco. Espera unos minutos y revisa la carpeta de spam."
       }
     },
     "donations": {
@@ -136,6 +140,18 @@
       "newsletterTesters": {
         "notSubscribed": "Ese correo no es un suscriptor confirmado de la newsletter."
       }
+    },
+    "username": {
+      "required": "Elige un nombre de usuario.",
+      "format": "Usa de 3 a 24 caracteres: letras minúsculas, números, _ o -.",
+      "reserved": "Ese nombre está reservado. Elige otro.",
+      "taken": "Ese nombre de usuario ya está en uso.",
+      "alreadyChosen": "Ya elegiste tu nombre de usuario."
+    },
+    "account": {
+      "usernameRequired": "Elige tu nombre de usuario antes de publicar.",
+      "emailNotVerified": "Confirma tu correo antes de publicar. El enlace está en tu bandeja de entrada.",
+      "banned": "Tu cuenta no puede publicar en el mural."
     }
   },
   "ResumePDFButton": {
@@ -197,7 +213,7 @@
     "validation": {
       "emailInvalid": "Correo inválido.",
       "passwordRequired": "Contraseña obligatoria.",
-      "usernameTooShort": "Nombre de usuario demasiado corto.",
+      "usernameFormat": "Usa de 3 a 24 caracteres: letras minúsculas, números, _ o -.",
       "passwordMin": "Mínimo 8 caracteres.",
       "passwordsDoNotMatch": "Las contraseñas no coinciden."
     },
@@ -215,6 +231,18 @@
       "verification": "Enlace de verificación inválido o expirado.",
       "sessionRequired": "Necesitas iniciar sesión para acceder a esto.",
       "generic": "Ocurrió un error inesperado. Inténtalo de nuevo."
+    },
+    "chooseUsername": {
+      "title": "Elige tu nombre de usuario",
+      "description": "Es como apareces en los comentarios y en el mural, y la dirección de tu perfil. Tu correo no aparece en ninguna parte del sitio. Puedes cambiarlo después en la configuración del perfil.",
+      "label": "Nombre de usuario",
+      "hint": "De 3 a 24 caracteres: letras minúsculas, números, _ o -.",
+      "submit": "Continuar",
+      "signOut": "Salir",
+      "errors": {
+        "format": "Usa de 3 a 24 caracteres: letras minúsculas, números, _ o -.",
+        "generic": "No se pudo guardar ahora. Inténtalo de nuevo."
+      }
     }
   },
   "authGuard": {
@@ -304,7 +332,6 @@
   },
   "vision": {
     "software": {
-      "titleHighlight": "Software",
       "description": "Las mejores decisiones técnicas que tomé vinieron de la <b>revisión de código</b> y de conversaciones difíciles, no de la inspiración solitaria.",
       "cursorName": "Romulo",
       "frameOne": "Diseñar.",
@@ -352,9 +379,6 @@
     },
     "profile": {
       "title": "Quién está detrás del código.",
-      "link-title": "¿Quieres ver mi currículum?",
-      "link-content": "Resumí mis experiencias y lo dejé disponible para descargar.",
-      "link-button": "Ver currículum online",
       "eyebrow": "Perfil",
       "description": "Experiencias, formación y el camino que me trajo hasta aquí — en orden cronológico."
     },
@@ -458,11 +482,6 @@
         "di un minicurso de Git.",
         "construí este sitio."
       ],
-      "lede": {
-        "before": "Nada de esto nació listo:",
-        "highlight": "cada uno empezó como un archivo vacío",
-        "after": "y un problema que todavía no sabía resolver. Código abierto siempre que se puede."
-      },
       "cards": [
         {
           "label": "Trabajando",
@@ -505,10 +524,6 @@
           "viajando": "De viaje",
           "ferias": "De vacaciones"
         }
-      },
-      "reach": {
-        "label": "Habla conmigo",
-        "button": "Empezar una conversación"
       }
     },
     "vision": {
@@ -1080,8 +1095,6 @@
       "back": "Volver"
     },
     "crypto": {
-      "genericError": "Error al procesar ETH.",
-      "coffees": "{count} café(s)",
       "errors": {
         "connect": "Error al conectar la billetera.",
         "switchNetwork": "No fue posible cambiar de red.",
@@ -1123,7 +1136,6 @@
       "recentSupport": "Apoyos recientes",
       "beFirst": "¡Sé el primero en apoyar!",
       "anonymous": "Anónimo",
-      "someone": "Alguien",
       "coffees": "{count} café(s)",
       "period": {
         "label": "Período del ranking",
@@ -1807,7 +1819,6 @@
         "embedYoutube": "Insertar YouTube"
       },
       "preview": {
-        "coverAlt": "Portada",
         "untitled": "Sin título"
       }
     },
@@ -2417,6 +2428,7 @@
         "title": "Información del perfil",
         "username": "Nombre de usuario",
         "usernameTaken": "Este nombre de usuario ya está en uso.",
+        "usernameInvalid": "Usa de 3 a 24 caracteres: letras minúsculas, números, _ o -. Algunos nombres están reservados.",
         "github": "URL de GitHub",
         "linkedin": "URL de LinkedIn",
         "githubPlaceholder": "https://github.com/username",
@@ -2761,6 +2773,46 @@
         "title": "Tráfico",
         "tooltip": "{count, plural, =0 {ninguna visita} one {# visita} other {# visitas}}"
       }
+    }
+  },
+  "verifyEmail": {
+    "metaTitle": "Confirmar correo",
+    "eyebrow": "Cuenta",
+    "loading": {
+      "title": "Confirmando tu correo",
+      "description": "Solo un momento."
+    },
+    "success": {
+      "title": "Correo confirmado",
+      "description": "Listo. Ahora puedes comentar en los posts y dejar tu mensaje en el mural."
+    },
+    "invalid": {
+      "title": "Este enlace ya no funciona",
+      "description": "Los enlaces de confirmación valen 24 horas y solo se pueden usar una vez. Si ya hiciste clic antes, tu correo está confirmado. Si no, entra en tu cuenta y pide un enlace nuevo desde la caja de comentarios de cualquier post.",
+      "descriptionCanResend": "Los enlaces de confirmación valen 24 horas y solo se pueden usar una vez. Pide uno nuevo y usa el más reciente.",
+      "sent": "Te enviamos un enlace nuevo. Vale por 24 horas."
+    },
+    "failed": {
+      "title": "No se pudo confirmar ahora",
+      "description": "El servidor no respondió. El enlace sigue siendo válido, así que puedes intentarlo de nuevo en un momento."
+    },
+    "actions": {
+      "blog": "Leer el blog",
+      "wall": "Ir al mural",
+      "resend": "Enviar un enlace nuevo",
+      "retry": "Intentar de nuevo",
+      "home": "Ir al inicio"
+    },
+    "resendError": "No se pudo enviar ahora. Inténtalo de nuevo.",
+    "notice": {
+      "title": {
+        "comment": "Confirma tu correo para comentar",
+        "wall": "Confirma tu correo para dejar un mensaje"
+      },
+      "description": "Necesitamos confirmar que {email} es tuyo. Busca el enlace en tu bandeja de entrada (o en spam) o pide uno nuevo.",
+      "sent": "Enlace enviado a {email}. Vale por 24 horas.",
+      "resend": "Enviar un enlace nuevo",
+      "sending": "Enviando…"
     }
   }
 }

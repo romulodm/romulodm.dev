@@ -18,18 +18,6 @@ declare global {
     }
 }
 
-// ── Manual tracking helpers
-
-export function trackEvent(action: string, params?: Record<string, unknown>) {
-    if (typeof window === 'undefined' || !window.gtag) return;
-    window.gtag('event', action, params);
-}
-
-export function trackPageView(url: string, title?: string) {
-    if (typeof window === 'undefined' || !window.gtag) return;
-    window.gtag('event', 'page_view', { page_location: url, page_title: title });
-}
-
 /**
  * Handles the opt-out link from the privacy policy: ?ga-optout=1 turns GA off
  * for this browser, ?ga-optout=0 turns it back on. The parameter is removed

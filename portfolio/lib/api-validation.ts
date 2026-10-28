@@ -52,7 +52,7 @@ export function getValidationErrorMessage(
     return error.message;
   }
 
-  return error.errors[0]?.message ?? fallback;
+  return error.issues[0]?.message ?? fallback;
 }
 
 export async function parseJsonBodyWithMessages<TSchema extends z.ZodTypeAny>(

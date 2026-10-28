@@ -13,18 +13,12 @@
  *
  * Uso:
  *
- *   <ReportBugButton />
- *   <SuggestionButton />
- *
- *   // ou, para qualquer assunto e qualquer aparência:
  *   <ContactTrigger topic="FREELANCE" className="minha-classe">
  *     Quero contratar
  *   </ContactTrigger>
  */
 
 import React, { useState } from 'react';
-import { Bug, Lightbulb } from 'lucide-react';
-import { useTranslations } from 'next-intl';
 
 import { ContactModal } from '@/components/modals/ContactModal';
 import type { ContactTopicValue } from '@/lib/contact-topics';
@@ -78,53 +72,5 @@ export function ContactTrigger({
         description={description}
       />
     </>
-  );
-}
-
-// ── Atalhos prontos ──────────────────────────────────────────────────────────
-
-interface PresetProps {
-  className?: string;
-}
-
-/** Abre o contato já em "Report de bug". */
-export function ReportBugButton({ className }: PresetProps): React.JSX.Element {
-  const t = useTranslations('contact');
-
-  return (
-    <ContactTrigger
-      topic="BUG_REPORT"
-      title={t('bug-title')}
-      description={t('bug-subtitle')}
-      className={className}
-    >
-      <Bug className="h-4 w-4" aria-hidden="true" />
-      {t('trigger-bug')}
-    </ContactTrigger>
-  );
-}
-
-/**
- * Abre o contato já em "Outro".
- *
- * Sugestão não é um assunto próprio no enum `ContactTopic` — seria uma migration
- * para uma distinção que hoje não muda nada no fluxo. "Outro" é o balde neutro,
- * e o título do modal deixa claro do que se trata. Se um dia sugestões
- * merecerem filtro próprio no painel, o caminho é adicionar `SUGGESTION` ao
- * enum e trocar a linha abaixo.
- */
-export function SuggestionButton({ className }: PresetProps): React.JSX.Element {
-  const t = useTranslations('contact');
-
-  return (
-    <ContactTrigger
-      topic="OTHER"
-      title={t('suggestion-title')}
-      description={t('suggestion-subtitle')}
-      className={className}
-    >
-      <Lightbulb className="h-4 w-4" aria-hidden="true" />
-      {t('trigger-suggestion')}
-    </ContactTrigger>
   );
 }

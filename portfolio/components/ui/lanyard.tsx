@@ -16,6 +16,8 @@ import { MeshLineGeometry, MeshLineMaterial } from 'meshline';
 import * as THREE from 'three';
 import clsx from 'clsx';
 
+import { useInView } from '@/hooks/use-in-view';
+
 // Lanyard strap texture - using public folder path
 const lanyardTexture = '/lanyard.png';
 
@@ -35,7 +37,6 @@ interface LanyardProps {
     containerClassName?: string;
     /** Canvas produced by CardTemplate — uploaded straight to the GPU. */
     cardTexture?: HTMLCanvasElement | null;
-    canvasRef?: React.Ref<HTMLCanvasElement>;
     /** Fires on the first frame after the GLB and strap texture are resolved. */
     onReady?: () => void;
     /**
@@ -101,7 +102,6 @@ export default function Lanyard({
     transparent = true,
     containerClassName,
     cardTexture,
-    canvasRef,
     onReady,
     eventSource,
     frameHeight
@@ -114,16 +114,23 @@ export default function Lanyard({
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
+    // The physics step runs inside the render loop, so stopping the loop while
+    // the canvas is off screen also stops Rapier. Without this both kept going
+    // at 60fps for the whole visit after the visitor scrolled past the hero.
+    const containerRef = useRef<HTMLDivElement>(null);
+    const inView = useInView(containerRef);
+
     return (
         <div
+            ref={containerRef}
             className={clsx(containerClassName || "relative z-0 w-full h-screen flex justify-center items-center transform scale-100 origin-center")}>
             <Canvas
-                ref={canvasRef}
+                frameloop={inView ? 'always' : 'never'}
                 eventSource={eventSource as React.RefObject<HTMLElement> | undefined}
                 events={eventSource ? liveRectEvents : undefined}
                 camera={{ position, fov }}
                 dpr={[1, isMobile ? 1.5 : 2]}
-                gl={{ alpha: transparent, preserveDrawingBuffer: true }}
+                gl={{ alpha: transparent }}
                 onCreated={({ gl }) => gl.setClearColor(new THREE.Color(0x000000), transparent ? 0 : 1)}
             >
                 {frameHeight && <ViewFrame frameHeight={frameHeight} />}

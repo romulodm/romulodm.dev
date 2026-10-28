@@ -83,10 +83,10 @@
 - Files: `portfolio/lib/auth.ts`, `portfolio/lib/auth-helpers.ts`, `portfolio/app/api/wall/route.ts`, `portfolio/app/api/comments/[id]/vote/route.ts`, `portfolio/app/api/posts/[id]/like/route.ts`, `portfolio/app/api/profile/route.ts`
 - Recommendations: Reject banned users in `handleOAuthSignIn`. Add a `requireActiveUser()` helper in `auth-helpers.ts` that reads `banned` from the database, and use it for every authenticated write. In the `jwt` callback, re-read `admin`/`banned` periodically (for example when a timestamp in the token goes stale).
 
-**No Content-Security-Policy or HSTS:**
-- Risk: `nginx/conf.d/security-headers.inc` sets X-Frame-Options, nosniff, Referrer-Policy and Permissions-Policy, but no CSP. `Strict-Transport-Security` is commented out (line 61). The app injects HTML in many places with `dangerouslySetInnerHTML` (see below), so a CSP would be the second line of defense.
+**No Content-Security-Policy:**
+- Risk: `nginx/conf.d/security-headers.inc` sets X-Frame-Options, nosniff, Referrer-Policy and Permissions-Policy, but no CSP. HSTS is on with a short `max-age=300` and a ramp plan in the file's comment. The app injects HTML in many places with `dangerouslySetInnerHTML` (see below), so a CSP would be the second line of defense.
 - Files: `nginx/conf.d/security-headers.inc`, `portfolio/next.config.js`
-- Recommendations: Enable HSTS once HTTPS works on every vhost. Add a CSP that allows the known third parties (Stripe, Turnstile, GA4, Sentry, MapLibre and MinIO origins), starting in report-only mode.
+- Recommendations: Raise the HSTS `max-age` along the ramp in `security-headers.inc`. Add a CSP that allows the known third parties (Stripe, Turnstile, GA4, Sentry, MapLibre and MinIO origins), starting in report-only mode.
 
 **Search highlight HTML is not escaped:**
 - Risk: `search/engine/highlight.go` wraps matches in `<mark>` without HTML-escaping the source text. `portfolio/components/blog/SearchDialog.tsx:184-190` and `portfolio/components/blog/BlogHeader.tsx:303-307` render `hit.title`/`hit.summary` through `dangerouslySetInnerHTML`. Titles and summaries are admin-authored, but any HTML in them runs in visitors' browsers.
@@ -132,10 +132,6 @@
 **Admin dashboard single mega-query:**
 - Problem: `portfolio/app/api/admin/dashboard/route.ts` runs dozens of Prisma aggregates per request.
 - Improvement path: Cache per panel in Redis with a short TTL, the way `portfolio/lib/status-cache.ts` does, or split it into lazy-loaded endpoints.
-
-**Unoptimized static images:**
-- Problem: `portfolio/public/assets/evento_3.png` (5.8 MB), `formatura.png` (3.3 MB) and `curso.png` (1.1 MB) are imported in `portfolio/components/sections/About.tsx`. `next/image` resizes them at runtime, but each first request still costs CPU on the VPS, and the repository grows with every version.
-- Improvement path: Pre-convert them to WebP/AVIF at display size.
 
 ## Fragile Areas
 

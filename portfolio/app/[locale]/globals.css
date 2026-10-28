@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Modals lock the page with `overflow: hidden` on <body>, which removes the
+ * classic scrollbar (~17px on Windows). Without a reserved gutter the page and
+ * the fixed navbar widen by that amount and visibly jump. `stable` keeps the
+ * gutter's space while the bar is gone. Overlay scrollbars (macOS, mobile)
+ * take no space, so this is a no-op there. */
+html {
+  scrollbar-gutter: stable;
+}
+
 :root {
   --background: 0 0% 98%;
   --foreground: 0 0% 10%;

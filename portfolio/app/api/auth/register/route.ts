@@ -36,7 +36,7 @@ function createRegisterSchema(t: Awaited<ReturnType<typeof getApiTranslator>>) {
     // Required: the old fallback used the e-mail local part as the username,
     // which published part of the address next to every comment.
     username: z
-      .string({ required_error: t("username.required") })
+      .string({ error: t("username.required") })
       .transform(normalizeUsernameInput)
       .superRefine((value, ctx) => {
         const problem = checkUsername(value);
