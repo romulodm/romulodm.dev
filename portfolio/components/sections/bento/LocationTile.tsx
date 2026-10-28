@@ -7,6 +7,7 @@ import { Globe2, MapPin } from 'lucide-react';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import './Bento.css';
 import BentoCard from './BentoCard';
+import { useInView } from '@/hooks/use-in-view';
 
 /** Rio Grande, RS — Brasil. Troque aqui se mudar de base. */
 const BASE = { lon: -52.0986, lat: -32.035 };
@@ -75,6 +76,17 @@ export default function LocationTile() {
 
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<import('maplibre-gl').Map | null>(null);
+
+  /**
+   * The bento sits near the bottom of the home, and the map is a WebGL context
+   * plus the library chunk, the CARTO style and its tiles. Creating it on load
+   * meant every visitor paid for that, including the ones who never scroll
+   * this far. It is created when the card gets within 400px of the viewport.
+   * The observed element is the frame: the map container itself is
+   * `display: none` until then, and a hidden element never intersects.
+   */
+  const frameRef = useRef<HTMLDivElement>(null);
+  const nearView = useInView(frameRef, { rootMargin: '400px', once: true });
   const [failed, setFailed] = useState(false);
 
   /**
@@ -90,7 +102,7 @@ export default function LocationTile() {
 
   // ---- cria o mapa uma unica vez -----------------------------------------
   useEffect(() => {
-    if (!mounted || !containerRef.current || mapRef.current) return;
+    if (!mounted || !nearView || !containerRef.current || mapRef.current) return;
 
     let cancelled = false;
 
@@ -157,14 +169,14 @@ export default function LocationTile() {
     // o estilo inicial sai do `schemeRef` (lido apos o await); trocas depois
     // disso sao tratadas no efeito abaixo
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mounted]);
+  }, [mounted, nearView]);
 
   // ---- acompanha a troca de tema -----------------------------------------
   useEffect(() => {
     mapRef.current?.setStyle(STYLES[scheme]);
   }, [scheme]);
 
-  const showMap = mounted && !failed;
+  const showMap = mounted && nearView && !failed;
 
   return (
     <BentoCard
@@ -173,7 +185,7 @@ export default function LocationTile() {
       align="bottom"
       contentClassName="-mx-6 -mt-6 mb-5 items-stretch justify-stretch"
     >
-      <div className="relative h-[13rem] w-full overflow-hidden bg-neutral-100 dark:bg-neutral-800/60">
+      <div ref={frameRef} className="relative h-[13rem] w-full overflow-hidden bg-neutral-100 dark:bg-neutral-800/60">
         <div ref={containerRef} className={showMap ? 'h-full w-full' : 'hidden'} />
 
         {!showMap && (
