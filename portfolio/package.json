@@ -12,6 +12,7 @@
     "generate-pdf": "node scripts/generate-resume.mjs",
     "export-post": "node scripts/export-post-pdf.mjs",
     "og:image": "node scripts/og-image/render.mjs",
+    "projects:screens": "node scripts/capture-project-screens.mjs",
     "preindex": "tsx scripts/reindex.ts",
     "update-blocklists": "tsx scripts/update-blocklists.ts",
     "test:unit": "vitest run --config ../vitest.config.ts --dir .",
@@ -74,7 +75,7 @@
     "three": "^0.167.1",
     "unified": "^11.0.5",
     "viem": "^2.48.4",
-    "zod": "^3.25.76"
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@playwright/test": "^1.55.0",

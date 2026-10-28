@@ -20,7 +20,7 @@ import { getApiTranslator } from '@/lib/api-intl'
 function createUpdateCommentSchema(t: Awaited<ReturnType<typeof getApiTranslator>>) {
     return z.object({
         bodyMd: z
-            .string({ required_error: t('comments.empty') })
+            .string({ error: t('comments.empty') })
             .transform((value) => sanitizeMultilineText(value, 2000))
             .refine((value) => value.length > 0, t('comments.empty'))
             .refine((value) => value.length <= 2000, t('comments.tooLong')),

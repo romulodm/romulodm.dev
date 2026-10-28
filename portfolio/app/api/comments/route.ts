@@ -29,7 +29,7 @@ function createCommentSchema(t: Awaited<ReturnType<typeof getApiTranslator>>) {
         postId: z.string().trim().min(1, t('comments.postIdRequired')),
         parentId: z.union([z.string().trim().min(1), z.null()]).optional().transform((value) => value ?? null),
         bodyMd: z
-            .string({ required_error: t('comments.empty') })
+            .string({ error: t('comments.empty') })
             .transform((value) => sanitizeMultilineText(value, 2000))
             .refine((value) => value.length > 0, t('comments.empty'))
             .refine((value) => value.length <= 2000, t('comments.tooLong')),

@@ -34,10 +34,7 @@ import { CONTACT_STATUSES, type ContactStatusValue } from "@/lib/contact";
 
 function createStatusSchema(t: Awaited<ReturnType<typeof getApiTranslator>>) {
   return z.object({
-    status: z.enum(CONTACT_STATUSES, {
-      required_error: t("common.invalidRequest"),
-      invalid_type_error: t("common.invalidRequest"),
-    }),
+    status: z.enum(CONTACT_STATUSES, { error: t("common.invalidRequest") }),
   });
 }
 
