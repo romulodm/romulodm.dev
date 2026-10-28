@@ -4,7 +4,6 @@ import {
   forgotPasswordSchema,
   loginSchema,
   registerSchema,
-  resetPasswordSchema,
 } from "./schemas";
 
 describe("auth schemas", () => {
@@ -46,16 +45,9 @@ describe("auth schemas", () => {
     }
   });
 
-  it("validates forgot/reset password payloads", () => {
+  it("validates forgot password payloads", () => {
     expect(
       forgotPasswordSchema.safeParse({ email: "romulo@example.com" }).success,
     ).toBe(true);
-
-    const reset = resetPasswordSchema.safeParse({
-      password: "password-123",
-      confirmPassword: "password-123",
-    });
-
-    expect(reset.success).toBe(true);
   });
 });

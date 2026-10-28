@@ -7,7 +7,6 @@ type Translate = (key: string) => string
 export type LoginValues = z.infer<typeof loginSchema>
 export type RegisterValues = z.infer<typeof registerSchema>
 export type ForgotPasswordValues = z.infer<typeof forgotPasswordSchema>
-export type ResetPasswordValues = z.infer<typeof resetPasswordSchema>
 
 /**
  * Locale-free versions of the schemas, for use outside a component (tests).
@@ -49,19 +48,6 @@ export function createForgotPasswordSchema(t: Translate) {
     })
 }
 
-export function createResetPasswordSchema(t: Translate) {
-    return z
-        .object({
-            password: z.string().min(8, t("validation.passwordMin")).max(100),
-            confirmPassword: z.string(),
-        })
-        .refine((data) => data.password === data.confirmPassword, {
-            message: t("validation.passwordsDoNotMatch"),
-            path: ["confirmPassword"],
-        })
-}
-
 export const loginSchema = createLoginSchema(keyAsMessage)
 export const registerSchema = createRegisterSchema(keyAsMessage)
 export const forgotPasswordSchema = createForgotPasswordSchema(keyAsMessage)
-export const resetPasswordSchema = createResetPasswordSchema(keyAsMessage)

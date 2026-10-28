@@ -1,11 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import {
-  cn,
-  decryptLanyardData,
-  encryptLanyardData,
-  formatDistanceToNow,
-} from "./utils";
+import { cn, formatDistanceToNow } from "./utils";
 
 describe("formatDistanceToNow", () => {
   const NOW = new Date("2026-04-09T22:00:00.000Z");
@@ -71,31 +66,5 @@ describe("formatDistanceToNow", () => {
 describe("cn", () => {
   it("merges truthy class values and tailwind conflicts", () => {
     expect(cn("px-2", undefined, "px-4", false, "font-bold")).toBe("px-4 font-bold");
-  });
-});
-
-describe("lanyard obfuscation", () => {
-  it("round-trips usernames and variants", () => {
-    const encrypted = encryptLanyardData("romulo-dev", "dark");
-
-    expect(encrypted).not.toContain("romulo-dev");
-    expect(decryptLanyardData(encrypted)).toEqual({
-      username: "romulo-dev",
-      variant: "dark",
-    });
-  });
-
-  it("supports unicode usernames", () => {
-    const encrypted = encryptLanyardData("romulo🚀", "light");
-
-    expect(decryptLanyardData(encrypted)).toEqual({
-      username: "romulo🚀",
-      variant: "light",
-    });
-  });
-
-  it("rejects malformed payloads", () => {
-    expect(decryptLanyardData("")).toBeNull();
-    expect(decryptLanyardData("not-valid")).toBeNull();
   });
 });
