@@ -332,7 +332,6 @@
   },
   "vision": {
     "software": {
-      "titleHighlight": "Software",
       "description": "The best technical decisions I've made came out of <b>code review</b> and hard conversations, not solitary inspiration.",
       "cursorName": "Romulo",
       "frameOne": "Design.",
@@ -380,9 +379,6 @@
     },
     "profile": {
       "title": "Who is behind the code.",
-      "link-title": "Want to see my resume?",
-      "link-content": "I summarized my experiences and made it available for download.",
-      "link-button": "View online resume",
       "eyebrow": "Profile",
       "description": "Experience, education and the path that got me here — in chronological order."
     },
@@ -486,11 +482,6 @@
         "taught a Git course.",
         "shipped this site."
       ],
-      "lede": {
-        "before": "None of it started finished:",
-        "highlight": "each one began as an empty file",
-        "after": "and a problem I did not yet know how to solve. Open source whenever possible."
-      },
       "cards": [
         {
           "label": "Working",
@@ -533,10 +524,6 @@
           "viajando": "Traveling",
           "ferias": "On vacation"
         }
-      },
-      "reach": {
-        "label": "Reach out",
-        "button": "Start a conversation"
       }
     },
     "vision": {
@@ -1108,8 +1095,6 @@
       "back": "Back"
     },
     "crypto": {
-      "genericError": "Error processing ETH.",
-      "coffees": "{count} coffee(s)",
       "errors": {
         "connect": "Couldn't connect the wallet.",
         "switchNetwork": "Couldn't switch networks.",
@@ -1151,7 +1136,6 @@
       "recentSupport": "Recent support",
       "beFirst": "Be the first to support!",
       "anonymous": "Anonymous",
-      "someone": "Someone",
       "coffees": "{count} coffee(s)",
       "period": {
         "label": "Ranking period",
@@ -1835,7 +1819,6 @@
         "embedYoutube": "Embed YouTube"
       },
       "preview": {
-        "coverAlt": "Cover",
         "untitled": "Untitled"
       }
     },
