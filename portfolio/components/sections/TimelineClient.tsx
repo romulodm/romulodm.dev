@@ -6,6 +6,7 @@ import type { ReactElement } from 'react';
 
 
 import { getTimelineData } from '@/data/timeline';
+import { useDragScroll } from '@/hooks/use-drag-scroll';
 
 interface IconProps {
     className?: string;
@@ -28,6 +29,7 @@ export default function TimelineClient(): ReactElement {
 
     const [currentItem, setCurrentItem] = useState<number>(0);
     const scrollContainerRef = useRef<HTMLDivElement>(null);
+    useDragScroll(scrollContainerRef);
 
     const handleItemChange = (index: number): void => {
         setCurrentItem(index);
@@ -37,7 +39,7 @@ export default function TimelineClient(): ReactElement {
 
     return (
         <section id="timeline" className="mt-5 w-full">
-            <div ref={scrollContainerRef} className="flex h-80 overflow-x-auto scroll-stylized px-4">
+            <div ref={scrollContainerRef} className="flex h-80 overflow-x-auto scroll-stylized px-4 cursor-grab select-none data-[dragging=true]:cursor-grabbing [&[data-dragging=true]_*]:cursor-grabbing">
                 {Object.entries(timelineObject).map(([year, events]) => (
                     <div key={year} className="relative">
                         <header className="absolute left-0 -translate-x-1/2 text-xs font-semibold text-gray-400 dark:text-neutral-500">
