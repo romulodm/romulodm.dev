@@ -26,11 +26,15 @@ export function GitHubStarsButton({
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        fetch(`https://api.github.com/repos/${user}/${repo}`)
-            .then((res) => res.json())
-            .then((data) => {
-                if (typeof data.stargazers_count === 'number') {
-                    setStars(data.stargazers_count)
+        // Served by our own route (app/api/github/stars), which caches the
+        // count: calling api.github.com from the browser hit its per-IP limit
+        // and logged a 403 to the console. That route only knows this site's
+        // repository, so `user`/`repo` here only build the link.
+        fetch('/api/github/stars')
+            .then((res) => (res.ok ? res.json() : null))
+            .then((data: { stars?: unknown } | null) => {
+                if (typeof data?.stars === 'number') {
+                    setStars(data.stars)
                 }
             })
             .catch(() => { })
@@ -72,7 +76,7 @@ export function GitHubStarsButton({
                 className,
             ].join(' ')}
         >
-            <FaGithub size={iconSize} />
+            <FaGithub size={iconSize} aria-hidden="true" />
 
             <span>{t('label')}</span>
 
