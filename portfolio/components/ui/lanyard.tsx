@@ -274,18 +274,30 @@ function Band({ maxSpeed = 50, minSpeed = 0, isMobile = false, cardTexture, onRe
         }
         if (fixed.current) {
             [j1, j2].forEach(ref => {
-                if (!ref.current.lerped) ref.current.lerped = new THREE.Vector3().copy(ref.current.translation());
+                const lerped = ref.current.lerped as THREE.Vector3 | undefined;
+                if (!lerped || !Number.isFinite(lerped.x + lerped.y + lerped.z)) {
+                    ref.current.lerped = new THREE.Vector3().copy(ref.current.translation());
+                }
                 const clampedDistance = Math.max(0.1, Math.min(1, ref.current.lerped.distanceTo(ref.current.translation())));
-                ref.current.lerped.lerp(
-                    ref.current.translation(),
-                    delta * (minSpeed + clampedDistance * (maxSpeed - minSpeed))
-                );
+                // The factor must stay at or below 1. With maxSpeed = 50, any
+                // frame slower than 20ms pushed it past 1, so the smoothed
+                // point overshot its target; past 2 every frame overshot by
+                // more than the last and the strap points ran off to Infinity,
+                // then NaN (logged by three.js as "computeBoundingBox():
+                // Computed min/max have NaN values"). Slow frames are exactly
+                // what a throttled CPU or the first frames after load produce.
+                const alpha = Math.min(1, delta * (minSpeed + clampedDistance * (maxSpeed - minSpeed)));
+                ref.current.lerped.lerp(ref.current.translation(), alpha);
             });
             curve.points[0].copy(j3.current.translation());
             curve.points[1].copy(j2.current.lerped);
             curve.points[2].copy(j1.current.lerped);
             curve.points[3].copy(fixed.current.translation());
-            band.current.geometry.setPoints(curve.getPoints(isMobile ? 16 : 32));
+            // Last line of defence: one non-finite point turns the whole strap
+            // geometry into NaN. Skip the frame instead; the next one recovers.
+            if (curve.points.every((p) => Number.isFinite(p.x) && Number.isFinite(p.y) && Number.isFinite(p.z))) {
+                band.current.geometry.setPoints(curve.getPoints(isMobile ? 16 : 32));
+            }
             ang.copy(card.current.angvel());
             rot.copy(card.current.rotation());
             card.current.setAngvel({ x: ang.x, y: ang.y - rot.y * 0.25, z: ang.z });

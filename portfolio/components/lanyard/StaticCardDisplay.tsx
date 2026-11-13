@@ -8,6 +8,7 @@ import * as THREE from 'three';
 
 import CardTemplate, { type CardTemplateRef } from '@/components/lanyard/LayardCardTemplate';
 import { useInView } from '@/hooks/use-in-view';
+import { STATIC_CARD_BOX } from '@/components/lanyard/StaticCardSkeleton';
 
 // Pre-load the GLB model to reduce initial loading time
 useGLTF.preload('/card.glb');
@@ -114,8 +115,7 @@ function StaticCardScene({ cardTexture, onReady }: StaticCardSceneProps) {
     return (
         <div
             ref={containerRef}
-            style={{ width: 420, height: 520 }}
-            className="cursor-grab active:cursor-grabbing select-none"
+            className="h-full w-full cursor-grab active:cursor-grabbing select-none"
             onMouseDown={onMouseDown}
             onMouseMove={onMouseMove}
             onMouseUp={onMouseUp}
@@ -178,23 +178,25 @@ export default function StaticCardDisplay() {
                 city={t("city")}
                 date={today}
             />
-            <div className="flex justify-center py-4 relative">
-                {/* Skeleton placeholder while loading */}
-                <div
-                    style={{ width: 260, height: 340 }}
-                    className={`absolute left-1/2 -translate-x-1/2 flex items-center justify-center transition-opacity duration-500 ${isReady ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
-                >
-                    <div className="w-[180px] h-[240px] rounded-xl bg-black/20 dark:bg-white/10 animate-pulse" />
-                </div>
-
-                {/* Actual 3D content with fade-in */}
-                <div className={`transition-opacity duration-500 ${isReady ? 'opacity-100' : 'opacity-0'}`}>
-                    {cardTexture && (
-                        // Local boundary: <Canvas> suspends on the GLB.
-                        <Suspense fallback={null}>
-                            <StaticCardScene cardTexture={cardTexture} onReady={handleSceneReady} />
-                        </Suspense>
-                    )}
+            {/* Same footprint as StaticCardSkeleton, in place before the
+                texture or the GLB exist, so nothing below it moves. */}
+            <div className="flex justify-center py-4">
+                <div className={STATIC_CARD_BOX}>
+                    {/* The card slides in from the left edge to the center once
+                        the scene is live. Only transform and opacity animate,
+                        so the slide runs on the compositor and the box keeps
+                        its size the whole time. With reduced motion it only
+                        fades in. */}
+                    <div
+                        className={`absolute inset-0 transition-[transform,opacity] duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:translate-x-0 motion-reduce:transition-opacity motion-reduce:duration-500 ${isReady ? 'translate-x-0 opacity-100' : '-translate-x-[70vw] opacity-0'}`}
+                    >
+                        {cardTexture && (
+                            // Local boundary: <Canvas> suspends on the GLB.
+                            <Suspense fallback={null}>
+                                <StaticCardScene cardTexture={cardTexture} onReady={handleSceneReady} />
+                            </Suspense>
+                        )}
+                    </div>
                 </div>
             </div>
         </>

@@ -47,7 +47,7 @@ function DurationLabel({ start, end }: { start: string; end: string }) {
   return (
     // Ongoing roles are measured against today, so the server and the client
     // can disagree when a render straddles the turn of a month.
-    <span className="text-muted-foreground/70" suppressHydrationWarning>
+    <span className="text-muted-foreground" suppressHydrationWarning>
       ({label})
     </span>
   );

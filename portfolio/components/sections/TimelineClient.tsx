@@ -6,6 +6,7 @@ import type { ReactElement } from 'react';
 
 
 import { getTimelineData } from '@/data/timeline';
+import { useDragScroll } from '@/hooks/use-drag-scroll';
 
 interface IconProps {
     className?: string;
@@ -28,6 +29,7 @@ export default function TimelineClient(): ReactElement {
 
     const [currentItem, setCurrentItem] = useState<number>(0);
     const scrollContainerRef = useRef<HTMLDivElement>(null);
+    useDragScroll(scrollContainerRef);
 
     const handleItemChange = (index: number): void => {
         setCurrentItem(index);
@@ -37,10 +39,10 @@ export default function TimelineClient(): ReactElement {
 
     return (
         <section id="timeline" className="mt-5 w-full">
-            <div ref={scrollContainerRef} className="flex h-80 overflow-x-auto scroll-stylized px-4">
+            <div ref={scrollContainerRef} className="flex h-80 overflow-x-auto scroll-stylized px-4 cursor-grab select-none data-[dragging=true]:cursor-grabbing [&[data-dragging=true]_*]:cursor-grabbing">
                 {Object.entries(timelineObject).map(([year, events]) => (
                     <div key={year} className="relative">
-                        <header className="absolute left-0 -translate-x-1/2 text-xs font-semibold text-gray-400 dark:text-neutral-500">
+                        <header className="absolute left-0 -translate-x-1/2 text-xs font-semibold text-gray-500 dark:text-neutral-500">
                             {year}
                         </header>
 
@@ -64,7 +66,7 @@ export default function TimelineClient(): ReactElement {
                                         >
                                             <span className="sr-only">{`${year} - ${heading}`}</span>
                                             <div className={`h-8 w-0.5 transition-all ${currentItem === globalEventIndex ? 'bg-sky-500 dark:bg-sky-600 h-[80px]' : 'bg-gray-500 dark:bg-neutral-600'}`}></div>
-                                            <Icon className={`mt-2 h-5 w-5 transition-all ${currentItem === globalEventIndex ? 'text-sky-500' : 'text-gray-500 dark:text-neutral-500'}`} />
+                                            <Icon aria-hidden="true" className={`mt-2 h-5 w-5 transition-all ${currentItem === globalEventIndex ? 'text-sky-500' : 'text-gray-500 dark:text-neutral-500'}`} />
                                         </button>
 
                                         <div className="absolute top-0 left-px h-2.5 w-[119px] bg-[image:linear-gradient(90deg,transparent_0px,transparent_9px,var(--line-color)_10px,var(--line-color)_10px)] bg-[length:10px_10px] [--line-color:theme(colors.gray.500)]" />
@@ -91,7 +93,7 @@ export default function TimelineClient(): ReactElement {
                 ))}
 
                 <div className="relative">
-                    <header className="absolute left-0 -translate-x-1/2 text-xs font-semibold text-gray-400">
+                    <header className="absolute left-0 -translate-x-1/2 text-xs font-semibold text-gray-500">
                         {t('today')}
                     </header>
                     <div className="mt-6">

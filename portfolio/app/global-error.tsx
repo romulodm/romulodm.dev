@@ -1,6 +1,6 @@
 'use client'
 
-import * as Sentry from '@sentry/nextjs'
+import { loadSentry } from '@/lib/sentry-client'
 import { useEffect, useState } from 'react'
 import en from '@/messages/en.json'
 import pt from '@/messages/pt.json'
@@ -34,7 +34,10 @@ export default function GlobalError({
   useEffect(() => {
     // Sem esta chamada, erro no layout raiz nunca chega ao Sentry: o
     // instrumentation-client so cobre o que renderiza abaixo do layout.
-    Sentry.captureException(error)
+    // Loads the SDK now if it has not loaded yet (see lib/sentry-client.ts).
+    loadSentry()
+      .then((Sentry) => Sentry.captureException(error))
+      .catch(() => {})
   }, [error])
 
   const [locale, setLocale] = useState<Locale>('pt')

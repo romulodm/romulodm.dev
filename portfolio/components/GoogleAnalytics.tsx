@@ -88,10 +88,16 @@ export function GoogleAnalytics({ measurementId }: { measurementId: string }) {
                     gtag('config', '${measurementId}');
                 `}
             </Script>
+            {/* lazyOnload: gtag.js is ~180KB and was the largest third-party
+                cost on the main thread (~350ms of blocking on a throttled
+                phone). The inline snippet above still runs early and queues
+                consent, 'js' and 'config' in dataLayer; gtag.js replays the
+                queue when it arrives after the load event, so the page view
+                is still recorded. */}
             <Script
                 async
                 src={`https://www.googletagmanager.com/gtag/js?id=${measurementId}`}
-                strategy="afterInteractive"
+                strategy="lazyOnload"
             />
         </>
     );

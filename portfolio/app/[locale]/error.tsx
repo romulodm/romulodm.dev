@@ -1,6 +1,6 @@
 'use client'
 
-import * as Sentry from '@sentry/nextjs'
+import { loadSentry } from '@/lib/sentry-client'
 import { RotateCw } from 'lucide-react'
 import { Link } from '@/i18n/navigation'
 import { useTranslations } from 'next-intl'
@@ -22,7 +22,10 @@ export default function LocaleError({
   const t = useTranslations('error')
 
   useEffect(() => {
-    Sentry.captureException(error)
+    // Loads the SDK now if it has not loaded yet (see lib/sentry-client.ts).
+    loadSentry()
+      .then((Sentry) => Sentry.captureException(error))
+      .catch(() => {})
   }, [error])
 
   return (

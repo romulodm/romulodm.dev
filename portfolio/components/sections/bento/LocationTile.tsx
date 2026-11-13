@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useTheme } from 'next-themes';
 import { Globe2, MapPin } from 'lucide-react';
-import 'maplibre-gl/dist/maplibre-gl.css';
 import './Bento.css';
 import BentoCard from './BentoCard';
 import { useInView } from '@/hooks/use-in-view';
@@ -111,7 +110,10 @@ export default function LocationTile() {
         // maplibre-gl 6 e ESM puro e nao expoe mais default export: o
         // `.default` daqui era o default sintetico que o esModuleInterop
         // fabricava para o build CJS da v5, e na v6 vem `undefined`.
-        const maplibregl = await import('maplibre-gl');
+        // The stylesheet comes with the library (see maplibreStyles.ts) and
+        // the map is only created once both are in, so the controls never
+        // render unstyled.
+        const [maplibregl] = await Promise.all([import('maplibre-gl'), import('./maplibreStyles')]);
         if (cancelled || !containerRef.current || mapRef.current) return;
 
         // Precisa vir antes do primeiro `new Map`: e na criacao do pool de

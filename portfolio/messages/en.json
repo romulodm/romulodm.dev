@@ -600,7 +600,8 @@
       "search": "Search posts",
       "language": "Change language",
       "theme": "Change theme",
-      "rss": "RSS feed"
+      "rss": "RSS feed",
+      "menu": "Open menu"
     },
     "themeOptions": {
       "light": "Light",

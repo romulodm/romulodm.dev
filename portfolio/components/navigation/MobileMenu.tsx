@@ -25,8 +25,12 @@ export function MobileMenu({ onOpenLanguageModal }: MobileMenuProps) {
     return (
         <DropdownMenu modal={false}>
             <DropdownMenuTrigger asChild>
-                <button className="md:hidden p-2 text-foreground hover:bg-gray-200 dark:hover:bg-secondary hover:text-black dark:hover:text-foreground rounded">
-                    <Menu className="h-5 w-5" />
+                <button
+                    type="button"
+                    aria-label={t("tooltip.menu")}
+                    className="md:hidden p-2 text-foreground hover:bg-gray-200 dark:hover:bg-secondary hover:text-black dark:hover:text-foreground rounded"
+                >
+                    <Menu aria-hidden="true" className="h-5 w-5" />
                 </button>
             </DropdownMenuTrigger>
 

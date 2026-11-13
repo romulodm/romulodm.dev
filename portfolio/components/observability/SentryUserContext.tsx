@@ -1,6 +1,6 @@
 "use client";
 
-import * as Sentry from "@sentry/nextjs";
+import { whenSentryLoaded } from "@/lib/sentry-client";
 import { useSession } from "next-auth/react";
 import { useEffect } from "react";
 
@@ -12,12 +12,8 @@ export default function SentryUserContext() {
 
         const userId = (session?.user as { id?: string } | undefined)?.id;
 
-        if (userId) {
-            Sentry.setUser({ id: userId });
-            return;
-        }
-
-        Sentry.setUser(null);
+        // Waits for the deferred SDK instead of loading it just for this.
+        whenSentryLoaded((Sentry) => Sentry.setUser(userId ? { id: userId } : null));
     }, [session, status]);
 
     return null;

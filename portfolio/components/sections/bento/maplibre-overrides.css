@@ -1,0 +1,45 @@
+/*
+ * Overrides for maplibre-gl.css. Loaded by maplibreStyles.ts right after the
+ * library stylesheet, so these rules win on equal specificity. They used to
+ * live in Bento.css, which is part of the home's render-blocking CSS and
+ * would now load before the library sheet and lose to it.
+ */
+
+/* Quieter MapLibre controls. The attribution stays visible: the OSM/CARTO
+   license requires it. */
+.maplibregl-ctrl-group {
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .18);
+}
+
+.maplibregl-ctrl-attrib,
+.maplibregl-ctrl-attrib a {
+    font-size: 10px;
+}
+
+.maplibregl-ctrl-bottom-right .maplibregl-ctrl-attrib {
+    background: rgba(255, 255, 255, .7);
+}
+
+.dark .maplibregl-ctrl-bottom-right .maplibregl-ctrl-attrib {
+    background: rgba(0, 0, 0, .45);
+}
+
+.dark .maplibregl-ctrl-attrib a {
+    color: rgba(255, 255, 255, .7);
+}
+
+/* In dark mode the +/- buttons are white by default and glare against the
+   Dark Matter style; here they follow the card. */
+.dark .maplibregl-ctrl-group {
+    background: rgba(23, 23, 23, .92);
+}
+
+.dark .maplibregl-ctrl-group button+button {
+    border-top-color: rgba(255, 255, 255, .12);
+}
+
+.dark .maplibregl-ctrl-group button .maplibregl-ctrl-icon {
+    filter: invert(1);
+}

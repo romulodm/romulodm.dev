@@ -80,7 +80,10 @@ export default function FeaturedProjectCard({ project, labels }: FeaturedProject
             href={href}
             target="_blank"
             rel="noopener noreferrer"
-            aria-label={`${labels.open}: ${project.title}`}
+            // The accessible name has to contain the visible text (WCAG 2.5.3,
+            // "label in name"): with only "Open project: X" a voice-control
+            // user saying the tagline they see could not reach the link.
+            aria-label={`${project.tagline} (${labels.open}: ${project.title})`}
             draggable={false}
             onPointerEnter={playSound}
             className="group relative block w-full lg:aspect-[16/11] overflow-hidden rounded-2xl border border-border bg-white p-2 shadow-sm transition-transform duration-500 hover:-translate-y-2 motion-reduce:transition-none motion-reduce:hover:translate-y-0 dark:border-neutral-800 dark:bg-white/[0.04]"
@@ -114,7 +117,7 @@ export default function FeaturedProjectCard({ project, labels }: FeaturedProject
                     under the text. `min-h-0` makes the aspect a hard cap:
                     without it the stage grows to fit its content, and the
                     `scroll` hero is a capture two and a half viewports tall. */}
-                <div className="relative z-10 aspect-[16/9] min-h-0 lg:absolute lg:inset-x-0 lg:bottom-0 lg:top-32 lg:aspect-auto xl:top-36">
+                <div aria-hidden="true" className="relative z-10 aspect-[16/9] min-h-0 lg:absolute lg:inset-x-0 lg:bottom-0 lg:top-32 lg:aspect-auto xl:top-36">
                     <div className="flex h-full justify-center">
                         <BrowserFrame
                             host={project.host}
