@@ -18,20 +18,15 @@
  */
 export const STATIC_CARD_BOX = 'relative aspect-[420/520] w-[min(420px,calc(100vw-2rem))]';
 
-export function StaticCardPulse({ className = '' }: { className?: string }) {
-    return (
-        <div className={`absolute inset-0 flex items-center justify-center ${className}`}>
-            <div className="h-[240px] w-[180px] animate-pulse rounded-xl bg-black/20 dark:bg-white/10" />
-        </div>
-    );
-}
-
+/**
+ * Only the reserved space, with nothing drawn in it: a pulsing placeholder
+ * read as a broken grey box on the hero's sky, and the card now announces
+ * itself by sliding in (see StaticCardDisplay).
+ */
 export default function StaticCardSkeleton() {
     return (
         <div className="flex justify-center py-4">
-            <div className={STATIC_CARD_BOX}>
-                <StaticCardPulse />
-            </div>
+            <div className={STATIC_CARD_BOX} />
         </div>
     );
 }
