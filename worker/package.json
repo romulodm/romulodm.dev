@@ -16,13 +16,13 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1032.0",
-    "@google-analytics/data": "^5.2.1",
     "@aws-sdk/client-ses": "^3.1021.0",
     "@aws-sdk/lib-storage": "^3.1032.0",
+    "@google-analytics/data": "^5.2.1",
     "@romulo/database": "*",
     "@romulo/queues": "*",
-    "@romulo/web3": "*",
     "@romulo/templates": "*",
+    "@romulo/web3": "*",
     "@sentry/node": "^10.68.0",
     "bullmq": "^5.71.0",
     "dockerode": "^4.0.10",
@@ -30,7 +30,7 @@
     "ioredis": "^5.0.0",
     "nodemailer": "^10.0.9",
     "stripe": "^21.0.1",
-    "systeminformation": "^5.31.5",
+    "systeminformation": "^5.33.20",
     "viem": "^2.55.11"
   },
   "devDependencies": {
