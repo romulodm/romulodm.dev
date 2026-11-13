@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 
 import HeroIgaratipo from '@/components/HeroIgaratipo';
+import StaticCardSkeleton from '@/components/lanyard/StaticCardSkeleton';
 import FakeTimeline from './FakeTimeline';
 
 import hillsFar from '@/public/hero/hills-far.webp';
@@ -26,14 +27,6 @@ const LanyardDisplay = dynamic(() => import('@/components/lanyard/LanyardDisplay
     loading: () => null,
 });
 
-const StaticCardSkeleton = () => (
-    <div className="flex justify-center py-4">
-        <div style={{ width: 260, height: 340 }} className="flex items-center justify-center">
-            <div className="h-[240px] w-[180px] animate-pulse rounded-xl bg-white/10" />
-        </div>
-    </div>
-);
-
 const StaticCardDisplay = dynamic(() => import('@/components/lanyard/StaticCardDisplay'), {
     ssr: false,
     loading: () => <StaticCardSkeleton />,
@@ -48,7 +41,7 @@ const SKY_LIGHT =
     'radial-gradient(200% 83% at 50% 0px, rgb(250, 250, 250) 0%, rgb(214, 222, 228) 42%, rgb(226, 170, 160) 100%)';
 
 const GRAIN: CSSProperties = {
-    backgroundImage: 'url("/grain.png")',
+    backgroundImage: 'url("/grain.webp")',
     backgroundSize: '100px 100px',
     backgroundRepeat: 'repeat',
     mixBlendMode: 'overlay',
@@ -91,6 +84,45 @@ function useIsDesktop(): boolean | null {
         () => window.matchMedia(DESKTOP_QUERY).matches,
         () => null,
     );
+}
+
+/**
+ * `true` once the page has fired `load` and the main thread has a free moment
+ * (or 2s have passed, whichever comes first).
+ *
+ * The badge scenes are the heaviest thing on the page: three.js and
+ * react-three-fiber everywhere, plus Rapier with its WASM inlined on desktop,
+ * a 340KB GLB and an environment map. Starting them during hydration put all
+ * of that in the same long tasks that keep the page from answering input.
+ * Both versions already fade in when ready, so starting them a moment later
+ * only moves that fade. Safari has no requestIdleCallback, hence the timeout.
+ */
+function useAfterLoadIdle(): boolean {
+    const [ready, setReady] = useState(false);
+
+    useEffect(() => {
+        let idleId = 0;
+        let timeoutId = 0;
+
+        const schedule = () => {
+            if (typeof window.requestIdleCallback === 'function') {
+                idleId = window.requestIdleCallback(() => setReady(true), { timeout: 2000 });
+            } else {
+                timeoutId = window.setTimeout(() => setReady(true), 200);
+            }
+        };
+
+        if (document.readyState === 'complete') schedule();
+        else window.addEventListener('load', schedule, { once: true });
+
+        return () => {
+            window.removeEventListener('load', schedule);
+            if (idleId) window.cancelIdleCallback(idleId);
+            window.clearTimeout(timeoutId);
+        };
+    }, []);
+
+    return ready;
 }
 
 /** Aplica `translateY = fator * scroll` em todo `[data-parallax]` dentro da secao. */
@@ -147,6 +179,7 @@ export default function Hero() {
     const sectionRef = useRef<HTMLElement>(null);
     useLayerParallax(sectionRef);
     const isDesktop = useIsDesktop();
+    const startScenes = useAfterLoadIdle();
 
     return (
         <section ref={sectionRef} className="relative isolate w-full overflow-clip">
@@ -211,7 +244,7 @@ export default function Hero() {
                    O canvas fica sem pointer-events para nao bloquear o painel; os
                    eventos vem da secao (eventSource) e o raycast so dispara quando o
                    cursor esta de fato sobre o cracha. */}
-            {isDesktop === true && (
+            {isDesktop === true && startScenes && (
                 <div className="hidden md:block">
                     <LanyardDisplay
                         position={[-3, 0, 20]}
@@ -224,10 +257,11 @@ export default function Hero() {
             )}
 
             <div className="relative z-30 flex flex-col items-center px-4 md:px-6 md:pt-[max(76vh,440px)]">
-                {/* Until the breakpoint is known the skeleton holds the card's
-                    place, so the mobile layout does not jump when it resolves. */}
+                {/* Until the breakpoint is known, and until the scene is allowed
+                    to start, the skeleton holds the card's exact footprint, so
+                    the panel below never moves when the card arrives. */}
                 <div className="relative z-20 md:hidden">
-                    {isDesktop === false ? <StaticCardDisplay /> : isDesktop === null ? <StaticCardSkeleton /> : null}
+                    {isDesktop === true ? null : isDesktop === false && startScenes ? <StaticCardDisplay /> : <StaticCardSkeleton />}
                 </div>
 
                 <div
@@ -248,7 +282,10 @@ export default function Hero() {
 
             {/* 7 — arvores em primeiro plano, por cima do painel */}
             <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-[-2.5vw] z-40">
-                <Image src={hillsFront} alt="" sizes="100vw" className="h-auto w-full select-none" />
+                {/* priority: on phones this layer is the Largest Contentful
+                    Paint element, and next/image otherwise renders it with
+                    loading="lazy" and no preload. */}
+                <Image src={hillsFront} alt="" priority sizes="100vw" className="h-auto w-full select-none" />
             </div>
 
             {/* 8 — emenda com a proxima secao */}

@@ -78,6 +78,10 @@ const nextConfig = {
     ];
   },
   images: {
+    // Next's default list jumps from 1200 to 1920, so a full-width image on
+    // a 1366-1536px laptop screen (the hero hills) downloaded the 1920px file.
+    // 1440 and 1600 sit in that gap; the rest is the default list.
+    deviceSizes: [640, 750, 828, 1080, 1200, 1440, 1600, 1920, 2048, 3840],
     // Post media is a local path (`/media/...`), so it needs no remote
     // pattern: the optimizer fetches it through the rewrite above. No
     // `localPatterns` either: left unset, Next allows every local path, while
