@@ -37,6 +37,7 @@ const FOOTER_SKY_LIGHT = `
 
 export function Footer() {
     const t = useTranslations('footer')
+    const tNav = useTranslations('navigation')
     const currentYear = new Date().getFullYear()
 
     const [contactOpen, setContactOpen] = useState(false)
@@ -54,7 +55,7 @@ export function Footer() {
             <div
                 className="absolute inset-0"
                 style={{
-                    backgroundImage: 'url("/grain.png")',
+                    backgroundImage: 'url("/grain.webp")',
                     backgroundSize: "60px 60px",
                     backgroundRepeat: "repeat",
                     backgroundBlendMode: "overlay",
@@ -96,7 +97,7 @@ export function Footer() {
 
                     {/* Logo */}
                     <div className="flex items-start col-span-2 md:col-span-3 lg:col-span-1">
-                        <Link href="/" className="flex items-center gap-2.5 no-underline">
+                        <Link href="/" aria-label={tNav('links.home.label')} className="flex items-center gap-2.5 no-underline">
                             <Logo size={55} className="text-primary" />
                         </Link>
                     </div>
@@ -246,7 +247,8 @@ function SocialBtn({
             rel="noopener noreferrer"
             className="w-9 h-9 bg-white/5 text-white rounded-full flex items-center justify-center no-underline hover:bg-white/10 transition-colors"
         >
-            {children}
+            {/* The link is named by aria-label; the icon is decoration. */}
+            <span aria-hidden="true" className="flex">{children}</span>
         </a>
     )
 }

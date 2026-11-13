@@ -59,9 +59,12 @@ function Link({ url, icon, title, color, id }: LinkProps): React.JSX.Element {
         target="_blank"
         id={id}
         rel="noopener noreferrer"
+        // The link shows only an icon and the tooltip is not part of its
+        // accessible name, so screen readers announced a bare "link".
+        aria-label={title}
         className="link-carrousel block p-3.5 rounded-lg transition-transform bg-white dark:bg-neutral-900 duration-200 border-2 hover:-translate-y-1.5"
       >
-        <div className="flex items-center text-lg">{icon}</div>
+        <div aria-hidden="true" className="flex items-center text-lg">{icon}</div>
       </a>
     </ItemTooltip>
   );

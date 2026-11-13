@@ -50,7 +50,7 @@ function TimelineRow({ size, className }: { size: keyof typeof SIZES; className:
             <div className={`mx-auto flex w-fit px-4 ${s.row}`}>
                 {Object.entries(FAKE_OBJECT).map(([year, events]) => (
                     <div key={year} className="relative">
-                        <header className="absolute left-0 -translate-x-1/3 select-none text-xs font-semibold text-gray-400 dark:text-neutral-500">
+                        <header className="absolute left-0 -translate-x-1/3 select-none text-xs font-semibold text-gray-500 dark:text-neutral-500">
                             {year}
                         </header>
 

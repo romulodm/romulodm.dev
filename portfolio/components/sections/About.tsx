@@ -126,15 +126,17 @@ const About: React.FC = () => {
                             {t("location")}
                         </span>
                         <span className="w-px h-3 bg-white/10" aria-hidden />
-                        <span className="flex items-center gap-1.5 text-base text-emerald-400/80">
+                        <span className="flex items-center gap-1.5 text-base text-emerald-700 dark:text-emerald-400/80">
                             {t("available")}
                         </span>
                     </div>
 
                     <div className="flex flex-wrap gap-3 my-5">
+                        {/* Dark label on the orange fill: white on --primary is
+                            2.74:1, under the 4.5:1 WCAG AA minimum. */}
                         <a
                             href="#projects"
-                            className="group inline-flex z-20 items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm shadow-primary/20 transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                            className="group inline-flex z-20 items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-[#0a0a0a] shadow-sm shadow-primary/20 transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                         >
                             {t("viewProjects")}
                             <ArrowRight size={16} className="transition-transform group-hover:translate-x-0.5" />

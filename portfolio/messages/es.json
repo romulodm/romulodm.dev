@@ -600,7 +600,8 @@
       "search": "Buscar posts",
       "language": "Cambiar idioma",
       "theme": "Cambiar tema",
-      "rss": "Feed RSS"
+      "rss": "Feed RSS",
+      "menu": "Abrir menú"
     },
     "themeOptions": {
       "light": "Claro",
@@ -2627,7 +2628,7 @@
   },
   "githubStars": {
     "label": "Star",
-    "aria": "Dar una estrella a {repo} en GitHub"
+    "aria": "Star: dar una estrella a {repo} en GitHub"
   },
   "blogSearch": {
     "title": "Buscar posts",

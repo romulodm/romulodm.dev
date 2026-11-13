@@ -74,7 +74,9 @@ export function Button({
       className={cx('vs-btn', `vs-btn--${variant}`, `vs-color-${color}`, className)}
       {...props}
     >
-      {startDecorator}
+      {/* Decorative: the button is named by its text. `display: contents`
+          keeps the icon laid out as a direct child of the button. */}
+      {startDecorator && <span aria-hidden="true" style={{ display: 'contents' }}>{startDecorator}</span>}
       {children}
     </Component>
   );
