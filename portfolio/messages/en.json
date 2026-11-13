@@ -946,23 +946,27 @@
       "subtitle": "Get notified about new posts, projects, and ideas straight to your inbox."
     },
     "nav": {
-      "resources": {
-        "title": "Resources",
+      "content": {
+        "title": "Content",
         "links": {
           "blog": "Blog",
           "wall": "Wall",
-          "support": "Support",
-          "profile": "Profile",
-          "resume": "Resume",
-          "status": "Status"
+          "newsletter": "Newsletter"
         }
       },
-      "newsletter": {
-        "title": "Newsletter",
+      "aboutMe": {
+        "title": "About me",
         "links": {
-          "about": "About",
-          "login": "Sign in",
-          "logout": "Sign out"
+          "profile": "Profile",
+          "resume": "Resume",
+          "contact": "Contact"
+        }
+      },
+      "site": {
+        "title": "This site",
+        "links": {
+          "status": "Status",
+          "support": "Support"
         }
       },
       "legal": {
@@ -972,11 +976,7 @@
           "terms": "Terms of service"
         }
       },
-      "about": {
-        "title": "About this site",
-        "description": "I believe that building in public is the best way to grow. I created this portfolio and blog to share ideas, projects, and lessons learned along the journey.",
-        "community": "If you're here, you're already part of this community."
-      }
+      "intro": "Software engineer and master's student, currently living in Rio Grande."
     },
     "legal": {
       "madeWith": "Made with ",

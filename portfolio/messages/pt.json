@@ -946,23 +946,27 @@
       "subtitle": "Receba novidades sobre posts, projetos e ideias diretamente no seu e-mail."
     },
     "nav": {
-      "resources": {
-        "title": "Recursos",
+      "content": {
+        "title": "Conteúdo",
         "links": {
           "blog": "Blog",
           "wall": "Mural",
-          "support": "Apoiar",
-          "profile": "Perfil",
-          "resume": "Currículo",
-          "status": "Status"
+          "newsletter": "Newsletter"
         }
       },
-      "newsletter": {
-        "title": "Newsletter",
+      "aboutMe": {
+        "title": "Sobre mim",
         "links": {
-          "about": "Sobre",
-          "login": "Entrar",
-          "logout": "Sair"
+          "profile": "Perfil",
+          "resume": "Currículo",
+          "contact": "Contato"
+        }
+      },
+      "site": {
+        "title": "Este site",
+        "links": {
+          "status": "Status",
+          "support": "Apoiar"
         }
       },
       "legal": {
@@ -972,11 +976,7 @@
           "terms": "Termos de serviço"
         }
       },
-      "about": {
-        "title": "Sobre este site",
-        "description": "Acredito que construir em público é a melhor forma de crescer. Criei este portfólio e blog para compartilhar ideias, projetos e aprendizados acumulados ao longo da jornada.",
-        "community": "Se você está por aqui, já faz parte dessa comunidade."
-      }
+      "intro": "Engenheiro de software e mestrando, atualmente morando em Rio Grande."
     },
     "legal": {
       "madeWith": "Feito com ",
