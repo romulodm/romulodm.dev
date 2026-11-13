@@ -93,47 +93,17 @@ export function Footer() {
                 <FooterNewsletter />
 
                 {/* Grid */}
-                <div className="grid gap-8 pb-12 grid-cols-2 md:grid-cols-3 lg:grid-cols-[190px_1fr_1fr_1fr_260px]">
+                <div className="grid gap-8 pb-12 grid-cols-2 md:grid-cols-4 lg:grid-cols-[300px_repeat(4,minmax(0,1fr))]">
 
-                    {/* Logo */}
-                    <div className="flex items-start col-span-2 md:col-span-3 lg:col-span-1">
-                        <Link href="/" aria-label={tNav('links.home.label')} className="flex items-center gap-2.5 no-underline">
+                    {/* Logo, intro and contact details */}
+                    <div className="col-span-2 md:col-span-4 lg:col-span-1">
+                        <Link href="/" aria-label={tNav('links.home.label')} className="inline-flex items-center gap-2.5 no-underline">
                             <Logo size={55} className="text-primary" />
                         </Link>
-                    </div>
-
-                    <FooterCol title={t('nav.resources.title')}>
-                        <FooterLink href="/blog">{t('nav.resources.links.blog')}</FooterLink>
-                        <FooterLink href="/wall">{t('nav.resources.links.wall')}</FooterLink>
-                        <FooterLink href="/support">{t('nav.resources.links.support')}</FooterLink>
-                        <FooterLink href="/profile/romulodm">{t('nav.resources.links.profile')}</FooterLink>
-                        <FooterLink href="/resume">{t('nav.resources.links.resume')}</FooterLink>
-                        <FooterLink href="/status">{t('nav.resources.links.status')}</FooterLink>
-                    </FooterCol>
-
-                    <FooterCol title={t('nav.newsletter.title')}>
-                        <FooterLink href="/newsletter/about">{t('nav.newsletter.links.about')}</FooterLink>
-                        <FooterLink href="/newsletter/login">{t('nav.newsletter.links.login')}</FooterLink>
-                        <FooterLink href="/newsletter/logout">{t('nav.newsletter.links.logout')}</FooterLink>
-                    </FooterCol>
-
-                    <FooterCol title={t('nav.legal.title')}>
-                        <FooterLink href="/legal/privacy-policy">{t('nav.legal.links.privacy')}</FooterLink>
-                        <FooterLink href="/legal/terms">{t('nav.legal.links.terms')}</FooterLink>
-                    </FooterCol>
-
-                    {/* About */}
-                    <div className="col-span-2 md:col-span-1">
-                        <h4 className="type-small font-semibold text-white mb-4">
-                            {t('nav.about.title')}
-                        </h4>
-                        <p className="text-xs text-white/50 leading-relaxed">
-                            {t('nav.about.description')}
+                        <p className="mt-3 max-w-[300px] text-sm text-white/50 leading-relaxed">
+                            {t('nav.intro')}
                         </p>
-                        <p className="text-xs mt-4 text-white/50 leading-relaxed">
-                            {t('nav.about.community')}
-                        </p>
-                        <div className="space-y-4 mt-4">
+                        <div className="space-y-3 mt-3">
                             <div className="flex items-center space-x-2 text-gray-300">
                                 <div className="p-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg">
                                     <Mail className="h-4 w-4" />
@@ -159,6 +129,36 @@ export function Footer() {
                             </div>
                         </div>
                     </div>
+
+                    <FooterCol title={t('nav.content.title')}>
+                        <FooterLink href="/blog">{t('nav.content.links.blog')}</FooterLink>
+                        <FooterLink href="/wall">{t('nav.content.links.wall')}</FooterLink>
+                        <FooterLink href="/newsletter">{t('nav.content.links.newsletter')}</FooterLink>
+                    </FooterCol>
+
+                    <FooterCol title={t('nav.aboutMe.title')}>
+                        <FooterLink href="/profile/romulodm">{t('nav.aboutMe.links.profile')}</FooterLink>
+                        <FooterLink href="/resume">{t('nav.aboutMe.links.resume')}</FooterLink>
+                        <li>
+                            <button
+                                type="button"
+                                onClick={() => setContactOpen(true)}
+                                className={`${FOOTER_LINK_CLASS} bg-transparent border-0 p-0 cursor-pointer text-left`}
+                            >
+                                {t('nav.aboutMe.links.contact')}
+                            </button>
+                        </li>
+                    </FooterCol>
+
+                    <FooterCol title={t('nav.site.title')}>
+                        <FooterLink href="/status">{t('nav.site.links.status')}</FooterLink>
+                        <FooterLink href="/support">{t('nav.site.links.support')}</FooterLink>
+                    </FooterCol>
+
+                    <FooterCol title={t('nav.legal.title')}>
+                        <FooterLink href="/legal/privacy-policy">{t('nav.legal.links.privacy')}</FooterLink>
+                        <FooterLink href="/legal/terms">{t('nav.legal.links.terms')}</FooterLink>
+                    </FooterCol>
                 </div>
 
                 {/* ── Socials ── */}
@@ -208,6 +208,8 @@ export function Footer() {
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
+const FOOTER_LINK_CLASS = 'text-xs text-white/50 no-underline leading-snug hover:text-white/80 transition-colors'
+
 function FooterCol({ title, children }: { title: string; children: React.ReactNode }) {
     return (
         <div>
@@ -220,10 +222,7 @@ function FooterCol({ title, children }: { title: string; children: React.ReactNo
 function FooterLink({ href, children }: { href: string; children: React.ReactNode }) {
     return (
         <li>
-            <a
-                href={href}
-                className="text-xs text-white/50 no-underline leading-snug hover:text-white/80 transition-colors"
-            >
+            <a href={href} className={FOOTER_LINK_CLASS}>
                 {children}
             </a>
         </li>
