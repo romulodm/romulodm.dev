@@ -43,45 +43,6 @@
     }
 }
 
-/* Controles do MapLibre um pouco mais discretos, sem esconder a atribuicao
-   (que a licenca do OSM/CARTO exige manter visivel). */
-.maplibregl-ctrl-group {
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, .18);
-}
-
-.maplibregl-ctrl-attrib,
-.maplibregl-ctrl-attrib a {
-    font-size: 10px;
-}
-
-.maplibregl-ctrl-bottom-right .maplibregl-ctrl-attrib {
-    background: rgba(255, 255, 255, .7);
-}
-
-.dark .maplibregl-ctrl-bottom-right .maplibregl-ctrl-attrib {
-    background: rgba(0, 0, 0, .45);
-}
-
-.dark .maplibregl-ctrl-attrib a {
-    color: rgba(255, 255, 255, .7);
-}
-
-/* No escuro os botoes +/- vem brancos por padrao e estouram o contraste
-   contra o Dark Matter — aqui eles acompanham o card. */
-.dark .maplibregl-ctrl-group {
-    background: rgba(23, 23, 23, .92);
-}
-
-.dark .maplibregl-ctrl-group button+button {
-    border-top-color: rgba(255, 255, 255, .12);
-}
-
-.dark .maplibregl-ctrl-group button .maplibregl-ctrl-icon {
-    filter: invert(1);
-}
-
 .bento-rise {
     --late: calc(var(--rise-delay, 0ms) + var(--rise-dur, 280ms));
 
