@@ -21,7 +21,10 @@ export function AnimatedEmoji({ code, className }: Props) {
         <picture aria-hidden="true" className={`inline-flex shrink-0 ${className ?? ''}`}>
             <source media="(prefers-reduced-motion: reduce)" srcSet={`${base}/emoji.svg`} type="image/svg+xml" />
             <source srcSet={`${base}/512.webp`} type="image/webp" />
-            <img src={`${base}/512.gif`} alt="" width={32} height={32} decoding="async" className="w-[1em] h-[1em]" />
+            {/* lazy: the animated WebP is ~290KB (the CDN only serves 512px),
+                and the footer heart was downloaded on every page load while
+                still far below the fold. */}
+            <img src={`${base}/512.gif`} alt="" width={32} height={32} loading="lazy" decoding="async" className="w-[1em] h-[1em]" />
         </picture>
     )
 }
